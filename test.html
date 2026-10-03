@@ -1,0 +1,1927 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hương Vị Hội An - Food-Trail & Thuyết Minh Ẩm Thực</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              hoian: {
+                gold: "#F3B02C",
+                yellow: "#EAA311",
+                red: "#C82323",
+                deepred: "#8E1B1B",
+                dark: "#0F172A",
+                warmbg: "#FFFDF6",
+                terracotta: "#D97706",
+                river: "#1E293B",
+              },
+            },
+            fontFamily: {
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+              serif: ["Playfair Display", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Custom Glowing & Floating Animations */
+      @keyframes lanternGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 12px rgba(243, 176, 44, 0.7));
+          transform: translateY(0px) rotate(-1deg);
+        }
+        50% {
+          filter: drop-shadow(0 0 20px rgba(200, 35, 35, 0.9));
+          transform: translateY(-6px) rotate(1deg);
+        }
+      }
+      @keyframes floatWater {
+        0%,
+        100% {
+          transform: translateY(0) rotate(-2deg);
+        }
+        50% {
+          transform: translateY(-8px) rotate(2deg);
+        }
+      }
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          opacity: 0.4;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.08);
+        }
+      }
+
+      .lantern-glow {
+        animation: lanternGlow 4s ease-in-out infinite;
+      }
+      .floating-lantern {
+        animation: floatWater 5s ease-in-out infinite;
+      }
+      .pulse-light {
+        animation: pulseGlow 3s ease-in-out infinite;
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.05);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #f3b02c;
+        border-radius: 4px;
+      }
+
+      /* Glassmorphism */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(243, 176, 44, 0.2);
+      }
+      .dark .glass-panel {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(243, 176, 44, 0.15);
+      }
+
+      /* Mobile Device Frame styling */
+      .phone-frame {
+        box-shadow:
+          0 25px 50px -12px rgba(0, 0, 0, 0.35),
+          0 0 0 12px #1e293b,
+          0 0 0 14px #334155;
+        border-radius: 40px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-[#FFFDF6] dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen transition-colors duration-300"
+  >
+    <!-- TOP NAVIGATION HEADER -->
+    <header
+      class="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-md text-white border-b border-hoian-gold/30 shadow-lg"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"
+      >
+        <!-- Brand & Icon -->
+        <div class="flex items-center gap-3">
+          <div
+            class="relative flex items-center justify-center w-10 h-10 rounded-full bg-hoian-red/30 border border-hoian-gold text-hoian-gold lantern-glow"
+          >
+            <!-- SVG Lantern Icon -->
+            <svg
+              class="w-6 h-6 text-hoian-gold"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                d="M12 2C11.4 2 11 2.4 11 3V4C7.1 4.5 4 7.8 4 12V16C4 18.2 5.8 20 8 20H9V22H11V20H13V22H15V20H16C18.2 20 20 18.2 20 16V12C20 7.8 16.9 4.5 13 4V3C13 2.4 12.6 2 12 2ZM6 12C6 8.7 8.7 6 12 6C15.3 6 18 8.7 18 12V15H6V12Z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h1
+              class="text-lg sm:text-xl font-bold font-serif tracking-wide bg-gradient-to-r from-hoian-gold via-amber-200 to-red-400 bg-clip-text text-transparent"
+            >
+              HƯƠNG VỊ HỘI AN
+            </h1>
+            <p class="text-[10px] text-amber-200/80 -mt-1 hidden sm:block">
+              Thuyết Minh Ẩm Thực & Food-Trail Challenge
+            </p>
+          </div>
+        </div>
+
+        <!-- Language & Audio Controls -->
+        <div class="flex items-center gap-2">
+          <!-- Global Language Switcher -->
+          <div class="relative inline-block text-left">
+            <select
+              id="langSelect"
+              onchange="changeLanguage(this.value)"
+              class="bg-slate-800 text-xs text-amber-100 border border-hoian-gold/40 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-hoian-gold cursor-pointer"
+            >
+              <option value="vi">🇻🇳 Tiếng Việt</option>
+              <option value="en">🇬🇧 English</option>
+              <option value="ja">🇯🇵 日本語</option>
+              <option value="ko">🇰🇷 한국어</option>
+              <option value="fr">🇫🇷 Français</option>
+            </select>
+          </div>
+
+          <button
+            onclick="toggleTheme()"
+            class="p-2 rounded-lg bg-slate-800 text-amber-300 hover:bg-slate-700 transition"
+            title="Đổi giao diện"
+          >
+            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- HOI AN AMBIENT DECORATIVE HEADER BANNER -->
+    <div
+      class="relative bg-gradient-to-b from-slate-900 via-hoian-river to-slate-950 text-white overflow-hidden border-b border-hoian-gold/20 py-4"
+    >
+      <!-- Floating Animated Paper Lanterns Background -->
+      <div
+        class="absolute inset-0 opacity-25 pointer-events-none overflow-hidden"
+      >
+        <div class="absolute -top-4 left-[10%] text-hoian-gold lantern-glow">
+          <i data-lucide="lamp" class="w-12 h-12"></i>
+        </div>
+        <div
+          class="absolute top-2 left-[30%] text-hoian-red lantern-glow"
+          style="animation-delay: 1s"
+        >
+          <i data-lucide="lamp" class="w-10 h-10"></i>
+        </div>
+        <div
+          class="absolute -top-2 left-[60%] text-amber-400 lantern-glow"
+          style="animation-delay: 2s"
+        >
+          <i data-lucide="lamp" class="w-14 h-14"></i>
+        </div>
+        <div
+          class="absolute top-4 left-[85%] text-hoian-gold lantern-glow"
+          style="animation-delay: 1.5s"
+        >
+          <i data-lucide="lamp" class="w-8 h-8"></i>
+        </div>
+      </div>
+
+      <div
+        class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10"
+      >
+        <div class="flex items-center gap-3">
+          <span
+            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-hoian-red/80 text-amber-100 border border-hoian-gold/40"
+          >
+            <span
+              class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse mr-1.5"
+            ></span>
+            Hội An UNESCO Culinary Trail
+          </span>
+          <p class="text-xs text-amber-100/80 hidden sm:inline">
+            Khám phá di sản văn hóa ẩm thực Phố Cổ bằng công nghệ AI & GPS
+          </p>
+        </div>
+
+        <!-- Quick Feature Tabs -->
+        <div class="flex items-center gap-2 text-xs">
+          <span class="text-amber-200/60">Tính năng chọn nhanh:</span>
+          <button
+            onclick="scrollToSection('narration-sec')"
+            class="px-2.5 py-1 rounded bg-slate-800/80 hover:bg-hoian-gold/20 text-amber-200 border border-amber-500/30 transition"
+          >
+            🎧 Thuyết Minh Món Ăn
+          </button>
+          <button
+            onclick="scrollToSection('trail-sec')"
+            class="px-2.5 py-1 rounded bg-slate-800/80 hover:bg-hoian-gold/20 text-amber-200 border border-amber-500/30 transition"
+          >
+            🗺️ Food-Trail Challenge
+          </button>
+          <button
+            onclick="scrollToSection('admin-sec')"
+            class="px-2.5 py-1 rounded bg-slate-800/80 hover:bg-hoian-gold/20 text-amber-200 border border-amber-500/30 transition"
+          >
+            📊 Admin Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTAINER SWITCHING BETWEEN WEB PORTAL & MOBILE APP -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <!-- ================================================================= -->
+      <!-- VIEW MODE 1: WEBSITE INTERFACE (Full Portal & Admin Dashboard)    -->
+      <!-- ================================================================= -->
+      <div id="webViewContainer" class="space-y-12 block">
+        <!-- HERO SECTION WITH HOI AN SCENERY -->
+        <div
+          class="relative rounded-3xl overflow-hidden shadow-2xl border border-hoian-gold/30 bg-slate-900 min-h-[380px] flex items-center"
+        >
+          <!-- Background Image Overlay with Hoi An Yellow Wall & Lanterns -->
+          <img
+            src="https://images.unsplash.com/photo-1552353617-3bfd679b3bdd?auto=format&fit=crop&w=1600&q=80"
+            alt="Phố Cổ Hội An"
+            class="absolute inset-0 w-full h-full object-cover opacity-45 mix-blend-overlay"
+          />
+
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-transparent"
+          ></div>
+
+          <div class="relative z-10 p-8 sm:p-12 max-w-3xl">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hoian-yellow/20 text-hoian-gold border border-hoian-gold/40 text-xs font-semibold mb-4"
+            >
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+              Hệ Thống Số Hóa Văn Hóa Ẩm Thực Phố Cổ
+            </div>
+            <h1
+              class="text-3xl sm:text-5xl font-serif font-bold text-white leading-tight mb-4"
+            >
+              Thưởng Thức
+              <span class="text-hoian-gold">Hương Vị Hội An</span> Qua Từng Câu
+              Chuyện
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base mb-6 leading-relaxed">
+              Hệ thống thuyết minh đa ngôn ngữ tự động kết hợp Bản đồ săn tìm ẩm
+              thực đường phố (Food-Trail). Lắng nghe sự tích Cao Lầu, Mì Quảng,
+              Bánh Mì Phượng và tham gia thử thách check-in nhận huy hiệu văn
+              hóa.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <button
+                onclick="scrollToSection('narration-sec')"
+                class="px-6 py-3 rounded-xl bg-hoian-gold text-slate-950 font-bold hover:bg-amber-400 transition shadow-lg flex items-center gap-2"
+              >
+                <i data-lucide="headphones" class="w-5 h-5"></i>
+                Nghe Thuyết Minh Món Ăn
+              </button>
+              <button
+                onclick="scrollToSection('trail-sec')"
+                class="px-6 py-3 rounded-xl bg-hoian-red/90 text-white font-bold hover:bg-red-700 transition shadow-lg border border-hoian-gold/30 flex items-center gap-2"
+              >
+                <i data-lucide="map-pin" class="w-5 h-5"></i>
+                Khám Phá Food-Trail
+              </button>
+            </div>
+          </div>
+
+          <!-- Floating Lantern Badge Decorative -->
+          <div
+            class="hidden lg:block absolute right-12 top-1/2 -translate-y-1/2 p-6 glass-panel rounded-2xl border border-hoian-gold/40 text-center max-w-xs shadow-2xl"
+          >
+            <div
+              class="w-16 h-16 mx-auto rounded-full bg-hoian-red/20 flex items-center justify-center text-hoian-gold mb-3 lantern-glow border border-hoian-gold/50"
+            >
+              <i data-lucide="award" class="w-8 h-8"></i>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-amber-300">
+              Food-Trail Challenge
+            </h3>
+            <p class="text-xs text-slate-300 mt-1">
+              Hoàn thành 5 checkpoint ẩm thực để nhận "Chứng nhận Thực Khách Hội
+              An"
+            </p>
+          </div>
+        </div>
+
+        <!-- SECTION 1: THUYẾT MINH ẨM THỰC (Audio Narration & Dish Detail) -->
+        <section id="narration-sec" class="space-y-6">
+          <div
+            class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-hoian-gold/20 pb-4"
+          >
+            <div>
+              <div
+                class="flex items-center gap-2 text-hoian-red font-bold text-sm"
+              >
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+                HỆ THỐNG AUDIO GUIDE DÂN GIANG
+              </div>
+              <h2
+                class="text-2xl sm:text-3xl font-serif font-bold text-slate-900 dark:text-white"
+              >
+                Thuyết Minh Ẩm Thực Multilingual
+              </h2>
+            </div>
+
+            <!-- Search & Filter Bar -->
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="relative">
+                <i
+                  data-lucide="search"
+                  class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                ></i>
+                <input
+                  type="text"
+                  id="searchInput"
+                  oninput="filterDishes()"
+                  placeholder="Tìm món ăn, địa danh..."
+                  class="pl-9 pr-4 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-hoian-gold w-48 sm:w-64"
+                />
+              </div>
+              <select
+                id="categoryFilter"
+                onchange="filterDishes()"
+                class="px-3 py-2 text-xs rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-hoian-gold cursor-pointer"
+              >
+                <option value="all">Tất cả danh mục</option>
+                <option value="mon-chinh">Món Chính Cổ Truyền</option>
+                <option value="an-vat">Ăn Vặt & Chè Streetfood</option>
+                <option value="thuc-uong">Thức Uống Phố Cổ</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Main Content Grid: Dish List & Audio Detail Modal/Panel -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <!-- Dishes Cards (Left 7 Cols) -->
+            <div
+              class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4"
+              id="dishesGrid"
+            >
+              <!-- Populated dynamically via JavaScript -->
+            </div>
+
+            <!-- Interactive Audio Player & History Detail (Right 5 Cols) -->
+            <div class="lg:col-span-5">
+              <div
+                class="sticky top-20 glass-panel rounded-2xl p-6 border border-hoian-gold/30 shadow-xl space-y-6"
+              >
+                <div
+                  class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3"
+                >
+                  <span
+                    class="text-xs font-bold text-hoian-gold uppercase tracking-wider flex items-center gap-1.5"
+                  >
+                    <span
+                      class="w-2 h-2 rounded-full bg-red-500 animate-ping"
+                    ></span>
+                    Đang Phát Thuyết Minh
+                  </span>
+                  <span
+                    class="text-xs bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500"
+                    id="currentLangTag"
+                  >
+                    🇻🇳 Tiếng Việt
+                  </span>
+                </div>
+
+                <!-- Selected Dish Image & Title -->
+                <div class="relative h-48 rounded-xl overflow-hidden group">
+                  <img
+                    id="playerImage"
+                    src="https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80"
+                    alt="Món ăn"
+                    class="w-full h-full object-cover"
+                  />
+                  <div
+                    class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"
+                  ></div>
+                  <div class="absolute bottom-3 left-3 right-3 text-white">
+                    <h3
+                      id="playerTitle"
+                      class="text-xl font-serif font-bold text-hoian-gold"
+                    >
+                      Cao Lầu Hội An
+                    </h3>
+                    <p id="playerSubtitle" class="text-xs text-slate-300">
+                      Đặc sản tinh hoa giếng cổ Bá Lễ
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Simulated Audio Player Controls -->
+                <div
+                  class="bg-slate-900 text-white rounded-xl p-4 border border-hoian-gold/20 space-y-3"
+                >
+                  <div
+                    class="flex items-center justify-between text-xs text-slate-400"
+                  >
+                    <span id="currentTime">0:00</span>
+                    <div class="flex items-center gap-1">
+                      <i
+                        data-lucide="radio"
+                        class="w-3 h-3 text-red-400 animate-pulse"
+                      ></i>
+                      <span>Giọng đọc AI Hội An</span>
+                    </div>
+                    <span id="totalTime">2:45</span>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div
+                    class="w-full bg-slate-800 h-2 rounded-full overflow-hidden cursor-pointer"
+                    onclick="seekAudio(event)"
+                  >
+                    <div
+                      id="audioProgressBar"
+                      class="bg-gradient-to-r from-hoian-gold to-red-500 h-full w-0 transition-all duration-300"
+                    ></div>
+                  </div>
+
+                  <!-- Control Buttons -->
+                  <div class="flex items-center justify-center gap-6 pt-2">
+                    <button
+                      onclick="rewindAudio()"
+                      class="p-2 text-slate-400 hover:text-white transition"
+                    >
+                      <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                    </button>
+                    <button
+                      id="btnPlayPause"
+                      onclick="toggleAudio()"
+                      class="w-12 h-12 rounded-full bg-hoian-gold text-slate-950 flex items-center justify-center hover:bg-amber-400 transition shadow-lg"
+                    >
+                      <i
+                        data-lucide="play"
+                        id="playIcon"
+                        class="w-6 h-6 fill-current ml-0.5"
+                      ></i>
+                    </button>
+                    <button
+                      onclick="forwardAudio()"
+                      class="p-2 text-slate-400 hover:text-white transition"
+                    >
+                      <i data-lucide="rotate-cw" class="w-4 h-4"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Narrative History Text -->
+                <div class="space-y-2">
+                  <h4
+                    class="text-sm font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2"
+                  >
+                    <i
+                      data-lucide="book-open"
+                      class="w-4 h-4 text-hoian-gold"
+                    ></i>
+                    Nội Dung Thuyết Minh & Lịch Sử
+                  </h4>
+                  <div
+                    id="playerHistoryText"
+                    class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed max-h-40 overflow-y-auto pr-2 border-l-2 border-hoian-gold/40 pl-3"
+                  >
+                    Sợi Cao Lầu có màu vàng nhạt, dẻo và thơm đặc trưng do gạo
+                    được ngâm trong nước tro đốt từ củi tràm ở Cù Lao Chàm. Nước
+                    dùng nấu từ giếng cổ Bá Lễ ngàn năm tuổi tạo nên hương vị
+                    độc bản không nơi nào nhái được...
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-2">
+                  <button
+                    id="btnFavorite"
+                    onclick="toggleFavoriteCurrent()"
+                    class="flex-1 py-2 px-3 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    <i
+                      data-lucide="heart"
+                      id="favIcon"
+                      class="w-4 h-4 text-red-500"
+                    ></i>
+                    Thêm Yêu Thích
+                  </button>
+                  <button
+                    onclick="shareDish()"
+                    class="py-2 px-3 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold flex items-center justify-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+                  >
+                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                    Chia sẻ
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: FOOD-TRAIL CHALLENGE (Gamified Food Tour Map & Geofencing) -->
+        <section
+          id="trail-sec"
+          class="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800"
+        >
+          <div
+            class="flex flex-col md:flex-row md:items-end justify-between gap-4"
+          >
+            <div>
+              <div
+                class="flex items-center gap-2 text-hoian-gold font-bold text-sm"
+              >
+                <i data-lucide="compass" class="w-4 h-4"></i>
+                THỬ THÁCH SĂN TÌM ẨM THỰC ĐƯỜNG PHỐ
+              </div>
+              <h2
+                class="text-2xl sm:text-3xl font-serif font-bold text-slate-900 dark:text-white"
+              >
+                Food-Trail Challenge (Gamified Tour)
+              </h2>
+            </div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 max-w-md">
+              Tham gia tuyến đường ẩm thực, check-in qua định vị GPS (<30m) tại
+              các quán ăn di sản để mở khóa bí ẩn tiếp theo & tích lũy Sổ Tay Ẩm
+              Thực.
+            </div>
+          </div>
+
+          <!-- Trail Selection Switcher -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div
+              onclick="selectTrail(1)"
+              id="trailCard1"
+              class="cursor-pointer p-4 rounded-2xl border-2 border-hoian-gold bg-amber-500/10 dark:bg-amber-500/5 transition hover:shadow-md relative overflow-hidden"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="text-xs font-bold px-2 py-0.5 rounded bg-hoian-gold text-slate-950"
+                  >Tuyến 1</span
+                >
+                <span class="text-xs text-slate-500 flex items-center gap-1"
+                  ><i data-lucide="clock" class="w-3 h-3"></i> 2 giờ</span
+                >
+              </div>
+              <h3 class="font-serif font-bold text-slate-900 dark:text-white">
+                Tuyến 5 Món Ăn Cổ Truyền Hội An
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Cao Lầu, Mì Quảng, Cơm Gà, Bánh Đập, Chè Bắp
+              </p>
+              <div class="mt-3 flex items-center justify-between text-xs">
+                <span class="text-hoian-red font-semibold">Đã mở: 2/5 Món</span>
+                <span class="text-slate-400">4.9 ★ (1,240 lượt đi)</span>
+              </div>
+            </div>
+
+            <div
+              onclick="selectTrail(2)"
+              id="trailCard2"
+              class="cursor-pointer p-4 rounded-2xl border border-slate-300 dark:border-slate-800 hover:border-hoian-gold bg-white dark:bg-slate-900 transition hover:shadow-md"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                  >Tuyến 2</span
+                >
+                <span class="text-xs text-slate-500 flex items-center gap-1"
+                  ><i data-lucide="clock" class="w-3 h-3"></i> 1.5 giờ</span
+                >
+              </div>
+              <h3 class="font-serif font-bold text-slate-900 dark:text-white">
+                Thử Thách Ăn Sáng Chuẩn Vị Phố Cổ
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Bánh Mì Phượng, Bún Mắm Nêm, Cà Phê Mắt Phố
+              </p>
+              <div class="mt-3 flex items-center justify-between text-xs">
+                <span class="text-slate-400">Đã mở: 0/3 Món</span>
+                <span class="text-slate-400">4.8 ★ (850 lượt đi)</span>
+              </div>
+            </div>
+
+            <div
+              onclick="selectTrail(3)"
+              id="trailCard3"
+              class="cursor-pointer p-4 rounded-2xl border border-slate-300 dark:border-slate-800 hover:border-hoian-gold bg-white dark:bg-slate-900 transition hover:shadow-md"
+            >
+              <div class="flex items-center justify-between mb-2">
+                <span
+                  class="text-xs font-bold px-2 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
+                  >Tuyến 3</span
+                >
+                <span class="text-xs text-slate-500 flex items-center gap-1"
+                  ><i data-lucide="clock" class="w-3 h-3"></i> 2.5 giờ</span
+                >
+              </div>
+              <h3 class="font-serif font-bold text-slate-900 dark:text-white">
+                Hành Trình Đèn Lồng Sông Hoài Đêm
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                Bánh Vạc (White Rose), Thịt Nướng Xiên, Chè Hạt Lotus
+              </p>
+              <div class="mt-3 flex items-center justify-between text-xs">
+                <span class="text-slate-400">Đã mở: 0/4 Món</span>
+                <span class="text-slate-400">5.0 ★ (2,100 lượt đi)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Map Simulation & GPS Check-In Container -->
+          <div
+            class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-slate-900 rounded-3xl p-6 text-white border border-hoian-gold/30 shadow-2xl"
+          >
+            <!-- Map Mock Visual (Left 8 cols) -->
+            <div
+              class="lg:col-span-8 relative h-96 rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 flex flex-col justify-between p-4"
+            >
+              <!-- Stylized Map Graphic Overlay -->
+              <div
+                class="absolute inset-0 opacity-40 bg-[radial-gradient(#F3B02C_1px,transparent_1px)] [background-size:16px_16px]"
+              ></div>
+
+              <!-- River Hoai Canvas Representation -->
+              <div
+                class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-blue-900/60 to-transparent flex items-center justify-around px-8"
+              >
+                <!-- Floating River Lanterns Graphics -->
+                <div class="floating-lantern text-amber-300">
+                  <i data-lucide="sparkles" class="w-6 h-6"></i>
+                </div>
+                <div
+                  class="floating-lantern text-hoian-red"
+                  style="animation-delay: 1.2s"
+                >
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                </div>
+                <div
+                  class="floating-lantern text-yellow-200"
+                  style="animation-delay: 2.5s"
+                >
+                  <i data-lucide="sparkles" class="w-7 h-7"></i>
+                </div>
+              </div>
+
+              <!-- Map Top Overlay -->
+              <div
+                class="relative z-10 flex items-center justify-between bg-slate-900/80 backdrop-blur-md p-3 rounded-xl border border-slate-700"
+              >
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 rounded-full bg-emerald-500 animate-ping"
+                  ></span>
+                  <span class="text-xs font-semibold text-slate-200"
+                    >GPS Giả Lập: 15.8777° N, 108.3272° E (Phố Cổ Hội An)</span
+                  >
+                </div>
+                <button
+                  onclick="simulateGPSMove()"
+                  class="text-xs bg-hoian-gold text-slate-950 px-3 py-1 rounded-lg font-bold hover:bg-amber-400 transition flex items-center gap-1"
+                >
+                  <i data-lucide="navigation" class="w-3 h-3"></i> Giả lập lại
+                  gần quán
+                </button>
+              </div>
+
+              <!-- Checkpoint Pins on Map -->
+              <div
+                class="relative z-10 flex-1 flex items-center justify-around py-8"
+              >
+                <!-- Checkpoint 1: Unlocked -->
+                <div
+                  class="flex flex-col items-center group cursor-pointer"
+                  onclick="clickMapPin(1)"
+                >
+                  <div
+                    class="w-10 h-10 rounded-full bg-emerald-500 text-slate-950 font-bold flex items-center justify-center border-2 border-white shadow-lg group-hover:scale-110 transition"
+                  >
+                    ✓
+                  </div>
+                  <span
+                    class="text-[11px] font-bold mt-1 bg-slate-900/90 px-2 py-0.5 rounded border border-emerald-500 text-emerald-400"
+                    >Cao Lầu Thanh</span
+                  >
+                </div>
+
+                <!-- Checkpoint 2: Nearby / Active Target -->
+                <div
+                  class="flex flex-col items-center group cursor-pointer"
+                  onclick="clickMapPin(2)"
+                >
+                  <div class="relative">
+                    <div
+                      class="w-12 h-12 rounded-full bg-hoian-gold text-slate-950 font-bold flex items-center justify-center border-4 border-hoian-red shadow-2xl pulse-light"
+                    >
+                      2
+                    </div>
+                    <div
+                      class="absolute -top-2 -right-2 bg-red-600 text-white text-[9px] px-1.5 py-0.5 rounded-full font-bold"
+                    >
+                      18m
+                    </div>
+                  </div>
+                  <span
+                    class="text-[11px] font-bold mt-1 bg-slate-900/90 px-2 py-0.5 rounded border border-hoian-gold text-amber-300"
+                    >Mì Quảng Ông Hai</span
+                  >
+                </div>
+
+                <!-- Checkpoint 3: Locked Mystery -->
+                <div
+                  class="flex flex-col items-center opacity-60 group cursor-pointer"
+                  onclick="clickMapPin(3)"
+                >
+                  <div
+                    class="w-10 h-10 rounded-full bg-slate-800 text-slate-400 font-bold flex items-center justify-center border border-slate-600"
+                  >
+                    <i data-lucide="lock" class="w-4 h-4"></i>
+                  </div>
+                  <span
+                    class="text-[11px] font-bold mt-1 bg-slate-900/90 px-2 py-0.5 rounded border border-slate-700 text-slate-400"
+                    >Điểm Bí Ẩn 3</span
+                  >
+                </div>
+              </div>
+
+              <!-- Map Bottom GPS Radius Indicator -->
+              <div
+                class="relative z-10 bg-slate-900/80 backdrop-blur-md p-3 rounded-xl border border-slate-700 flex items-center justify-between text-xs"
+              >
+                <span class="text-slate-300"
+                  >Khoảng cách tới mục tiêu:
+                  <b class="text-hoian-gold" id="gpsDistance">18 mét</b> (Bán
+                  kính hợp lệ &lt; 30m)</span
+                >
+                <span
+                  class="text-emerald-400 font-bold flex items-center gap-1"
+                >
+                  <i data-lucide="check-circle-2" class="w-4 h-4"></i> Đủ điều
+                  kiện Check-in
+                </span>
+              </div>
+            </div>
+
+            <!-- Active Target Check-in Drawer (Right 4 cols) -->
+            <div
+              class="lg:col-span-4 flex flex-col justify-between space-y-4 bg-slate-800/80 p-5 rounded-2xl border border-slate-700"
+            >
+              <div>
+                <div
+                  class="flex items-center justify-between border-b border-slate-700 pb-3"
+                >
+                  <span
+                    class="text-xs text-hoian-gold font-bold uppercase tracking-wider"
+                    >Điểm Đến Tiếp Theo</span
+                  >
+                  <span
+                    class="bg-hoian-red/30 text-hoian-gold text-[10px] px-2 py-0.5 rounded border border-hoian-gold/30"
+                    >Món #2/5</span
+                  >
+                </div>
+
+                <div class="mt-4 space-y-3">
+                  <h3
+                    class="text-lg font-serif font-bold text-amber-200"
+                    id="targetName"
+                  >
+                    Quán Mì Quảng Ông Hai
+                  </h3>
+                  <p
+                    class="text-xs text-slate-300 leading-relaxed"
+                    id="targetDesc"
+                  >
+                    Nằm sâu trong kiệt nhỏ phố Trần Phú, nổi tiếng với nước dùng
+                    đậm đà nấu từ tôm đất và trứng cút, ăn kèm bánh tráng nướng
+                    giòn rụm.
+                  </p>
+
+                  <div
+                    class="p-3 rounded-xl bg-slate-900/90 border border-hoian-gold/20 text-xs space-y-2"
+                  >
+                    <div
+                      class="font-bold text-hoian-gold flex items-center gap-1"
+                    >
+                      <i data-lucide="help-circle" class="w-4 h-4"></i> Câu Đố
+                      Địa Lý Mở Khóa:
+                    </div>
+                    <p class="text-slate-300 italic" id="targetQuiz">
+                      "Tên loài rau răm độc đáo ăn kèm mì Quảng ở đất Quảng Nam
+                      là gì?"
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Check-in Button & Action -->
+              <div class="space-y-2 pt-4">
+                <button
+                  onclick="triggerCheckIn()"
+                  class="w-full py-3 rounded-xl bg-gradient-to-r from-hoian-gold to-amber-500 text-slate-950 font-bold hover:brightness-110 transition shadow-lg flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="camera" class="w-5 h-5"></i>
+                  Check-in & Chụp Ảnh Món Ăn
+                </button>
+                <p class="text-[10px] text-center text-slate-400">
+                  GPS Geofencing kiểm tra bán kính tự động 30m
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+       
+          <!-- Admin Analytics Metric Cards -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div
+              class="glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1"
+            >
+              <span class="text-xs text-slate-500"
+                >Lượt Nghe Audio Thuyết Minh</span
+              >
+              <div class="text-2xl font-bold text-hoian-gold font-serif">
+                48,290
+              </div>
+              <span
+                class="text-[10px] text-emerald-500 flex items-center gap-0.5"
+                >↑ +14% so với tháng trước</span
+              >
+            </div>
+            <div
+              class="glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1"
+            >
+              <span class="text-xs text-slate-500"
+                >Lượt Check-in Food-Trail</span
+              >
+              <div class="text-2xl font-bold text-hoian-red font-serif">
+                12,850
+              </div>
+              <span
+                class="text-[10px] text-emerald-500 flex items-center gap-0.5"
+                >↑ +22% so với tháng trước</span
+              >
+            </div>
+            <div
+              class="glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1"
+            >
+              <span class="text-xs text-slate-500">Món Ăn Số Hóa</span>
+              <div
+                class="text-2xl font-bold text-slate-800 dark:text-white font-serif"
+              >
+                24 Món
+              </div>
+              <span class="text-[10px] text-slate-400">5 Ngôn ngữ hỗ trợ</span>
+            </div>
+            <div
+              class="glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-1"
+            >
+              <span class="text-xs text-slate-500">Đánh Giá Trung Bình</span>
+              <div class="text-2xl font-bold text-amber-500 font-serif">
+                4.9 / 5.0
+              </div>
+              <span class="text-[10px] text-slate-400">Từ 3,400+ du khách</span>
+            </div>
+          </div>
+
+          <!-- Admin Management Table Tabs -->
+          <div
+            class="glass-panel rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl"
+          >
+            <div
+              class="bg-slate-100 dark:bg-slate-900 px-6 py-3 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between flex-wrap gap-2"
+            >
+              <div class="flex items-center gap-2">
+                <button
+                  class="px-3 py-1.5 rounded-lg text-xs font-bold bg-hoian-gold text-slate-950 shadow"
+                >
+                  Quản lý món ăn
+                </button>
+                <button
+                  class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
+                >
+                  Quản lý Food-Trails
+                </button>
+                <button
+                  class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
+                >
+                  Cấu hình ngôn ngữ AI
+                </button>
+              </div>
+              <button
+                onclick="addNewDishAdmin()"
+                class="px-3 py-1.5 rounded-lg text-xs font-bold bg-hoian-red text-white hover:bg-red-700 transition flex items-center gap-1"
+              >
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Thêm món ăn mới
+              </button>
+            </div>
+
+            <!-- Admin Table Content -->
+            <div class="overflow-x-auto">
+              <table
+                class="w-full text-left text-xs text-slate-600 dark:text-slate-300"
+              >
+                <thead
+                  class="bg-slate-50 dark:bg-slate-950/50 uppercase text-[10px] text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-800"
+                >
+                  <tr>
+                    <th class="p-4">Tên Món Ăn</th>
+                    <th class="p-4">Danh Mục</th>
+                    <th class="p-4">Lượt Nghe</th>
+                    <th class="p-4">Bản Dịch Ngôn Ngữ</th>
+                    <th class="p-4">Tọa Độ GPS Check-in</th>
+                    <th class="p-4 text-right">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody
+                  class="divide-y divide-slate-200 dark:divide-slate-800"
+                  id="adminTableBody"
+                >
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================================================================= -->
+      <!-- VIEW MODE 2: MOBILE APP INTERFACE (Smartphone Device Simulator)   -->
+      <!-- ================================================================= -->
+      <div
+        id="mobileViewContainer"
+        class="hidden min-h-[750px] flex items-center justify-center py-6"
+      >
+        <!-- MOBILE DEVICE FRAME SIMULATOR -->
+        <div
+          class="phone-frame w-full max-w-[390px] h-[780px] bg-slate-950 text-slate-100 flex flex-col relative overflow-hidden border-4 border-slate-800"
+        >
+          <!-- Phone Top Bar & Notch -->
+          <div
+            class="bg-slate-900 text-slate-300 px-6 py-2 flex items-center justify-between text-[11px] font-semibold border-b border-slate-800 select-none z-30"
+          >
+            <span>09:41</span>
+            <!-- Notch -->
+            <div
+              class="w-24 h-4 bg-slate-950 rounded-b-xl border-x border-b border-slate-800"
+            ></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="wifi" class="w-3 h-3"></i>
+              <i data-lucide="battery" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+
+          <!-- App Header Bar inside Mobile -->
+          <div
+            class="bg-slate-900/90 backdrop-blur-md px-4 py-3 border-b border-hoian-gold/20 flex items-center justify-between z-20 sticky top-0"
+          >
+            <div class="flex items-center gap-2">
+              <div
+                class="w-7 h-7 rounded-full bg-hoian-red/30 border border-hoian-gold flex items-center justify-center text-hoian-gold text-xs font-bold"
+              >
+                🏮
+              </div>
+              <div>
+                <h3
+                  class="text-xs font-serif font-bold text-hoian-gold leading-tight"
+                >
+                  Hương Vị Hội An
+                </h3>
+                <p class="text-[9px] text-slate-400">Visitor Companion App</p>
+              </div>
+            </div>
+
+            <!-- Mobile Lang & Passport Icon -->
+            <div class="flex items-center gap-2">
+              <button
+                onclick="openMobilePassport()"
+                class="p-1.5 rounded-lg bg-slate-800 text-hoian-gold border border-hoian-gold/30 hover:bg-slate-700 text-[10px] flex items-center gap-1"
+              >
+                <i data-lucide="book" class="w-3.5 h-3.5"></i>
+                Sổ Tay
+              </button>
+            </div>
+          </div>
+
+          <!-- Mobile Main Scrollable Screen Body -->
+          <div
+            class="flex-1 overflow-y-auto p-4 space-y-4 text-xs"
+            id="mobileScreenBody"
+          >
+            <!-- Mobile Tab 1: Home / Discovery Screen -->
+            <div id="mTabHome" class="space-y-4">
+              <!-- Lantern Welcome Banner -->
+              <div
+                class="relative rounded-2xl overflow-hidden p-4 bg-gradient-to-br from-hoian-deepred via-slate-900 to-slate-950 border border-hoian-gold/30 text-white shadow-lg"
+              >
+                <div
+                  class="absolute -right-2 -bottom-2 text-hoian-gold/20 opacity-30"
+                >
+                  <i data-lucide="lamp" class="w-28 h-28"></i>
+                </div>
+                <span
+                  class="text-[9px] px-2 py-0.5 rounded-full bg-hoian-gold/20 text-hoian-gold border border-hoian-gold/30 font-bold uppercase"
+                  >Phố Cổ Chào Đón</span
+                >
+                <h2 class="text-base font-serif font-bold text-amber-200 mt-1">
+                  Săn Tìm Ẩm Thực & Nghe Thuyết Minh
+                </h2>
+                <p class="text-[11px] text-slate-300 mt-1">
+                  Chạm vào món ăn bất kỳ để nghe audio thuyết minh đa ngôn ngữ.
+                </p>
+              </div>
+
+              <!-- Quick Search in Mobile -->
+              <div class="relative">
+                <i
+                  data-lucide="search"
+                  class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                ></i>
+                <input
+                  type="text"
+                  oninput="filterMobileDishes(this.value)"
+                  placeholder="Tìm Cao Lầu, Mì Quảng, Bánh Mì..."
+                  class="w-full pl-8 pr-3 py-2 text-xs bg-slate-900 border border-slate-800 rounded-xl focus:outline-none focus:border-hoian-gold text-slate-200"
+                />
+              </div>
+
+              <!-- Horizontal Categories Slider -->
+              <div
+                class="flex gap-2 overflow-x-auto pb-1 text-[11px] no-scrollbar"
+              >
+                <button
+                  onclick="filterMobileCategory('all')"
+                  class="px-3 py-1 rounded-full bg-hoian-gold text-slate-950 font-bold whitespace-nowrap"
+                >
+                  Tất cả
+                </button>
+                <button
+                  onclick="filterMobileCategory('mon-chinh')"
+                  class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap"
+                >
+                  Món Chính
+                </button>
+                <button
+                  onclick="filterMobileCategory('an-vat')"
+                  class="px-3 py-1 rounded-full bg-slate-800 text-slate-300 hover:bg-slate-700 whitespace-nowrap"
+                >
+                  Ăn Vặt
+                </button>
+              </div>
+
+              <!-- Mobile Dish Cards Grid -->
+              <div class="space-y-3" id="mobileDishesList">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- Mobile Tab 2: Food-Trail Tour Screen -->
+            <div id="mTabTrail" class="hidden space-y-4">
+              <div
+                class="flex items-center justify-between border-b border-slate-800 pb-2"
+              >
+                <h3
+                  class="font-serif font-bold text-sm text-hoian-gold flex items-center gap-1"
+                >
+                  <i data-lucide="map" class="w-4 h-4"></i> Tuyến Đường
+                  Food-Trail
+                </h3>
+                <span class="text-[10px] text-emerald-400 font-bold"
+                  >GPS Đang Bật</span
+                >
+              </div>
+
+              <!-- Simulated Mobile GPS Map Visual -->
+              <div
+                class="relative h-48 rounded-xl overflow-hidden border border-slate-800 bg-slate-900 flex flex-col justify-between p-3"
+              >
+                <div
+                  class="absolute inset-0 opacity-30 bg-[radial-gradient(#F3B02C_1px,transparent_1px)] [background-size:12px_12px]"
+                ></div>
+
+                <div
+                  class="relative z-10 flex items-center justify-between bg-slate-950/80 p-1.5 rounded-lg text-[10px]"
+                >
+                  <span class="text-slate-300">Quán gần nhất: <b>18m</b></span>
+                  <span class="text-emerald-400 font-bold"
+                    >Sẵn sàng Check-in</span
+                  >
+                </div>
+
+                <div
+                  class="relative z-10 flex items-center justify-around py-4"
+                >
+                  <div class="text-center">
+                    <div
+                      class="w-8 h-8 rounded-full bg-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center mx-auto"
+                    >
+                      ✓
+                    </div>
+                    <span class="text-[9px] text-slate-400 mt-1 block"
+                      >Cao Lầu</span
+                    >
+                  </div>
+                  <div class="text-center">
+                    <div
+                      class="w-10 h-10 rounded-full bg-hoian-gold text-slate-950 font-bold text-sm flex items-center justify-center mx-auto pulse-light border-2 border-hoian-red"
+                    >
+                      2
+                    </div>
+                    <span
+                      class="text-[9px] text-hoian-gold font-bold mt-1 block"
+                      >Mì Quảng</span
+                    >
+                  </div>
+                  <div class="text-center opacity-50">
+                    <div
+                      class="w-8 h-8 rounded-full bg-slate-800 text-slate-500 font-bold text-xs flex items-center justify-center mx-auto border border-slate-700"
+                    >
+                      🔒
+                    </div>
+                    <span class="text-[9px] text-slate-500 mt-1 block"
+                      >Bí ẩn</span
+                    >
+                  </div>
+                </div>
+
+                <button
+                  onclick="triggerCheckIn()"
+                  class="relative z-10 w-full py-2 rounded-lg bg-hoian-gold text-slate-950 font-bold text-xs shadow hover:bg-amber-400 transition flex items-center justify-center gap-1"
+                >
+                  <i data-lucide="camera" class="w-3.5 h-3.5"></i> Check-in Món
+                  #2 (Mì Quảng)
+                </button>
+              </div>
+
+              <!-- Active Food-Trail Steps -->
+              <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-300">
+                  Danh Sách Check-In Tuyến 1:
+                </h4>
+
+                <div
+                  class="p-2.5 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-between"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-5 h-5 rounded-full bg-emerald-500 text-slate-950 font-bold text-[10px] flex items-center justify-center"
+                      >✓</span
+                    >
+                    <div>
+                      <div class="font-bold text-slate-200">
+                        1. Cao Lầu Thanh
+                      </div>
+                      <div class="text-[9px] text-slate-400">
+                        Đã check-in lúc 10:15
+                      </div>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-emerald-400 font-bold"
+                    >+100 điểm</span
+                  >
+                </div>
+
+                <div
+                  class="p-2.5 rounded-xl bg-slate-900 border border-hoian-gold/40 flex items-center justify-between"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-5 h-5 rounded-full bg-hoian-gold text-slate-950 font-bold text-[10px] flex items-center justify-center"
+                      >2</span
+                    >
+                    <div>
+                      <div class="font-bold text-hoian-gold">
+                        2. Mì Quảng Ông Hai
+                      </div>
+                      <div class="text-[9px] text-slate-400">Cách bạn 18m</div>
+                    </div>
+                  </div>
+                  <span class="text-[10px] text-amber-300 font-bold"
+                    >Đang chờ</span
+                  >
+                </div>
+
+                <div
+                  class="p-2.5 rounded-xl bg-slate-900/50 border border-slate-800 flex items-center justify-between opacity-60"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="w-5 h-5 rounded-full bg-slate-800 text-slate-500 font-bold text-[10px] flex items-center justify-center"
+                      >3</span
+                    >
+                    <div>
+                      <div class="font-bold text-slate-400">
+                        3. Điểm Bí Ẩn Cơm Gà
+                      </div>
+                      <div class="text-[9px] text-slate-500">
+                        Mở khóa sau bước 2
+                      </div>
+                    </div>
+                  </div>
+                  <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-600"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mobile Tab 3: Passport / Sổ Tay Ẩm Thực -->
+            <div id="mTabPassport" class="hidden space-y-4">
+              <div
+                class="p-4 rounded-2xl bg-gradient-to-r from-amber-900/40 to-slate-900 border border-hoian-gold/40 text-center space-y-2"
+              >
+                <div
+                  class="w-12 h-12 rounded-full bg-hoian-gold/20 border border-hoian-gold text-hoian-gold flex items-center justify-center mx-auto text-xl lantern-glow"
+                >
+                  🏮
+                </div>
+                <h3 class="font-serif font-bold text-amber-200 text-sm">
+                  Sổ Tay Ẩm Thực Cá Nhân
+                </h3>
+                <p class="text-[10px] text-slate-300">
+                  Du khách: Nguyễn Văn A (Xác thực GPS)
+                </p>
+
+                <div
+                  class="pt-2 flex justify-center gap-4 text-center border-t border-slate-800"
+                >
+                  <div>
+                    <div class="text-sm font-bold text-hoian-gold">2 / 5</div>
+                    <div class="text-[9px] text-slate-400">Check-in</div>
+                  </div>
+                  <div>
+                    <div class="text-sm font-bold text-emerald-400">200</div>
+                    <div class="text-[9px] text-slate-400">Điểm Tích Lũy</div>
+                  </div>
+                  <div>
+                    <div class="text-sm font-bold text-red-400">1</div>
+                    <div class="text-[9px] text-slate-400">Huy Hiệu</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collected Food Badges -->
+              <div class="space-y-2">
+                <h4 class="text-xs font-bold text-slate-300">
+                  Huy Hiệu Văn Hóa Đã Thu Thập:
+                </h4>
+                <div class="grid grid-cols-2 gap-2">
+                  <div
+                    class="p-3 rounded-xl bg-slate-900 border border-hoian-gold/30 text-center space-y-1"
+                  >
+                    <span class="text-2xl">🍜</span>
+                    <div class="font-bold text-[11px] text-amber-200">
+                      Sành Cao Lầu
+                    </div>
+                    <p class="text-[9px] text-slate-400">
+                      Thưởng thức Cao Lầu giếng Bá Lễ
+                    </p>
+                  </div>
+                  <div
+                    class="p-3 rounded-xl bg-slate-900/40 border border-slate-800 text-center space-y-1 opacity-50"
+                  >
+                    <span class="text-2xl grayscale">🥖</span>
+                    <div class="font-bold text-[11px] text-slate-400">
+                      Vua Bánh Mì
+                    </div>
+                    <p class="text-[9px] text-slate-500">Chưa mở khóa</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Bottom Sticky Navigation Bar -->
+          <div
+            class="bg-slate-900/95 backdrop-blur-md border-t border-slate-800 p-2 flex items-center justify-around z-30"
+          >
+            <button
+              onclick="switchMobileTab('home')"
+              id="mNavHome"
+              class="flex flex-col items-center gap-1 text-hoian-gold"
+            >
+              <i data-lucide="headphones" class="w-4 h-4"></i>
+              <span class="text-[9px] font-semibold">Thuyết Minh</span>
+            </button>
+            <button
+              onclick="switchMobileTab('trail')"
+              id="mNavTrail"
+              class="flex flex-col items-center gap-1 text-slate-400 hover:text-white"
+            >
+              <i data-lucide="map-pin" class="w-4 h-4"></i>
+              <span class="text-[9px] font-semibold">Food-Trail</span>
+            </button>
+            <button
+              onclick="switchMobileTab('passport')"
+              id="mNavPassport"
+              class="flex flex-col items-center gap-1 text-slate-400 hover:text-white"
+            >
+              <i data-lucide="award" class="w-4 h-4"></i>
+              <span class="text-[9px] font-semibold">Sổ Tay</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- MODAL: GPS CHECK-IN & PHOTO CAPTURE SIMULATOR -->
+    <div
+      id="checkInModal"
+      class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="glass-panel max-w-md w-full rounded-3xl p-6 border border-hoian-gold/40 shadow-2xl space-y-4 text-slate-800 dark:text-slate-100 relative"
+      >
+        <button
+          onclick="closeModal()"
+          class="absolute top-4 right-4 p-1 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-white"
+        >
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+
+        <div class="text-center space-y-2">
+          <div
+            class="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-500 text-emerald-400 flex items-center justify-center mx-auto text-2xl"
+          >
+            📸
+          </div>
+          <h3 class="text-xl font-serif font-bold text-hoian-gold">
+            Check-in Mì Quảng Ông Hai
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-300">
+            Đã xác nhận vị trí GPS (&lt;30m). Chụp ảnh món ăn để hoàn tất!
+          </p>
+        </div>
+
+        <!-- Simulated Camera Preview Box -->
+        <div
+          class="relative h-48 rounded-2xl overflow-hidden bg-slate-900 border-2 border-dashed border-hoian-gold/50 flex flex-col items-center justify-center text-center p-4"
+        >
+          <img
+            id="capturedPhotoPreview"
+            src="https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80"
+            class="absolute inset-0 w-full h-full object-cover hidden"
+          />
+
+          <div id="cameraPlaceholder" class="space-y-2">
+            <i
+              data-lucide="camera"
+              class="w-10 h-10 text-hoian-gold mx-auto"
+            ></i>
+            <p class="text-xs text-slate-400">
+              Nhấn nút bên dưới để mô phỏng chụp ảnh món ăn thực tế
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <button
+            onclick="takeCheckInPhoto()"
+            class="w-full py-3 rounded-xl bg-hoian-gold text-slate-950 font-bold hover:bg-amber-400 transition shadow"
+          >
+            📸 Chụp Ảnh & Lưu Vào Sổ Tay
+          </button>
+          <button
+            onclick="closeModal()"
+            class="w-full py-2 text-xs text-slate-400 hover:underline"
+          >
+            Hủy bỏ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer
+      class="bg-slate-950 text-slate-400 text-xs border-t border-hoian-gold/20 py-8 mt-12"
+    >
+      <div class="max-w-7xl mx-auto px-4 text-center space-y-3">
+        <div
+          class="flex items-center justify-center gap-2 text-hoian-gold font-serif font-bold text-base"
+        >
+          <span>🏮 Hương Vị Hội An</span>
+        </div>
+        <p class="text-slate-500 max-w-xl mx-auto">
+          Dự án số hóa văn hóa ẩm thực Phố Cổ Hội An với hệ thống thuyết minh
+          audio đa ngôn ngữ & Gamified Food-Trail GPS.
+        </p>
+        <p class="text-[11px] text-slate-600">
+          © 2026 Hoi An Culinary Heritage Platform. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Hoi An Dishes Mock Data (Matching Use Cases & Multilingual Translations)
+      const dishesData = [
+        {
+          id: 1,
+          name: "Cao Lầu Hội An",
+          category: "mon-chinh",
+          categoryName: "Món Chính Cổ Truyền",
+          image:
+            "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=80",
+          audioDuration: "2:45",
+          audioUrl: "#",
+          plays: "18,420",
+          translations: {
+            vi: {
+              subtitle: "Đặc sản tinh hoa giếng cổ Bá Lễ",
+              history:
+                "Sợi Cao Lầu có màu vàng nhạt, dẻo và thơm đặc trưng do gạo được ngâm trong nước tro đốt từ củi tràm ở Cù Lao Chàm. Nước dùng nấu từ giếng cổ Bá Lễ ngàn năm tuổi tạo nên hương vị độc bản không nơi nào nhái được.",
+            },
+            en: {
+              subtitle: "Hoi An Signature Noodle Specialty",
+              history:
+                "Cao Lau noodles feature a unique chewy texture soaked in lye water ash from Cham Island trees and cooked with water exclusively drawn from the thousand-year-old Ba Le Ancient Well.",
+            },
+            ja: {
+              subtitle: "ホイアンの伝統的な名物麺",
+              history:
+                "カオラウの黄色い麺は、チャム島のアッシュ水とバーレ古代井戸の純 l水を使用して作られ、独特の歯ごたえと深い味わいを生み出しています。",
+            },
+            ko: {
+              subtitle: "호이안 전통 국수 요리",
+              history:
+                "까오러우 국수는 참섬의 나무 재를 섞은 물과 천년 역사의 바레 우물물로 만들어 독특한 식감과 깊은 풍미를 자랑합니다.",
+            },
+            fr: {
+              subtitle: "Spécialité de Nouilles Authentique de Hoi An",
+              history:
+                "Les nouilles Cao Lau possèdent une texture unique, trempées dans de l'eau de cendre de l'île de Cham et préparées avec l'eau du puits millénaire de Ba Le.",
+            },
+          },
+          gpsCoords: "15.8775° N, 108.3270° E",
+          isFav: false,
+        },
+        {
+          id: 2,
+          name: "Mì Quảng Ông Hai",
+          category: "mon-chinh",
+          categoryName: "Món Chính Cổ Truyền",
+          image:
+            "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80",
+          audioDuration: "2:10",
+          audioUrl: "#",
+          plays: "14,100",
+          translations: {
+            vi: {
+              subtitle: "Hương vị xứ Quảng đậm đà",
+              history:
+                "Mì Quảng Hội An có phần nước dùng đậm đà, xăm xắp mặt bánh. Bát mì ăn kèm bánh tráng nướng xốp giòn, đậu phụng rang thơm và các loại rau sống Trà Quế ngát hương.",
+            },
+            en: {
+              subtitle: "Rich Quang Style Noodle Soup",
+              history:
+                "Quang Noodle is served with a small amount of concentrated flavorful broth, topped with toasted peanuts, crispy rice crackers, and aromatic Tra Que fresh herbs.",
+            },
+            ja: {
+              subtitle: "クアンナム省の濃厚な和え麺",
+              history:
+                "ミークアンは濃厚なスープが特徴で、香ばしいナッツやパリパリのライスペーパー、チャクエ村のハーブとともに楽しむ贅沢な一品です。",
+            },
+            ko: {
+              subtitle: "풍부한 맛의 미꽝 국수",
+              history:
+                "미꽝은 진한 육수에 땅콩, 바삭한 쌀과자, 그리고 트라퀘 마을의 신선한 허브를 함께 넣어 먹는 대표적인 향토 음식을 말합니다.",
+            },
+            fr: {
+              subtitle: "Nouilles Traditionnelles de Quang Nam",
+              history:
+                "Le Mi Quang est servi avec un bouillon concentré très savoureux, accompagné d'arachides grillées, de galette de riz croustillante et d'herbes fraîches de Tra Que.",
+            },
+          },
+          gpsCoords: "15.8777° N, 108.3272° E",
+          isFav: true,
+        },
+        {
+          id: 3,
+          name: "Bánh Mì Phượng Hội An",
+          category: "an-vat",
+          categoryName: "Ăn Vặt & Streetfood",
+          image:
+            "https://images.unsplash.com/photo-1626804475297-4160820cca34?auto=format&fit=crop&w=800&q=80",
+          audioDuration: "3:05",
+          audioUrl: "#",
+          plays: "22,950",
+          translations: {
+            vi: {
+              subtitle: "Ổ Bánh Mì Ngon Nhất Thế Giới",
+              history:
+                "Từng được đầu bếp lừng danh Anthony Bourdain khen ngợi là 'Bánh mì ngon nhất thế giới', Bánh mì Phượng chinh phục thực khách nhờ nước sốt bơ trứng đặc chế và vỏ bánh giòn rụm.",
+            },
+            en: {
+              subtitle: "World Famous Hoi An Baguette",
+              history:
+                "Praised by Anthony Bourdain as 'the best sandwich in the world', Banh Mi Phuong stands out for its secret homemade mayonnaise sauce and crispy golden crust.",
+            },
+            ja: {
+              subtitle: "世界一と絶賛されたバインミー",
+              history:
+                "有名シェフのアンソニー・ボーディン氏が絶賛したバインミー。自家製マヨネーズソースと香ばしいフランスパンの絶妙な組み合わせ。",
+            },
+            ko: {
+              subtitle: "세계 최고의 반미 샌드위치",
+              history:
+                "세계적인 셰프 앤서니 보데인이 '세계 최고의 반미'라고 극찬한 곳으로, 비법 소스와 바삭한 빵이 매력적입니다.",
+            },
+            fr: {
+              subtitle: "La Meilleure Baguette du Monde",
+              history:
+                "Salué par le chef Anthony Bourdain comme le meilleur sandwich au monde, le Banh Mi Phuong séduit par sa sauce mayonnaise maison et sa croûte croustillante.",
+            },
+          },
+          gpsCoords: "15.8780° N, 108.3285° E",
+          isFav: false,
+        },
+        {
+          id: 4,
+          name: "Chè Bắp Cẩm Nam",
+          category: "an-vat",
+          categoryName: "Ăn Vặt & Streetfood",
+          image:
+            "https://images.unsplash.com/photo-1541832676-9b763b0239ab?auto=format&fit=crop&w=800&q=80",
+          audioDuration: "1:50",
+          audioUrl: "#",
+          plays: "8,310",
+          translations: {
+            vi: {
+              subtitle: "Món chè ngọt thanh bãi bồi Cẩm Nam",
+              history:
+                "Chè bắp nấu từ bắp nếp Cẩm Nam tươi ngon thu hoạch trên các bãi bồi phù sa sông Thu Bồn, mang vị ngọt thanh mát, thoảng hương vani và cốt dừa béo ngậy.",
+            },
+            en: {
+              subtitle: "Cam Nam Sweet Corn Dessert Soup",
+              history:
+                "Made from fresh sticky corn harvested from alluvial plains along Thu Bon River, sweet corn soup yields a natural subtle sweetness paired with rich coconut milk.",
+            },
+            ja: {
+              subtitle: "カムナム島のスイートコーンチェー",
+              history:
+                "トゥボン川の川沿いで穫れたフレッシュなトウモロコシを使用した、まろやかな甘みとココナッツミルクの香りが広がるチェー。",
+            },
+            ko: {
+              subtitle: "캄남 섬의 달콤한 옥수수 디저트",
+              history:
+                "투본강의 비옥한 토양에서 자란 신선한 찰옥수수로 만들어 자연스러운 달콤함과 코코넛 밀크의 부드러움을 더한 디저트입니다.",
+            },
+            fr: {
+              subtitle: "Dessert Sucré au Maïs de Cam Nam",
+              history:
+                "Préparé avec du maïs doux récolté sur les rives de la rivière Thu Bon, ce dessert offre une douceur naturelle combinée au lait de coco onctueux.",
+            },
+          },
+          gpsCoords: "15.8760° N, 108.3300° E",
+          isFav: false,
+        },
+      ];
+
+      // State Tracking
+      let currentLang = "vi";
+      let currentDish = dishesData[0];
+      let isPlaying = false;
+      let playInterval = null;
+      let audioProgress = 0;
+
+      window.onload = function () {
+        lucide.createIcons();
+        renderDishesGrid(dishesData);
+        renderAdminTable();
+        renderMobileDishes(dishesData);
+        updatePlayerView();
+      };
+
+      function switchView(mode) {
+        const webContainer = document.getElementById("webViewContainer");
+        const mobileContainer = document.getElementById("mobileViewContainer");
+        const btnWeb = document.getElementById("btnViewWeb");
+        const btnMobile = document.getElementById("btnViewMobile");
+
+        if (mode === "web") {
+          webContainer.classList.remove("hidden");
+          mobileContainer.classList.add("hidden");
+          btnWeb.className =
+            "px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 bg-hoian-gold text-slate-950 shadow-md";
+          btnMobile.className =
+            "px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 text-slate-300 hover:text-white";
+        } else {
+          webContainer.classList.add("hidden");
+          mobileContainer.classList.remove("hidden");
+          btnMobile.className =
+            "px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 bg-hoian-gold text-slate-950 shadow-md";
+          btnWeb.className =
+            "px-3 sm:px-4 py-1.5 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 text-slate-300 hover:text-white";
+        }
+      }
+
+      function scrollToSection(id) {
+        switchView("web");
+        document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+      }
+
+      function changeLanguage(lang) {
+        currentLang = lang;
+        const langMap = {
+          vi: "🇻🇳 Tiếng Việt",
+          en: "🇬🇧 English",
+          ja: "🇯🇵 日本語",
+          ko: "🇰🇷 한국어",
+          fr: "🇫🇷 Français",
+        };
+        document.getElementById("currentLangTag").innerText = langMap[lang];
+        updatePlayerView();
+      }
+
+      function renderDishesGrid(items) {
+        const grid = document.getElementById("dishesGrid");
+        grid.innerHTML = items
+          .map((dish) => {
+            const trans =
+              dish.translations[currentLang] || dish.translations.vi;
+            return `
+                <div onclick="selectDish(${dish.id})" class="cursor-pointer glass-panel rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:border-hoian-gold transition group shadow-md flex flex-col justify-between">
+                    <div class="relative h-40 overflow-hidden">
+                        <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-2 right-2 bg-slate-950/80 text-hoian-gold text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm border border-hoian-gold/30">
+                            🎧 ${dish.audioDuration}
+                        </span>
+                    </div>
+                    <div class="p-4 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-bold text-hoian-red uppercase">${dish.categoryName}</span>
+                            <span class="text-[10px] text-slate-400"><i data-lucide="headphones" class="w-3 h-3 inline"></i> ${dish.plays}</span>
+                        </div>
+                        <h3 class="font-serif font-bold text-base text-slate-900 dark:text-amber-200 group-hover:text-hoian-gold transition">${dish.name}</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-2">${trans.subtitle}</p>
+                        <button class="w-full mt-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-hoian-gold hover:text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1.5">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i> Nghe Thuyết Minh
+                        </button>
+                    </div>
+                </div>
+                `;
+          })
+          .join("");
+        lucide.createIcons();
+      }
+
+      function selectDish(id) {
+        currentDish = dishesData.find((d) => d.id === id);
+        audioProgress = 0;
+        isPlaying = false;
+        clearInterval(playInterval);
+        updatePlayerView();
+      }
+
+      function updatePlayerView() {
+        if (!currentDish) return;
+        const trans =
+          currentDish.translations[currentLang] || currentDish.translations.vi;
+
+        document.getElementById("playerTitle").innerText = currentDish.name;
+        document.getElementById("playerSubtitle").innerText = trans.subtitle;
+        document.getElementById("playerHistoryText").innerText = trans.history;
+        document.getElementById("playerImage").src = currentDish.image;
+        document.getElementById("totalTime").innerText =
+          currentDish.audioDuration;
+        document.getElementById("audioProgressBar").style.width =
+          audioProgress + "%";
+
+        const favIcon = document.getElementById("favIcon");
+        if (currentDish.isFav) {
+          favIcon.setAttribute("class", "w-4 h-4 text-red-500 fill-current");
+        } else {
+          favIcon.setAttribute("class", "w-4 h-4 text-slate-400");
+        }
+      }
+
+      function toggleAudio() {
+        isPlaying = !isPlaying;
+        const playIcon = document.getElementById("playIcon");
+
+        if (isPlaying) {
+          playIcon.setAttribute("data-lucide", "pause");
+          playInterval = setInterval(() => {
+            audioProgress += 2;
+            if (audioProgress > 100) {
+              audioProgress = 0;
+              isPlaying = false;
+              clearInterval(playInterval);
+              playIcon.setAttribute("data-lucide", "play");
+              lucide.createIcons();
+            }
+            document.getElementById("audioProgressBar").style.width =
+              audioProgress + "%";
+
+            // Update Current Time Display Simulation
+            let seconds = Math.floor((audioProgress / 100) * 150);
+            let mins = Math.floor(seconds / 60);
+            let secs = seconds % 60;
+            document.getElementById("currentTime").innerText =
+              `${mins}:${secs < 10 ? "0" : ""}${secs}`;
+          }, 300);
+        } else {
+          playIcon.setAttribute("data-lucide", "play");
+          clearInterval(playInterval);
+        }
+        lucide.createIcons();
+      }
+
+      function rewindAudio() {
+        audioProgress = Math.max(0, audioProgress - 15);
+        document.getElementById("audioProgressBar").style.width =
+          audioProgress + "%";
+      }
+
+      function forwardAudio() {
+        audioProgress = Math.min(100, audioProgress + 15);
+        document.getElementById("audioProgressBar").style.width =
+          audioProgress + "%";
+      }
+
+      function toggleFavoriteCurrent() {
+        if (currentDish) {
+          currentDish.isFav = !currentDish.isFav;
+          updatePlayerView();
+        }
+      }
+
+      function shareDish() {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Đã sao chép liên kết chia sẻ thuyết minh món ăn!");
+      }
+
+      function filterDishes() {
+        const query = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const cat = document.getElementById("categoryFilter").value;
+
+        const filtered = dishesData.filter((d) => {
+          const matchQuery = d.name.toLowerCase().includes(query);
+          const matchCat = cat === "all" || d.category === cat;
+          return matchQuery && matchCat;
+        });
+        renderDishesGrid(filtered);
+      }
+
+      function selectTrail(id) {
+        [1, 2, 3].forEach((i) => {
+          const el = document.getElementById(`trailCard${i}`);
+          if (i === id) {
+            el.className =
+              "cursor-pointer p-4 rounded-2xl border-2 border-hoian-gold bg-amber-500/10 dark:bg-amber-500/5 transition hover:shadow-md relative overflow-hidden";
+          } else {
+            el.className =
+              "cursor-pointer p-4 rounded-2xl border border-slate-300 dark:border-slate-800 hover:border-hoian-gold bg-white dark:bg-slate-900 transition hover:shadow-md";
+          }
+        });
+      }
+
+      function simulateGPSMove() {
+        document.getElementById("gpsDistance").innerText = "12 mét";
+        alert(
+          "GPS Giả lập: Đã di chuyển đến vị trí Quán Mì Quảng Ông Hai (Bán kính 12m < 30m)!",
+        );
+      }
+
+      function triggerCheckIn() {
+        document.getElementById("checkInModal").classList.remove("hidden");
+      }
+
+      function closeModal() {
+        document.getElementById("checkInModal").classList.add("hidden");
+      }
+
+      function takeCheckInPhoto() {
+        const preview = document.getElementById("capturedPhotoPreview");
+        const placeholder = document.getElementById("cameraPlaceholder");
+        preview.classList.remove("hidden");
+        placeholder.classList.add("hidden");
+
+        setTimeout(() => {
+          alert(
+            "Chúc mừng! Đã check-in thành công Mì Quảng Ông Hai. Huy hiệu 'Sành Mì Quảng' đã lưu vào Sổ Tay Ẩm Thực!",
+          );
+          closeModal();
+        }, 800);
+      }
+
+      function renderAdminTable() {
+        const tbody = document.getElementById("adminTableBody");
+        tbody.innerHTML = dishesData
+          .map(
+            (dish) => `
+                <tr class="hover:bg-slate-100/50 dark:hover:bg-slate-900/50 transition">
+                    <td class="p-4 font-bold text-slate-800 dark:text-amber-200 flex items-center gap-2">
+                        <img src="${dish.image}" class="w-8 h-8 rounded-lg object-cover">
+                        ${dish.name}
+                    </td>
+                    <td class="p-4">${dish.categoryName}</td>
+                    <td class="p-4 font-semibold text-hoian-gold">${dish.plays}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">5/5 Langs</span>
+                    </td>
+                    <td class="p-4 text-slate-400 font-mono text-[11px]">${dish.gpsCoords}</td>
+                    <td class="p-4 text-right">
+                        <button class="px-2 py-1 rounded bg-slate-200 dark:bg-slate-800 hover:bg-hoian-gold hover:text-slate-950 font-bold">Chỉnh sửa</button>
+                    </td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function addNewDishAdmin() {
+        alert("Mở Modal Thêm Món Ăn Mới & Cấu Hình Voiceover AI Đa Ngôn Ngữ.");
+      }
+
+      function renderMobileDishes(items) {
+        const container = document.getElementById("mobileDishesList");
+        container.innerHTML = items
+          .map(
+            (dish) => `
+                <div onclick="selectDish(${dish.id}); switchView('web'); scrollToSection('narration-sec');" class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-hoian-gold transition flex items-center gap-3 cursor-pointer">
+                    <img src="${dish.image}" class="w-14 h-14 rounded-lg object-cover">
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-serif font-bold text-xs text-amber-200 truncate">${dish.name}</h4>
+                        <p class="text-[10px] text-slate-400 truncate">${dish.translations.vi.subtitle}</p>
+                        <span class="text-[9px] text-hoian-gold flex items-center gap-1 mt-1">
+                            <i data-lucide="headphones" class="w-3 h-3"></i> ${dish.audioDuration}
+                        </span>
+                    </div>
+                </div>
+            `,
+          )
+          .join("");
+        lucide.createIcons();
+      }
+
+      function filterMobileDishes(query) {
+        const filtered = dishesData.filter((d) =>
+          d.name.toLowerCase().includes(query.toLowerCase()),
+        );
+        renderMobileDishes(filtered);
+      }
+
+      function filterMobileCategory(cat) {
+        if (cat === "all") renderMobileDishes(dishesData);
+        else renderMobileDishes(dishesData.filter((d) => d.category === cat));
+      }
+
+      function switchMobileTab(tab) {
+        ["Home", "Trail", "Passport"].forEach((t) => {
+          document.getElementById(`mTab${t}`).classList.add("hidden");
+          document.getElementById(`mNav${t}`).className =
+            "flex flex-col items-center gap-1 text-slate-400 hover:text-white";
+        });
+
+        if (tab === "home") {
+          document.getElementById("mTabHome").classList.remove("hidden");
+          document.getElementById("mNavHome").className =
+            "flex flex-col items-center gap-1 text-hoian-gold";
+        } else if (tab === "trail") {
+          document.getElementById("mTabTrail").classList.remove("hidden");
+          document.getElementById("mNavTrail").className =
+            "flex flex-col items-center gap-1 text-hoian-gold";
+        } else if (tab === "passport") {
+          document.getElementById("mTabPassport").classList.remove("hidden");
+          document.getElementById("mNavPassport").className =
+            "flex flex-col items-center gap-1 text-hoian-gold";
+        }
+      }
+
+      function openMobilePassport() {
+        switchMobileTab("passport");
+      }
+
+      function toggleTheme() {
+        document.documentElement.classList.toggle("dark");
+      }
+    </script>
+  </body>
+</html>
