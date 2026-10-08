@@ -1,0 +1,24 @@
+name: CD Deploy to Vercel
+
+# Lịch trình: Chỉ tự động deploy khi code đã được merge/push THÀNH CÔNG vào nhánh main
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-to-production:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 4.1: Lấy code về máy chủ ảo
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Bước 4.2: Deploy lên Vercel sử dụng các secret đã tạo ở Bước 3
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod"
