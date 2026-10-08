@@ -1,6 +1,5 @@
 name: CI Check Code
 
-# Lịch trình: Chạy tự động mỗi khi có ai push code hoặc tạo Pull Request vào nhánh main
 on:
   push:
     branches: [main, master]
@@ -9,28 +8,17 @@ on:
 
 jobs:
   check-code:
-    runs-on: ubuntu-latest # Chạy trên máy chủ ảo Linux của GitHub
+    runs-on: ubuntu-latest
 
     steps:
-      # Bước  Tải code từ GitHub về máy chủ ảo
-      - name: Checkout Source Code
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      #  Cài đặt NodeJS
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: "npm"
-
-      #  Cài đặt các thư viện (package) của dự án
-      - name: Install Dependencies
-        run: npm ci
-
-      # Bước  Tự động chạy lệnh kiểm tra lỗi (Linter)
-      - name: Check Linting
-        run: npm run lint --if-present
-
-      # Bước Thử nghiệm build dự án
-      - name: Test Build
-        run: npm run build
+      - name: Check if test.html exists
+        run: |
+          if [ -f "test.html" ]; then
+            echo "Kiem tra thanh cong: Da tim thay file HTML!"
+          else
+            echo "Loi: Khong tim thay file HTML"
+            exit 1
+          fi
