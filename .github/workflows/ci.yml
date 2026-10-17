@@ -1,0 +1,24 @@
+name: CI Check Code
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check if test.html exists
+        run: |
+          if [ -f "test.html" ]; then
+            echo "Kiem tra thanh cong: Da tim thay file HTML!"
+          else
+            echo "Loi: Khong tim thay file HTML"
+            exit 1
+          fi
