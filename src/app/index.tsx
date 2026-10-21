@@ -281,10 +281,6 @@ export default function HomeScreen() {
               />
             </View>
 
-            <Text style={styles.urlHint}>
-              Địa chỉ kết nối (Đổi localhost thành IP Wi-Fi máy tính nếu quét
-              trong mạng LAN):
-            </Text>
             <TextInput
               value={customUrl}
               onChangeText={setCustomUrl}
