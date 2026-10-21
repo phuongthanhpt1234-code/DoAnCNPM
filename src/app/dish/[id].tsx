@@ -58,7 +58,7 @@ export default function DishDetailScreen() {
 
         <View style={styles.card}>
           <Text style={styles.sectionHeader}>
-            🎧 Nội dung thuyết minh ({LANGS[lang].name})
+            🎧 Nội dung thuyết minh ({LANGS[lang].label})
           </Text>
           <Text style={styles.desc}>{dish.desc[lang]}</Text>
         </View>
