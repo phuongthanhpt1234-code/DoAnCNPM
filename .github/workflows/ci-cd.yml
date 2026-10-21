@@ -1,0 +1,90 @@
+name: HoiAn Food Guide - CI/CD Web & Mobile Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # 1. KIỂM TRA CHẤT LƯỢNG CODE (CONTINUOUS INTEGRATION)
+  quality-check:
+    name: Lint & TypeScript Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript Typecheck
+        run: npx tsc --noEmit
+
+      - name: Run Expo Lint
+        run: npx expo lint
+
+  # 2. TRIỂN KHAI WEB TỰ ĐỘNG LÊN VERCEL (CONTINUOUS DEPLOYMENT - WEB)
+  deploy-web:
+    name: Build & Deploy Web to Vercel
+    needs: quality-check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Export Static Web Build (Expo Web)
+        run: npx expo export --platform web
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./dist
+          vercel-args: "--prod"
+
+  # 3. CẬP NHẬT ỨNG DỤNG DI ĐỘNG QUA OTA (CONTINUOUS DEPLOYMENT - MOBILE EAS)
+  deploy-mobile-ota:
+    name: Publish Expo EAS Update (Mobile)
+    needs: quality-check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish Over-The-Air (OTA) Update
+        run: npx eas-cli@latest update --auto --non-interactive

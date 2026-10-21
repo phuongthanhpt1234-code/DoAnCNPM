@@ -1,17 +1,23 @@
-import { Stack } from 'expo-router';
-import { StatusBar } from 'react-native';
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor="#120F0D" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="login" />
-        <Stack.Screen name="register" />
-        <Stack.Screen name="map" />
-        <Stack.Screen name="favorite" />
-        <Stack.Screen name="language" />
+      <StatusBar style="light" />
+      <Stack
+        screenOptions={{
+          headerStyle: { backgroundColor: "#140909" },
+          headerTintColor: "#e9c26b",
+          headerTitleStyle: { fontWeight: "bold" },
+          contentStyle: { backgroundColor: "#090505" },
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="dish/[id]"
+          options={{ title: "Thuyết Minh Ẩm Thực", presentation: "modal" }}
+        />
       </Stack>
     </>
   );
