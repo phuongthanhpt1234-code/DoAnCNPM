@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   View,
   Text,
@@ -13,7 +14,7 @@ import {
   Linking,
   useWindowDimensions,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import { DISHES, LANGS, LangKey, Dish } from "../data/dishesData";
 
 type TimeSlotKey = "morning" | "noon" | "night";
@@ -205,6 +206,24 @@ export default function HomeScreen() {
   ]);
   const [tasteCardVisible, setTasteCardVisible] = useState<boolean>(false);
 
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
+    null,
+  );
+
+  // Mỗi lần màn hình được focus (kể cả khi quay lại từ login/register) thì đọc lại tài khoản
+  useFocusEffect(
+    useCallback(() => {
+      AsyncStorage.getItem("userAccount")
+        .then((s) => setUser(s ? JSON.parse(s) : null))
+        .catch(() => setUser(null));
+    }, []),
+  );
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("userAccount");
+    setUser(null);
+  };
+
   const isDesktop = width >= 900;
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
 
@@ -311,12 +330,42 @@ export default function HomeScreen() {
           ))}
         </ScrollView>
 
-        <TouchableOpacity
-          style={styles.qrTriggerBtn}
-          onPress={() => setQrVisible(true)}
-        >
-          <Text style={styles.qrTriggerText}>📱 Quét QR Mobile</Text>
-        </TouchableOpacity>
+        <View style={styles.authRow}>
+          <TouchableOpacity
+            style={styles.qrTriggerBtn}
+            onPress={() => setQrVisible(true)}
+          >
+            <Text style={styles.qrTriggerText}>📱 Quét QR Mobile</Text>
+          </TouchableOpacity>
+
+          {user ? (
+            <>
+              <View style={styles.userChip}>
+                <Text style={styles.userChipText} numberOfLines={1}>
+                  👤 {user.name || user.email}
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
+                <Text style={styles.loginBtnText}>Đăng xuất</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() => router.push("/login" as any)}
+              >
+                <Text style={styles.loginBtnText}>Đăng nhập</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.registerBtn}
+                onPress={() => router.push("/register" as any)}
+              >
+                <Text style={styles.registerBtnText}>Đăng ký</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
       </View>
 
       <FlatList
@@ -798,6 +847,37 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   qrTriggerText: { color: "#090505", fontWeight: "bold", fontSize: 12 },
+  authRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    gap: 8,
+  },
+  loginBtn: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#e9c26b",
+  },
+  loginBtnText: { color: "#e9c26b", fontWeight: "bold", fontSize: 12 },
+  registerBtn: {
+    backgroundColor: "#d4152f",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  registerBtnText: { color: "#fff", fontWeight: "bold", fontSize: 12 },
+  userChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#160c0c",
+    borderWidth: 1,
+    borderColor: "#e9c26b33",
+    maxWidth: 160,
+  },
+  userChipText: { color: "#f5ead4", fontSize: 12, fontWeight: "600" },
   filterSection: {
     paddingHorizontal: 6,
     paddingTop: 6,
