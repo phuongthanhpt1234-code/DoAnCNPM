@@ -1,29 +1,38 @@
-import React, { useState, useMemo, useCallback } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   FlatList,
   Image,
-  TouchableOpacity,
-  TextInput,
-  Modal,
-  ScrollView,
-  Platform,
   Linking,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
   useWindowDimensions,
 } from "react-native";
-import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import { DISHES, LANGS, LangKey, Dish } from "../data/dishesData";
+import { DISHES, Dish, LANGS, LangKey } from "../data/dishesData";
 
 type TimeSlotKey = "morning" | "noon" | "night";
+
+interface LocalizedText {
+  vi: string;
+  en: string;
+  zh: string;
+  ko: string;
+  ja: string;
+  [key: string]: string;
+}
 
 interface ScheduleStop {
   id: string;
   order: number;
-  dishName: string;
-  shopName: string;
+  dishName: LocalizedText;
+  shopName: LocalizedText;
   hours: string;
   lat: number;
   lng: number;
@@ -31,44 +40,334 @@ interface ScheduleStop {
 
 interface DietaryOption {
   id: string;
-  emoji: string;
-  label: string;
+  label: LocalizedText;
   voiceText: string;
 }
 
-const SCHEDULE_SLOTS: {
-  key: TimeSlotKey;
-  emoji: string;
-  title: string;
-  timeRange: string;
-}[] = [
-  {
-    key: "morning",
-    emoji: "🌅",
-    title: "Buổi Sáng",
-    timeRange: "07:00 - 10:30",
-  },
-  {
-    key: "noon",
-    emoji: "☀️",
-    title: "Buổi Trưa",
-    timeRange: "11:00 - 15:00",
-  },
-  {
-    key: "night",
-    emoji: "🏮",
-    title: "Phố Đêm",
-    timeRange: "17:00 - 22:00",
-  },
+// TỪ ĐIỂN ẨM THỰC TỨC THÌ (ĐẢM BẢO DỊCH NGAY LẬP TỨC KHI BẤM PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT)
+const QUICK_CULINARY_DICT: { patterns: string[]; vi: string }[] = [
+  { patterns: ["no onion", "without onion", "不要洋葱", "不放洋葱", "양파 빼", "양파 없이", "玉ねぎ抜き", "たまねぎ抜き", "không hành tây"], vi: "không bỏ hành tây" },
+  { patterns: ["no scallion", "no green onion", "no spring onion", "不要葱", "不放葱", "파 빼", "파 없이", "ネギ抜き", "ねぎ抜き", "không hành lá", "không hành"], vi: "không bỏ hành lá" },
+  { patterns: ["no cilantro", "no coriander", "不要香菜", "不放香菜", "고수 빼", "고수 없이", "パクチー抜き", "香菜抜き", "không rau mùi", "không ngò"], vi: "không bỏ rau mùi và hành ngò" },
+  { patterns: ["no garlic", "without garlic", "不要蒜", "不放蒜", "마늘 빼", "마늘 없이", "ニンニク抜き", "にんにく抜き", "không tỏi"], vi: "không bỏ tỏi" },
+  { patterns: ["less sugar", "no sugar", "low sugar", "少糖", "无糖", "설탕 적게", "설탕 빼", "甘さ控えめ", "砂糖抜き", "ít đường", "không đường"], vi: "giảm ngọt, cho ít đường" },
+  { patterns: ["less salt", "low salt", "no salt", "少盐", "싱겁게", "소금 적게", "塩分控えめ", "ít mặn", "nhạt hơn"], vi: "nêm nhạt, cho ít muối" },
+  { patterns: ["no shrimp", "shrimp allergy", "seafood allergy", "no seafood", "海鲜过敏", "不要虾", "새우 알레르기", "해산물 알레르기", "새우 빼", "エビ抜き", "甲殻類アレルギー", "dị ứng hải sản", "không tôm"], vi: "tôi dị ứng hải sản, xin không bỏ tôm cua" },
+  { patterns: ["no pork", "without pork", "no meat", "不要猪肉", "不吃猪肉", "돼지고기 빼", "豚肉抜き", "không thịt heo", "không mỡ"], vi: "không bỏ thịt heo và mỡ heo" },
+  { patterns: ["no fish sauce", "without fish sauce", "不要鱼露", "피쉬소스 빼", "느억맘 빼", "魚醤抜き", "ヌクマム抜き", "không nước mắm"], vi: "không dùng nước mắm" },
+  { patterns: ["less oil", "no oil", "少油", "기름 적게", "油少なめ", "ít dầu mỡ"], vi: "chế biến ít dầu mỡ" },
+  { patterns: ["less ice", "no ice", "少冰", "去冰", "얼음 적게", "얼음 빼", "氷少なめ", "氷抜き", "ít đá", "không đá"], vi: "cho ít đá hoặc không đá" },
 ];
+
+function translateNoteInstant(rawText: string): string {
+  const clean = rawText.trim();
+  if (!clean) return "";
+  const lower = clean.toLowerCase();
+  const matchedVi: string[] = [];
+  for (const item of QUICK_CULINARY_DICT) {
+    if (item.patterns.some((p) => lower.includes(p))) {
+      matchedVi.push(item.vi);
+    }
+  }
+  if (matchedVi.length > 0) return matchedVi.join(", ");
+  return clean;
+}
+
+const PAGE_UI: Record<
+  string,
+  {
+    brandTitle: string;
+    brandSub: string;
+    qrMobileBtn: string;
+    loginBtn: string;
+    registerBtn: string;
+    logoutBtn: string;
+    searchPlaceholder: string;
+    catAll: string;
+    catMain: string;
+    catSnack: string;
+    catStreet: string;
+    catSweet: string;
+    listenBtn: string;
+    qrShortBtn: string;
+    assistantTitle: string;
+    practicalBadge: string;
+    assistantSub: string;
+    slotMorning: string;
+    slotNoon: string;
+    slotNight: string;
+    checkInDone: string;
+    checkInNow: string;
+    walkAllThreeBtn: string;
+    dietaryTitle: string;
+    dietarySub: string;
+    addCustomNoteBtn: string;
+    customNotePlaceholder: string;
+    customNoteTranslatedPrefix: string;
+    openTasteCardBtn: string;
+    playVoiceModalBtn: string;
+    directionsModalBtn: string;
+    closeBtn: string;
+    tasteModalBadge: string;
+    tasteModalHeading: string;
+    tasteModalSub: string;
+    tasteNormalText: string;
+    replayChefVoiceBtn: string;
+    closeTasteCardBtn: string;
+    qrModalTitle: string;
+    qrModalDesc: string;
+    closeQrModalBtn: string;
+  }
+> = {
+  vi: {
+    brandTitle: "THEO DẤU VỊ HỘI",
+    brandSub: "Thuyết Minh Tự Động Đa Ngôn Ngữ",
+    qrMobileBtn: "Quét QR Mobile",
+    loginBtn: "Đăng nhập",
+    registerBtn: "Đăng ký",
+    logoutBtn: "Đăng xuất",
+    searchPlaceholder: "Tìm món ăn Hội An...",
+    catAll: "Tất cả (15)",
+    catMain: "Món chính",
+    catSnack: "Bánh & Ăn vặt",
+    catStreet: "Đường phố",
+    catSweet: "Chè & Đồ uống",
+    listenBtn: "Thuyết minh",
+    qrShortBtn: "Mã QR",
+    assistantTitle: "Trợ Lý Lịch Trình & Thẻ Khẩu Vị",
+    practicalBadge: "THỰC TIỄN",
+    assistantSub:
+      "Gợi ý thực đơn theo 3 khung giờ trong ngày & tạo Thẻ khẩu vị giao tiếp trực tiếp với chủ quán Hội An.",
+    slotMorning: "Buổi Sáng",
+    slotNoon: "Buổi Trưa",
+    slotNight: "Phố Đêm",
+    checkInDone: "Đã Check-in",
+    checkInNow: "Check-in Ngay",
+    walkAllThreeBtn: "Dẫn Đường Đi Bộ Cả 3 Trạm Trong Lịch Trình",
+    dietaryTitle: "Thẻ Khẩu Vị & Dị Ứng Giao Tiếp Chủ Quán",
+    dietarySub:
+      "Chọn lưu ý ăn uống để tạo Thẻ chữ lớn & phát Giọng đọc AI cho đầu bếp tại Hội An:",
+    addCustomNoteBtn: "+ Thêm ghi chú khẩu vị khác (Dịch & phát giọng đọc Tiếng Việt)",
+    customNotePlaceholder: "Nhập yêu cầu thêm (VD: Không hành ngò, ít mỡ, không tỏi...)",
+    customNoteTranslatedPrefix: "Nội dung phát Tiếng Việt cho chủ quán:",
+    openTasteCardBtn: "Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc AI",
+    playVoiceModalBtn: "Phát Giọng Đọc",
+    directionsModalBtn: "Chỉ đường Google Maps",
+    closeBtn: "Đóng",
+    tasteModalBadge: "THẺ GIAO TIẾP CHỦ QUÁN HỘI AN",
+    tasteModalHeading: "Xin chào Cô / Chú chủ quán!",
+    tasteModalSub: "Nhờ quán chế biến giúp món ăn theo lưu ý khẩu vị sau:",
+    tasteNormalText: "Ăn uống bình thường, không kiêng cữ",
+    replayChefVoiceBtn: "Phát Lại Giọng Đọc AI Cho Đầu Bếp",
+    closeTasteCardBtn: "Đóng Thẻ Khẩu Vị",
+    qrModalTitle: "Quét Mã QR Trên Điện Thoại",
+    qrModalDesc:
+      "Dùng Camera điện thoại hoặc Zalo quét mã QR dưới đây để mở ngay giao diện Mobile thuyết minh tự động",
+    closeQrModalBtn: "Đóng cửa sổ QR",
+  },
+  en: {
+    brandTitle: "THEO DẤU VỊ HỘI",
+    brandSub: "Multilingual Automated Audio Guide",
+    qrMobileBtn: "Mobile QR Code",
+    loginBtn: "Sign in",
+    registerBtn: "Sign up",
+    logoutBtn: "Log out",
+    searchPlaceholder: "Search Hoi An dishes...",
+    catAll: "All (15)",
+    catMain: "Main Dishes",
+    catSnack: "Cakes & Snacks",
+    catStreet: "Street Food",
+    catSweet: "Sweet Soup & Drinks",
+    listenBtn: "Audio Guide",
+    qrShortBtn: "QR Code",
+    assistantTitle: "Itinerary Assistant & Dietary Card",
+    practicalBadge: "PRACTICAL",
+    assistantSub:
+      "Recommended menus for 3 daily time slots & Dietary Card to communicate directly with Hoi An restaurant owners.",
+    slotMorning: "Morning",
+    slotNoon: "Midday",
+    slotNight: "Night Town",
+    checkInDone: "Checked In",
+    checkInNow: "Check-in Now",
+    walkAllThreeBtn: "Walking Directions for All 3 Stops (Stop 1 -> 2 -> 3)",
+    dietaryTitle: "Dietary & Allergy Communication Card",
+    dietarySub:
+      "Select dietary preferences to display a large-text card & play Vietnamese audio for the chef in Hoi An:",
+    addCustomNoteBtn: "+ Add custom dietary note (Auto-translated to Vietnamese voice)",
+    customNotePlaceholder: "Type any extra request (e.g. No onion, no cilantro, less sugar...)",
+    customNoteTranslatedPrefix: "Vietnamese voice for Chef:",
+    openTasteCardBtn: "Open Chef Card & Play AI Voice",
+    playVoiceModalBtn: "Play Voice Narration",
+    directionsModalBtn: "Google Maps Directions",
+    closeBtn: "Close",
+    tasteModalBadge: "COMMUNICATION CARD FOR HOI AN CHEF",
+    tasteModalHeading: "Hello Restaurant Owner / Chef!",
+    tasteModalSub: "Please kindly prepare my dish with the following dietary notes:",
+    tasteNormalText: "Normal diet, no restrictions",
+    replayChefVoiceBtn: "Replay Vietnamese Voice for Chef",
+    closeTasteCardBtn: "Close Dietary Card",
+    qrModalTitle: "Scan QR Code on Mobile",
+    qrModalDesc:
+      "Use your phone camera to scan the QR code below to open the automated mobile audio guide",
+    closeQrModalBtn: "Close QR Window",
+  },
+  zh: {
+    brandTitle: "THEO DẤU VỊ HỘI",
+    brandSub: "多语言自动语音导览系统",
+    qrMobileBtn: "手机扫码",
+    loginBtn: "登录",
+    registerBtn: "注册",
+    logoutBtn: "退出登录",
+    searchPlaceholder: "搜索会安美食...",
+    catAll: "全部 (15)",
+    catMain: "主食名菜",
+    catSnack: "糕点小吃",
+    catStreet: "街头风味",
+    catSweet: "甜品饮品",
+    listenBtn: "语音解说",
+    qrShortBtn: "二维码",
+    assistantTitle: "行程助手与饮食忌口卡",
+    practicalBadge: "实用功能",
+    assistantSub:
+      "按早、午、晚三个时段推荐菜单，并生成大字版饮食忌口卡直接与会安店主沟通。",
+    slotMorning: "清晨早点",
+    slotNoon: "午间正餐",
+    slotNight: "古镇夜市",
+    checkInDone: "已打卡",
+    checkInNow: "立即打卡",
+    walkAllThreeBtn: "开启本时段全部 3 站步行导航 (第 1 -> 2 -> 3 站)",
+    dietaryTitle: "展示给店主的饮食偏好与过敏沟通卡",
+    dietarySub: "勾选饮食注意事项以生成大字卡，并向会安厨师播放越南语语音：",
+    addCustomNoteBtn: "+ 添加其他饮食备注（自动翻译并朗读越南语）",
+    customNotePlaceholder: "输入其他忌口要求（如：不要香菜、不要洋葱、少糖...）",
+    customNoteTranslatedPrefix: "已翻译为越南语供厨师收听：",
+    openTasteCardBtn: "打开店主沟通卡并播放语音",
+    playVoiceModalBtn: "播放语音讲解",
+    directionsModalBtn: "谷歌地图导航",
+    closeBtn: "关闭",
+    tasteModalBadge: "会安餐厅店主沟通卡",
+    tasteModalHeading: "店主您好！",
+    tasteModalSub: "烹制菜品时请协助留意以下饮食要求：",
+    tasteNormalText: "正常饮食，无特殊忌口",
+    replayChefVoiceBtn: "重新向厨师播放越南语语音",
+    closeTasteCardBtn: "关闭忌口卡",
+    qrModalTitle: "使用手机扫描二维码",
+    qrModalDesc: "使用手机相机扫描下方二维码，即可打开移动端多语言自动语音导览",
+    closeQrModalBtn: "关闭二维码窗口",
+  },
+  ko: {
+    brandTitle: "THEO DẤU VỊ HỘI",
+    brandSub: "다국어 자동 음성 가이드",
+    qrMobileBtn: "모바일 QR 코드",
+    loginBtn: "로그인",
+    registerBtn: "회원가입",
+    logoutBtn: "로그아웃",
+    searchPlaceholder: "호이안 요리 검색...",
+    catAll: "전체 (15)",
+    catMain: "메인 요리",
+    catSnack: "전통 떡 & 간식",
+    catStreet: "길거리 음식",
+    catSweet: "체(디저트) & 음료",
+    listenBtn: "음성 해설",
+    qrShortBtn: "QR 코드",
+    assistantTitle: "일정 도우미 & 식단 소통 카드",
+    practicalBadge: "실용 기능",
+    assistantSub:
+      "하루 3개 시간대별 추천 코스와 호이안 식당 주인에게 직접 보여줄 식단 소통 카드를 생성합니다.",
+    slotMorning: "아침 시간",
+    slotNoon: "점심 시간",
+    slotNight: "야시장 밤",
+    checkInDone: "체크인 완료",
+    checkInNow: "체크인하기",
+    walkAllThreeBtn: "일정 내 3개 정류장 전체 도보 길찾기 (1 -> 2 -> 3번)",
+    dietaryTitle: "식당 주인 소통용 식단 & 알레르기 카드",
+    dietarySub:
+      "식이 유의사항을 선택하여 호이안 요리사에게 큰 글씨 카드와 베트남어 음성을 전달하세요:",
+    addCustomNoteBtn: "+ 기타 식단 요청사항 추가 (베트남어 자동 번역 및 음성 안내)",
+    customNotePlaceholder: "추가 요청 입력 (예: 고수 빼주세요, 양파 빼주세요, 덜 달게...)",
+    customNoteTranslatedPrefix: "요리사용 베트남어 번역:",
+    openTasteCardBtn: "주방장 제시용 카드 열기 & 음성 재생",
+    playVoiceModalBtn: "음성 해설 재생",
+    directionsModalBtn: "구글 지도 길찾기",
+    closeBtn: "닫기",
+    tasteModalBadge: "호이안 식당 주인 소통 카드",
+    tasteModalHeading: "사장님 안녕하세요!",
+    tasteModalSub: "음식 조리 시 아래 식이 요청사항을 참고해 주세요:",
+    tasteNormalText: "가리는 음식 없이 모두 잘 먹습니다",
+    replayChefVoiceBtn: "요리사를 위해 베트남어 음성 다시 재생",
+    closeTasteCardBtn: "식단 카드 닫기",
+    qrModalTitle: "휴대폰으로 QR 코드 스캔",
+    qrModalDesc:
+      "휴대폰 카메라로 아래 QR 코드를 스캔하면 모바일 자동 음성 가이드가 열립니다",
+    closeQrModalBtn: "QR 창 닫기",
+  },
+  ja: {
+    brandTitle: "THEO DẤU VỊ HỘI",
+    brandSub: "多言語自動音声グルメガイド",
+    qrMobileBtn: "モバイルQR",
+    loginBtn: "ログイン",
+    registerBtn: "新規登録",
+    logoutBtn: "ログアウト",
+    searchPlaceholder: "ホイアンの料理を検索...",
+    catAll: "すべて (15)",
+    catMain: "メイン料理",
+    catSnack: "餅・軽食",
+    catStreet: "屋台グルメ",
+    catSweet: "チェー・飲み物",
+    listenBtn: "音声ガイド",
+    qrShortBtn: "QRコード",
+    assistantTitle: "時間帯別プラン＆食事制限カード",
+    practicalBadge: "実用機能",
+    assistantSub:
+      "1日3つの時間帯別おすすめメニューと、ホイアンの店主に直接見せる食事制限カードを作成します。",
+    slotMorning: "朝の時間",
+    slotNoon: "昼の時間",
+    slotNight: "夜の旧市街",
+    checkInDone: "チェックイン済",
+    checkInNow: "チェックイン",
+    walkAllThreeBtn: "全3スポットの徒歩ルート案内（スポット1 -> 2 -> 3）",
+    dietaryTitle: "店主に見せる食事制限・アレルギーカード",
+    dietarySub:
+      "食事の注意点を選択して、大きな文字のカードとベトナム語音声で料理人に伝えます：",
+    addCustomNoteBtn: "+ その他の要望を追加（ベトナム語に自動翻訳＆音声再生）",
+    customNotePlaceholder: "追加の要望を入力（例：パクチー抜き、玉ねぎ抜き、甘さ控えめ...）",
+    customNoteTranslatedPrefix: "料理人向けベトナム語翻訳：",
+    openTasteCardBtn: "カードを表示してベトナム語音声を再生",
+    playVoiceModalBtn: "音声ガイドを再生",
+    directionsModalBtn: "Googleマップで案内",
+    closeBtn: "閉じる",
+    tasteModalBadge: "ホイアン店主向け伝達カード",
+    tasteModalHeading: "こんにちは！",
+    tasteModalSub: "調理の際、以下の食事制限にご配慮いただけますと幸いです：",
+    tasteNormalText: "食事制限はありません（すべて食べられます）",
+    replayChefVoiceBtn: "料理人向けにベトナム語音声をもう一度再生",
+    closeTasteCardBtn: "カードを閉じる",
+    qrModalTitle: "スマートフォンでQRをスキャン",
+    qrModalDesc:
+      "スマートフォンのカメラで下のQRコードを読み取ると、モバイル音声ガイドが開きます",
+    closeQrModalBtn: "QR画面を閉じる",
+  },
+};
 
 const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
   morning: [
     {
       id: "m1",
       order: 1,
-      dishName: "Bánh Mì Đặc Ruột Hội An",
-      shopName: "Bánh Mì Phượng",
+      dishName: {
+        vi: "Bánh Mì Đặc Ruột Hội An",
+        en: "Hoi An Crispy Baguette (Banh Mi)",
+        zh: "会安炭烤法棍三明治",
+        ko: "호이안 크리스피 반미",
+        ja: "ホイアン炭火焼きバインミー",
+      },
+      shopName: {
+        vi: "Bánh Mì Phượng",
+        en: "Phuong Banh Mi",
+        zh: "凤姐法棍店 (Bánh Mì Phượng)",
+        ko: "반미 프엉 (Bánh Mì Phượng)",
+        ja: "バインミー・フォン",
+      },
       hours: "06:30 - 21:30",
       lat: 15.878,
       lng: 108.3285,
@@ -76,8 +375,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "m2",
       order: 2,
-      dishName: "Mì Quảng Tôm Thịt Trứng",
-      shopName: "Mì Quảng Ông Hai",
+      dishName: {
+        vi: "Mì Quảng Tôm Thịt Trứng",
+        en: "Quang-Style Turmeric Noodles",
+        zh: "广南鲜虾猪肉姜黄面",
+        ko: "꽝남식 강황 쌀국수 (미꽝)",
+        ja: "ミークアン（海老と豚肉の混ぜ麺）",
+      },
+      shopName: {
+        vi: "Mì Quảng Ông Hai",
+        en: "Ong Hai Mi Quang",
+        zh: "二叔广南面 (Mì Quảng Ông Hai)",
+        ko: "옹하이 미꽝",
+        ja: "ミークアン・オンハイ",
+      },
       hours: "07:30 - 21:00",
       lat: 15.8775,
       lng: 108.3292,
@@ -85,8 +396,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "m3",
       order: 3,
-      dishName: "Trà Thảo Mộc Sả Chanh Cánh Sen",
-      shopName: "Nước Mót Hội An",
+      dishName: {
+        vi: "Trà Thảo Mộc Sả Chanh Cánh Sen",
+        en: "Lotus Petal Lemongrass Herbal Tea",
+        zh: "会安荷花瓣九味草本凉茶",
+        ko: "연꽃잎 레몬그라스 허브티",
+        ja: "モット・ハーブティー（蓮の花びら添え）",
+      },
+      shopName: {
+        vi: "Nước Mót Hội An",
+        en: "Mot Hoi An Herbal Tea",
+        zh: "会安 Mót 草本茶铺",
+        ko: "느억못 호이안",
+        ja: "ヌックモット・ホイアン",
+      },
       hours: "08:00 - 21:30",
       lat: 15.87818,
       lng: 108.32648,
@@ -96,8 +419,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "n1",
       order: 1,
-      dishName: "Cao Lầu Cổ Truyền Hội An",
-      shopName: "Cao Lầu Không Gian Xanh",
+      dishName: {
+        vi: "Cao Lầu Cổ Truyền Hội An",
+        en: "Traditional Hoi An Cao Lau Noodles",
+        zh: "会安传统高楼面",
+        ko: "호이안 전통 까오러우",
+        ja: "カオラウ（ホイアン伝統太麺）",
+      },
+      shopName: {
+        vi: "Cao Lầu Không Gian Xanh",
+        en: "Green Space Cao Lau",
+        zh: "绿色空间高楼面",
+        ko: "콩잔싼 까오러우",
+        ja: "カオラウ・コンザンサイン",
+      },
       hours: "10:00 - 21:00",
       lat: 15.87815,
       lng: 108.32655,
@@ -105,8 +440,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "n2",
       order: 2,
-      dishName: "Cơm Gà Xé Phố Cổ",
-      shopName: "Cơm Gà Bà Buội",
+      dishName: {
+        vi: "Cơm Gà Xé Phố Cổ",
+        en: "Hoi An Shredded Chicken Rice",
+        zh: "会安古镇手撕鸡饭",
+        ko: "호이안 전통 치킨라이스",
+        ja: "ホイアン伝統チキンライス",
+      },
+      shopName: {
+        vi: "Cơm Gà Bà Buội",
+        en: "Ba Buoi Chicken Rice",
+        zh: "布伊阿婆鸡饭 (Bà Buội)",
+        ko: "바부오이 치킨라이스",
+        ja: "コムガー・バーブオイ",
+      },
       hours: "10:30 - 20:00",
       lat: 15.8782,
       lng: 108.3265,
@@ -114,8 +461,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "n3",
       order: 3,
-      dishName: "Bánh Đập Hến Xào Cẩm Nam",
-      shopName: "Bánh Đập Bà Già",
+      dishName: {
+        vi: "Bánh Đập Hến Xào Cẩm Nam",
+        en: "Cracked Rice Paper & Stir-Fried Clams",
+        zh: "锦南香炒河蚬配脆拍米饼",
+        ko: "깜남 재첩 볶음과 반답 크래커",
+        ja: "バインダップとカムナム産シジミ炒め",
+      },
+      shopName: {
+        vi: "Bánh Đập Bà Già",
+        en: "Ba Gia Cam Nam Stall",
+        zh: "锦南老阿婆米饼店",
+        ko: "바자 반답 노점",
+        ja: "バインダップ・バージャー",
+      },
       hours: "11:00 - 17:00",
       lat: 15.8745,
       lng: 108.3342,
@@ -125,8 +484,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "e1",
       order: 1,
-      dishName: "Bánh Vạc Hoa Hồng Trắng",
-      shopName: "Nhà Hàng Bông Hồng Trắng",
+      dishName: {
+        vi: "Bánh Vạc Hoa Hồng Trắng",
+        en: "White Rose Shrimp Dumplings",
+        zh: "会安白玫瑰鲜虾饺",
+        ko: "화이트 로즈 새우 만두 (반박)",
+        ja: "ホワイトローズ（米粉の蒸し餃子）",
+      },
+      shopName: {
+        vi: "Nhà Hàng Bông Hồng Trắng",
+        en: "White Rose Restaurant",
+        zh: "白玫瑰传统工坊",
+        ko: "봉홍짱 레스토랑",
+        ja: "ホワイトローズ工房",
+      },
       hours: "16:00 - 21:30",
       lat: 15.8812,
       lng: 108.3235,
@@ -134,8 +505,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "e2",
       order: 2,
-      dishName: "Thịt Xiên Nướng Bờ Sông Hoài",
-      shopName: "Phố Đêm Nguyễn Phúc Chu",
+      dishName: {
+        vi: "Thịt Xiên Nướng Bờ Sông Hoài",
+        en: "Hoai Riverbank Grilled Pork Skewers",
+        zh: "怀河岸炭烤五香肉串",
+        ko: "호아이 강변 숯불 고기꼬치",
+        ja: "ホアイ川沿いの炭火焼き豚串",
+      },
+      shopName: {
+        vi: "Phố Đêm Nguyễn Phúc Chu",
+        en: "Nguyen Phuc Chu Night Street",
+        zh: "阮福周夜市美食街",
+        ko: "응우옌푹쭈 야시장 거리",
+        ja: "グエンフックチュウ夜市通り",
+      },
       hours: "17:00 - 22:00",
       lat: 15.8768,
       lng: 108.3268,
@@ -143,8 +526,20 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
     {
       id: "e3",
       order: 3,
-      dishName: "Chè Xí Mà Phù Cổ Truyền",
-      shopName: "Gánh Chè Ông Thiều",
+      dishName: {
+        vi: "Chè Xí Mà Phù Cổ Truyền",
+        en: "Traditional Black Sesame Pudding",
+        zh: "古法石磨养生黑芝麻糊",
+        ko: "전통 흑임자 죽 (씨마푸)",
+        ja: "黒ごまの薬膳チェー（シーマーフー）",
+      },
+      shopName: {
+        vi: "Gánh Chè Ông Thiều",
+        en: "Ong Thieu Heritage Stall",
+        zh: "邵公百年黑芝麻糊摊",
+        ko: "옹티에우 전통 체 노점",
+        ja: "オンティエウ伝統甘味屋台",
+      },
       hours: "17:30 - 22:00",
       lat: 15.8805,
       lng: 108.324,
@@ -155,26 +550,46 @@ const SCHEDULE_DATA: Record<TimeSlotKey, ScheduleStop[]> = {
 const DIETARY_OPTIONS: DietaryOption[] = [
   {
     id: "no_peanut",
-    emoji: "🥜",
-    label: "Dị ứng đậu phộng (Không lạc)",
+    label: {
+      vi: "Dị ứng đậu phộng (Không lạc)",
+      en: "Peanut Allergy (No Peanuts)",
+      zh: "花生过敏（请勿放花生）",
+      ko: "땅콩 알레르기 (땅콩 제외)",
+      ja: "ピーナッツアレルギー（ピーナッツ抜き）",
+    },
     voiceText: "Tôi bị dị ứng đậu phộng, xin vui lòng không bỏ lạc",
   },
   {
     id: "no_spicy",
-    emoji: "🌶️",
-    label: "Không ăn cay (Không ớt)",
+    label: {
+      vi: "Không ăn cay (Không ớt)",
+      en: "No Spicy (No Chili)",
+      zh: "不吃辣（请勿放辣椒）",
+      ko: "맵지 않게 (고추 제외)",
+      ja: "辛くしないでください（唐辛子抜き）",
+    },
     voiceText: "Tôi không ăn được cay, xin đừng bỏ ớt và tương ớt",
   },
   {
     id: "vegan",
-    emoji: "🥬",
-    label: "Ăn thuần chay (Không thịt cá)",
+    label: {
+      vi: "Ăn thuần chay (Không thịt cá)",
+      en: "Strict Vegan (No Meat or Fish Sauce)",
+      zh: "纯素食（不含肉类与鱼露）",
+      ko: "순수 채식 (육류 및 피쉬소스 제외)",
+      ja: "完全菜食（肉・魚・魚醤抜き）",
+    },
     voiceText: "Tôi ăn thuần chay, xin không dùng thịt cá và nước mắm",
   },
   {
     id: "no_msg",
-    emoji: "🧂",
-    label: "Không bột ngọt (Mì chính)",
+    label: {
+      vi: "Không bột ngọt (Mì chính)",
+      en: "No MSG Added",
+      zh: "请勿添加味精",
+      ko: "조미료(MSG) 제외",
+      ja: "うま味調味料（MSG）抜き",
+    },
     voiceText: "Xin vui lòng không nêm bột ngọt mì chính vào món ăn",
   },
 ];
@@ -206,9 +621,58 @@ export default function HomeScreen() {
   ]);
   const [tasteCardVisible, setTasteCardVisible] = useState<boolean>(false);
 
+  // STATE CHO MỤC (THÊM): NHẬP GHI CHÚ BẰNG BẤT KỲ NGÔN NGỮ NÀO -> DỊCH & ĐỌC TIẾNG VIỆT
+  const [showCustomNoteBox, setShowCustomNoteBox] = useState<boolean>(false);
+  const [customDietaryNote, setCustomDietaryNote] = useState<string>("");
+  const [translatedCustomNoteVi, setTranslatedCustomNoteVi] =
+    useState<string>("");
+
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(
     null,
   );
+
+  const ui = PAGE_UI[lang] || PAGE_UI.vi;
+
+  useEffect(() => {
+    if (params.lang && PAGE_UI[params.lang]) {
+      setLang(params.lang as LangKey);
+      AsyncStorage.setItem("appLanguage", params.lang).catch(() => {});
+    }
+  }, [params.lang]);
+
+  // Tự động dịch sang Tiếng Việt ngay khi du khách đang gõ (để lúc bấm nút Mở Thẻ là đọc ngay lập tức)
+  useEffect(() => {
+    let isCancelled = false;
+    const raw = customDietaryNote.trim();
+    if (!raw) {
+      setTranslatedCustomNoteVi("");
+      return;
+    }
+
+    // Dịch tức thì bằng từ điển nội bộ trước
+    setTranslatedCustomNoteVi(translateNoteInstant(raw));
+
+    // Sau đó cập nhật bản dịch chi tiết qua Google Translate API
+    const timer = setTimeout(async () => {
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=${encodeURIComponent(raw)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!isCancelled && Array.isArray(data) && Array.isArray(data[0])) {
+          const translated = data[0]
+            .map((part: any) => part[0])
+            .join("")
+            .trim();
+          if (translated) setTranslatedCustomNoteVi(translated);
+        }
+      } catch (e) {}
+    }, 250);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timer);
+    };
+  }, [customDietaryNote]);
 
   useFocusEffect(
     useCallback(() => {
@@ -216,13 +680,27 @@ export default function HomeScreen() {
         .then((s) => setUser(s ? JSON.parse(s) : null))
         .catch(() => setUser(null));
 
-      AsyncStorage.getItem("appLanguage").then((savedLang) => {
-        if (savedLang && savedLang in LANGS) {
-          setLang(savedLang as LangKey);
-        }
-      });
-    }, []),
+      if (!params.lang) {
+        AsyncStorage.getItem("appLanguage")
+          .then((savedLang) => {
+            if (savedLang && PAGE_UI[savedLang]) {
+              setLang(savedLang as LangKey);
+            }
+          })
+          .catch(() => {});
+      }
+    }, [params.lang]),
   );
+
+  // ĐỒNG BỘ NGÔN NGỮ TỨC THÌ LÊN URL VÀ ASYNCSTORAGE NGAY LẦN BẤM ĐẦU TIÊN
+  const handleSelectLanguage = async (k: LangKey) => {
+    setLang(k);
+    router.setParams({ lang: k });
+    try {
+      await AsyncStorage.setItem("appLanguage", k);
+    } catch (e) {}
+  };
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userAccount");
     setUser(null);
@@ -235,13 +713,18 @@ export default function HomeScreen() {
     return DISHES.filter((d) => {
       const matchCat = cat === "all" || d.cat === cat;
       const q = search.toLowerCase();
-      const matchSearch = (d.name[lang] + d.name.vi + d.desc[lang])
+      const matchSearch = (
+        (d.name[lang] || "") +
+        d.name.vi +
+        (d.desc[lang] || "")
+      )
         .toLowerCase()
         .includes(q);
       return matchCat && matchSearch;
     });
   }, [cat, search, lang]);
 
+  // GIỮ NGUYÊN HÀM PHÁT GIỌNG ĐỌC GỐC ĐỂ KHÔNG BAO GIỜ LỖI GIỌNG ĐỌC AI TIẾNG VIỆT
   const speakText = (text: string, customSpeechCode?: string) => {
     if (
       Platform.OS === "web" &&
@@ -265,12 +748,16 @@ export default function HomeScreen() {
     );
   };
 
+  // DẪN ĐƯỜNG ĐI BỘ CẢ 3 TRẠM: LUÔN MẶC ĐỊNH TRẠM 1 LÀ ĐIỂM KHỞI ĐẦU -> TRẠM 2 -> TRẠM 3 CHO CẢ SÁNG, TRƯA, TỐI
   const handleRouteAllThreeStops = () => {
-    const stops = SCHEDULE_DATA[activeSlot];
-    if (!stops || stops.length < 3) return;
-    const origin = `${stops[0].lat},${stops[0].lng}`;
-    const waypoint = `${stops[1].lat},${stops[1].lng}`;
-    const destination = `${stops[2].lat},${stops[2].lng}`;
+    const rawStops = SCHEDULE_DATA[activeSlot];
+    if (!rawStops || rawStops.length < 3) return;
+
+    const orderedStops = [...rawStops].sort((a, b) => a.order - b.order);
+    const origin = `${orderedStops[0].lat},${orderedStops[0].lng}`;
+    const waypoint = `${orderedStops[1].lat},${orderedStops[1].lng}`;
+    const destination = `${orderedStops[2].lat},${orderedStops[2].lng}`;
+
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoint}&travelmode=walking`;
     Linking.openURL(url);
   };
@@ -285,14 +772,22 @@ export default function HomeScreen() {
     const chosen = DIETARY_OPTIONS.filter((opt) =>
       selectedDietary.includes(opt.id),
     );
-    if (chosen.length === 0) {
+    const extraVi = (
+      translatedCustomNoteVi || translateNoteInstant(customDietaryNote)
+    ).trim();
+
+    const voiceParts = chosen.map((c) => c.voiceText);
+    if (extraVi) {
+      voiceParts.push(`Ngoài ra xin lưu ý giúp tôi: ${extraVi}`);
+    }
+
+    if (voiceParts.length === 0) {
       return "Xin chào chủ quán Hội An, tôi có thể ăn được tất cả các nguyên liệu bình thường. Cảm ơn quán!";
     }
-    return `Xin chào cô chú chủ quán Hội An! Nhờ quán lưu ý giúp tôi: ${chosen
-      .map((c) => c.voiceText)
-      .join(". ")}. Xin cảm ơn rất nhiều!`;
+    return `Xin chào cô chú chủ quán Hội An! Nhờ quán lưu ý giúp tôi: ${voiceParts.join(". ")}. Xin cảm ơn rất nhiều!`;
   };
 
+  // GỌI ĐỒNG BỘ TRỰC TIẾP ĐỂ TRÌNH DUYỆT PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT NGAY LẬP TỨC
   const handleOpenAndSpeakTasteCard = () => {
     setTasteCardVisible(true);
     speakText(buildChefVoiceMessage(), "vi-VN");
@@ -301,16 +796,28 @@ export default function HomeScreen() {
   const qrTargetUrl = `${customUrl}?mobile=1&lang=${lang}${selectedDish ? `&dish=${selectedDish.id}` : ""}`;
   const qrImageUri = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(qrTargetUrl)}`;
 
-  const currentStops = SCHEDULE_DATA[activeSlot];
+  const currentStops = useMemo(
+    () => [...SCHEDULE_DATA[activeSlot]].sort((a, b) => a.order - b.order),
+    [activeSlot],
+  );
+
+  const slotTabs: { key: TimeSlotKey; title: string; timeRange: string }[] = [
+    { key: "morning", title: ui.slotMorning, timeRange: "07:00 - 10:30" },
+    { key: "noon", title: ui.slotNoon, timeRange: "11:00 - 15:00" },
+    { key: "night", title: ui.slotNight, timeRange: "17:00 - 22:00" },
+  ];
+
+  const activeExtraNoteVi = (
+    translatedCustomNoteVi || translateNoteInstant(customDietaryNote)
+  ).trim();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.brandRow}>
-          <Text style={styles.logoEmoji}>🏮</Text>
           <View>
-            <Text style={styles.brandTitle}>HỘI AN FOOD MAP</Text>
-            <Text style={styles.brandSub}>Thuyết Minh Tự Động Đa Ngôn Ngữ</Text>
+            <Text style={styles.brandTitle}>{ui.brandTitle}</Text>
+            <Text style={styles.brandSub}>{ui.brandSub}</Text>
           </View>
         </View>
 
@@ -322,13 +829,13 @@ export default function HomeScreen() {
           {(Object.keys(LANGS) as LangKey[]).map((k) => (
             <TouchableOpacity
               key={k}
-              onPress={() => setLang(k)}
+              onPress={() => handleSelectLanguage(k)}
               style={[styles.langBtn, lang === k && styles.langBtnActive]}
             >
               <Text
                 style={[styles.langBtnText, lang === k && { color: "#fff" }]}
               >
-                {LANGS[k].flag} {LANGS[k].label}
+                {k.toUpperCase()} {LANGS[k].label}
               </Text>
             </TouchableOpacity>
           ))}
@@ -339,44 +846,42 @@ export default function HomeScreen() {
             style={styles.qrTriggerBtn}
             onPress={() => setQrVisible(true)}
           >
-            <Text style={styles.qrTriggerText}>📱 Quét QR Mobile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => router.push("/favorite" as any)}
-          >
-            <Text style={styles.loginBtnText}>❤️ Sổ tay</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.loginBtn}
-            onPress={() => router.push("/language" as any)}
-          >
-            <Text style={styles.loginBtnText}>🌐 Ngôn ngữ</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.userChip}
-            onPress={() => router.push("/profile" as any)}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.userChipText} numberOfLines={1}>
-              👤 {user ? user.name || user.email : "Hồ sơ"}
-            </Text>
+            <Text style={styles.qrTriggerText}>{ui.qrMobileBtn}</Text>
           </TouchableOpacity>
 
           {user ? (
-            <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
-              <Text style={styles.loginBtnText}>Đăng xuất</Text>
-            </TouchableOpacity>
+            <>
+              <View style={styles.userChip}>
+                <Text style={styles.userChipText} numberOfLines={1}>
+                  {user.name || user.email}
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
+                <Text style={styles.loginBtnText}>{ui.logoutBtn}</Text>
+              </TouchableOpacity>
+            </>
           ) : (
-            <TouchableOpacity
-              style={styles.registerBtn}
-              onPress={() => router.push("/login" as any)}
-            >
-              <Text style={styles.registerBtnText}>Đăng nhập</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() =>
+                  router.push({ pathname: "/login" as any, params: { lang } })
+                }
+              >
+                <Text style={styles.loginBtnText}>{ui.loginBtn}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.registerBtn}
+                onPress={() =>
+                  router.push({
+                    pathname: "/register" as any,
+                    params: { lang },
+                  })
+                }
+              >
+                <Text style={styles.registerBtnText}>{ui.registerBtn}</Text>
+              </TouchableOpacity>
+            </>
           )}
         </View>
       </View>
@@ -393,7 +898,7 @@ export default function HomeScreen() {
               <TextInput
                 value={search}
                 onChangeText={setSearch}
-                placeholder="🔍 Tìm món ăn Hội An..."
+                placeholder={ui.searchPlaceholder}
                 placeholderTextColor="#a89a82"
                 style={styles.searchInput}
               />
@@ -403,11 +908,11 @@ export default function HomeScreen() {
                 contentContainerStyle={styles.catRow}
               >
                 {[
-                  ["all", "Tất cả (15)"],
-                  ["main", "🍜 Món chính"],
-                  ["snack", "🥟 Bánh & Ăn vặt"],
-                  ["street", "🥖 Đường phố"],
-                  ["sweet", "🍧 Chè & Đồ uống"],
+                  ["all", ui.catAll],
+                  ["main", ui.catMain],
+                  ["snack", ui.catSnack],
+                  ["street", ui.catStreet],
+                  ["sweet", ui.catSweet],
                 ].map(([key, label]) => (
                   <TouchableOpacity
                     key={key}
@@ -440,9 +945,7 @@ export default function HomeScreen() {
             <Image source={{ uri: item.img }} style={styles.cardImg} />
             <View style={styles.cardBody}>
               <View style={styles.cardMeta}>
-                <Text style={styles.cardPrice}>
-                  {item.emoji} {item.price}
-                </Text>
+                <Text style={styles.cardPrice}>{item.price}</Text>
                 <Text style={styles.cardRating}>★ {item.rating}</Text>
               </View>
               <Text style={styles.cardTitle}>{item.name[lang]}</Text>
@@ -459,7 +962,7 @@ export default function HomeScreen() {
                     speakText(item.desc[lang]);
                   }}
                 >
-                  <Text style={styles.listenBtnText}>🔊 Thuyết minh</Text>
+                  <Text style={styles.listenBtnText}>{ui.listenBtn}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
@@ -469,7 +972,7 @@ export default function HomeScreen() {
                     setQrVisible(true);
                   }}
                 >
-                  <Text style={styles.qrMiniText}>📱 QR</Text>
+                  <Text style={styles.qrMiniText}>{ui.qrShortBtn}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -479,20 +982,16 @@ export default function HomeScreen() {
           <View style={styles.assistantSection}>
             <View style={styles.assistantHeaderRow}>
               <View style={styles.assistantTitleGroup}>
-                <Text style={styles.assistantIcon}>🗓️</Text>
-                <Text style={styles.assistantTitle}>
-                  Trợ Lý Lịch Trình & Thẻ Khẩu Vị
-                </Text>
+                <Text style={styles.assistantTitle}>{ui.assistantTitle}</Text>
               </View>
               <View style={styles.practicalBadge}>
-                <Text style={styles.practicalBadgeText}>THỰC TIỄN</Text>
+                <Text style={styles.practicalBadgeText}>
+                  {ui.practicalBadge}
+                </Text>
               </View>
             </View>
 
-            <Text style={styles.assistantSub}>
-              Gợi ý thực đơn theo 3 khung giờ trong ngày & tạo Thẻ khẩu vị giao
-              tiếp trực tiếp với chủ quán Hội An.
-            </Text>
+            <Text style={styles.assistantSub}>{ui.assistantSub}</Text>
 
             <View
               style={[
@@ -502,7 +1001,7 @@ export default function HomeScreen() {
             >
               <View style={[styles.panelBox, isDesktop && { flex: 1 }]}>
                 <View style={styles.slotTabsRow}>
-                  {SCHEDULE_SLOTS.map((slot) => {
+                  {slotTabs.map((slot) => {
                     const isActive = activeSlot === slot.key;
                     return (
                       <TouchableOpacity
@@ -520,7 +1019,7 @@ export default function HomeScreen() {
                             isActive && styles.slotTabTitleActive,
                           ]}
                         >
-                          {slot.emoji} {slot.title}
+                          {slot.title}
                         </Text>
                         <Text
                           style={[
@@ -538,6 +1037,10 @@ export default function HomeScreen() {
                 <View style={styles.stopsList}>
                   {currentStops.map((stop) => {
                     const isChecked = checkedStops.includes(stop.id);
+                    const stopDishName =
+                      stop.dishName[lang] || stop.dishName.vi;
+                    const stopShopName =
+                      stop.shopName[lang] || stop.shopName.vi;
                     return (
                       <View key={stop.id} style={styles.stopCard}>
                         <View
@@ -560,10 +1063,10 @@ export default function HomeScreen() {
 
                         <View style={styles.stopInfoCol}>
                           <Text style={styles.stopDishTitle}>
-                            {stop.dishName}
+                            {stopDishName}
                           </Text>
                           <Text style={styles.stopShopMeta}>
-                            📍 {stop.shopName} • {stop.hours}
+                            {stopShopName} • {stop.hours}
                           </Text>
                         </View>
 
@@ -585,7 +1088,7 @@ export default function HomeScreen() {
                                 : styles.checkInActionTextPending,
                             ]}
                           >
-                            {isChecked ? "Đã Check-in" : "Check-in Ngay"}
+                            {isChecked ? ui.checkInDone : ui.checkInNow}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -599,29 +1102,24 @@ export default function HomeScreen() {
                   style={styles.walkRouteBtn}
                 >
                   <Text style={styles.walkRouteBtnText}>
-                    🗺️ Dẫn Đường Đi Bộ Cả 3 Trạm Trong Lịch Trình
+                    {ui.walkAllThreeBtn}
                   </Text>
                 </TouchableOpacity>
               </View>
 
               <View style={[styles.panelBox, isDesktop && { flex: 1 }]}>
                 <View style={styles.dietaryHeaderRow}>
-                  <View style={styles.dietaryPlusBadge}>
-                    <Text style={styles.dietaryPlusIcon}>＋</Text>
-                  </View>
                   <Text style={styles.dietaryPanelTitle}>
-                    Thẻ Khẩu Vị & Dị Ứng Giao Tiếp Chủ Quán
+                    {ui.dietaryTitle}
                   </Text>
                 </View>
 
-                <Text style={styles.dietaryPanelSub}>
-                  Chọn lưu ý ăn uống để tạo Thẻ chữ lớn & phát Giọng đọc cho đầu
-                  bếp tại Hội An
-                </Text>
+                <Text style={styles.dietaryPanelSub}>{ui.dietarySub}</Text>
 
                 <View style={styles.dietaryOptionsList}>
                   {DIETARY_OPTIONS.map((opt) => {
                     const isSelected = selectedDietary.includes(opt.id);
+                    const optLabel = opt.label[lang] || opt.label.vi;
                     return (
                       <TouchableOpacity
                         key={opt.id}
@@ -633,14 +1131,13 @@ export default function HomeScreen() {
                         ]}
                       >
                         <View style={styles.dietaryItemLeft}>
-                          <Text style={styles.dietaryEmoji}>{opt.emoji}</Text>
                           <Text
                             style={[
                               styles.dietaryLabel,
                               isSelected && styles.dietaryLabelSelected,
                             ]}
                           >
-                            {opt.label}
+                            {optLabel}
                           </Text>
                         </View>
 
@@ -657,6 +1154,70 @@ export default function HomeScreen() {
                       </TouchableOpacity>
                     );
                   })}
+
+                  {/* MỤC (THÊM): NHẬP GHI CHÚ BẰNG 1 TRONG 5 NGÔN NGỮ -> DỊCH & PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT */}
+                  <TouchableOpacity
+                    activeOpacity={0.85}
+                    onPress={() => setShowCustomNoteBox(!showCustomNoteBox)}
+                    style={[
+                      styles.dietaryItemRow,
+                      (showCustomNoteBox ||
+                        customDietaryNote.trim().length > 0) &&
+                        styles.dietaryItemRowSelected,
+                    ]}
+                  >
+                    <View style={styles.dietaryItemLeft}>
+                      <Text
+                        style={[
+                          styles.dietaryLabel,
+                          (showCustomNoteBox ||
+                            customDietaryNote.trim().length > 0) &&
+                            styles.dietaryLabelSelected,
+                        ]}
+                      >
+                        {ui.addCustomNoteBtn}
+                      </Text>
+                    </View>
+
+                    <View
+                      style={[
+                        styles.dietaryRadioCircle,
+                        (showCustomNoteBox ||
+                          customDietaryNote.trim().length > 0) &&
+                          styles.dietaryRadioCircleSelected,
+                      ]}
+                    >
+                      <Text style={styles.dietaryCheckMark}>
+                        {showCustomNoteBox ||
+                        customDietaryNote.trim().length > 0
+                          ? "✓"
+                          : "+"}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  {(showCustomNoteBox ||
+                    customDietaryNote.trim().length > 0) && (
+                    <View style={styles.customNoteInputWrap}>
+                      <TextInput
+                        value={customDietaryNote}
+                        onChangeText={setCustomDietaryNote}
+                        placeholder={ui.customNotePlaceholder}
+                        placeholderTextColor="#a89a82"
+                        style={styles.customNoteInput}
+                      />
+                      {activeExtraNoteVi ? (
+                        <Text style={styles.customNotePreviewText}>
+                          {ui.customNoteTranslatedPrefix}{" "}
+                          <Text
+                            style={{ color: "#34d399", fontWeight: "bold" }}
+                          >
+                            {activeExtraNoteVi}
+                          </Text>
+                        </Text>
+                      ) : null}
+                    </View>
+                  )}
                 </View>
 
                 <TouchableOpacity
@@ -665,7 +1226,7 @@ export default function HomeScreen() {
                   style={styles.openTasteCardBtn}
                 >
                   <Text style={styles.openTasteCardBtnText}>
-                    🔊 Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc
+                    {ui.openTasteCardBtn}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -703,7 +1264,7 @@ export default function HomeScreen() {
                     onPress={() => speakText(selectedDish.desc[lang])}
                   >
                     <Text style={styles.primaryBtnText}>
-                      🔊 Phát Giọng Đọc ({LANGS[lang].label})
+                      {ui.playVoiceModalBtn} ({LANGS[lang].label})
                     </Text>
                   </TouchableOpacity>
 
@@ -716,7 +1277,7 @@ export default function HomeScreen() {
                     }
                   >
                     <Text style={styles.secondaryBtnText}>
-                      🧭 Chỉ đường Google Maps
+                      {ui.directionsModalBtn}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -725,7 +1286,7 @@ export default function HomeScreen() {
                   style={styles.closeBtn}
                   onPress={() => setSelectedDish(null)}
                 >
-                  <Text style={styles.closeBtnText}>Đóng</Text>
+                  <Text style={styles.closeBtnText}>{ui.closeBtn}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -738,31 +1299,65 @@ export default function HomeScreen() {
           <View style={styles.tasteModalBox}>
             <View style={styles.tasteModalBadge}>
               <Text style={styles.tasteModalBadgeText}>
-                THẺ GIAO TIẾP CHỦ QUÁN HỘI AN
+                {ui.tasteModalBadge}
               </Text>
             </View>
 
-            <Text style={styles.tasteModalHeading}>
-              Xin chào Cô / Chú chủ quán!
-            </Text>
-            <Text style={styles.tasteModalSub}>
-              Nhờ quán chế biến giúp món ăn theo lưu ý khẩu vị sau:
-            </Text>
+            <Text style={styles.tasteModalHeading}>{ui.tasteModalHeading}</Text>
+            <Text style={styles.tasteModalSub}>{ui.tasteModalSub}</Text>
 
             <View style={styles.tasteLargeList}>
-              {selectedDietary.length === 0 ? (
+              {selectedDietary.length === 0 && !activeExtraNoteVi ? (
                 <Text style={styles.tasteLargeItemText}>
-                  ✅ Ăn uống bình thường, không kiêng cữ
+                  {ui.tasteNormalText}
                 </Text>
               ) : (
-                DIETARY_OPTIONS.filter((opt) =>
-                  selectedDietary.includes(opt.id),
-                ).map((opt) => (
-                  <View key={opt.id} style={styles.tasteLargeItem}>
-                    <Text style={styles.tasteLargeEmoji}>{opt.emoji}</Text>
-                    <Text style={styles.tasteLargeItemText}>{opt.label}</Text>
-                  </View>
-                ))
+                <>
+                  {DIETARY_OPTIONS.filter((opt) =>
+                    selectedDietary.includes(opt.id),
+                  ).map((opt) => (
+                    <View key={opt.id} style={styles.tasteLargeItem}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.tasteLargeItemText}>
+                          {opt.label.vi}
+                        </Text>
+                        {lang !== "vi" && (
+                          <Text
+                            style={{
+                              color: "#a89a82",
+                              fontSize: 13,
+                              marginTop: 2,
+                            }}
+                          >
+                            {opt.label[lang] || opt.label.en}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+
+                  {activeExtraNoteVi.length > 0 && (
+                    <View style={styles.tasteLargeItem}>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.tasteLargeItemText}>
+                          Lưu ý thêm: {activeExtraNoteVi}
+                        </Text>
+                        {customDietaryNote.trim().toLowerCase() !==
+                          activeExtraNoteVi.toLowerCase() && (
+                          <Text
+                            style={{
+                              color: "#a89a82",
+                              fontSize: 13,
+                              marginTop: 2,
+                            }}
+                          >
+                            ({customDietaryNote.trim()})
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  )}
+                </>
               )}
             </View>
 
@@ -771,7 +1366,7 @@ export default function HomeScreen() {
               onPress={() => speakText(buildChefVoiceMessage(), "vi-VN")}
             >
               <Text style={styles.openTasteCardBtnText}>
-                🔊 Phát Lại Giọng Đọc Cho Đầu Bếp
+                {ui.replayChefVoiceBtn}
               </Text>
             </TouchableOpacity>
 
@@ -779,7 +1374,7 @@ export default function HomeScreen() {
               style={[styles.closeBtn, { width: "100%", marginTop: 10 }]}
               onPress={() => setTasteCardVisible(false)}
             >
-              <Text style={styles.closeBtnText}>Đóng Thẻ Khẩu Vị</Text>
+              <Text style={styles.closeBtnText}>{ui.closeTasteCardBtn}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -790,12 +1385,9 @@ export default function HomeScreen() {
           <View
             style={[styles.modalBox, { padding: 24, alignItems: "center" }]}
           >
-            <Text style={styles.qrModalTitle}>
-              📱 Quét Mã QR Trên Điện Thoại
-            </Text>
+            <Text style={styles.qrModalTitle}>{ui.qrModalTitle}</Text>
             <Text style={styles.qrModalDesc}>
-              Dùng Camera điện thoại hoặc Zalo quét mã QR dưới đây để mở ngay
-              giao diện Mobile thuyết minh tự động ({LANGS[lang].label}).
+              {ui.qrModalDesc} ({LANGS[lang].label}).
             </Text>
 
             <View style={styles.qrFrame}>
@@ -815,7 +1407,7 @@ export default function HomeScreen() {
               style={[styles.closeBtn, { width: "100%" }]}
               onPress={() => setQrVisible(false)}
             >
-              <Text style={styles.closeBtnText}>Đóng cửa sổ QR</Text>
+              <Text style={styles.closeBtnText}>{ui.closeQrModalBtn}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -840,12 +1432,16 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  logoEmoji: { fontSize: 28 },
-  brandTitle: { color: "#e9c26b", fontSize: 20, fontWeight: "bold" },
-  brandSub: { color: "#a89a82", fontSize: 11 },
+  brandTitle: {
+    color: "#e9c26b",
+    fontSize: 20,
+    fontWeight: "bold",
+    letterSpacing: 0.8,
+  },
+  brandSub: { color: "#a89a82", fontSize: 11, marginTop: 2 },
   langBar: { flexDirection: "row", gap: 6, paddingVertical: 4 },
   langBtn: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
@@ -932,10 +1528,8 @@ const styles = StyleSheet.create({
   assistantTitleGroup: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
     flex: 1,
   },
-  assistantIcon: { fontSize: 20 },
   assistantTitle: {
     color: "#ffffff",
     fontSize: 19,
@@ -1091,29 +1685,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   walkRouteBtnText: {
-    color: "#ffffff",
+    color: "#120f0d",
     fontSize: 14,
     fontWeight: "900",
   },
   dietaryHeaderRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
     marginBottom: 6,
-  },
-  dietaryPlusBadge: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    backgroundColor: "#10b981",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  dietaryPlusIcon: {
-    color: "#090505",
-    fontWeight: "900",
-    fontSize: 15,
-    lineHeight: 17,
   },
   dietaryPanelTitle: {
     color: "#ffffff",
@@ -1149,11 +1728,8 @@ const styles = StyleSheet.create({
   dietaryItemLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
     flex: 1,
-  },
-  dietaryEmoji: {
-    fontSize: 18,
+    paddingRight: 8,
   },
   dietaryLabel: {
     color: "#e5e7eb",
@@ -1168,7 +1744,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: "#9ca3af",
+    backgroundColor: "#4b5563",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -1179,6 +1755,29 @@ const styles = StyleSheet.create({
     color: "#090505",
     fontSize: 13,
     fontWeight: "900",
+  },
+  customNoteInputWrap: {
+    backgroundColor: "#181412",
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: "#10b981",
+    gap: 6,
+  },
+  customNoteInput: {
+    backgroundColor: "#120f0d",
+    color: "#ffffff",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#302924",
+    fontSize: 13,
+  },
+  customNotePreviewText: {
+    color: "#b8b0a8",
+    fontSize: 12,
+    marginTop: 2,
   },
   openTasteCardBtn: {
     backgroundColor: "#059669",
@@ -1319,16 +1918,11 @@ const styles = StyleSheet.create({
     borderColor: "#10b981",
     borderRadius: 14,
     padding: 14,
-    gap: 12,
-  },
-  tasteLargeEmoji: {
-    fontSize: 26,
   },
   tasteLargeItemText: {
     color: "#34d399",
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "bold",
-    flex: 1,
   },
   qrModalTitle: {
     color: "#e9c26b",

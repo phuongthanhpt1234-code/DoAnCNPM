@@ -19,17 +19,16 @@ if (Platform.OS !== 'web') {
 
 type LangCode = 'vi' | 'en' | 'zh' | 'ko' | 'ja' | 'es' | 'ar';
 
-const VOICE_LANGS: { id: LangCode; flag: string; label: string; bcp47: string }[] = [
-  { id: 'vi', flag: '🇻🇳', label: 'Tiếng Việt', bcp47: 'vi-VN' },
-  { id: 'en', flag: '🇬🇧', label: 'English', bcp47: 'en-US' },
-  { id: 'zh', flag: '🇨🇳', label: '中文', bcp47: 'zh-CN' },
-  { id: 'ko', flag: '🇰🇷', label: '한국어', bcp47: 'ko-KR' },
-  { id: 'ja', flag: '🇯🇵', label: '日本語', bcp47: 'ja-JP' },
-  { id: 'es', flag: '🇪🇸', label: 'Español', bcp47: 'es-ES' },
-  { id: 'ar', flag: '🇸🇦', label: 'العربية', bcp47: 'ar-SA' },
+const VOICE_LANGS: { id: LangCode; code: string; label: string; bcp47: string }[] = [
+  { id: 'vi', code: 'VN', label: 'Tiếng Việt', bcp47: 'vi-VN' },
+  { id: 'en', code: 'EN', label: 'English', bcp47: 'en-US' },
+  { id: 'zh', code: 'CN', label: '中文', bcp47: 'zh-CN' },
+  { id: 'ko', code: 'KR', label: '한국어', bcp47: 'ko-KR' },
+  { id: 'ja', code: 'JP', label: '日本語', bcp47: 'ja-JP' },
+  { id: 'es', code: 'ES', label: 'Español', bcp47: 'es-ES' },
+  { id: 'ar', code: 'AR', label: 'العربية', bcp47: 'ar-SA' },
 ];
 
-// DỮ LIỆU ĐA NGÔN NGỮ CHO 3 MẬT THƯ HẺM SÂU (KHÔNG BAO GIỜ BỊ NHẢY VỀ CƠM GÀ BÀ BUỘI)
 const SECRET_CLUES_MULTILINGUAL: Record<string, {
   lat: number;
   lng: number;
@@ -73,7 +72,6 @@ const SECRET_CLUES_MULTILINGUAL: Record<string, {
   }
 };
 
-// NHÃN GIAO DIỆN ĐỒNG BỘ 100% CHO CẢ 7 NGÔN NGỮ (BAO GỒM CẢ CÁC NÚT TRÊN TOP BAR)
 const UI_LABELS: Record<LangCode, {
   studioBadge: string;
   playingStatus: string;
@@ -94,137 +92,137 @@ const UI_LABELS: Record<LangCode, {
   multiStopTag: string;
 }> = {
   vi: {
-    studioBadge: '🎧 THUYẾT MINH VĂN HÓA & NGUYÊN LIỆU MÓN ĂN',
+    studioBadge: 'THUYẾT MINH VĂN HÓA & NGUYÊN LIỆU MÓN ĂN',
     playingStatus: 'Đang phát giọng đọc AI thuyết minh...',
     readyStatus: 'Bấm Play để nghe AI thuyết minh',
-    checkInHoiAnBtn: '🏮 Check-in Tại Hội An (<=20m • +300 XP)',
-    checkInNationalBtn: '🇻🇳 Check-in Toàn Quốc (Từ Xa • +150 XP)',
-    checkedInBtn: '🎉 Đã Lưu Vào Hộ Chiếu Di Sản',
+    checkInHoiAnBtn: 'Check-in Tại Hội An (<=20m • +300 XP)',
+    checkInNationalBtn: 'Check-in Toàn Quốc (Từ Xa • +150 XP)',
+    checkedInBtn: 'Đã Lưu Vào Hộ Chiếu Di Sản',
     walkBtn: 'Chỉ đường',
     hideWalkBtn: 'Ẩn lộ trình',
-    inRadiusText: '🟢 Trong vùng 20m tại Hội An (X2 XP)',
-    nationalModeText: '🇻🇳 GPS Toàn Quốc (Check-in mọi nơi)',
+    inRadiusText: 'Trong vùng 20m tại Hội An (X2 XP)',
+    nationalModeText: 'GPS Toàn Quốc (Check-in mọi nơi)',
     switchRemoteBtn: 'Đổi Từ Xa',
     switchNearBtn: 'Giả lập <=20m',
-    modePin: '📍 Vị trí',
-    modeWalk: '🚶 Đường đi bộ',
-    modeSat: '🛰️ Vệ tinh',
-    multiStopTitle: 'Lộ Trình Đi Bộ Đa Điểm Phố Cổ',
-    multiStopTag: '🚶 Bản đồ nối liền các trạm thưởng thức ẩm thực'
+    modePin: 'Vị trí',
+    modeWalk: 'Đường đi bộ',
+    modeSat: 'Vệ tinh',
+    multiStopTitle: 'Lộ Trình Đi Bộ 3 Trạm (Khởi đầu tại Trạm 1)',
+    multiStopTag: 'Bản đồ xuất phát từ Trạm 1 đi qua Trạm 2 đến Trạm 3'
   },
   en: {
-    studioBadge: '🎧 CULINARY HERITAGE & INGREDIENT NARRATION',
+    studioBadge: 'CULINARY HERITAGE & INGREDIENT NARRATION',
     playingStatus: 'Playing AI culinary voice narration...',
     readyStatus: 'Tap Play to listen to AI narration',
-    checkInHoiAnBtn: '🏮 Check-in at Hoi An (<=20m • +300 XP)',
-    checkInNationalBtn: '🇻🇳 Remote Check-in (+150 XP)',
-    checkedInBtn: '🎉 Saved to Heritage Passport',
+    checkInHoiAnBtn: 'Check-in at Hoi An (<=20m • +300 XP)',
+    checkInNationalBtn: 'Remote Check-in (+150 XP)',
+    checkedInBtn: 'Saved to Heritage Passport',
     walkBtn: 'Directions',
     hideWalkBtn: 'Hide Route',
-    inRadiusText: '🟢 Within 20m in Hoi An (X2 XP)',
-    nationalModeText: '🇻🇳 Nationwide GPS (Check-in Anywhere)',
+    inRadiusText: 'Within 20m in Hoi An (X2 XP)',
+    nationalModeText: 'Nationwide GPS (Check-in Anywhere)',
     switchRemoteBtn: 'Set Remote',
     switchNearBtn: 'Sim <=20m',
-    modePin: '📍 Pin View',
-    modeWalk: '🚶 Walk Route',
-    modeSat: '🛰️ Satellite',
-    multiStopTitle: 'Multi-Stop Ancient Town Walking Tour',
-    multiStopTag: '🚶 Connected walking itinerary across selected stops'
+    modePin: 'Pin View',
+    modeWalk: 'Walk Route',
+    modeSat: 'Satellite',
+    multiStopTitle: '3-Stop Walking Tour (Starting at Stop 1)',
+    multiStopTag: 'Connected walking itinerary from Stop 1 -> Stop 2 -> Stop 3'
   },
   zh: {
-    studioBadge: '🎧 会安美食文化与传统食材语音解说',
+    studioBadge: '会安美食文化与传统食材语音解说',
     playingStatus: '正在播放 AI 美食文化语音解说...',
     readyStatus: '点击播放收听 AI 美食文化讲解',
-    checkInHoiAnBtn: '🏮 会安 20米内打卡 (+300 XP)',
-    checkInNationalBtn: '🇻🇳 全境远程打卡 (+150 XP)',
-    checkedInBtn: '🎉 已成功记入美食护照',
+    checkInHoiAnBtn: '会安 20米内打卡 (+300 XP)',
+    checkInNationalBtn: '全境远程打卡 (+150 XP)',
+    checkedInBtn: '已成功记入美食护照',
     walkBtn: '步行导航',
     hideWalkBtn: '隐藏路线',
-    inRadiusText: '🟢 会安 20米范围内 (双倍积分)',
-    nationalModeText: '🇻🇳 全境自由打卡模式',
+    inRadiusText: '会安 20米范围内 (双倍积分)',
+    nationalModeText: '全境自由打卡模式',
     switchRemoteBtn: '切换远程',
     switchNearBtn: '模拟 <=20m',
-    modePin: '📍 位置视图',
-    modeWalk: '🚶 步行路线',
-    modeSat: '🛰️ 卫星地图',
-    multiStopTitle: '会安古镇多站点美食步行路线',
-    multiStopTag: '🚶 串联所选美食站点的最佳步行导航'
+    modePin: '位置视图',
+    modeWalk: '步行路线',
+    modeSat: '卫星地图',
+    multiStopTitle: '会安古镇三站点步行路线（起点：第 1 站）',
+    multiStopTag: '从第 1 站出发，途经第 2 站，抵达第 3 站'
   },
   ko: {
-    studioBadge: '🎧 호이안 미식 유산 & 식재료 AI 음성 해설',
+    studioBadge: '호이안 미식 유산 & 식재료 AI 음성 해설',
     playingStatus: 'AI 요리 문화 음성 해설 재생 중...',
     readyStatus: '재생 버튼을 눌러 AI 해설 듣기',
-    checkInHoiAnBtn: '🏮 호이안 20m 체크인 (+300 XP)',
-    checkInNationalBtn: '🇻🇳 원격 체크인 (+150 XP)',
-    checkedInBtn: '🎉 미식 패스포트 기록 완료',
+    checkInHoiAnBtn: '호이안 20m 체크인 (+300 XP)',
+    checkInNationalBtn: '원격 체크인 (+150 XP)',
+    checkedInBtn: '미식 패스포트 기록 완료',
     walkBtn: '도보 길찾기',
     hideWalkBtn: '경로 닫기',
-    inRadiusText: '🟢 호이안 반경 20m 내 (2배 포인트)',
-    nationalModeText: '🇻🇳 어디서나 원격 체크인 가능',
+    inRadiusText: '호이안 반경 20m 내 (2배 포인트)',
+    nationalModeText: '어디서나 원격 체크인 가능',
     switchRemoteBtn: '원격 전환',
     switchNearBtn: '20m 시뮬레이션',
-    modePin: '📍 위치 보기',
-    modeWalk: '🚶 도보 경로',
-    modeSat: '🛰️ 위성 지도',
-    multiStopTitle: '호이안 올드타운 다중 경유지 도보 투어',
-    multiStopTag: '🚶 선택한 맛집들을 연결하는 최적 도보 코스'
+    modePin: '위치 보기',
+    modeWalk: '도보 경로',
+    modeSat: '위성 지도',
+    multiStopTitle: '호이안 3개 정류장 도보 투어 (출발: 1번 정류장)',
+    multiStopTag: '1번 정류장에서 출발하여 2번을 거쳐 3번으로 이동하는 코스'
   },
   ja: {
-    studioBadge: '🎧 ホイアン食文化＆伝統食材 AI音声ガイド',
+    studioBadge: 'ホイアン食文化＆伝統食材 AI音声ガイド',
     playingStatus: 'AI食文化ナレーションを再生しています...',
     readyStatus: '再生ボタンを押してAI解説を聞く',
-    checkInHoiAnBtn: '🏮 ホイアン20mチェックイン (+300 XP)',
-    checkInNationalBtn: '🇻🇳 リモートチェックイン (+150 XP)',
-    checkedInBtn: '🎉 グルメパスポートに記録完了',
+    checkInHoiAnBtn: 'ホイアン20mチェックイン (+300 XP)',
+    checkInNationalBtn: 'リモートチェックイン (+150 XP)',
+    checkedInBtn: 'グルメパスポートに記録完了',
     walkBtn: '徒歩ナビ',
     hideWalkBtn: 'ルート非表示',
-    inRadiusText: '🟢 ホイアン半径20m圏内 (ポイント2倍)',
-    nationalModeText: '🇻🇳 どこでもチェックイン可能モード',
+    inRadiusText: 'ホイアン半径20m圏内 (ポイント2倍)',
+    nationalModeText: 'どこでもチェックイン可能モード',
     switchRemoteBtn: '遠隔切替',
     switchNearBtn: '20m接近',
-    modePin: '📍 スポット位置',
-    modeWalk: '🚶 徒歩ルート',
-    modeSat: '🛰️ 衛星写真',
-    multiStopTitle: 'ホイアン旧市街・複数スポット食べ歩きルート',
-    multiStopTag: '🚶 選択した名店を順番に巡る徒歩ナビゲーション'
+    modePin: 'スポット位置',
+    modeWalk: '徒歩ルート',
+    modeSat: '衛星写真',
+    multiStopTitle: 'ホイアン3スポット食べ歩きルート（出発：スポット1）',
+    multiStopTag: 'スポット1を出発点とし、スポット2を経由してスポット3へ案内'
   },
   es: {
-    studioBadge: '🎧 NARRACIÓN IA DE PATRIMONIO E INGREDIENTES',
+    studioBadge: 'NARRACIÓN IA DE PATRIMONIO E INGREDIENTES',
     playingStatus: 'Reproduciendo narración IA...',
     readyStatus: 'Toca Play para escuchar la narración',
-    checkInHoiAnBtn: '🏮 Check-in en Hoi An (+300 XP)',
-    checkInNationalBtn: '🇻🇳 Check-in Remoto (+150 XP)',
-    checkedInBtn: '🎉 Guardado en tu Pasaporte',
+    checkInHoiAnBtn: 'Check-in en Hoi An (+300 XP)',
+    checkInNationalBtn: 'Check-in Remoto (+150 XP)',
+    checkedInBtn: 'Guardado en tu Pasaporte',
     walkBtn: 'Ruta a pie',
     hideWalkBtn: 'Ocultar ruta',
-    inRadiusText: '🟢 Radio de 20m en Hoi An (XP Doble)',
-    nationalModeText: '🇻🇳 Modo Check-in desde cualquier lugar',
+    inRadiusText: 'Radio de 20m en Hoi An (XP Doble)',
+    nationalModeText: 'Modo Check-in desde cualquier lugar',
     switchRemoteBtn: 'Modo Remoto',
     switchNearBtn: 'Simular <=20m',
-    modePin: '📍 Ubicación',
-    modeWalk: '🚶 Ruta a pie',
-    modeSat: '🛰️ Satélite',
-    multiStopTitle: 'Ruta Gastronómica a Pie Multi-Parada',
-    multiStopTag: '🚶 Recorrido conectado por tus paradas seleccionadas'
+    modePin: 'Ubicación',
+    modeWalk: 'Ruta a pie',
+    modeSat: 'Satélite',
+    multiStopTitle: 'Ruta a Pie de 3 Paradas (Inicio en Parada 1)',
+    multiStopTag: 'Recorrido conectado desde la Parada 1 hacia la Parada 2 y 3'
   },
   ar: {
-    studioBadge: '🎧 الشرح الصوتي الذكي لتاريخ ومكونات الطبق',
+    studioBadge: 'الشرح الصوتي الذكي لتاريخ ومكونات الطبق',
     playingStatus: 'جاري تشغيل الشرح الصوتي الذكي...',
     readyStatus: 'اضغط للتشغيل والاستماع إلى الشرح',
-    checkInHoiAnBtn: '🏮 تسجيل الوصول في هوي آن (+300 XP)',
-    checkInNationalBtn: '🇻🇳 تسجيل الوصول عن بعد (+150 XP)',
-    checkedInBtn: '🎉 تم الحفظ في جواز السفر الغذائي',
+    checkInHoiAnBtn: 'تسجيل الوصول في هوي آن (+300 XP)',
+    checkInNationalBtn: 'تسجيل الوصول عن بعد (+150 XP)',
+    checkedInBtn: 'تم الحفظ في جواز السفر الغذائي',
     walkBtn: 'مسار المشي',
     hideWalkBtn: 'إخفاء المسار',
-    inRadiusText: '🟢 ضمن نطاق 20م في هوي آن (نقاط مضاعفة)',
-    nationalModeText: '🇻🇳 وضع تسجيل الوصول الشامل',
+    inRadiusText: 'ضمن نطاق 20م في هوي آن (نقاط مضاعفة)',
+    nationalModeText: 'وضع تسجيل الوصول الشامل',
     switchRemoteBtn: 'وضع بعيد',
     switchNearBtn: 'محاكاة <=20م',
-    modePin: '📍 الموقع',
-    modeWalk: '🚶 مسار المشي',
-    modeSat: '🛰️ قمر صناعي',
-    multiStopTitle: 'مسار المشي متعدد المحطات في هوي آن',
-    multiStopTag: '🚶 خريطة متصلة لجميع محطات الطعام المختارة'
+    modePin: 'الموقع',
+    modeWalk: 'مسار المشي',
+    modeSat: 'قمر صناعي',
+    multiStopTitle: 'مسار المشي لثلاث محطات (البداية من المحطة 1)',
+    multiStopTag: 'خريطة متصلة تبدأ من المحطة 1 مروراً بالمحطة 2 إلى المحطة 3'
   }
 };
 
@@ -242,7 +240,6 @@ export default function MapScreen() {
 
   const allDishesList: any[] = (LocalesData as any).ALL_DISHES_DATA || [];
 
-  // 1. KIỂM TRA CHẾ ĐỘ LỘ TRÌNH ĐA ĐIỂM (KHI NGƯỜI DÙNG BẤM DẪN ĐƯỜNG NHIỀU TRẠM)
   let parsedRouteStops: any[] = [];
   if (params.stopsJson) {
     try {
@@ -254,7 +251,6 @@ export default function MapScreen() {
   }
   const isMultiStopMode = parsedRouteStops.length > 1 || params.isMultiStop === '1';
 
-  // 2. KIỂM TRA CHẾ ĐỘ MẬT THƯ HẺM SÂU AGENT AI (KHÔNG BAO GIỜ NHẢY VỀ CƠM GÀ BÀ BUỘI)
   const detectSecretClueKey = (): string | null => {
     const cid = String(params.clueId || params.id || '');
     if (SECRET_CLUES_MULTILINGUAL[cid]) return cid;
@@ -273,7 +269,6 @@ export default function MapScreen() {
   const secretClueKey = detectSecretClueKey();
   const secretClueObj = secretClueKey ? SECRET_CLUES_MULTILINGUAL[secretClueKey] : null;
 
-  // 3. TÌM MÓN ĂN CHính XÁC THEO ID HOẶC TÊN HOẶC TỌA ĐỘ
   const findExactDish = () => {
     if (secretClueObj || isMultiStopMode) return null;
     if (params.id) {
@@ -296,14 +291,12 @@ export default function MapScreen() {
       const byCoords = allDishesList.find((d: any) => Math.abs(d.lat - pLat) < 0.0001 && Math.abs(d.lng - pLng) < 0.0001);
       if (byCoords) return byCoords;
     }
-    // Chỉ khi không truyền bất kỳ thông tin gì mới dùng món đầu tiên
     if (!params.name && !params.lat) return allDishesList[0];
     return null;
   };
 
   const foundDish = findExactDish();
 
-  // Tọa độ chính xác của mục tiêu
   const foodLat = secretClueObj
     ? secretClueObj.lat
     : isMultiStopMode && parsedRouteStops.length > 0
@@ -323,11 +316,10 @@ export default function MapScreen() {
   const initDist = params.initialDistance ? parseInt(params.initialDistance as string, 10) : 10;
   const [isSimulatedNear, setIsSimulatedNear] = useState<boolean>(initDist <= 20);
   const [userCoords] = useState({
-    lat: isMultiStopMode && parsedRouteStops.length > 0 ? parsedRouteStops[0].lat : (initDist <= 20 ? foodLat - 0.00008 : 15.8755),
-    lng: isMultiStopMode && parsedRouteStops.length > 0 ? parsedRouteStops[0].lng : (initDist <= 20 ? foodLng - 0.00007 : 108.3238)
+    lat: isMultiStopMode && parsedRouteStops.length > 0 ? parsedRouteStops[0].lat : (initDist <= 20 ? foodLat - 0.00008 : 15.8780),
+    lng: isMultiStopMode && parsedRouteStops.length > 0 ? parsedRouteStops[0].lng : (initDist <= 20 ? foodLng - 0.00007 : 108.3285)
   });
 
-  // Nếu là Lộ trình đa điểm hoặc bấm Dẫn đường từ Hộp thư mật -> tự động bật chế độ vẽ đường đi bộ ('walk')
   const [mapMode, setMapMode] = useState<'pin' | 'walk' | 'sat'>(
     isMultiStopMode || params.autoWalk === '1' || secretClueObj ? 'walk' : 'pin'
   );
@@ -370,37 +362,33 @@ export default function MapScreen() {
   const isInside20m = distanceMeters <= 20;
   const uiLabels = UI_LABELS[voiceLang] || UI_LABELS.vi;
 
-  // Lấy thông tin hiển thị (Tên món / Mật thư / Lộ trình) hoàn toàn theo ngôn ngữ `voiceLang`
   const getDisplayContent = (lang: LangCode) => {
     const labels = UI_LABELS[lang] || UI_LABELS.vi;
 
-    // Trường hợp 1: Lộ trình đi bộ nhiều trạm
     if (isMultiStopMode) {
       const stopNames = parsedRouteStops.length > 0
-        ? parsedRouteStops.map((d, idx) => `${idx + 1}. ${d.translations?.[lang]?.name || d.translations?.vi?.name}`).join(' ➔ ')
-        : (params.routeNames as string) || '1 ➔ 2 ➔ 3';
+        ? parsedRouteStops.map((d, idx) => `${idx + 1}. ${d.translations?.[lang]?.name || d.translations?.vi?.name}`).join(' -> ')
+        : (params.routeNames as string) || '1 -> 2 -> 3';
       return {
         name: labels.multiStopTitle,
         shop: stopNames,
         tag: labels.multiStopTag,
         story: lang === 'ja'
-          ? `選択されたスポット（${stopNames}）を順番に巡る徒歩ルートを表示しています。地図の青いルートに沿って古都ホイアンの食べ歩きをお楽しみください。`
+          ? `選択されたスポット（${stopNames}）をスポット1から順番に巡る徒歩ルートを表示しています。`
           : lang === 'en'
-            ? `Active walking itinerary connecting: ${stopNames}. Follow the blue walking path on the map to enjoy each culinary stop in order.`
+            ? `Active walking itinerary starting from Stop 1: ${stopNames}.`
             : lang === 'zh'
-              ? `已为您规划串联以下美食站点的步行路线：${stopNames}。请沿着地图上的路线依次品尝会安古镇美食。`
+              ? `已为您规划从第1站出发串联以下美食站点的步行路线：${stopNames}。`
               : lang === 'ko'
-                ? `선택하신 맛집 코스(${stopNames})를 연결하는 도보 길찾기입니다. 지도의 안내선을 따라 이동해 보세요.`
-                : `Lộ trình đi bộ kết nối các trạm: ${stopNames}. Bản đồ phía trên đã vẽ sẵn đường đi bộ ngắn nhất nối từ trạm đầu tiên đến trạm cuối cùng.`
+                ? `1번 정류장을 출발점으로 하여 선택하신 맛집 코스(${stopNames})를 연결하는 도보 길찾기입니다.`
+                : `Lộ trình đi bộ bắt đầu từ Trạm 1 nối tiếp qua các trạm: ${stopNames}.`
       };
     }
 
-    // Trường hợp 2: Mật thư Hẻm Sâu Agent AI
     if (secretClueObj) {
       return secretClueObj.translations[lang] || secretClueObj.translations.vi;
     }
 
-    // Trường hợp 3: Món ăn trong danh sách 25 món
     if (foundDish && foundDish.translations) {
       const tr = foundDish.translations[lang] || foundDish.translations.vi;
       return {
@@ -411,7 +399,6 @@ export default function MapScreen() {
       };
     }
 
-    // Trường hợp 4: Địa điểm tùy chỉnh khác truyền qua params
     return {
       name: (params.name as string) || 'Đặc sản Hội An',
       shop: (params.shopVi as string) || 'Phố Cổ Hội An',
@@ -505,12 +492,16 @@ export default function MapScreen() {
     } catch (e) {}
   };
 
+  // MẶC ĐỊNH TRẠM 1 LÀ ĐIỂM KHỞI ĐẦU (saddr) -> ĐI QUA TRẠM 2 -> KẾT THÚC Ở TRẠM 3 (daddr)
   const getEmbeddedMapUrl = () => {
     const satParam = mapMode === 'sat' ? '&t=k' : '';
     if (isMultiStopMode && parsedRouteStops.length >= 2) {
-      const first = parsedRouteStops[0];
-      const last = parsedRouteStops[parsedRouteStops.length - 1];
-      return `https://maps.google.com/maps?saddr=${first.lat},${first.lng}&daddr=${last.lat},${last.lng}&dirflg=w${satParam}&output=embed`;
+      const stop1 = parsedRouteStops[0];
+      const remainingStops = parsedRouteStops
+        .slice(1)
+        .map((s: any) => `${s.lat},${s.lng}`)
+        .join('+to:');
+      return `https://maps.google.com/maps?saddr=${stop1.lat},${stop1.lng}&daddr=${remainingStops}&dirflg=w${satParam}&output=embed`;
     }
     if (mapMode === 'walk') {
       return `https://maps.google.com/maps?saddr=${userCoords.lat},${userCoords.lng}&daddr=${foodLat},${foodLng}&dirflg=w${satParam}&output=embed`;
@@ -533,12 +524,11 @@ export default function MapScreen() {
     <View style={[styles.container, { backgroundColor: theme.bg }]}>
       {toastMsg ? (
         <View style={styles.toastBox}>
-          <Ionicons name="sparkles" size={16} color="#120F0D" />
           <Text style={styles.toastText}>{toastMsg}</Text>
         </View>
       ) : null}
       
-      {/* THANH TOP BAR ĐỒNG BỘ 100% NGÔN NGỮ & HIỂN THỊ ĐÚNG ĐỊA ĐIỂM */}
+      {/* THANH TOP BAR */}
       <View style={[styles.topBar, { backgroundColor: theme.cardBg, borderColor: isInside20m ? theme.green : theme.border }]}>
         <View style={styles.topBarRow}>
           <TouchableOpacity style={[styles.backBtn, { backgroundColor: theme.subBox }]} onPress={() => { stopDishNarration(); router.back(); }}>
@@ -550,7 +540,7 @@ export default function MapScreen() {
               {isInside20m ? `${uiLabels.inRadiusText} (${distanceMeters}m)` : uiLabels.nationalModeText}
             </Text>
             <Text style={{ color: theme.textSub, fontSize: 11 }} numberOfLines={1}>
-              📍 {displayContent.shop} ({foodLat.toFixed(4)}°N, {foodLng.toFixed(4)}°E)
+              {displayContent.shop} ({foodLat.toFixed(4)}°N, {foodLng.toFixed(4)}°E)
             </Text>
           </View>
 
@@ -592,7 +582,7 @@ export default function MapScreen() {
         </MapView>
       )}
 
-      {/* BẢNG THUYẾT MINH MÓN ĂN (ĐÃ SỬA LỖI CẮT CHỮ TIÊU ĐỀ TIẾNG NHẬT) */}
+      {/* BẢNG THUYẾT MINH MÓN ĂN */}
       <View style={[styles.bottomSheet, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 6, paddingBottom: 16 }}>
           
@@ -602,7 +592,7 @@ export default function MapScreen() {
           <Text style={[styles.dishName, { color: theme.textMain }]}>
             {displayContent.name}
           </Text>
-          <Text style={[styles.dishTag, { color: theme.green }]}>✨ {displayContent.tag}</Text>
+          <Text style={[styles.dishTag, { color: theme.green }]}>{displayContent.tag}</Text>
 
           {/* PHÒNG THU GIỌNG ĐỌC AI 7 NGÔN NGỮ */}
           <View style={[styles.aiBox, { backgroundColor: theme.subBox, borderColor: isSpeaking ? theme.green : theme.border }]}>
@@ -615,7 +605,9 @@ export default function MapScreen() {
                     style={[styles.langChip, { backgroundColor: active ? theme.green : theme.cardBg, borderColor: theme.border }]}
                     onPress={() => handleSelectVoiceLang(vl.id)}
                   >
-                    <Text style={{ fontSize: 13, marginRight: 4 }}>{vl.flag}</Text>
+                    <Text style={{ color: active ? '#FFFFFF' : theme.textSub, fontSize: 10, fontWeight: 'bold', marginRight: 5 }}>
+                      {vl.code}
+                    </Text>
                     <Text style={{ color: active ? '#FFFFFF' : theme.textMain, fontSize: 12, fontWeight: active ? 'bold' : '500' }}>
                       {vl.label}
                     </Text>
@@ -679,7 +671,6 @@ export default function MapScreen() {
               style={[styles.checkInBtn, { backgroundColor: isCheckedIn ? theme.green : (isInside20m ? '#059669' : theme.accent) }]} 
               onPress={handleDualModeCheckIn}
             >
-              <Ionicons name={isCheckedIn ? "checkmark-circle" : "location"} size={18} color="#FFFFFF" />
               <Text style={styles.checkInBtnText} numberOfLines={1}>
                 {isCheckedIn 
                   ? uiLabels.checkedInBtn 
@@ -690,11 +681,19 @@ export default function MapScreen() {
             <TouchableOpacity 
               style={[styles.walkBtn, { borderColor: theme.accent }]} 
               onPress={() => {
+                if (isMultiStopMode && parsedRouteStops.length >= 2) {
+                  const stop1 = parsedRouteStops[0];
+                  const lastStop = parsedRouteStops[parsedRouteStops.length - 1];
+                  const middle = parsedRouteStops.slice(1, -1).map((s: any) => `${s.lat},${s.lng}`).join('|');
+                  const url = `https://www.google.com/maps/dir/?api=1&origin=${stop1.lat},${stop1.lng}${middle ? `&waypoints=${encodeURIComponent(middle)}` : ''}&destination=${lastStop.lat},${lastStop.lng}&travelmode=walking`;
+                  if (Platform.OS === 'web') window.open(url, '_blank');
+                  else Linking.openURL(url);
+                  return;
+                }
                 if (Platform.OS === 'web') setMapMode(mapMode === 'walk' ? 'pin' : 'walk');
                 else Linking.openURL(`https://www.google.com/maps/dir/?api=1&destination=${foodLat},${foodLng}&travelmode=walking`);
               }}
             >
-              <Ionicons name="walk" size={18} color={theme.accent} />
               <Text style={[styles.walkBtnText, { color: theme.accent }]}>
                 {mapMode === 'walk' ? uiLabels.hideWalkBtn : uiLabels.walkBtn}
               </Text>
@@ -709,7 +708,7 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, maxWidth: 480, width: '100%', alignSelf: 'center' },
   toastBox: { position: 'absolute', top: 115, left: 20, right: 20, zIndex: 50, backgroundColor: '#10B981', paddingVertical: 10, paddingHorizontal: 14, borderRadius: 12, flexDirection: 'row', alignItems: 'center', elevation: 10 },
-  toastText: { color: '#120F0D', fontSize: 12, fontWeight: 'bold', marginLeft: 8, flex: 1 },
+  toastText: { color: '#120F0D', fontSize: 12, fontWeight: 'bold', flex: 1, textAlign: 'center' },
   topBar: { position: 'absolute', top: 10, left: 12, right: 12, zIndex: 20, borderRadius: 16, padding: 10, borderWidth: 1.5, elevation: 8 },
   topBarRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   backBtn: { padding: 7, borderRadius: 10 },
@@ -734,7 +733,7 @@ const styles = StyleSheet.create({
 
   bottomActions: { flexDirection: 'row', gap: 8 },
   checkInBtn: { flex: 1.8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 13, paddingHorizontal: 8, borderRadius: 12 },
-  checkInBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: 'bold', marginLeft: 6 },
+  checkInBtnText: { color: '#FFFFFF', fontSize: 12, fontWeight: 'bold' },
   walkBtn: { flex: 0.9, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 13, borderRadius: 12, borderWidth: 1.5 },
-  walkBtnText: { fontSize: 12, fontWeight: 'bold', marginLeft: 4 }
+  walkBtnText: { fontSize: 12, fontWeight: 'bold' }
 });
