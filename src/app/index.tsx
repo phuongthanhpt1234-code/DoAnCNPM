@@ -210,15 +210,19 @@ export default function HomeScreen() {
     null,
   );
 
-  // Mỗi lần màn hình được focus (kể cả khi quay lại từ login/register) thì đọc lại tài khoản
   useFocusEffect(
     useCallback(() => {
       AsyncStorage.getItem("userAccount")
         .then((s) => setUser(s ? JSON.parse(s) : null))
         .catch(() => setUser(null));
+
+      AsyncStorage.getItem("appLanguage").then((savedLang) => {
+        if (savedLang && savedLang in LANGS) {
+          setLang(savedLang as LangKey);
+        }
+      });
     }, []),
   );
-
   const handleLogout = async () => {
     await AsyncStorage.removeItem("userAccount");
     setUser(null);
@@ -338,32 +342,41 @@ export default function HomeScreen() {
             <Text style={styles.qrTriggerText}>📱 Quét QR Mobile</Text>
           </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => router.push("/favorite" as any)}
+          >
+            <Text style={styles.loginBtnText}>❤️ Sổ tay</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={() => router.push("/language" as any)}
+          >
+            <Text style={styles.loginBtnText}>🌐 Ngôn ngữ</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.userChip}
+            onPress={() => router.push("/profile" as any)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.userChipText} numberOfLines={1}>
+              👤 {user ? user.name || user.email : "Hồ sơ"}
+            </Text>
+          </TouchableOpacity>
+
           {user ? (
-            <>
-              <View style={styles.userChip}>
-                <Text style={styles.userChipText} numberOfLines={1}>
-                  👤 {user.name || user.email}
-                </Text>
-              </View>
-              <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
-                <Text style={styles.loginBtnText}>Đăng xuất</Text>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
+              <Text style={styles.loginBtnText}>Đăng xuất</Text>
+            </TouchableOpacity>
           ) : (
-            <>
-              <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={() => router.push("/login" as any)}
-              >
-                <Text style={styles.loginBtnText}>Đăng nhập</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.registerBtn}
-                onPress={() => router.push("/register" as any)}
-              >
-                <Text style={styles.registerBtnText}>Đăng ký</Text>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              style={styles.registerBtn}
+              onPress={() => router.push("/login" as any)}
+            >
+              <Text style={styles.registerBtnText}>Đăng nhập</Text>
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -602,8 +615,8 @@ export default function HomeScreen() {
                 </View>
 
                 <Text style={styles.dietaryPanelSub}>
-                  Chọn lưu ý ăn uống để tạo Thẻ chữ lớn & phát Giọng đọc AI cho
-                  đầu bếp tại Hội An:
+                  Chọn lưu ý ăn uống để tạo Thẻ chữ lớn & phát Giọng đọc cho đầu
+                  bếp tại Hội An
                 </Text>
 
                 <View style={styles.dietaryOptionsList}>
@@ -652,7 +665,7 @@ export default function HomeScreen() {
                   style={styles.openTasteCardBtn}
                 >
                   <Text style={styles.openTasteCardBtnText}>
-                    🔊 Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc AI
+                    🔊 Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -758,7 +771,7 @@ export default function HomeScreen() {
               onPress={() => speakText(buildChefVoiceMessage(), "vi-VN")}
             >
               <Text style={styles.openTasteCardBtnText}>
-                🔊 Phát Lại Giọng Đọc AI Cho Đầu Bếp
+                🔊 Phát Lại Giọng Đọc Cho Đầu Bếp
               </Text>
             </TouchableOpacity>
 

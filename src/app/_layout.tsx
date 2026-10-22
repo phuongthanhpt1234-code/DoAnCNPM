@@ -2,7 +2,10 @@ import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { TouchableOpacity, Text } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
+import "../locales";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "i18next";
+import { useEffect } from "react";
 // Nút quay về trang chủ dùng chung cho login và register
 const BackHomeButton = () => (
   <TouchableOpacity
@@ -15,6 +18,11 @@ const BackHomeButton = () => (
 );
 
 export default function RootLayout() {
+  useEffect(() => {
+    AsyncStorage.getItem("appLanguage").then((l) => {
+      if (l) i18n.changeLanguage(l);
+    });
+  }, []);
   return (
     <>
       <StatusBar style="light" />
@@ -47,6 +55,15 @@ export default function RootLayout() {
             headerLeft: () => <BackHomeButton />,
           }}
         />
+        <Stack.Screen name="explore" options={{ headerShown: false }} />
+        <Stack.Screen name="map" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+        <Stack.Screen name="security" options={{ headerShown: false }} />
+        <Stack.Screen name="notifications" options={{ headerShown: false }} />
+        <Stack.Screen name="support" options={{ headerShown: false }} />
+        <Stack.Screen name="favorite" options={{ headerShown: false }} />
+        <Stack.Screen name="language" options={{ headerShown: false }} />
       </Stack>
     </>
   );
