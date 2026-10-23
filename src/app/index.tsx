@@ -46,17 +46,166 @@ interface DietaryOption {
 
 // TỪ ĐIỂN ẨM THỰC TỨC THÌ (ĐẢM BẢO DỊCH NGAY LẬP TỨC KHI BẤM PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT)
 const QUICK_CULINARY_DICT: { patterns: string[]; vi: string }[] = [
-  { patterns: ["no onion", "without onion", "不要洋葱", "不放洋葱", "양파 빼", "양파 없이", "玉ねぎ抜き", "たまねぎ抜き", "không hành tây"], vi: "không bỏ hành tây" },
-  { patterns: ["no scallion", "no green onion", "no spring onion", "不要葱", "不放葱", "파 빼", "파 없이", "ネギ抜き", "ねぎ抜き", "không hành lá", "không hành"], vi: "không bỏ hành lá" },
-  { patterns: ["no cilantro", "no coriander", "不要香菜", "不放香菜", "고수 빼", "고수 없이", "パクチー抜き", "香菜抜き", "không rau mùi", "không ngò"], vi: "không bỏ rau mùi và hành ngò" },
-  { patterns: ["no garlic", "without garlic", "不要蒜", "不放蒜", "마늘 빼", "마늘 없이", "ニンニク抜き", "にんにく抜き", "không tỏi"], vi: "không bỏ tỏi" },
-  { patterns: ["less sugar", "no sugar", "low sugar", "少糖", "无糖", "설탕 적게", "설탕 빼", "甘さ控えめ", "砂糖抜き", "ít đường", "không đường"], vi: "giảm ngọt, cho ít đường" },
-  { patterns: ["less salt", "low salt", "no salt", "少盐", "싱겁게", "소금 적게", "塩分控えめ", "ít mặn", "nhạt hơn"], vi: "nêm nhạt, cho ít muối" },
-  { patterns: ["no shrimp", "shrimp allergy", "seafood allergy", "no seafood", "海鲜过敏", "不要虾", "새우 알레르기", "해산물 알레르기", "새우 빼", "エビ抜き", "甲殻類アレルギー", "dị ứng hải sản", "không tôm"], vi: "tôi dị ứng hải sản, xin không bỏ tôm cua" },
-  { patterns: ["no pork", "without pork", "no meat", "不要猪肉", "不吃猪肉", "돼지고기 빼", "豚肉抜き", "không thịt heo", "không mỡ"], vi: "không bỏ thịt heo và mỡ heo" },
-  { patterns: ["no fish sauce", "without fish sauce", "不要鱼露", "피쉬소스 빼", "느억맘 빼", "魚醤抜き", "ヌクマム抜き", "không nước mắm"], vi: "không dùng nước mắm" },
-  { patterns: ["less oil", "no oil", "少油", "기름 적게", "油少なめ", "ít dầu mỡ"], vi: "chế biến ít dầu mỡ" },
-  { patterns: ["less ice", "no ice", "少冰", "去冰", "얼음 적게", "얼음 빼", "氷少なめ", "氷抜き", "ít đá", "không đá"], vi: "cho ít đá hoặc không đá" },
+  {
+    patterns: [
+      "no onion",
+      "without onion",
+      "不要洋葱",
+      "不放洋葱",
+      "양파 빼",
+      "양파 없이",
+      "玉ねぎ抜き",
+      "たまねぎ抜き",
+      "không hành tây",
+    ],
+    vi: "không bỏ hành tây",
+  },
+  {
+    patterns: [
+      "no scallion",
+      "no green onion",
+      "no spring onion",
+      "不要葱",
+      "不放葱",
+      "파 빼",
+      "파 없이",
+      "ネギ抜き",
+      "ねぎ抜き",
+      "không hành lá",
+      "không hành",
+    ],
+    vi: "không bỏ hành lá",
+  },
+  {
+    patterns: [
+      "no cilantro",
+      "no coriander",
+      "不要香菜",
+      "不放香菜",
+      "고수 빼",
+      "고수 없이",
+      "パクチー抜き",
+      "香菜抜き",
+      "không rau mùi",
+      "không ngò",
+    ],
+    vi: "không bỏ rau mùi và hành ngò",
+  },
+  {
+    patterns: [
+      "no garlic",
+      "without garlic",
+      "不要蒜",
+      "不放蒜",
+      "마늘 빼",
+      "마늘 없이",
+      "ニンニク抜き",
+      "にんにく抜き",
+      "không tỏi",
+    ],
+    vi: "không bỏ tỏi",
+  },
+  {
+    patterns: [
+      "less sugar",
+      "no sugar",
+      "low sugar",
+      "少糖",
+      "无糖",
+      "설탕 적게",
+      "설탕 빼",
+      "甘さ控えめ",
+      "砂糖抜き",
+      "ít đường",
+      "không đường",
+    ],
+    vi: "giảm ngọt, cho ít đường",
+  },
+  {
+    patterns: [
+      "less salt",
+      "low salt",
+      "no salt",
+      "少盐",
+      "싱겁게",
+      "소금 적게",
+      "塩分控えめ",
+      "ít mặn",
+      "nhạt hơn",
+    ],
+    vi: "nêm nhạt, cho ít muối",
+  },
+  {
+    patterns: [
+      "no shrimp",
+      "shrimp allergy",
+      "seafood allergy",
+      "no seafood",
+      "海鲜过敏",
+      "不要虾",
+      "새우 알레르기",
+      "해산물 알레르기",
+      "새우 빼",
+      "エビ抜き",
+      "甲殻類アレルギー",
+      "dị ứng hải sản",
+      "không tôm",
+    ],
+    vi: "tôi dị ứng hải sản, xin không bỏ tôm cua",
+  },
+  {
+    patterns: [
+      "no pork",
+      "without pork",
+      "no meat",
+      "不要猪肉",
+      "不吃猪肉",
+      "돼지고기 빼",
+      "豚肉抜き",
+      "không thịt heo",
+      "không mỡ",
+    ],
+    vi: "không bỏ thịt heo và mỡ heo",
+  },
+  {
+    patterns: [
+      "no fish sauce",
+      "without fish sauce",
+      "不要鱼露",
+      "피쉬소스 빼",
+      "느억맘 빼",
+      "魚醤抜き",
+      "ヌクマム抜き",
+      "không nước mắm",
+    ],
+    vi: "không dùng nước mắm",
+  },
+  {
+    patterns: [
+      "less oil",
+      "no oil",
+      "少油",
+      "기름 적게",
+      "油少なめ",
+      "ít dầu mỡ",
+    ],
+    vi: "chế biến ít dầu mỡ",
+  },
+  {
+    patterns: [
+      "less ice",
+      "no ice",
+      "少冰",
+      "去冰",
+      "얼음 적게",
+      "얼음 빼",
+      "氷少なめ",
+      "氷抜き",
+      "ít đá",
+      "không đá",
+    ],
+    vi: "cho ít đá hoặc không đá",
+  },
 ];
 
 function translateNoteInstant(rawText: string): string {
@@ -147,8 +296,10 @@ const PAGE_UI: Record<
     dietaryTitle: "Thẻ Khẩu Vị & Dị Ứng Giao Tiếp Chủ Quán",
     dietarySub:
       "Chọn lưu ý ăn uống để tạo Thẻ chữ lớn & phát Giọng đọc AI cho đầu bếp tại Hội An:",
-    addCustomNoteBtn: "+ Thêm ghi chú khẩu vị khác (Dịch & phát giọng đọc Tiếng Việt)",
-    customNotePlaceholder: "Nhập yêu cầu thêm (VD: Không hành ngò, ít mỡ, không tỏi...)",
+    addCustomNoteBtn:
+      "+ Thêm ghi chú khẩu vị khác (Dịch & phát giọng đọc Tiếng Việt)",
+    customNotePlaceholder:
+      "Nhập yêu cầu thêm (VD: Không hành ngò, ít mỡ, không tỏi...)",
     customNoteTranslatedPrefix: "Nội dung phát Tiếng Việt cho chủ quán:",
     openTasteCardBtn: "Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc AI",
     playVoiceModalBtn: "Phát Giọng Đọc",
@@ -193,8 +344,10 @@ const PAGE_UI: Record<
     dietaryTitle: "Dietary & Allergy Communication Card",
     dietarySub:
       "Select dietary preferences to display a large-text card & play Vietnamese audio for the chef in Hoi An:",
-    addCustomNoteBtn: "+ Add custom dietary note (Auto-translated to Vietnamese voice)",
-    customNotePlaceholder: "Type any extra request (e.g. No onion, no cilantro, less sugar...)",
+    addCustomNoteBtn:
+      "+ Add custom dietary note (Auto-translated to Vietnamese voice)",
+    customNotePlaceholder:
+      "Type any extra request (e.g. No onion, no cilantro, less sugar...)",
     customNoteTranslatedPrefix: "Vietnamese voice for Chef:",
     openTasteCardBtn: "Open Chef Card & Play AI Voice",
     playVoiceModalBtn: "Play Voice Narration",
@@ -202,7 +355,8 @@ const PAGE_UI: Record<
     closeBtn: "Close",
     tasteModalBadge: "COMMUNICATION CARD FOR HOI AN CHEF",
     tasteModalHeading: "Hello Restaurant Owner / Chef!",
-    tasteModalSub: "Please kindly prepare my dish with the following dietary notes:",
+    tasteModalSub:
+      "Please kindly prepare my dish with the following dietary notes:",
     tasteNormalText: "Normal diet, no restrictions",
     replayChefVoiceBtn: "Replay Vietnamese Voice for Chef",
     closeTasteCardBtn: "Close Dietary Card",
@@ -239,7 +393,8 @@ const PAGE_UI: Record<
     dietaryTitle: "展示给店主的饮食偏好与过敏沟通卡",
     dietarySub: "勾选饮食注意事项以生成大字卡，并向会安厨师播放越南语语音：",
     addCustomNoteBtn: "+ 添加其他饮食备注（自动翻译并朗读越南语）",
-    customNotePlaceholder: "输入其他忌口要求（如：不要香菜、不要洋葱、少糖...）",
+    customNotePlaceholder:
+      "输入其他忌口要求（如：不要香菜、不要洋葱、少糖...）",
     customNoteTranslatedPrefix: "已翻译为越南语供厨师收听：",
     openTasteCardBtn: "打开店主沟通卡并播放语音",
     playVoiceModalBtn: "播放语音讲解",
@@ -283,8 +438,10 @@ const PAGE_UI: Record<
     dietaryTitle: "식당 주인 소통용 식단 & 알레르기 카드",
     dietarySub:
       "식이 유의사항을 선택하여 호이안 요리사에게 큰 글씨 카드와 베트남어 음성을 전달하세요:",
-    addCustomNoteBtn: "+ 기타 식단 요청사항 추가 (베트남어 자동 번역 및 음성 안내)",
-    customNotePlaceholder: "추가 요청 입력 (예: 고수 빼주세요, 양파 빼주세요, 덜 달게...)",
+    addCustomNoteBtn:
+      "+ 기타 식단 요청사항 추가 (베트남어 자동 번역 및 음성 안내)",
+    customNotePlaceholder:
+      "추가 요청 입력 (예: 고수 빼주세요, 양파 빼주세요, 덜 달게...)",
     customNoteTranslatedPrefix: "요리사용 베트남어 번역:",
     openTasteCardBtn: "주방장 제시용 카드 열기 & 음성 재생",
     playVoiceModalBtn: "음성 해설 재생",
@@ -330,7 +487,8 @@ const PAGE_UI: Record<
     dietarySub:
       "食事の注意点を選択して、大きな文字のカードとベトナム語音声で料理人に伝えます：",
     addCustomNoteBtn: "+ その他の要望を追加（ベトナム語に自動翻訳＆音声再生）",
-    customNotePlaceholder: "追加の要望を入力（例：パクチー抜き、玉ねぎ抜き、甘さ控えめ...）",
+    customNotePlaceholder:
+      "追加の要望を入力（例：パクチー抜き、玉ねぎ抜き、甘さ控えめ...）",
     customNoteTranslatedPrefix: "料理人向けベトナム語翻訳：",
     openTasteCardBtn: "カードを表示してベトナム語音声を再生",
     playVoiceModalBtn: "音声ガイドを再生",
@@ -726,15 +884,65 @@ export default function HomeScreen() {
 
   // GIỮ NGUYÊN HÀM PHÁT GIỌNG ĐỌC GỐC ĐỂ KHÔNG BAO GIỜ LỖI GIỌNG ĐỌC AI TIẾNG VIỆT
   const speakText = (text: string, customSpeechCode?: string) => {
-    if (
-      Platform.OS === "web" &&
-      typeof window !== "undefined" &&
-      "speechSynthesis" in window
-    ) {
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = customSpeechCode || LANGS[lang].speechCode;
-      window.speechSynthesis.speak(utter);
+    const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
+
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      // Hủy âm thanh cũ đang phát (nếu có)
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if ((window as any).__currentAudio) {
+        (window as any).__currentAudio.pause();
+      }
+
+      // Hàm dự phòng: Phát trực tiếp qua HTML5 Audio nếu trình duyệt thiếu giọng Tiếng Việt
+      const playFallbackOnlineVoice = () => {
+        try {
+          const shortLang = targetLang.split("-")[0];
+          const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
+            text,
+          )}&tl=${shortLang}&client=tw-ob`;
+          const audio = new window.Audio(url);
+          (window as any).__currentAudio = audio;
+          audio.play().catch((err) => console.warn("Audio play error:", err));
+        } catch (e) {}
+      };
+
+      if ("speechSynthesis" in window) {
+        // Đợi 120ms sau khi cancel() để Cốc Cốc/Chrome không nuốt mất câu đọc mới
+        setTimeout(() => {
+          const voices = window.speechSynthesis.getVoices();
+          const matchedVoice = voices.find((v) =>
+            v.lang
+              .toLowerCase()
+              .replace("_", "-")
+              .startsWith(targetLang.toLowerCase().slice(0, 2)),
+          );
+
+          if (!matchedVoice && targetLang.toLowerCase().startsWith("vi")) {
+            playFallbackOnlineVoice();
+            return;
+          }
+
+          const utter = new SpeechSynthesisUtterance(text);
+
+          (window as any).__currentUtter = utter;
+          utter.lang = targetLang;
+          utter.rate = 0.95;
+
+          if (matchedVoice) {
+            utter.voice = matchedVoice;
+          }
+
+          utter.onerror = () => {
+            playFallbackOnlineVoice();
+          };
+
+          window.speechSynthesis.speak(utter);
+        }, 120);
+      } else {
+        playFallbackOnlineVoice();
+      }
     } else if (!customSpeechCode) {
       router.push(`/dish/${selectedDish?.id || 1}?lang=${lang}`);
     }
@@ -963,16 +1171,6 @@ export default function HomeScreen() {
                   }}
                 >
                   <Text style={styles.listenBtnText}>{ui.listenBtn}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.qrMiniBtn}
-                  onPress={() => {
-                    setSelectedDish(item);
-                    setQrVisible(true);
-                  }}
-                >
-                  <Text style={styles.qrMiniText}>{ui.qrShortBtn}</Text>
                 </TouchableOpacity>
               </View>
             </View>
