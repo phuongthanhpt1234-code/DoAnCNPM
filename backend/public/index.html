@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Theo Dấu Vị Hội – Bảng quản trị</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1ec;--panel:#fff;--ink:#17302d;--muted:#5d716d;--line:#d5ddd6;--green:#1f5c52;--on-green:#fff;--wall:#d9a21b;--red:#b8322a;--bar:#1f5c52}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1b19;--panel:#16282508;--panel:#172a27;--ink:#e6efe9;--muted:#93aaa4;--line:#2a403c;--green:#5fb3a2;--on-green:#0f1b19;--wall:#e8b73a;--red:#e56a60;--bar:#5fb3a2}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Be Vietnam Pro",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;border-bottom:4px solid var(--wall);padding-bottom:12px}
+h1{margin:0;font-size:26px;font-weight:800;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted)}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin:20px 0;background:var(--green);color:var(--on-green);border-radius:6px}
+.strip div{padding:14px 18px;border-left:1px solid rgba(255,255,255,.25)}
+.strip div:first-child{border-left:0}
+.strip b{display:block;font-size:28px;font-weight:800;line-height:1.1}
+.strip span{font-size:13px;opacity:.9}
+.grid{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:20px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+section{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:20px}
+h2{margin:0 0 12px;font-size:17px;font-weight:600}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{background:transparent;border:1px solid var(--line);border-radius:4px;padding:7px 9px;width:100%}
+.tools input{flex:1 1 180px;width:auto}.tools select{flex:0 1 160px;width:auto}
+button{cursor:pointer;border:1px solid var(--line);background:transparent;border-radius:4px;padding:7px 12px}
+button.primary{background:var(--green);color:var(--on-green);border-color:var(--green);font-weight:600}
+button.danger{color:var(--red)}
+:focus-visible{outline:2px solid var(--wall);outline-offset:2px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:520px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:13px}
+td small{display:block;color:var(--muted)}
+td.act{white-space:nowrap;text-align:right}
+.off{color:var(--muted)}
+.bars{display:flex;align-items:flex-end;gap:8px;height:130px}
+.bars div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:12px;color:var(--muted)}
+.bars i{display:block;width:100%;background:var(--bar);border-radius:3px 3px 0 0;min-height:2px}
+.bars b{color:var(--ink);font-weight:600}
+ol,ul{margin:0;padding:0;list-style:none}
+li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line)}
+li:last-child{border-bottom:0}
+li small{color:var(--muted);display:block}
+.empty{color:var(--muted);margin:8px 0}
+dialog{border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);padding:20px;width:min(480px,94vw)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+label{display:block;margin-bottom:10px;font-size:13px;color:var(--muted)}
+label input,label select,label textarea{margin-top:4px;color:var(--ink)}
+.row{display:flex;gap:10px}.row label{flex:1}
+.check{display:flex;align-items:center;gap:8px;color:var(--ink);font-size:15px}.check input{width:auto;margin:0}
+.foot{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+#msg{color:var(--red);min-height:1.4em;margin:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Theo Dấu Vị Hội</h1>
+    <p>Bảng quản trị món ăn và lượt check-in</p>
+  </header>
+  <p id="msg" role="alert"></p>
+  <div class="strip" id="strip"></div>
+  <div class="grid">
+    <div>
+      <section>
+        <h2>Món ăn</h2>
+        <div class="tools">
+          <input id="q" type="search" placeholder="Tìm theo tên món" aria-label="Tìm theo tên món">
+          <select id="cat" aria-label="Lọc theo danh mục"><option value="">Tất cả danh mục</option></select>
+          <button class="primary" id="add">Thêm món</button>
+        </div>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Món</th><th>Danh mục</th><th>Giá</th><th>Yêu thích</th><th></th></tr></thead>
+          <tbody id="dishes"></tbody>
+        </table></div>
+        <p class="empty" id="noDish" hidden>Chưa có món nào khớp. Bấm “Thêm món” để tạo món đầu tiên.</p>
+      </section>
+    </div>
+    <div>
+      <section>
+        <h2>Check-in 7 ngày gần nhất</h2>
+        <div class="bars" id="bars"></div>
+      </section>
+      <section>
+        <h2>Món được yêu thích nhất</h2>
+        <ol id="top"></ol>
+      </section>
+      <section>
+        <h2>Check-in mới nhất</h2>
+        <ul id="recent"></ul>
+        <p class="empty" id="noCheck" hidden>Chưa có lượt check-in nào từ ứng dụng.</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <form method="dialog" id="form">
+    <h2 id="dlgTitle">Thêm món</h2>
+    <label>Tên món<input name="name" required></label>
+    <div class="row">
+      <label>Danh mục<select name="category_id"></select></label>
+      <label>Giá (VNĐ)<input name="price_vnd" type="number" min="0" step="1000"></label>
+    </div>
+    <label>Mô tả<textarea name="description" rows="3"></textarea></label>
+    <label>Địa chỉ quán<input name="address"></label>
+    <label>Đường dẫn ảnh<input name="image_url"></label>
+    <label class="check"><input type="checkbox" name="is_active" checked> Hiển thị trong ứng dụng</label>
+    <p id="formErr" style="color:var(--red);margin:0"></p>
+    <div class="foot"><button type="button" id="cancel">Huỷ</button><button class="primary" type="submit">Lưu món</button></div>
+  </form>
+</dialog>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const vnd = (n) => n == null ? '—' : Number(n).toLocaleString('vi-VN') + ' đ';
+const dmy = (d) => new Date(d).toLocaleString('vi-VN', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+let dishes = [], cats = [], editing = null;
+
+async function api(path, opts = {}) {
+  const r = await fetch('/api' + path, { headers: {'Content-Type':'application/json'}, ...opts });
+  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.message || 'Lỗi ' + r.status); }
+  return r.status === 204 ? null : r.json();
+}
+
+async function loadStats() {
+  const [s, c] = await Promise.all([api('/stats'), api('/checkins?limit=8')]);
+  const t = s.totals;
+  $('#strip').innerHTML = [['Món ăn',t.dishes],['Danh mục',t.categories],['Lượt yêu thích',t.favorites],['Lượt check-in',t.check_ins],['Thiết bị',t.devices]]
+    .map(([l,v]) => `<div><b>${v}</b><span>${l}</span></div>`).join('');
+  const max = Math.max(1, ...s.daily.map((d) => d.n));
+  $('#bars').innerHTML = s.daily.map((d) =>
+    `<div title="${esc(d.day)}"><b>${d.n}</b><i style="height:${Math.round(d.n / max * 90)}%"></i>${esc(d.day.slice(8))}/${esc(d.day.slice(5,7))}</div>`).join('');
+  $('#top').innerHTML = s.top.map((d) =>
+    `<li><span>${esc(d.name)}<small>${d.check_ins} check-in</small></span><b>${d.favorites}</b></li>`).join('');
+  $('#recent').innerHTML = c.map((x) =>
+    `<li><span>${esc(x.dish_name)}<small>${esc(x.note || 'Không có ghi chú')}</small></span><small>${dmy(x.created_at)}</small></li>`).join('');
+  $('#noCheck').hidden = c.length > 0;
+}
+
+async function loadDishes() {
+  const p = new URLSearchParams();
+  if ($('#q').value) p.set('q', $('#q').value);
+  if ($('#cat').value) p.set('category_id', $('#cat').value);
+  dishes = await api('/dishes?' + p);
+  $('#dishes').innerHTML = dishes.map((d) => `
+    <tr class="${d.is_active ? '' : 'off'}">
+      <td><b>${esc(d.name)}</b><small>${esc(d.description || '')}${d.is_active ? '' : ' (đang ẩn)'}</small></td>
+      <td>${esc(d.category_name || '—')}</td><td>${vnd(d.price_vnd)}</td><td>${d.favorite_count}</td>
+      <td class="act"><button data-edit="${d.id}">Sửa</button> <button class="danger" data-del="${d.id}">Xoá</button></td>
+    </tr>`).join('');
+  $('#noDish').hidden = dishes.length > 0;
+}
+
+async function loadCats() {
+  cats = await api('/categories');
+  $('#cat').innerHTML = '<option value="">Tất cả danh mục</option>' + cats.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  document.querySelector('[name=category_id]').innerHTML = '<option value="">Chưa phân loại</option>' + cats.map((c) => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+}
+
+function openForm(d) {
+  editing = d;
+  const f = $('#form');
+  $('#dlgTitle').textContent = d ? 'Sửa món' : 'Thêm món';
+  f.name.value = d?.name ?? ''; f.category_id.value = d?.category_id ?? '';
+  f.price_vnd.value = d?.price_vnd ?? ''; f.description.value = d?.description ?? '';
+  f.address.value = d?.address ?? ''; f.image_url.value = d?.image_url ?? '';
+  f.is_active.checked = d ? d.is_active : true;
+  $('#formErr').textContent = '';
+  $('#dlg').showModal();
+}
+
+$('#add').onclick = () => openForm(null);
+$('#cancel').onclick = () => $('#dlg').close();
+$('#dishes').onclick = async (e) => {
+  const id = e.target.dataset.edit || e.target.dataset.del;
+  if (!id) return;
+  if (e.target.dataset.edit) return openForm(dishes.find((d) => d.id == id));
+  if (!confirm('Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.')) return;
+  try { await api('/dishes/' + id, { method: 'DELETE' }); await refresh(); } catch (err) { $('#msg').textContent = err.message; }
+};
+$('#form').onsubmit = async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const body = {
+    name: f.name.value.trim(), category_id: f.category_id.value ? Number(f.category_id.value) : null,
+    price_vnd: f.price_vnd.value ? Number(f.price_vnd.value) : null, description: f.description.value || null,
+    address: f.address.value || null, image_url: f.image_url.value || null, is_active: f.is_active.checked,
+  };
+  try {
+    await api(editing ? '/dishes/' + editing.id : '/dishes', { method: editing ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    $('#dlg').close(); await refresh();
+  } catch (err) { $('#formErr').textContent = err.message; }
+};
+let t; $('#q').oninput = () => { clearTimeout(t); t = setTimeout(loadDishes, 250); };
+$('#cat').onchange = loadDishes;
+
+async function refresh() { await Promise.all([loadDishes(), loadStats()]); }
+(async () => {
+  try { await loadCats(); await refresh(); }
+  catch (err) { $('#msg').textContent = 'Không kết nối được API: ' + err.message + '. Kiểm tra backend và DATABASE_URL trong file .env.'; }
+})();
+</script>
+</body>
+</html>

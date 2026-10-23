@@ -41,3 +41,7 @@ example
 # generated native folders
 /ios
 /android
+
+backend/.env
+backend/node_modules/
+backend/dist/

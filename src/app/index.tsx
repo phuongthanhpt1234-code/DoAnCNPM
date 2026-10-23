@@ -16,6 +16,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { DISHES, Dish, LANGS, LangKey } from "../data/dishesData";
+import { getDishes } from "../services/api";
 
 type TimeSlotKey = "morning" | "noon" | "night";
 
@@ -756,6 +757,98 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const params = useLocalSearchParams<{ lang?: string; dish?: string }>();
 
+  const [apiDishes, setApiDishes] = useState<Dish[]>(DISHES);
+  const [apiLoading, setApiLoading] = useState(true);
+  const [apiError, setApiError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const CAT_BY_NAME: Record<string, string> = {
+      "Món chính": "main",
+      "Ăn vặt": "snack",
+      "Đường phố": "street",
+      "Đồ uống": "sweet",
+      "Chè & Đồ uống": "sweet",
+    };
+
+    async function loadDishes() {
+      try {
+        const rows: any[] = await getDishes();
+
+        if (cancelled) return;
+
+        const converted: Dish[] = rows
+          .filter((row) => row.is_active !== false)
+          .map((row) => {
+            const localDish = DISHES.find(
+              (d) =>
+                d.name.vi.trim().toLowerCase() ===
+                String(row.name).trim().toLowerCase(),
+            );
+
+            const base: Dish = localDish ?? {
+              id: 1000 + row.id,
+              cat: "main",
+              emoji: "🍜",
+              price: "Đang cập nhật",
+              rating: 0,
+              lat: 15.877,
+              lng: 108.327,
+              img: "",
+              name: {
+                vi: row.name,
+                en: row.name,
+                zh: row.name,
+                ko: row.name,
+                ja: row.name,
+              },
+              desc: {
+                vi: row.description ?? "",
+                en: row.description ?? "",
+                zh: row.description ?? "",
+                ko: row.description ?? "",
+                ja: row.description ?? "",
+              },
+            };
+
+            return {
+              ...base,
+              name: { ...base.name, vi: row.name },
+              desc: { ...base.desc, vi: row.description ?? base.desc.vi },
+              img: row.image_url || base.img,
+              price:
+                row.price_vnd != null
+                  ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
+                  : base.price,
+              cat: CAT_BY_NAME[row.category_name] ?? localDish?.cat ?? "main",
+            };
+          });
+
+        setApiDishes(converted);
+        console.log("API OK:", converted.length, "món");
+        setApiError("");
+      } catch (err) {
+        console.log("API LỖI:", err);
+        if (!cancelled) {
+          setApiError(
+            err instanceof Error ? err.message : "Không tải được món ăn",
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setApiLoading(false);
+        }
+      }
+    }
+
+    loadDishes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const [lang, setLang] = useState<LangKey>((params.lang as LangKey) || "vi");
   const [cat, setCat] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
@@ -798,7 +891,6 @@ export default function HomeScreen() {
     }
   }, [params.lang]);
 
-  // Tự động dịch sang Tiếng Việt ngay khi du khách đang gõ (để lúc bấm nút Mở Thẻ là đọc ngay lập tức)
   useEffect(() => {
     let isCancelled = false;
     const raw = customDietaryNote.trim();
@@ -807,10 +899,8 @@ export default function HomeScreen() {
       return;
     }
 
-    // Dịch tức thì bằng từ điển nội bộ trước
     setTranslatedCustomNoteVi(translateNoteInstant(raw));
 
-    // Sau đó cập nhật bản dịch chi tiết qua Google Translate API
     const timer = setTimeout(async () => {
       try {
         const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=vi&dt=t&q=${encodeURIComponent(raw)}`;
@@ -850,7 +940,6 @@ export default function HomeScreen() {
     }, [params.lang]),
   );
 
-  // ĐỒNG BỘ NGÔN NGỮ TỨC THÌ LÊN URL VÀ ASYNCSTORAGE NGAY LẦN BẤM ĐẦU TIÊN
   const handleSelectLanguage = async (k: LangKey) => {
     setLang(k);
     router.setParams({ lang: k });
@@ -868,7 +957,7 @@ export default function HomeScreen() {
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
 
   const filtered = useMemo(() => {
-    return DISHES.filter((d) => {
+    return apiDishes.filter((d) => {
       const matchCat = cat === "all" || d.cat === cat;
       const q = search.toLowerCase();
       const matchSearch = (
@@ -880,9 +969,8 @@ export default function HomeScreen() {
         .includes(q);
       return matchCat && matchSearch;
     });
-  }, [cat, search, lang]);
+  }, [apiDishes, cat, search, lang]);
 
-  // GIỮ NGUYÊN HÀM PHÁT GIỌNG ĐỌC GỐC ĐỂ KHÔNG BAO GIỜ LỖI GIỌNG ĐỌC AI TIẾNG VIỆT
   const speakText = (text: string, customSpeechCode?: string) => {
     const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
 
@@ -895,7 +983,6 @@ export default function HomeScreen() {
         (window as any).__currentAudio.pause();
       }
 
-      // Hàm dự phòng: Phát trực tiếp qua HTML5 Audio nếu trình duyệt thiếu giọng Tiếng Việt
       const playFallbackOnlineVoice = () => {
         try {
           const shortLang = targetLang.split("-")[0];
@@ -909,7 +996,6 @@ export default function HomeScreen() {
       };
 
       if ("speechSynthesis" in window) {
-        // Đợi 120ms sau khi cancel() để Cốc Cốc/Chrome không nuốt mất câu đọc mới
         setTimeout(() => {
           const voices = window.speechSynthesis.getVoices();
           const matchedVoice = voices.find((v) =>
