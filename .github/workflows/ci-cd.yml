@@ -98,5 +98,3 @@ jobs:
       - name: Publish Over-The-Air (OTA) Update
         if: env.EXPO_TOKEN != ''
         run: npx eas-cli@latest update --auto --non-interactive
-npx tsc --noEmit
-npx expo lint
