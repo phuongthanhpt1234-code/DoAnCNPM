@@ -849,7 +849,16 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     };
   }, []);
 
-  const [lang, setLang] = useState<LangKey>((params.lang as LangKey) || "vi");
+  const [languageSelection, setLanguageSelection] = useState<{
+    route: string | undefined;
+    value: LangKey;
+  }>(() => ({ route: params.lang, value: (params.lang as LangKey) || "vi" }));
+  const lang: LangKey = languageSelection.route === params.lang
+    ? languageSelection.value
+    : params.lang && PAGE_UI[params.lang] ? params.lang as LangKey : "vi";
+  const setLang = useCallback((value: LangKey) => {
+    setLanguageSelection({ route: params.lang, value });
+  }, [params.lang]);
   const [cat, setCat] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(
@@ -875,8 +884,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   // STATE CHO MỤC (THÊM): NHẬP GHI CHÚ BẰNG BẤT KỲ NGÔN NGỮ NÀO -> DỊCH & ĐỌC TIẾNG VIỆT
   const [showCustomNoteBox, setShowCustomNoteBox] = useState<boolean>(false);
   const [customDietaryNote, setCustomDietaryNote] = useState<string>("");
-  const [translatedCustomNoteVi, setTranslatedCustomNoteVi] =
-    useState<string>("");
+  const [remoteTranslation, setRemoteTranslation] = useState({ source: "", text: "" });
+  const noteSource = customDietaryNote.trim();
+  const translatedCustomNoteVi = !noteSource ? ""
+    : remoteTranslation.source === noteSource ? remoteTranslation.text
+    : translateNoteInstant(noteSource);
 
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(
     null,
@@ -886,7 +898,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   useEffect(() => {
     if (params.lang && PAGE_UI[params.lang]) {
-      setLang(params.lang as LangKey);
       AsyncStorage.setItem("appLanguage", params.lang).catch(() => {});
     }
   }, [params.lang]);
@@ -894,12 +905,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   useEffect(() => {
     let isCancelled = false;
     const raw = customDietaryNote.trim();
-    if (!raw) {
-      setTranslatedCustomNoteVi("");
-      return;
-    }
-
-    setTranslatedCustomNoteVi(translateNoteInstant(raw));
+    if (!raw) return;
 
     const timer = setTimeout(async () => {
       try {
@@ -911,7 +917,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             .map((part: any) => part[0])
             .join("")
             .trim();
-          if (translated) setTranslatedCustomNoteVi(translated);
+          if (translated) setRemoteTranslation({ source: raw, text: translated });
         }
       } catch (e) {}
     }, 250);
@@ -937,7 +943,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           })
           .catch(() => {});
       }
-    }, [params.lang]),
+    }, [params.lang, setLang]),
   );
 
   const handleSelectLanguage = async (k: LangKey) => {
