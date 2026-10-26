@@ -341,9 +341,13 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
   }, []);
 
   useEffect(() => {
-    const clean = ((i18n.language || 'vi').split('-')[0].toLowerCase()) as LangCode;
-    if (UI_LABELS[clean]) setVoiceLang(clean);
-  }, [i18n.language]);
+    const onLanguageChanged = (language: string) => {
+      const clean = language.split('-')[0].toLowerCase() as LangCode;
+      if (UI_LABELS[clean]) setVoiceLang(clean);
+    };
+    i18n.on('languageChanged', onLanguageChanged);
+    return () => { i18n.off('languageChanged', onLanguageChanged); };
+  }, [i18n]);
 
   useEffect(() => {
     if (isSpeaking) {
