@@ -780,7 +780,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
         const converted: Dish[] = rows
           .filter((row) => row.is_active !== false)
-          .map((row) => {
+   .map((row): Dish => {
             const localDish = DISHES.find(
               (d) =>
                 d.name.vi.trim().toLowerCase() ===
