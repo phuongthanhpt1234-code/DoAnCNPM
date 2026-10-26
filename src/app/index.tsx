@@ -764,7 +764,7 @@ export default function HomeScreen() {
   useEffect(() => {
     let cancelled = false;
 
-    const CAT_BY_NAME: Record<string, string> = {
+const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       "Món chính": "main",
       "Ăn vặt": "snack",
       "Đường phố": "street",
