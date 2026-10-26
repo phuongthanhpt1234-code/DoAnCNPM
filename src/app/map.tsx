@@ -325,8 +325,8 @@ export default function MapScreen() {
   );
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
-
-  const waveAnim = useRef(new Animated.Value(0.3)).current;
+  
+const [waveAnim] = useState(() => new Animated.Value(0.3));
 
   useEffect(() => {
     AsyncStorage.getItem('appThemeMode').then(saved => {
