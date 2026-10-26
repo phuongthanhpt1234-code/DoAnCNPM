@@ -660,8 +660,8 @@ export default function MapScreen() {
 
             <View style={[styles.scriptCard, { borderLeftColor: theme.green }]}>
               <Text style={[styles.scriptText, { color: theme.textMain }]}>
-                "{pureScript}"
-              </Text>
+  {`"${pureScript}"`}
+</Text>
             </View>
           </View>
 
