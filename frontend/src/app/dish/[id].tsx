@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,18 +9,62 @@ import {
   Linking,
 } from "react-native";
 import { useLocalSearchParams } from "expo-router";
-import { DISHES, LANGS } from "../../data/dishesData";
+import { DISHES, Dish, LANGS, LangKey } from "../../data/dishesData";
+import {
+  api,
+  ApiDish,
+  notifyPresenceLangChange,
+  startPresenceSession,
+} from "../../services/api";
 
 export default function DishDetailScreen() {
   const { id, lang: paramLang } = useLocalSearchParams<{
     id: string;
     lang?: string;
   }>();
-  const [lang, setLang] = useState<"vi" | "en" | "zh" | "ko" | "ja">(
-    (paramLang as any) || "vi",
+  const [lang, setLang] = useState<LangKey>(
+    (paramLang as LangKey) || "vi",
   );
 
-  const dish = DISHES.find((d) => d.id === Number(id)) || DISHES[0];
+  useEffect(() => {
+    const cleanup = startPresenceSession(() => lang);
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    notifyPresenceLangChange(lang);
+  }, [lang]);
+
+  const fallbackDish = DISHES.find((d) => d.id === Number(id)) || DISHES[0];
+  const [dish, setDish] = useState<Dish>(fallbackDish);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    api<ApiDish>(`/dishes/${id}`)
+      .then((row) => {
+        if (cancelled || !row) return;
+        setDish({
+          id: row.id,
+          cat: (row.category_slug as Dish["cat"]) || fallbackDish.cat,
+          emoji: row.emoji || fallbackDish.emoji,
+          price:
+            row.price_vnd != null
+              ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
+              : fallbackDish.price,
+          rating: row.rating != null ? Number(row.rating) : fallbackDish.rating,
+          lat: row.lat != null ? Number(row.lat) : fallbackDish.lat,
+          lng: row.lng != null ? Number(row.lng) : fallbackDish.lng,
+          img: row.image_url || fallbackDish.img,
+          name: row.name_i18n || fallbackDish.name,
+          desc: row.desc_i18n || fallbackDish.desc,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [id, fallbackDish]);
 
   const openGoogleMaps = () => {
     Linking.openURL(
@@ -37,13 +81,13 @@ export default function DishDetailScreen() {
         {Object.entries(LANGS).map(([key, item]) => (
           <TouchableOpacity
             key={key}
-            onPress={() => setLang(key as any)}
+            onPress={() => setLang(key as LangKey)}
             style={[styles.langBtn, lang === key && styles.langBtnActive]}
           >
             <Text
               style={[styles.langText, lang === key && styles.langTextActive]}
             >
-              {item.flag} {key.toUpperCase()}
+              {key.toUpperCase()}
             </Text>
           </TouchableOpacity>
         ))}
@@ -51,21 +95,21 @@ export default function DishDetailScreen() {
 
       <View style={styles.body}>
         <Text style={styles.price}>
-          {dish.emoji} {dish.price} · ★ {dish.rating}
+          {dish.price}
         </Text>
-        <Text style={styles.title}>{dish.name[lang]}</Text>
+        <Text style={styles.title}>{dish.name[lang] || dish.name.vi}</Text>
         <Text style={styles.subtitle}>Tên gốc: {dish.name.vi}</Text>
 
         <View style={styles.card}>
           <Text style={styles.sectionHeader}>
-            🎧 Nội dung thuyết minh ({LANGS[lang].label})
+            Nội dung thuyết minh ({LANGS[lang].label})
           </Text>
-          <Text style={styles.desc}>{dish.desc[lang]}</Text>
+          <Text style={styles.desc}>{dish.desc[lang] || dish.desc.vi}</Text>
         </View>
 
         <TouchableOpacity style={styles.mapBtn} onPress={openGoogleMaps}>
           <Text style={styles.mapBtnText}>
-            🧭 Chỉ đường đến quán (Google Maps)
+            Chỉ đường đến quán (Google Maps)
           </Text>
         </TouchableOpacity>
       </View>

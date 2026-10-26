@@ -9,10 +9,27 @@ export const ah =
 
 export function errorHandler(err: any, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof ZodError) {
-    return res.status(400).json({ message: 'Dữ liệu không hợp lệ', issues: err.issues });
+    return res.status(400).json({
+      code: 'VALIDATION_ERROR',
+      message: 'Dữ liệu không hợp lệ',
+      issues: err.issues,
+    });
   }
-  if (err?.code === '23503') return res.status(400).json({ message: 'Tham chiếu tới dữ liệu không tồn tại' });
-  if (err?.code === '23505') return res.status(409).json({ message: 'Dữ liệu đã tồn tại' });
+  if (err?.code === '23503') {
+    return res.status(400).json({
+      code: 'FOREIGN_KEY_ERROR',
+      message: 'Tham chiếu tới dữ liệu không tồn tại',
+    });
+  }
+  if (err?.code === '23505') {
+    return res.status(409).json({
+      code: 'DUPLICATE_ERROR',
+      message: 'Dữ liệu đã tồn tại',
+    });
+  }
   console.error(err);
-  res.status(500).json({ message: 'Lỗi máy chủ' });
+  res.status(500).json({
+    code: 'INTERNAL_ERROR',
+    message: 'Lỗi máy chủ',
+  });
 }

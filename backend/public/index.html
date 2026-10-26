@@ -3,129 +3,809 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Theo Dấu Vị Hội – Bảng quản trị</title>
+    <title>THEO DẤU VỊ HỘI – Bảng Quản Trị Đa Ngôn Ngữ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg: #eef1ec;
-        --panel: #fff;
-        --ink: #17302d;
-        --muted: #5d716d;
-        --line: #d5ddd6;
-        --green: #1f5c52;
-        --on-green: #fff;
-        --wall: #d9a21b;
-        --red: #b8322a;
-        --bar: #1f5c52;
+        --bg: #090505;
+        --header-bg: #140909;
+        --panel: #160c0c;
+        --panel-alt: #14110f;
+        --card-item: #1c1815;
+        --input-bg: #120a0a;
+        --ink: #f5ead4;
+        --ink-white: #ffffff;
+        --muted: #a89a82;
+        --desc: #d6c7b2;
+        --gold: #e9c26b;
+        --gold-border: rgba(233, 194, 107, 0.22);
+        --gold-border-strong: rgba(233, 194, 107, 0.45);
+        --dark-border: #302924;
+        --crimson: #d4152f;
+        --crimson-hover: #b81127;
+        --emerald: #10b981;
+        --emerald-bg: #0c291e;
+        --emerald-badge: #047857;
+        --amber: #f59e0b;
+        --danger: #f87171;
       }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --bg: #0f1b19;
-          --panel: #16282508;
-          --panel: #172a27;
-          --ink: #e6efe9;
-          --muted: #93aaa4;
-          --line: #2a403c;
-          --green: #5fb3a2;
-          --on-green: #0f1b19;
-          --wall: #e8b73a;
-          --red: #e56a60;
-          --bar: #5fb3a2;
-        }
-      }
+
       * {
         box-sizing: border-box;
       }
+
+      [hidden] {
+        display: none !important;
+      }
+
       body {
         margin: 0;
         background: var(--bg);
         color: var(--ink);
         font:
-          15px/1.5 "Be Vietnam Pro",
+          14px/1.5 "Be Vietnam Pro",
+          "Segoe UI",
+          Roboto,
           system-ui,
+          -apple-system,
           sans-serif;
+        min-height: 100vh;
       }
-      .wrap {
-        max-width: 1180px;
+
+      /* BỐ CỤC CHÍNH GỒM SIDEBAR (THANH BÊN) + NỘI DUNG */
+      .app-shell {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 268px;
+        background: var(--header-bg);
+        border-right: 1px solid var(--gold-border);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        padding: 20px 14px;
+        flex-shrink: 0;
+        z-index: 40;
+      }
+
+      .sidebar-brand {
+        padding: 4px 10px 16px;
+        border-bottom: 1px solid var(--gold-border);
+        margin-bottom: 14px;
+      }
+
+      .sidebar-brand h1 {
+        margin: 0;
+        color: var(--gold);
+        font-size: 19px;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+      }
+
+      .sidebar-brand p {
+        margin: 4px 0 0;
+        color: var(--muted);
+        font-size: 11.5px;
+        line-height: 1.4;
+      }
+
+      .sidebar-label {
+        font-size: 10.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--muted);
+        padding: 0 12px;
+        margin: 6px 0 8px;
+      }
+
+      .nav-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .nav-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 14px;
+        border-radius: 14px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--desc);
+        font-size: 13.5px;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.16s ease;
+      }
+
+      .nav-btn:hover {
+        background: rgba(233, 194, 107, 0.09);
+        border-color: var(--gold-border);
+        color: var(--ink-white);
+      }
+
+      .nav-btn.active {
+        background: linear-gradient(90deg, var(--crimson), #9e0f23);
+        border-color: var(--gold);
+        color: #ffffff;
+        font-weight: 700;
+        box-shadow: 0 6px 18px rgba(212, 21, 47, 0.32);
+      }
+
+      .nav-btn-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .nav-icon {
+        font-size: 16px;
+        width: 22px;
+        text-align: center;
+      }
+
+      .nav-badge {
+        font-size: 11px;
+        font-weight: 800;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: rgba(233, 194, 107, 0.15);
+        color: var(--gold);
+        border: 1px solid var(--gold-border);
+      }
+
+      .nav-btn.active .nav-badge {
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+
+      .nav-badge.live {
+        background: rgba(16, 185, 129, 0.2);
+        color: #34d399;
+        border-color: rgba(16, 185, 129, 0.45);
+      }
+
+      .sidebar-foot {
+        padding-top: 14px;
+        border-top: 1px solid var(--gold-border);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sidebar-foot button {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 14px;
+      }
+
+      .sidebar-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11.5px;
+        color: var(--muted);
+        padding: 6px 8px 0;
+      }
+
+      .main-area {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .topbar {
+        background: var(--header-bg);
+        border-bottom: 1px solid var(--gold-border);
+        padding: 14px 24px;
+        position: sticky;
+        top: 0;
+        z-index: 30;
+      }
+
+      .topbar-inner {
+        max-width: 1320px;
         margin: 0 auto;
-        padding: 20px 16px 48px;
-      }
-      header {
         display: flex;
         flex-wrap: wrap;
-        align-items: baseline;
-        gap: 8px 16px;
-        border-bottom: 4px solid var(--wall);
-        padding-bottom: 12px;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
       }
-      h1 {
+
+      .page-heading h1 {
         margin: 0;
-        font-size: 26px;
+        color: var(--ink-white);
+        font-size: 19px;
         font-weight: 800;
-        letter-spacing: -0.01em;
       }
-      header p {
+
+      .page-heading p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      @media (max-width: 960px) {
+        .app-shell {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          height: auto;
+          position: static;
+          border-right: 0;
+          border-bottom: 1px solid var(--gold-border);
+        }
+        .nav-list {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+        .nav-btn {
+          flex: 1 1 auto;
+          width: auto;
+        }
+      }
+
+      .grid.single-col {
+        grid-template-columns: 1fr;
+      }
+
+      .sub-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 20px;
+      }
+
+      /* BỘ 3 BIỂU ĐỒ TRỰC TIẾP: CỘT - TRÒN - ĐƯỜNG */
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      @media (max-width: 1080px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .chart-card {
+        background: var(--panel);
+        border: 1px solid var(--gold-border);
+        border-radius: 20px;
+        padding: 16px 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 280px;
+      }
+
+      .chart-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .chart-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .chart-title-wrap h3 {
         margin: 0;
+        font-size: 15.5px;
+        font-weight: 700;
+        color: var(--ink-white);
+      }
+
+      .chart-sub {
+        font-size: 11.5px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+
+      .mini-tabs {
+        display: inline-flex;
+        background: var(--bg);
+        border: 1px solid var(--gold-border);
+        border-radius: 14px;
+        padding: 2px;
+      }
+
+      .mini-tabs button {
+        border: 0;
+        padding: 4px 9px;
+        font-size: 11px;
+        border-radius: 12px;
         color: var(--muted);
       }
+
+      .mini-tabs button.active {
+        background: var(--crimson);
+        color: #fff;
+      }
+
+      /* 1. BIỂU ĐỒ CỘT TRỰC TIẾP */
+      .live-bars-box {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        gap: 10px;
+        height: 175px;
+        padding: 18px 10px 8px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
+      }
+
+      .bar-col {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+      }
+
+      .bar-col:hover {
+        transform: translateY(-2px);
+      }
+
+      .bar-val {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--gold);
+        white-space: nowrap;
+      }
+
+      .bar-fill {
+        width: 100%;
+        max-width: 38px;
+        background: linear-gradient(180deg, #e9c26b 0%, #d4152f 100%);
+        border-radius: 8px 8px 3px 3px;
+        min-height: 6px;
+        transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 4px 12px rgba(212, 21, 47, 0.28);
+      }
+
+      .bar-lbl {
+        font-size: 11px;
+        color: var(--desc);
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+      }
+
+      /* 2. BIỂU ĐỒ TRÒN (DONUT SVG) */
+      .pie-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        height: 175px;
+        padding: 12px 14px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
+      }
+
+      .pie-svg-box {
+        position: relative;
+        width: 136px;
+        height: 136px;
+        flex-shrink: 0;
+      }
+
+      .pie-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+      }
+
+      .pie-center b {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--gold);
+        line-height: 1;
+      }
+
+      .pie-center span {
+        font-size: 10.5px;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+
+      .pie-legend {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .pie-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 12px;
+      }
+
+      .pie-item-left {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .pie-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+        flex-shrink: 0;
+      }
+
+      .pie-name {
+        color: var(--ink);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pie-pct {
+        color: var(--gold);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      /* 3. BIỂU ĐỒ ĐƯỜNG (LINE SVG) */
+      .line-box {
+        height: 175px;
+        padding: 10px 12px 6px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .line-svg {
+        width: 100%;
+        height: 130px;
+        overflow: visible;
+      }
+
+      .line-x-labels {
+        display: flex;
+        justify-content: space-between;
+        gap: 4px;
+        font-size: 10.5px;
+        color: var(--muted);
+        padding-top: 2px;
+      }
+
+      .line-x-labels span {
+        flex: 1;
+        text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .quick-metric-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--card-item);
+        border: 1px solid var(--gold-border);
+        padding: 4px 9px;
+        border-radius: 12px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .quick-metric-btn:hover {
+        border-color: var(--gold);
+        background: rgba(233, 194, 107, 0.16);
+      }
+
+      .lang-mini {
+        cursor: pointer;
+      }
+
+      .lang-mini.active-mini {
+        background: var(--crimson);
+        border-color: var(--gold);
+        color: #fff;
+      }
+
+      .topbar-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* CONTAINER CHÍNH */
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px 18px 56px;
+      }
+
+      #msg {
+        color: var(--danger);
+        background: rgba(212, 21, 47, 0.14);
+        border: 1px solid rgba(248, 113, 113, 0.4);
+        border-radius: 14px;
+        padding: 10px 14px;
+        margin: 0 0 16px;
+        display: none;
+      }
+      #msg:not(:empty) {
+        display: block;
+      }
+
+      /* THỐNG KÊ TỔNG QUAN */
       .strip {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        margin: 20px 0;
-        background: var(--green);
-        color: var(--on-green);
-        border-radius: 6px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 14px;
+        margin-bottom: 22px;
       }
-      .strip div {
-        padding: 14px 18px;
-        border-left: 1px solid rgba(255, 255, 255, 0.25);
+
+      .stat-card {
+        background: var(--panel);
+        border: 1px solid var(--gold-border);
+        border-radius: 20px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
       }
-      .strip div:first-child {
-        border-left: 0;
-      }
-      .strip b {
+
+      .stat-info span {
         display: block;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .stat-info b {
+        display: block;
+        color: var(--gold);
         font-size: 28px;
         font-weight: 800;
         line-height: 1.1;
       }
-      .strip span {
-        font-size: 13px;
-        opacity: 0.9;
+
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
       }
+
+      /* BỐ CỤC 2 CỘT */
       .grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
         gap: 20px;
+        align-items: start;
       }
-      @media (max-width: 860px) {
+
+      @media (max-width: 960px) {
         .grid {
           grid-template-columns: 1fr;
         }
       }
+
       section {
         background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 6px;
-        padding: 16px;
+        border: 1px solid var(--gold-border);
+        border-radius: 20px;
+        padding: 18px;
         margin-bottom: 20px;
       }
-      h2 {
-        margin: 0 0 12px;
-        font-size: 17px;
-        font-weight: 600;
+
+      section.alt-panel {
+        background: var(--panel-alt);
+        border-color: #2e2621;
       }
+
+      .sec-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .sec-title-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      h2 {
+        margin: 0;
+        color: var(--ink-white);
+        font-size: 18px;
+        font-weight: 700;
+        font-family:
+          "Be Vietnam Pro",
+          "Segoe UI",
+          Roboto,
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+
+      .live-dot {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        animation: pulseLive 1.8s infinite;
+      }
+
+      @keyframes pulseLive {
+        0% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
+      .stat-card.live-card {
+        border-color: rgba(16, 185, 129, 0.55);
+        background: linear-gradient(135deg, #0d221b, #160c0c);
+      }
+
+      .stat-card.live-card b {
+        color: #34d399;
+      }
+
+      .presence-box {
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+      }
+
+      .presence-big-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .presence-big-num {
+        font-size: 32px;
+        font-weight: 800;
+        color: #34d399;
+        line-height: 1;
+      }
+
+      .presence-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .presence-ctrl-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+        margin-top: 8px;
+      }
+
+      .presence-ctrl-row input {
+        width: 82px;
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 10px;
+      }
+
+      .presence-ctrl-row button {
+        padding: 6px 10px;
+        font-size: 11.5px;
+      }
+
+      .code-path-hint {
+        display: block;
+        font-size: 11px;
+        color: var(--gold);
+        background: rgba(233, 194, 107, 0.08);
+        border: 1px dashed var(--gold-border);
+        border-radius: 10px;
+        padding: 7px 10px;
+        margin-top: 8px;
+        word-break: break-all;
+      }
+
+      .badge-emerald {
+        background: var(--emerald-badge);
+        color: var(--ink-white);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .badge-gold {
+        background: rgba(233, 194, 107, 0.14);
+        border: 1px solid var(--gold-border-strong);
+        color: var(--gold);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      /* TÌM KIẾM & CHIP DANH MỤC */
       .tools {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         margin-bottom: 12px;
       }
+
       input,
       select,
       textarea,
@@ -133,283 +813,1033 @@
         font: inherit;
         color: inherit;
       }
+
       input,
       select,
       textarea {
-        background: transparent;
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 7px 9px;
+        background: var(--input-bg);
+        border: 1px solid var(--gold-border-strong);
+        border-radius: 14px;
+        padding: 10px 14px;
+        color: var(--ink);
         width: 100%;
       }
-      .tools input {
-        flex: 1 1 180px;
-        width: auto;
+
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--muted);
       }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: var(--gold);
+      }
+
+      .tools input[type="search"] {
+        flex: 1 1 240px;
+        width: auto;
+        border-radius: 24px;
+        padding-left: 16px;
+      }
+
       .tools select {
-        flex: 0 1 160px;
+        flex: 0 1 190px;
         width: auto;
+        border-radius: 24px;
       }
+
+      .cat-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .cat-chip {
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: var(--bg);
+        border: 1px solid var(--gold-border);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .cat-chip.active {
+        background: var(--crimson);
+        border-color: var(--gold);
+        color: var(--ink-white);
+      }
+
+      /* NÚT BẤM PILL */
       button {
         cursor: pointer;
-        border: 1px solid var(--line);
+        border: 1px solid var(--gold-border-strong);
         background: transparent;
-        border-radius: 4px;
-        padding: 7px 12px;
+        color: var(--gold);
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.15s ease;
       }
+
+      button:hover {
+        background: rgba(233, 194, 107, 0.12);
+      }
+
       button.primary {
-        background: var(--green);
-        color: var(--on-green);
-        border-color: var(--green);
+        background: var(--crimson);
+        color: var(--ink-white);
+        border-color: var(--crimson);
+      }
+
+      button.primary:hover {
+        background: var(--crimson-hover);
+      }
+
+      button.gold-btn {
+        background: var(--gold);
+        color: var(--bg);
+        border-color: var(--gold);
+      }
+
+      button.danger {
+        color: var(--danger);
+        border-color: rgba(248, 113, 113, 0.35);
+      }
+
+      button.danger:hover {
+        background: rgba(248, 113, 113, 0.12);
+        border-color: var(--danger);
+      }
+
+      .view-switch {
+        display: inline-flex;
+        background: var(--bg);
+        border: 1px solid var(--gold-border);
+        border-radius: 20px;
+        padding: 2px;
+      }
+
+      .view-switch button {
+        border: 0;
+        padding: 6px 12px;
+        color: var(--muted);
+        border-radius: 18px;
+      }
+
+      .view-switch button.active {
+        background: var(--crimson);
+        color: var(--ink-white);
+      }
+
+      /* CHẾ ĐỘ THẺ MÓN ĂN (CARD GRID GIỐNG HỆT FRONTEND) */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 14px;
+      }
+
+      .dish-card {
+        background: var(--bg);
+        border: 1px solid var(--gold-border);
+        border-radius: 20px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .dish-card.off {
+        opacity: 0.55;
+      }
+
+      .dish-card-img {
+        width: 100%;
+        height: 155px;
+        object-fit: cover;
+        background: #1c1212;
+        display: block;
+      }
+
+      .dish-card-fallback {
+        width: 100%;
+        height: 155px;
+        background: linear-gradient(135deg, #1f0e0e, #120808);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        border-bottom: 1px solid var(--gold-border);
+      }
+
+      .dish-card-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex: 1;
+      }
+
+      .dish-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .dish-card-price {
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .dish-card-cat {
+        color: var(--gold);
+        font-size: 11px;
+        background: rgba(233, 194, 107, 0.12);
+        border: 1px solid var(--gold-border);
+        padding: 2px 8px;
+        border-radius: 12px;
         font-weight: 600;
       }
-      button.danger {
-        color: var(--red);
+
+      .dish-card-title {
+        color: var(--ink);
+        font-size: 18px;
+        font-weight: 700;
+        margin: 2px 0 0;
       }
-      :focus-visible {
-        outline: 2px solid var(--wall);
-        outline-offset: 2px;
+
+      .dish-card-sub {
+        color: var(--muted);
+        font-size: 12px;
       }
+
+      .dish-card-desc {
+        color: var(--desc);
+        font-size: 12.5px;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .dish-card-foot {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid rgba(233, 194, 107, 0.12);
+      }
+
+      .dish-card-foot button {
+        flex: 1;
+        padding: 8px 10px;
+      }
+
+      /* CHẾ ĐỘ BẢNG (TABLE) */
       .tablewrap {
         overflow-x: auto;
       }
+
       table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 520px;
+        min-width: 580px;
       }
+
       th,
       td {
         text-align: left;
-        padding: 9px 8px;
-        border-bottom: 1px solid var(--line);
-        vertical-align: top;
+        padding: 12px 10px;
+        border-bottom: 1px solid rgba(233, 194, 107, 0.14);
+        vertical-align: middle;
       }
+
       th {
-        font-weight: 600;
-        color: var(--muted);
-        font-size: 13px;
+        font-weight: 700;
+        color: var(--gold);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
+
+      tr:hover td {
+        background: rgba(233, 194, 107, 0.04);
+      }
+
+      .dish-row-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .dish-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--gold-border);
+        background: #1c1212;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      td b {
+        color: var(--ink);
+        font-size: 15px;
+      }
+
       td small {
         display: block;
         color: var(--muted);
+        font-size: 12px;
+        margin-top: 2px;
       }
+
+      .lang-badges {
+        display: flex;
+        gap: 4px;
+        margin-top: 4px;
+      }
+
+      .lang-mini {
+        font-size: 10px;
+        padding: 1px 6px;
+        border-radius: 8px;
+        background: rgba(16, 185, 129, 0.15);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        color: #34d399;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
       td.act {
         white-space: nowrap;
         text-align: right;
       }
-      .off {
-        color: var(--muted);
+
+      .price-tag {
+        color: var(--gold);
+        font-weight: 700;
       }
+
+      .fav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .off {
+        opacity: 0.55;
+      }
+
+      /* BIỂU ĐỒ CỘT CHECK-IN 7 NGÀY */
       .bars {
         display: flex;
         align-items: flex-end;
-        gap: 8px;
-        height: 130px;
+        gap: 10px;
+        height: 175px;
+        padding: 14px 12px 10px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
       }
-      .bars div {
+
+      .bars .day-col {
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
         align-items: center;
         height: 100%;
-        font-size: 12px;
+        font-size: 11px;
         color: var(--muted);
+        gap: 5px;
+        cursor: pointer;
+        padding: 4px 2px;
+        border-radius: 10px;
+        transition: background 0.15s ease, transform 0.15s ease;
+        user-select: none;
       }
+
+      .bars .day-col:hover {
+        background: rgba(233, 194, 107, 0.08);
+        transform: translateY(-2px);
+      }
+
+      .bars .day-track {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+      }
+
       .bars i {
         display: block;
         width: 100%;
-        background: var(--bar);
-        border-radius: 3px 3px 0 0;
-        min-height: 2px;
+        max-width: 34px;
+        background: linear-gradient(180deg, var(--gold), var(--crimson));
+        border-radius: 6px 6px 2px 2px;
+        min-height: 6px;
+        transition: height 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: 0 4px 12px rgba(212, 21, 47, 0.28);
       }
+
       .bars b {
-        color: var(--ink);
-        font-weight: 600;
+        color: var(--gold);
+        font-weight: 800;
+        font-size: 13px;
+        line-height: 1;
       }
+
+      .day-actions {
+        display: flex;
+        gap: 4px;
+        margin-top: 2px;
+      }
+
+      .day-act-btn {
+        padding: 1px 6px;
+        font-size: 10px;
+        font-weight: 800;
+        border-radius: 6px;
+        background: rgba(233, 194, 107, 0.12);
+        border: 1px solid var(--gold-border);
+        color: var(--gold);
+        line-height: 1.3;
+      }
+
+      .day-act-btn:hover {
+        background: var(--crimson);
+        color: #fff;
+        border-color: var(--gold);
+      }
+
       ol,
       ul {
         margin: 0;
         padding: 0;
         list-style: none;
-      }
-      li {
         display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .stop-item {
+        display: flex;
+        align-items: center;
         justify-content: space-between;
         gap: 12px;
-        padding: 8px 0;
-        border-bottom: 1px solid var(--line);
+        padding: 12px 14px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 14px;
       }
-      li:last-child {
-        border-bottom: 0;
+
+      .stop-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
       }
-      li small {
+
+      .stop-badge {
+        width: 30px;
+        height: 30px;
+        border-radius: 15px;
+        background: var(--amber);
+        color: #120f0d;
+        font-weight: 900;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .stop-badge.done {
+        background: var(--emerald);
+      }
+
+      .stop-title {
+        color: var(--ink-white);
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .stop-sub {
         color: var(--muted);
+        font-size: 12px;
         display: block;
+        margin-top: 2px;
       }
+
+      .stop-right {
+        color: var(--gold);
+        font-weight: 800;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
       .empty {
         color: var(--muted);
-        margin: 8px 0;
+        text-align: center;
+        padding: 20px 12px;
+        background: var(--card-item);
+        border: 1px dashed var(--dark-border);
+        border-radius: 14px;
+        margin: 8px 0 0;
       }
+
+      /* MODAL CHỈNH SỬA ĐA NGÔN NGỮ (5 NGÔN NGỮ) */
       dialog {
-        border: 1px solid var(--line);
-        border-radius: 8px;
+        border: 1px solid var(--gold);
+        border-radius: 24px;
         background: var(--panel);
         color: var(--ink);
-        padding: 20px;
-        width: min(480px, 94vw);
+        padding: 22px;
+        width: min(600px, 95vw);
+        max-height: 92vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
       }
+
       dialog::backdrop {
-        background: rgba(0, 0, 0, 0.45);
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(4px);
       }
+
+      dialog h2 {
+        color: var(--gold);
+        font-size: 21px;
+        margin-bottom: 12px;
+      }
+
+      .form-lang-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+        padding: 8px;
+        background: var(--bg);
+        border: 1px solid var(--gold-border);
+        border-radius: 16px;
+      }
+
+      .form-lang-tab {
+        flex: 1 1 auto;
+        text-align: center;
+        padding: 7px 10px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .form-lang-tab.active {
+        background: var(--crimson);
+        border-color: var(--gold);
+        color: #fff;
+      }
+
+      .lang-pane {
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        border-radius: 16px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+      }
+
       label {
         display: block;
         margin-bottom: 10px;
-        font-size: 13px;
+        font-size: 12.5px;
+        font-weight: 600;
         color: var(--muted);
       }
+
+      label:last-child {
+        margin-bottom: 0;
+      }
+
       label input,
       label select,
       label textarea {
-        margin-top: 4px;
-        color: var(--ink);
+        margin-top: 5px;
       }
+
       .row {
         display: flex;
         gap: 10px;
+        margin-bottom: 10px;
       }
+
       .row label {
         flex: 1;
+        margin-bottom: 0;
       }
+
       .check {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         color: var(--ink);
-        font-size: 15px;
+        font-size: 13.5px;
+        background: var(--card-item);
+        border: 1px solid var(--dark-border);
+        padding: 10px 14px;
+        border-radius: 14px;
+        cursor: pointer;
+        margin-top: 8px;
       }
+
       .check input {
-        width: auto;
+        width: 18px;
+        height: 18px;
         margin: 0;
+        accent-color: var(--emerald);
       }
+
       .foot {
         display: flex;
         justify-content: flex-end;
-        gap: 8px;
-        margin-top: 6px;
+        gap: 10px;
+        margin-top: 16px;
       }
-      #msg {
-        color: var(--red);
-        min-height: 1.4em;
-        margin: 4px 0;
+
+      .foot button {
+        padding: 10px 20px;
+        font-size: 13px;
+      }
+
+      .upload-box {
+        background: var(--card-item);
+        border: 1px dashed var(--gold-border-strong);
+        border-radius: 16px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .upload-preview {
+        width: 72px;
+        height: 72px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: var(--input-bg);
+        border: 1px solid var(--gold-border);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        overflow: hidden;
+      }
+
+      .upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .upload-controls {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .upload-controls input[type="file"] {
+        padding: 7px 10px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      .upload-status {
+        display: block;
+        color: var(--muted);
+        font-size: 11.5px;
+        margin-top: 4px;
       }
     </style>
   </head>
   <body>
-    <div class="wrap">
-      <header>
-        <h1>Theo Dấu Vị Hội</h1>
-        <p>Bảng quản trị món ăn và lượt check-in</p>
-      </header>
-      <p id="msg" role="alert"></p>
-      <div class="strip" id="strip"></div>
-      <div class="grid">
+    <div class="app-shell">
+      <!-- SIDEBAR (THANH ĐIỀU HƯỚNG BÊN TRÁI) -->
+      <aside class="sidebar">
         <div>
-          <section>
-            <h2>Món ăn</h2>
-            <div class="tools">
-              <input
-                id="q"
-                type="search"
-                placeholder="Tìm theo tên món"
-                aria-label="Tìm theo tên món"
-              />
-              <select id="cat" aria-label="Lọc theo danh mục">
-                <option value="">Tất cả danh mục</option>
-              </select>
-              <button class="primary" id="add">Thêm món</button>
-            </div>
-            <div class="tablewrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Món</th>
-                    <th>Danh mục</th>
-                    <th>Giá</th>
-                    <th>Yêu thích</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody id="dishes"></tbody>
-              </table>
-            </div>
-            <p class="empty" id="noDish" hidden>
-              Chưa có món nào khớp. Bấm “Thêm món” để tạo món đầu tiên.
-            </p>
-          </section>
+          <div class="sidebar-brand">
+            <h1>THEO DẤU VỊ HỘI</h1>
+            <p>Hệ Thống Quản Trị Ẩm Thực Hội An</p>
+          </div>
+
+          <div class="sidebar-label">Danh mục quản trị</div>
+          <nav class="nav-list" id="sidebarNav" aria-label="Menu điều hướng chính">
+            <button type="button" class="nav-btn active" data-nav="overview">
+              <span class="nav-btn-left">
+                <span>Tổng Quan Chung</span>
+              </span>
+            </button>
+
+            <button type="button" class="nav-btn" data-nav="dishes">
+              <span class="nav-btn-left">
+                <span>Quản Lý Món Ăn</span>
+              </span>
+              <span class="nav-badge" id="navDishCount">0</span>
+            </button>
+
+            <button type="button" class="nav-btn" data-nav="devices">
+              <span class="nav-btn-left">
+                <span>Thiết Bị Truy Cập</span>
+              </span>
+              <span class="nav-badge live" id="navOnlineCount">0</span>
+            </button>
+
+            <button type="button" class="nav-btn" data-nav="checkins">
+              <span class="nav-btn-left">
+                <span>Check-in & Yêu Thích</span>
+              </span>
+              <span class="nav-badge" id="navCheckinCount">0</span>
+            </button>
+          </nav>
         </div>
-        <div>
-          <section>
-            <h2>Check-in 7 ngày gần nhất</h2>
-            <div class="bars" id="bars"></div>
-          </section>
-          <section>
-            <h2>Món được yêu thích nhất</h2>
-            <ol id="top"></ol>
-          </section>
-          <section>
-            <h2>Check-in mới nhất</h2>
-            <ul id="recent"></ul>
-            <p class="empty" id="noCheck" hidden>
-              Chưa có lượt check-in nào từ ứng dụng.
-            </p>
-          </section>
+
+        <div class="sidebar-foot">
+          <div class="sidebar-status">
+            <span class="live-dot"></span>
+            <span>Máy chủ & CSDL trực tuyến</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- KHU VỰC NỘI DUNG CHÍNH BÊN PHẢI -->
+      <div class="main-area">
+        <header class="topbar">
+          <div class="topbar-inner">
+            <div class="page-heading">
+              <h1 id="pageTitle">Tổng Quan Hệ Thống</h1>
+              <p id="pageSub">Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ thời gian thực</p>
+            </div>
+
+            <div class="topbar-actions">
+              <button type="button" id="refreshBtn">Làm mới số liệu</button>
+            </div>
+          </div>
+        </header>
+
+        <div class="wrap" style="width: 100%">
+          <p id="msg" role="alert"></p>
+
+          <!-- HÀNG THẺ THỐNG KÊ TỔNG QUAN -->
+          <div class="strip" id="strip"></div>
+
+          <!-- BỘ 3 BIỂU ĐỒ HOẠT ĐỘNG TRỰC TIẾP TRÊN SỐ LIỆU: CỘT - TRÒN - ĐƯỜNG -->
+          <div class="charts-grid" id="secCharts">
+            <!-- 1. BIỂU ĐỒ CỘT -->
+            <div class="chart-card">
+              <div>
+                <div class="chart-head">
+                  <div class="chart-title-wrap">
+                    <h3>Biểu Đồ Cột</h3>
+                  </div>
+                  <div class="mini-tabs" id="barModeTabs">
+                    <button type="button" class="active" data-bmode="price">Giá bán</button>
+                    <button type="button" data-bmode="engage">Tương tác</button>
+                  </div>
+                </div>
+                <div class="chart-sub" id="barChartSub">So sánh trực tiếp mức giá (nghìn đ) của từng món ăn (Bấm vào cột để +1 Check-in)</div>
+              </div>
+              <div class="live-bars-box" id="liveBarChart"></div>
+            </div>
+
+            <!-- 2. BIỂU ĐỒ TRÒN -->
+            <div class="chart-card">
+              <div>
+                <div class="chart-head">
+                  <div class="chart-title-wrap">
+                    <h3>Biểu Đồ Tròn</h3>
+                  </div>
+                  <div class="mini-tabs" id="pieModeTabs">
+                    <button type="button" class="active" data-pmode="cat">Danh mục</button>
+                    <button type="button" data-pmode="price">Tỷ trọng giá</button>
+                  </div>
+                </div>
+                <div class="chart-sub" id="pieChartSub">Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực</div>
+              </div>
+              <div class="pie-wrap">
+                <div class="pie-svg-box">
+                  <svg viewBox="0 0 42 42" width="136" height="136" id="livePieSvg"></svg>
+                  <div class="pie-center">
+                    <b id="pieCenterVal">0</b>
+                    <span id="pieCenterLbl">tổng món</span>
+                  </div>
+                </div>
+                <div class="pie-legend" id="livePieLegend"></div>
+              </div>
+            </div>
+
+            <!-- 3. BIỂU ĐỒ ĐƯỜNG -->
+            <div class="chart-card">
+              <div>
+                <div class="chart-head">
+                  <div class="chart-title-wrap">
+                    <h3>Biểu Đồ Đường</h3>
+                  </div>
+                  <div class="mini-tabs" id="lineModeTabs">
+                    <button type="button" class="active" data-lmode="dish">Món ăn & Giá</button>
+                    <button type="button" data-lmode="online">Thiết bị Live</button>
+                  </div>
+                </div>
+                <div class="chart-sub" id="lineChartSub">Đường biến thiên trực tiếp theo số liệu thực tế của hệ thống</div>
+              </div>
+              <div class="line-box">
+                <svg viewBox="0 0 320 125" class="line-svg" id="liveLineSvg"></svg>
+                <div class="line-x-labels" id="liveLineLabels"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" id="mainGrid">
+            <div id="colLeft">
+              <section id="secDishes">
+                <div class="sec-head">
+                  <div class="sec-title-group">
+                    <h2>Danh Sách Món Ăn Hội An</h2>
+                    <span class="badge-gold" id="dishCountBadge">0 món</span>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+                    <div class="view-switch" role="group" aria-label="Chế độ hiển thị">
+                      <button type="button" id="viewTableBtn" class="active">
+                        Dạng bảng
+                      </button>
+                      <button type="button" id="viewCardBtn">Dạng thẻ (App)</button>
+                    </div>
+                    <button type="button" class="gold-btn" id="add">+ Thêm món mới</button>
+                  </div>
+                </div>
+
+                <div class="tools">
+                  <input
+                    id="q"
+                    type="search"
+                    placeholder="Tìm món"
+                    aria-label="Tìm theo tên món"
+                  />
+                  <select id="cat" aria-label="Lọc theo danh mục">
+                    <option value="">Tất cả danh mục</option>
+                  </select>
+                </div>
+
+                <div class="cat-chips" id="catChips"></div>
+
+                <div id="tableView" class="tablewrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Món ăn & Bản dịch</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th>Yêu thích</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody id="dishes"></tbody>
+                  </table>
+                </div>
+
+                <div id="cardView" class="cards-grid" hidden></div>
+
+                <p class="empty" id="noDish" hidden>
+                  Chưa có món ăn nào khớp bộ lọc. Bấm “+ Thêm món mới” để tạo món
+                  đầu tiên.
+                </p>
+              </section>
+            </div>
+
+            <div id="colRight">
+              <section class="alt-panel" id="secDevices">
+                <div class="sec-head">
+                  <div class="sec-title-group">
+                    <span class="live-dot"></span>
+                    <h2>Thiết Bị Đang Truy Cập</h2>
+                    <span class="badge-emerald">TRỰC TIẾP (LIVE)</span>
+                  </div>
+                </div>
+                <div class="presence-box">
+                  <div class="presence-big-row" style="margin-bottom: 0">
+                    <div>
+                      <span class="presence-meta">Số thiết bị đang mở ứng dụng</span>
+                      <div class="presence-big-num" id="liveOnlineNum">0</div>
+                    </div>
+                    <div style="text-align: right">
+                      <span class="presence-meta">Trạng thái kết nối</span>
+                      <br />
+                      <b style="color: #34d399; font-size: 13px">● Đang đồng bộ thời gian thực</b>
+                    </div>
+                  </div>
+                </div>
+                <ul id="activeDevicesList"></ul>
+                <p class="empty" id="noActiveDevice">
+                  Hiện chưa có thiết bị nào mở trang Frontend. Khi mở tab/app mới số lượng sẽ tăng ngay và khi đóng sẽ giảm ngay lập tức.
+                </p>
+              </section>
+
+              <section class="alt-panel" id="secDailyCheckin">
+                <div class="sec-head">
+                  <div class="sec-title-group">
+                    <h2>Check-in 7 Ngày Gần Nhất</h2>
+                    <span class="badge-emerald" id="dailyTotalBadge">THỰC TIỄN</span>
+                  </div>
+                </div>
+                <div class="bars" id="bars"></div>
+              </section>
+
+              <section class="alt-panel" id="secTopFav">
+                <div class="sec-head">
+                  <div class="sec-title-group">
+                    <h2>Món Được Yêu Thích Nhất</h2>
+                  </div>
+                </div>
+                <ol id="top"></ol>
+              </section>
+
+              <section class="alt-panel" id="secRecentCheckin">
+                <div class="sec-head">
+                  <div class="sec-title-group">
+                    <h2>Lượt Check-in Mới Nhất</h2>
+                  </div>
+                </div>
+                <ul id="recent"></ul>
+                <p class="empty" id="noCheck" hidden>
+                  Chưa có lượt check-in nào từ ứng dụng.
+                </p>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <dialog id="dlg">
       <form method="dialog" id="form">
-        <h2 id="dlgTitle">Thêm món</h2>
-        <label>Tên món<input name="name" required /></label>
+        <h2 id="dlgTitle">Thêm món ăn mới (5 ngôn ngữ)</h2>
+
+        <!-- TAB 5 NGÔN NGỮ TRONG FORM -->
+        <div class="form-lang-tabs" id="formLangTabs">
+          <button type="button" class="form-lang-tab active" data-flang="vi">VI Tiếng Việt</button>
+          <button type="button" class="form-lang-tab" data-flang="en">EN English</button>
+          <button type="button" class="form-lang-tab" data-flang="zh">ZH 中文</button>
+          <button type="button" class="form-lang-tab" data-flang="ko">KO 한국어</button>
+          <button type="button" class="form-lang-tab" data-flang="ja">JA 日本語</button>
+        </div>
+
+        <div class="lang-pane" data-pane="vi">
+          <label>Tên món (Tiếng Việt - Bắt buộc)<input name="name_vi" placeholder="VD: Cao lầu Hội An" required /></label>
+          <label>Thuyết minh món ăn (Tiếng Việt)<textarea name="desc_vi" rows="3" placeholder="Nội dung thuyết minh Tiếng Việt..."></textarea></label>
+        </div>
+        <div class="lang-pane" data-pane="en" hidden>
+          <label>Dish Name (English)<input name="name_en" placeholder="e.g. Cao Lau" /></label>
+          <label>Narration / Description (English)<textarea name="desc_en" rows="3" placeholder="English audio narration text..."></textarea></label>
+        </div>
+        <div class="lang-pane" data-pane="zh" hidden>
+          <label>菜品名称 (中文)<input name="name_zh" placeholder="例如：高楼面" /></label>
+          <label>语音讲解内容 (中文)<textarea name="desc_zh" rows="3" placeholder="中文介绍与讲解..."></textarea></label>
+        </div>
+        <div class="lang-pane" data-pane="ko" hidden>
+          <label>음식 이름 (한국어)<input name="name_ko" placeholder="예: 까오러우" /></label>
+          <label>오디오 가이드 설명 (한국어)<textarea name="desc_ko" rows="3" placeholder="한국어 음식 설명..."></textarea></label>
+        </div>
+        <div class="lang-pane" data-pane="ja" hidden>
+          <label>料理名 (日本語)<input name="name_ja" placeholder="例：カオラウ" /></label>
+          <label>音声ガイド解説 (日本語)<textarea name="desc_ja" rows="3" placeholder="日本語の料理解説..."></textarea></label>
+        </div>
+
         <div class="row">
           <label>Danh mục<select name="category_id"></select></label>
-          <label
-            >Giá (VNĐ)<input name="price_vnd" type="number" min="0" step="1000"
-          /></label>
+          <label>Giá (VNĐ)<input name="price_vnd" type="number" min="0" step="1000" placeholder="40000" /></label>
         </div>
-        <label>Mô tả<textarea name="description" rows="3"></textarea></label>
-        <label>Địa chỉ quán<input name="address" /></label>
-        <label>Đường dẫn ảnh<input name="image_url" /></label>
-        <label class="check"
-          ><input type="checkbox" name="is_active" checked /> Hiển thị trong ứng
-          dụng</label
-        >
-        <p id="formErr" style="color: var(--red); margin: 0"></p>
+
+        <div class="row">
+          <input type="hidden" name="emoji" value="" />
+          <label>Địa chỉ quán tại Hội An<input name="address" placeholder="VD: 687 Hai Bà Trưng, Hội An" /></label>
+        </div>
+
+        <div class="row">
+          <label>Vĩ độ GPS (Lat)<input name="lat" type="number" step="any" value="15.878" /></label>
+          <label>Kinh độ GPS (Lng)<input name="lng" type="number" step="any" value="108.327" /></label>
+        </div>
+
+        <label>Ảnh món ăn (Chọn file ảnh đã tải xuống từ máy tính)</label>
+        <div class="upload-box">
+          <div class="upload-preview" id="imgPreviewBox">Ảnh</div>
+          <div class="upload-controls">
+            <input type="file" id="imageFile" accept="image/*" />
+            <input type="hidden" name="image_url" />
+            <small class="upload-status" id="uploadStatus">Chưa chọn file ảnh (Hỗ trợ JPG, PNG, WEBP...)</small>
+          </div>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" name="is_active" checked />
+          Hiển thị món ăn này trên ứng dụng Frontend
+        </label>
+        <p id="formErr" style="color: var(--danger); margin: 8px 0 0"></p>
         <div class="foot">
-          <button type="button" id="cancel">Huỷ</button
-          ><button class="primary" type="submit">Lưu món</button>
+          <button type="button" id="cancel">Đóng</button>
+          <button class="primary" type="submit">Lưu món ăn (5 ngôn ngữ)</button>
         </div>
       </form>
     </dialog>
 
     <script>
+      const LANG_KEYS = ["vi", "en", "zh", "ko", "ja"];
+      const LANG_LABELS = {
+        vi: "VI Tiếng Việt",
+        en: "EN English",
+        zh: "ZH 中文",
+        ko: "KO 한국어",
+        ja: "JA 日本語",
+      };
+
       const $ = (s) => document.querySelector(s);
+      const $$ = (s) => Array.from(document.querySelectorAll(s));
       const esc = (s) =>
-        String(s ?? "").replace(
-          /[&<>"']/g,
-          (c) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[c],
-        );
+        String(s ?? "")
+          .normalize("NFC")
+          .replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
       const vnd = (n) =>
-        n == null ? "—" : Number(n).toLocaleString("vi-VN") + " đ";
+        n == null ? "Đang cập nhật" : Number(n).toLocaleString("vi-VN") + "đ";
       const dmy = (d) =>
         new Date(d).toLocaleString("vi-VN", {
           day: "2-digit",
@@ -417,9 +1847,21 @@
           hour: "2-digit",
           minute: "2-digit",
         });
+
       let dishes = [],
         cats = [],
-        editing = null;
+        editing = null,
+        viewMode = "table",
+        currentLang = "vi",
+        dishLangMap = {},
+        barMode = "price",
+        pieMode = "cat",
+        lineMode = "dish",
+        lastStats = { totals: {}, daily: [], top: [], by_category: [] },
+        onlineHistory = [],
+        latestPresence = { online_count: 0, real_online: 0, config: { OFFSET_ONLINE_COUNT: 0, FIXED_ONLINE_COUNT: null }, devices: [] };
+
+      const PIE_COLORS = ["#d4152f", "#e9c26b", "#10b981", "#3b82f6", "#a855f7", "#f97316"];
 
       async function api(path, opts = {}) {
         const r = await fetch("/api" + path, {
@@ -433,63 +1875,454 @@
         return r.status === 204 ? null : r.json();
       }
 
+      function getCatLabel(catId, fallbackName) {
+        const c = cats.find((x) => String(x.id) === String(catId));
+        if (!c) return fallbackName || "Món Hội An";
+        return c.translations?.vi || c.name;
+      }
+
+      function pushOnlinePoint(count) {
+        const timeStr = new Date().toLocaleTimeString("vi-VN", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        onlineHistory.push({ label: timeStr, val: Number(count || 0) });
+        if (onlineHistory.length > 7) onlineHistory.shift();
+      }
+
+      function renderBarChart() {
+        const box = $("#liveBarChart");
+        if (!box) return;
+        const source = dishes.length ? dishes : lastStats.top || [];
+        if (!source.length) {
+          box.innerHTML = `<div class="empty" style="width:100%;margin:0">Chưa có dữ liệu món ăn</div>`;
+          return;
+        }
+
+        const topMetrics = {};
+        for (const item of lastStats.top || []) {
+          topMetrics[item.id] = item;
+        }
+
+        const items = source.slice(0, 7).map((d) => {
+          const m = topMetrics[d.id] || {};
+          const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+          const checks = Number(m.check_ins ?? 0);
+          const priceK = Math.round(Number(d.price_vnd ?? m.price_vnd ?? 0) / 1000);
+          const val = barMode === "price" ? priceK : favs + checks;
+          const unit = barMode === "price" ? `${priceK}k` : `${val} lượt`;
+          const shortName = (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 11);
+          return { id: d.id, name: d.name, shortName, val, unit };
+        });
+
+        const maxVal = Math.max(1, ...items.map((x) => x.val));
+        box.innerHTML = items
+          .map(
+            (x) => `
+          <div class="bar-col" data-quick-check="${x.id}" title="${esc(x.name)}: ${esc(x.unit)} (Bấm để +1 Check-in trực tiếp)">
+            <span class="bar-val">${esc(x.unit)}</span>
+            <i class="bar-fill" style="height:${Math.max(8, Math.round((x.val / maxVal) * 84))}%"></i>
+            <span class="bar-lbl">${esc(x.shortName)}</span>
+          </div>`,
+          )
+          .join("");
+      }
+
+      function renderPieChart() {
+        const svg = $("#livePieSvg");
+        const legend = $("#livePieLegend");
+        if (!svg || !legend) return;
+
+        let segments = [];
+        if (pieMode === "cat") {
+          const catCounts = cats.map((c) => {
+            const cnt = dishes.filter((d) => String(d.category_id) === String(c.id)).length;
+            return { label: c.translations?.vi || c.name, val: cnt, catId: c.id };
+          });
+          const uncat = dishes.filter((d) => !d.category_id).length;
+          if (uncat > 0) catCounts.push({ label: "Khác", val: uncat, catId: "" });
+          segments = catCounts.filter((x) => x.val > 0);
+          $("#pieCenterVal").textContent = dishes.length;
+          $("#pieCenterLbl").textContent = "tổng món";
+        } else {
+          segments = dishes.slice(0, 6).map((d) => ({
+            label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 14),
+            val: Math.max(1, Math.round(Number(d.price_vnd || 10000) / 1000)),
+            catId: d.category_id || "",
+          }));
+          const totalK = segments.reduce((s, x) => s + x.val, 0);
+          $("#pieCenterVal").textContent = `${totalK}k`;
+          $("#pieCenterLbl").textContent = "tổng giá";
+        }
+
+        const total = segments.reduce((acc, s) => acc + s.val, 0);
+        if (total === 0) {
+          svg.innerHTML = `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#302924" stroke-width="5"></circle>`;
+          legend.innerHTML = `<small style="color:var(--muted)">Chưa có số liệu</small>`;
+          return;
+        }
+
+        let offset = 25;
+        const circles = [
+          `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#261c18" stroke-width="5.5"></circle>`,
+        ];
+
+        segments.forEach((seg, idx) => {
+          const pct = (seg.val / total) * 100;
+          const color = PIE_COLORS[idx % PIE_COLORS.length];
+          circles.push(
+            `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="${color}" stroke-width="5.5" stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="${offset}" style="transition: stroke-dasharray 0.35s ease"></circle>`,
+          );
+          offset -= pct;
+        });
+
+        svg.innerHTML = circles.join("");
+        legend.innerHTML = segments
+          .map((seg, idx) => {
+            const pct = Math.round((seg.val / total) * 100);
+            const color = PIE_COLORS[idx % PIE_COLORS.length];
+            const unitTxt = pieMode === "cat" ? `${seg.val} món (${pct}%)` : `${seg.val}k (${pct}%)`;
+            return `
+            <div class="pie-item" style="cursor:pointer" data-filter-cat="${esc(seg.catId ?? "")}" title="Bấm để lọc theo nhóm này">
+              <div class="pie-item-left">
+                <span class="pie-dot" style="background:${color}"></span>
+                <span class="pie-name">${esc(seg.label)}</span>
+              </div>
+              <span class="pie-pct">${unitTxt}</span>
+            </div>`;
+          })
+          .join("");
+      }
+
+      function renderLineChart() {
+        const svg = $("#liveLineSvg");
+        const labelsEl = $("#liveLineLabels");
+        if (!svg || !labelsEl) return;
+
+        let pointsData = [];
+        if (lineMode === "online") {
+          if (onlineHistory.length === 0) {
+            pushOnlinePoint(latestPresence.online_count || 0);
+          }
+          pointsData = onlineHistory.map((p) => ({
+            label: p.label.slice(0, 5),
+            val: p.val,
+            display: `${p.val}`,
+          }));
+        } else {
+          const topMetrics = {};
+          for (const item of lastStats.top || []) topMetrics[item.id] = item;
+          pointsData = dishes.slice(0, 7).map((d) => {
+            const m = topMetrics[d.id] || {};
+            const priceK = Math.round(Number(d.price_vnd || 0) / 1000);
+            const bonus = (Number(d.favorite_count ?? m.favorites ?? 0) + Number(m.check_ins ?? 0)) * 5;
+            const val = priceK + bonus;
+            return {
+              label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 9),
+              val,
+              display: `${priceK}k`,
+            };
+          });
+        }
+
+        if (pointsData.length === 0) {
+          svg.innerHTML = "";
+          labelsEl.innerHTML = `<span style="color:var(--muted)">Chưa có dữ liệu</span>`;
+          return;
+        }
+
+        if (pointsData.length === 1) {
+          pointsData = [pointsData[0], { ...pointsData[0] }];
+        }
+
+        const W = 320;
+        const H = 120;
+        const padX = 24;
+        const padTop = 22;
+        const padBot = 12;
+        const usableW = W - padX * 2;
+        const usableH = H - padTop - padBot;
+        const maxVal = Math.max(1, ...pointsData.map((p) => p.val));
+
+        const coords = pointsData.map((p, i) => {
+          const x = padX + (i / (pointsData.length - 1)) * usableW;
+          const y = padTop + usableH - (p.val / maxVal) * usableH;
+          return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, ...p };
+        });
+
+        const polyPoints = coords.map((c) => `${c.x},${c.y}`).join(" ");
+        const areaPoints = `${coords[0].x},${H - padBot} ${polyPoints} ${coords[coords.length - 1].x},${H - padBot}`;
+
+        svg.innerHTML = `
+          <defs>
+            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#e9c26b" stop-opacity="0.42" />
+              <stop offset="100%" stop-color="#d4152f" stop-opacity="0.02" />
+            </linearGradient>
+          </defs>
+          <line x1="${padX}" y1="${H - padBot}" x2="${W - padX}" y2="${H - padBot}" stroke="#302924" stroke-width="1" />
+          <polygon points="${areaPoints}" fill="url(#lineGrad)" />
+          <polyline fill="none" stroke="#e9c26b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />
+          ${coords
+            .map(
+              (c) => `
+            <circle cx="${c.x}" cy="${c.y}" r="4.2" fill="#d4152f" stroke="#e9c26b" stroke-width="2" />
+            <text x="${c.x}" y="${c.y - 8}" fill="#f5ead4" font-size="9.5" font-weight="700" text-anchor="middle">${esc(c.display)}</text>
+          `,
+            )
+            .join("")}
+        `;
+
+        labelsEl.innerHTML = coords.map((c) => `<span>${esc(c.label)}</span>`).join("");
+      }
+
+      function renderAllCharts() {
+        renderBarChart();
+        renderPieChart();
+        renderLineChart();
+      }
+
+      function renderPresence(p) {
+        if (!p) return;
+        latestPresence = p;
+        const onlineCount = p.online_count ?? 0;
+
+        const stripOnlineEl = $("#stripOnlineVal");
+        if (stripOnlineEl) stripOnlineEl.textContent = onlineCount;
+        const navOnlineEl = $("#navOnlineCount");
+        if (navOnlineEl) navOnlineEl.textContent = onlineCount;
+
+        $("#liveOnlineNum").textContent = onlineCount;
+
+        pushOnlinePoint(onlineCount);
+        if (lineMode === "online") {
+          renderLineChart();
+        }
+
+        const list = p.devices || [];
+        $("#noActiveDevice").hidden = list.length > 0;
+        $("#activeDevicesList").innerHTML = list
+          .map(
+            (dev, idx) => `
+            <li class="stop-item">
+              <div class="stop-left">
+                <span class="stop-badge done">${idx + 1}</span>
+                <div>
+                  <span class="stop-title">${esc(dev.platform || "Thiết bị")} • <span class="lang-mini">${esc((dev.lang || "vi").toUpperCase())}</span></span>
+                  <small class="stop-sub">Mã phiên: ${esc(dev.tab_id?.slice(-8) || dev.device_id?.slice(-8))} • Vào lúc ${dmy(dev.connected_at)}</small>
+                </div>
+              </div>
+              <span class="stop-right" style="color: #34d399">Online</span>
+            </li>`,
+          )
+          .join("");
+      }
+
       async function loadStats() {
         const [s, c] = await Promise.all([
           api("/stats"),
           api("/checkins?limit=8"),
         ]);
+        lastStats = s;
         const t = s.totals;
-        $("#strip").innerHTML = [
-          ["Món ăn", t.dishes],
-          ["Danh mục", t.categories],
-          ["Lượt yêu thích", t.favorites],
-          ["Lượt check-in", t.check_ins],
-          ["Thiết bị", t.devices],
-        ]
-          .map(([l, v]) => `<div><b>${v}</b><span>${l}</span></div>`)
+        if (s.presence) {
+          renderPresence(s.presence);
+        }
+        const statItems = [
+          ["Thiết bị đang truy cập", t.online_devices ?? latestPresence.online_count, true],
+          ["Món ăn Hội An", t.dishes, false],
+          ["Danh mục ẩm thực", t.categories, false],
+          ["Lượt yêu thích", t.favorites, false],
+          ["Lượt check-in", t.check_ins, false],
+        ];
+        $("#strip").innerHTML = statItems
+          .map(
+            ([label, val, isLive]) => `
+            <div class="stat-card ${isLive ? "live-card" : ""}">
+              <div class="stat-info">
+                <span>${label}</span>
+                <b ${isLive ? 'id="stripOnlineVal"' : ""}>${val}</b>
+              </div>
+            </div>`,
+          )
           .join("");
+
+        const navCheckEl = $("#navCheckinCount");
+        if (navCheckEl) navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
+
+        const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
+        const dailyBadge = $("#dailyTotalBadge");
+        if (dailyBadge) dailyBadge.textContent = `${dailySum} LƯỢT / 7 NGÀY`;
+
         const max = Math.max(1, ...s.daily.map((d) => d.n));
         $("#bars").innerHTML = s.daily
-          .map(
-            (d) =>
-              `<div title="${esc(d.day)}"><b>${d.n}</b><i style="height:${Math.round((d.n / max) * 90)}%"></i>${esc(d.day.slice(8))}/${esc(d.day.slice(5, 7))}</div>`,
-          )
+          .map((d) => {
+            const label = `${esc(d.day.slice(8))}/${esc(d.day.slice(5, 7))}`;
+            const pct = d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
+            return `
+              <div class="day-col" title="Ngày ${label}: ${d.n} lượt check-in">
+                <b>${d.n}</b>
+                <div class="day-track">
+                  <i style="height:${pct}%"></i>
+                </div>
+                <span>${label}</span>
+              </div>`;
+          })
           .join("");
+
         $("#top").innerHTML = s.top
+          .slice(0, 5)
           .map(
-            (d) =>
-              `<li><span>${esc(d.name)}<small>${d.check_ins} check-in</small></span><b>${d.favorites}</b></li>`,
+            (d, idx) => `
+            <li class="stop-item">
+              <div class="stop-left">
+                <span class="stop-badge">${idx + 1}</span>
+                <div>
+                  <span class="stop-title">${esc(d.name)}</span>
+                  <small class="stop-sub">${d.check_ins} lượt check-in tại quán</small>
+                </div>
+              </div>
+              <span class="stop-right">${d.favorites} yêu thích</span>
+            </li>`,
           )
           .join("");
+
         $("#recent").innerHTML = c
           .map(
-            (x) =>
-              `<li><span>${esc(x.dish_name)}<small>${esc(x.note || "Không có ghi chú")}</small></span><small>${dmy(x.created_at)}</small></li>`,
+            (x) => `
+            <li class="stop-item">
+              <div class="stop-left">
+                <span class="stop-badge done">✓</span>
+                <div>
+                  <span class="stop-title">${esc(x.dish_name)}</span>
+                  <small class="stop-sub">${esc(x.note || "Đã check-in tại điểm ẩm thực")}</small>
+                </div>
+              </div>
+              <small style="color: var(--muted); white-space: nowrap">${dmy(x.created_at)}</small>
+            </li>`,
           )
           .join("");
         $("#noCheck").hidden = c.length > 0;
+        renderAllCharts();
+      }
+
+      function renderDishes() {
+        $("#dishCountBadge").textContent = `${dishes.length} món`;
+        const navDishEl = $("#navDishCount");
+        if (navDishEl) navDishEl.textContent = dishes.length;
+
+        $("#dishes").innerHTML = dishes
+          .map((d) => {
+            const dLang = dishLangMap[d.id] || "vi";
+            const localName = d.name_i18n?.[dLang] || d.name;
+            const localDesc = d.desc_i18n?.[dLang] || d.description || "";
+            const catLabel = getCatLabel(d.category_id, d.category_name);
+            const badges = LANG_KEYS.filter(
+              (k) => d.translations?.[k]?.name,
+            )
+              .map(
+                (k) =>
+                  `<span class="lang-mini ${dLang === k ? "active-mini" : ""}" data-dish-lang="${d.id}:${k}" title="Bấm để xem nội dung món này bằng tiếng ${k.toUpperCase()}">${k}</span>`,
+              )
+              .join("");
+
+            return `
+          <tr class="${d.is_active ? "" : "off"}">
+            <td>
+              <div class="dish-row-cell">
+                ${
+                  d.image_url
+                    ? `<img class="dish-thumb" src="${esc(d.image_url)}" alt="${esc(localName)}" loading="lazy" />`
+                    : `<div class="dish-thumb">Ảnh</div>`
+                }
+                <div>
+                  <b>${esc(localName)}</b>
+                  <small>${esc(localDesc.slice(0, 78))}${localDesc.length > 78 ? "..." : ""}</small>
+                  <small>${esc(d.address || "Phố cổ Hội An")}${d.is_active ? "" : " • (Đang ẩn)"}</small>
+                  <div class="lang-badges">${badges}</div>
+                </div>
+              </div>
+            </td>
+            <td><span class="dish-card-cat">${esc(catLabel)}</span></td>
+            <td>
+              <span class="price-tag">${vnd(d.price_vnd)}</span>
+            </td>
+            <td>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button type="button" class="quick-metric-btn" data-add-fav="${d.id}" title="Bấm để +1 Yêu thích trực tiếp">Yêu thích: ${d.favorite_count} (+1)</button>
+                <button type="button" class="quick-metric-btn" data-add-check="${d.id}" title="Bấm để +1 Check-in trực tiếp">+Check-in</button>
+              </div>
+            </td>
+            <td class="act">
+              <button data-edit="${d.id}">Sửa</button>
+              <button class="danger" data-del="${d.id}">Xoá</button>
+            </td>
+          </tr>`;
+          })
+          .join("");
+
+        $("#cardView").innerHTML = dishes
+          .map((d) => {
+            const dLang = dishLangMap[d.id] || "vi";
+            const localName = d.name_i18n?.[dLang] || d.name;
+            const localDesc = d.desc_i18n?.[dLang] || d.description || "";
+            const catLabel = getCatLabel(d.category_id, d.category_name);
+            return `
+          <div class="dish-card ${d.is_active ? "" : "off"}">
+            <div>
+              ${
+                d.image_url
+                  ? `<img class="dish-card-img" src="${esc(d.image_url)}" alt="${esc(localName)}" loading="lazy" />`
+                  : `<div class="dish-card-fallback">Ảnh</div>`
+              }
+              <div class="dish-card-body">
+                <div class="dish-card-meta">
+                  <span class="dish-card-price">${vnd(d.price_vnd)}</span>
+                  <span class="dish-card-cat">${esc(catLabel)}</span>
+                </div>
+                <h3 class="dish-card-title">${esc(localName)}</h3>
+                <div class="dish-card-sub">${esc(d.address || "Phố cổ Hội An")}</div>
+                <p class="dish-card-desc">${esc(localDesc)}</p>
+              </div>
+            </div>
+            <div class="dish-card-body" style="padding-top: 0">
+              <div class="dish-card-foot">
+                <button data-edit="${d.id}">Sửa (5 ngôn ngữ)</button>
+                <button class="danger" data-del="${d.id}">Xoá</button>
+              </div>
+            </div>
+          </div>`;
+          })
+          .join("");
+
+        $("#noDish").hidden = dishes.length > 0;
+        renderAllCharts();
       }
 
       async function loadDishes() {
         const p = new URLSearchParams();
         if ($("#q").value) p.set("q", $("#q").value);
         if ($("#cat").value) p.set("category_id", $("#cat").value);
+        p.set("lang", "vi");
         dishes = await api("/dishes?" + p);
-        $("#dishes").innerHTML = dishes
-          .map(
-            (d) => `
-    <tr class="${d.is_active ? "" : "off"}">
-      <td><b>${esc(d.name)}</b><small>${esc(d.description || "")}${d.is_active ? "" : " (đang ẩn)"}</small></td>
-      <td>${esc(d.category_name || "—")}</td><td>${vnd(d.price_vnd)}</td><td>${d.favorite_count}</td>
-      <td class="act"><button data-edit="${d.id}">Sửa</button> <button class="danger" data-del="${d.id}">Xoá</button></td>
-    </tr>`,
-          )
-          .join("");
-        $("#noDish").hidden = dishes.length > 0;
+        renderDishes();
+      }
+
+      function renderCatChips() {
+        const current = $("#cat").value;
+        $("#catChips").innerHTML =
+          `<button type="button" class="cat-chip ${current === "" ? "active" : ""}" data-cat="">Tất cả (${dishes.length})</button>` +
+          cats
+            .map((c) => {
+              const label = c.translations?.vi || c.name;
+              return `<button type="button" class="cat-chip ${String(current) === String(c.id) ? "active" : ""}" data-cat="${c.id}">${esc(label)}</button>`;
+            })
+            .join("");
       }
 
       async function loadCats() {
-        cats = await api("/categories");
+        cats = await api("/categories?lang=vi");
         $("#cat").innerHTML =
           '<option value="">Tất cả danh mục</option>' +
           cats
@@ -500,30 +2333,285 @@
           cats
             .map((c) => `<option value="${c.id}">${esc(c.name)}</option>`)
             .join("");
+        renderCatChips();
+      }
+
+      function switchFormLangTab(flang) {
+        $$("#formLangTabs .form-lang-tab").forEach((btn) =>
+          btn.classList.toggle("active", btn.dataset.flang === flang),
+        );
+        $$("[data-pane]").forEach((pane) => {
+          pane.hidden = pane.dataset.pane !== flang;
+        });
       }
 
       function openForm(d) {
         editing = d;
         const f = $("#form");
-        $("#dlgTitle").textContent = d ? "Sửa món" : "Thêm món";
-        f.name.value = d?.name ?? "";
-        f.category_id.value = d?.category_id ?? "";
+        $("#dlgTitle").textContent = d
+          ? "Chỉnh sửa món ăn (5 ngôn ngữ)"
+          : "Thêm món ăn mới (5 ngôn ngữ)";
+
+        const baseViName = (d?.translations?.vi?.name ?? d?.name ?? "").trim();
+        const baseViDesc = (d?.translations?.vi?.description ?? d?.description ?? "").trim();
+        for (const k of LANG_KEYS) {
+          const tName = (d?.translations?.[k]?.name ?? (k === "vi" ? baseViName : "")).trim();
+          const tDesc = (d?.translations?.[k]?.description ?? (k === "vi" ? baseViDesc : "")).trim();
+          f[`name_${k}`].value = k !== "vi" && tName === baseViName ? "" : tName;
+          f[`desc_${k}`].value = k !== "vi" && tDesc === baseViDesc ? "" : tDesc;
+        }
+
+        f.category_id.value = d?.category_id ?? (cats[0]?.id ?? "");
         f.price_vnd.value = d?.price_vnd ?? "";
-        f.description.value = d?.description ?? "";
+        f.emoji.value = d?.emoji ?? "";
+        f.lat.value = d?.lat ?? 15.878;
+        f.lng.value = d?.lng ?? 108.327;
         f.address.value = d?.address ?? "";
         f.image_url.value = d?.image_url ?? "";
+        $("#imageFile").value = "";
+        if (d?.image_url) {
+          $("#imgPreviewBox").innerHTML = `<img src="${esc(d.image_url)}" alt="preview" />`;
+          $("#uploadStatus").textContent = "Đang dùng ảnh hiện tại (Chọn file mới nếu muốn thay đổi)";
+        } else {
+          $("#imgPreviewBox").textContent = "Ảnh";
+          $("#uploadStatus").textContent = "Chưa chọn file ảnh (Hỗ trợ JPG, PNG, WEBP...)";
+        }
         f.is_active.checked = d ? d.is_active : true;
         $("#formErr").textContent = "";
+        switchFormLangTab(currentLang);
         $("#dlg").showModal();
       }
 
+      $("#imageFile").onchange = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        $("#uploadStatus").textContent = "Đang tải ảnh lên...";
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const dataUrl = reader.result;
+            $("#imgPreviewBox").innerHTML = `<img src="${dataUrl}" alt="preview" />`;
+            const res = await api("/upload", {
+              method: "POST",
+              body: JSON.stringify({ filename: file.name, dataUrl }),
+            });
+            $("#form").image_url.value = res.url;
+            $("#uploadStatus").textContent = "✔ Đã tải ảnh: " + file.name;
+          } catch (err) {
+            $("#uploadStatus").textContent = "Lỗi tải ảnh: " + err.message;
+          }
+        };
+        reader.readAsDataURL(file);
+      };
+
+      function setViewMode(mode) {
+        viewMode = mode;
+        $("#tableView").hidden = mode !== "table";
+        $("#cardView").hidden = mode !== "card";
+        $("#viewTableBtn").classList.toggle("active", mode === "table");
+        $("#viewCardBtn").classList.toggle("active", mode === "card");
+      }
+
+      $("#barModeTabs").onclick = (e) => {
+        const btn = e.target.closest("[data-bmode]");
+        if (!btn) return;
+        barMode = btn.dataset.bmode;
+        $$("#barModeTabs button").forEach((b) =>
+          b.classList.toggle("active", b.dataset.bmode === barMode),
+        );
+        $("#barChartSub").textContent =
+          barMode === "price"
+            ? "So sánh trực tiếp mức giá (nghìn đ) của từng món ăn (Bấm vào cột để +1 Check-in)"
+            : "Tổng lượt Yêu thích + Check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
+        renderBarChart();
+      };
+
+      $("#pieModeTabs").onclick = (e) => {
+        const btn = e.target.closest("[data-pmode]");
+        if (!btn) return;
+        pieMode = btn.dataset.pmode;
+        $$("#pieModeTabs button").forEach((b) =>
+          b.classList.toggle("active", b.dataset.pmode === pieMode),
+        );
+        $("#pieChartSub").textContent =
+          pieMode === "cat"
+            ? "Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực"
+            : "Tỷ trọng (%) phân bổ mức giá giữa các món ăn Hội An";
+        renderPieChart();
+      };
+
+      $("#lineModeTabs").onclick = (e) => {
+        const btn = e.target.closest("[data-lmode]");
+        if (!btn) return;
+        lineMode = btn.dataset.lmode;
+        $$("#lineModeTabs button").forEach((b) =>
+          b.classList.toggle("active", b.dataset.lmode === lineMode),
+        );
+        $("#lineChartSub").textContent =
+          lineMode === "dish"
+            ? "Đường biến thiên trực tiếp theo giá và mức độ tương tác của món ăn"
+            : "Đường biến thiên số lượng thiết bị truy cập theo thời gian thực";
+        renderLineChart();
+      };
+
+      $("#liveBarChart").onclick = async (e) => {
+        const col = e.target.closest("[data-quick-check]");
+        if (!col) return;
+        const dishId = Number(col.dataset.quickCheck);
+        if (!dishId) return;
+        try {
+          await api("/checkins", {
+            method: "POST",
+            body: JSON.stringify({
+              device_id: "admin_" + Date.now(),
+              dish_id: dishId,
+              note: "Check-in trực tiếp từ biểu đồ",
+            }),
+          });
+          barMode = "engage";
+          $$("#barModeTabs button").forEach((b) =>
+            b.classList.toggle("active", b.dataset.bmode === "engage"),
+          );
+          await refresh();
+        } catch (err) {
+          $("#msg").textContent = err.message;
+        }
+      };
+
+      $("#livePieLegend").onclick = (e) => {
+        const item = e.target.closest("[data-filter-cat]");
+        if (!item) return;
+        const catId = item.dataset.filterCat;
+        $("#cat").value = $("#cat").value === String(catId) ? "" : String(catId);
+        renderCatChips();
+        loadDishes();
+      };
+
+      $("#formLangTabs").onclick = (e) => {
+        const btn = e.target.closest("[data-flang]");
+        if (!btn) return;
+        switchFormLangTab(btn.dataset.flang);
+      };
+
+      const NAV_META = {
+        overview: [
+          "Tổng Quan Hệ Thống",
+          "Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ thời gian thực",
+        ],
+        dishes: [
+          "Quản Lý Món Ăn Hội An",
+          "Thêm, chỉnh sửa, xoá món ăn và quản lý nội dung thuyết minh 5 ngôn ngữ",
+        ],
+        devices: [
+          "Thiết Bị Đang Truy Cập (Live)",
+          "Giám sát trực tiếp các thiết bị đang mở ứng dụng theo thời gian thực",
+        ],
+        checkins: [
+          "Lịch Sử Check-in & Yêu Thích",
+          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn được yêu thích",
+        ],
+      };
+
+      function switchNavSection(nav) {
+        $$("#sidebarNav .nav-btn").forEach((b) =>
+          b.classList.toggle("active", b.dataset.nav === nav),
+        );
+        const [title, sub] = NAV_META[nav] || NAV_META.overview;
+        $("#pageTitle").textContent = title;
+        $("#pageSub").textContent = sub;
+
+        const showOverview = nav === "overview";
+        $("#strip").hidden = !showOverview;
+        $("#secCharts").hidden = !showOverview;
+
+        const colLeft = $("#colLeft");
+        const colRight = $("#colRight");
+        const mainGrid = $("#mainGrid");
+
+        colLeft.hidden = nav !== "dishes";
+        colRight.hidden = !(nav === "devices" || nav === "checkins");
+        mainGrid.hidden = showOverview;
+
+        $("#secDevices").hidden = nav !== "devices";
+        $("#secDailyCheckin").hidden = nav !== "checkins";
+        $("#secTopFav").hidden = nav !== "checkins";
+        $("#secRecentCheckin").hidden = nav !== "checkins";
+
+        mainGrid.classList.toggle("single-col", true);
+      }
+
+      $("#sidebarNav").onclick = (e) => {
+        const btn = e.target.closest("[data-nav]");
+        if (!btn) return;
+        switchNavSection(btn.dataset.nav);
+      };
+
+      $("#viewTableBtn").onclick = () => setViewMode("table");
+      $("#viewCardBtn").onclick = () => setViewMode("card");
       $("#add").onclick = () => openForm(null);
       $("#cancel").onclick = () => $("#dlg").close();
-      $("#dishes").onclick = async (e) => {
-        const id = e.target.dataset.edit || e.target.dataset.del;
-        if (!id) return;
-        if (e.target.dataset.edit)
+      $("#refreshBtn").onclick = () => refresh();
+
+      $("#catChips").onclick = (e) => {
+        const btn = e.target.closest("[data-cat]");
+        if (!btn) return;
+        $("#cat").value = btn.dataset.cat;
+        renderCatChips();
+        loadDishes();
+      };
+
+      const handleDishAction = async (e) => {
+        const langBadge = e.target.closest("[data-dish-lang]");
+        if (langBadge) {
+          const [dId, lKey] = langBadge.dataset.dishLang.split(":");
+          dishLangMap[dId] = lKey;
+          renderDishes();
+          return;
+        }
+
+        const favBtn = e.target.closest("[data-add-fav]");
+        if (favBtn) {
+          const dishId = Number(favBtn.dataset.addFav);
+          try {
+            await api("/favorites", {
+              method: "POST",
+              body: JSON.stringify({
+                device_id: "fav_" + Date.now() + "_" + Math.floor(Math.random() * 999),
+                dish_id: dishId,
+              }),
+            });
+            await refresh();
+          } catch (err) {
+            $("#msg").textContent = err.message;
+          }
+          return;
+        }
+
+        const checkBtn = e.target.closest("[data-add-check]");
+        if (checkBtn) {
+          const dishId = Number(checkBtn.dataset.addCheck);
+          try {
+            await api("/checkins", {
+              method: "POST",
+              body: JSON.stringify({
+                device_id: "chk_" + Date.now(),
+                dish_id: dishId,
+                note: "Check-in tại quán",
+              }),
+            });
+            await refresh();
+          } catch (err) {
+            $("#msg").textContent = err.message;
+          }
+          return;
+        }
+
+        const btn = e.target.closest("[data-edit], [data-del]");
+        if (!btn) return;
+        const id = btn.dataset.edit || btn.dataset.del;
+        if (btn.dataset.edit) {
           return openForm(dishes.find((d) => d.id == id));
+        }
         if (
           !confirm("Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.")
         )
@@ -535,17 +2623,35 @@
           $("#msg").textContent = err.message;
         }
       };
+
+      $("#dishes").onclick = handleDishAction;
+      $("#cardView").onclick = handleDishAction;
+
       $("#form").onsubmit = async (e) => {
         e.preventDefault();
         const f = e.target;
+        const nameVi = f.name_vi.value.trim();
+        const descVi = f.desc_vi.value.trim() || null;
+
+        const translations = {};
+        for (const k of LANG_KEYS) {
+          const n = f[`name_${k}`].value.trim() || nameVi;
+          const desc = f[`desc_${k}`].value.trim() || descVi;
+          translations[k] = { name: n, description: desc };
+        }
+
         const body = {
-          name: f.name.value.trim(),
+          name: nameVi,
+          description: descVi,
           category_id: f.category_id.value ? Number(f.category_id.value) : null,
           price_vnd: f.price_vnd.value ? Number(f.price_vnd.value) : null,
-          description: f.description.value || null,
-          address: f.address.value || null,
-          image_url: f.image_url.value || null,
+          emoji: f.emoji.value.trim() || "🍜",
+          lat: f.lat.value ? Number(f.lat.value) : 15.878,
+          lng: f.lng.value ? Number(f.lng.value) : 108.327,
+          address: f.address.value.trim() || null,
+          image_url: f.image_url.value.trim() || null,
           is_active: f.is_active.checked,
+          translations,
         };
         try {
           await api(editing ? "/dishes/" + editing.id : "/dishes", {
@@ -558,20 +2664,50 @@
           $("#formErr").textContent = err.message;
         }
       };
+
       let t;
       $("#q").oninput = () => {
         clearTimeout(t);
         t = setTimeout(loadDishes, 250);
       };
-      $("#cat").onchange = loadDishes;
+      $("#cat").onchange = () => {
+        renderCatChips();
+        loadDishes();
+      };
+
+      function connectPresenceStream() {
+        try {
+          const es = new EventSource("/api/presence/stream?role=admin");
+          es.onmessage = (ev) => {
+            try {
+              const data = JSON.parse(ev.data);
+              renderPresence(data);
+              if (data.stats_updated) {
+                loadStats();
+                loadDishes();
+              }
+            } catch {}
+          };
+          es.onerror = () => {
+            es.close();
+            setTimeout(connectPresenceStream, 3000);
+          };
+        } catch {}
+      }
 
       async function refresh() {
+        $("#msg").textContent = "";
         await Promise.all([loadDishes(), loadStats()]);
+        renderCatChips();
       }
+
+      switchNavSection("overview");
+
       (async () => {
         try {
           await loadCats();
           await refresh();
+          connectPresenceStream();
         } catch (err) {
           $("#msg").textContent =
             "Không kết nối được API: " +

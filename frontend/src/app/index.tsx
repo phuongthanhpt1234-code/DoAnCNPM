@@ -16,7 +16,13 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { DISHES, Dish, LANGS, LangKey } from "../data/dishesData";
-import { getDishes } from "../services/api";
+import {
+  api,
+  getClientDeviceId,
+  getDishes,
+  notifyPresenceLangChange,
+  startPresenceSession,
+} from "../services/api";
 
 type TimeSlotKey = "morning" | "noon" | "night";
 
@@ -788,22 +794,22 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             );
 
             const base: Dish = localDish ?? {
-              id: 1000 + row.id,
+              id: row.id,
               cat: "main",
-              emoji: "🍜",
+              emoji: row.emoji || "🍜",
               price: "Đang cập nhật",
-              rating: 0,
-              lat: 15.877,
-              lng: 108.327,
-              img: "",
-              name: {
+              rating: Number(row.rating ?? 4.8),
+              lat: Number(row.lat ?? 15.877),
+              lng: Number(row.lng ?? 108.327),
+              img: row.image_url || "",
+              name: row.name_i18n ?? {
                 vi: row.name,
                 en: row.name,
                 zh: row.name,
                 ko: row.name,
                 ja: row.name,
               },
-              desc: {
+              desc: row.desc_i18n ?? {
                 vi: row.description ?? "",
                 en: row.description ?? "",
                 zh: row.description ?? "",
@@ -812,16 +818,66 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               },
             };
 
+            const mergedName: Record<LangKey, string> = {
+              vi: row.name_i18n?.vi || row.name || base.name.vi,
+              en:
+                row.name_i18n?.en && row.name_i18n.en !== row.name
+                  ? row.name_i18n.en
+                  : localDish?.name.en || row.name_i18n?.en || row.name,
+              zh:
+                row.name_i18n?.zh && row.name_i18n.zh !== row.name
+                  ? row.name_i18n.zh
+                  : localDish?.name.zh || row.name_i18n?.zh || row.name,
+              ko:
+                row.name_i18n?.ko && row.name_i18n.ko !== row.name
+                  ? row.name_i18n.ko
+                  : localDish?.name.ko || row.name_i18n?.ko || row.name,
+              ja:
+                row.name_i18n?.ja && row.name_i18n.ja !== row.name
+                  ? row.name_i18n.ja
+                  : localDish?.name.ja || row.name_i18n?.ja || row.name,
+            };
+
+            const rawDescVi = row.desc_i18n?.vi || row.description || base.desc.vi;
+            const mergedDesc: Record<LangKey, string> = {
+              vi: rawDescVi,
+              en:
+                row.desc_i18n?.en && row.desc_i18n.en !== rawDescVi
+                  ? row.desc_i18n.en
+                  : localDish?.desc.en || row.desc_i18n?.en || rawDescVi,
+              zh:
+                row.desc_i18n?.zh && row.desc_i18n.zh !== rawDescVi
+                  ? row.desc_i18n.zh
+                  : localDish?.desc.zh || row.desc_i18n?.zh || rawDescVi,
+              ko:
+                row.desc_i18n?.ko && row.desc_i18n.ko !== rawDescVi
+                  ? row.desc_i18n.ko
+                  : localDish?.desc.ko || row.desc_i18n?.ko || rawDescVi,
+              ja:
+                row.desc_i18n?.ja && row.desc_i18n.ja !== rawDescVi
+                  ? row.desc_i18n.ja
+                  : localDish?.desc.ja || row.desc_i18n?.ja || rawDescVi,
+            };
+
             return {
               ...base,
-              name: { ...base.name, vi: row.name },
-              desc: { ...base.desc, vi: row.description ?? base.desc.vi },
+              id: Number(row.id),
+              emoji: row.emoji || base.emoji,
+              rating: row.rating != null ? Number(row.rating) : base.rating,
+              lat: row.lat != null ? Number(row.lat) : base.lat,
+              lng: row.lng != null ? Number(row.lng) : base.lng,
+              name: mergedName,
+              desc: mergedDesc,
               img: row.image_url || base.img,
               price:
                 row.price_vnd != null
                   ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
                   : base.price,
-              cat: CAT_BY_NAME[row.category_name] ?? localDish?.cat ?? "main",
+              cat:
+                (row.category_slug as Dish["cat"]) ??
+                CAT_BY_NAME[row.category_name] ??
+                localDish?.cat ??
+                "main",
             };
           });
 
@@ -873,8 +929,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       : "https://hoian-food-map.vercel.app",
   );
 
-  const [activeSlot, setActiveSlot] = useState<TimeSlotKey>("morning");
-  const [checkedStops, setCheckedStops] = useState<string[]>(["m3"]);
+  const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
     "no_spicy",
@@ -890,11 +945,17 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     : remoteTranslation.source === noteSource ? remoteTranslation.text
     : translateNoteInstant(noteSource);
 
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
-    null,
-  );
-
   const ui = PAGE_UI[lang] || PAGE_UI.vi;
+
+  // Kết nối đếm thiết bị đang truy cập thời gian thực (tự động giảm khi đóng tab/app)
+  useEffect(() => {
+    const cleanup = startPresenceSession(() => lang);
+    return cleanup;
+  }, []);
+
+  useEffect(() => {
+    notifyPresenceLangChange(lang);
+  }, [lang]);
 
   useEffect(() => {
     if (params.lang && PAGE_UI[params.lang]) {
@@ -930,10 +991,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   useFocusEffect(
     useCallback(() => {
-      AsyncStorage.getItem("userAccount")
-        .then((s) => setUser(s ? JSON.parse(s) : null))
-        .catch(() => setUser(null));
-
       if (!params.lang) {
         AsyncStorage.getItem("appLanguage")
           .then((savedLang) => {
@@ -952,11 +1009,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     try {
       await AsyncStorage.setItem("appLanguage", k);
     } catch (e) {}
-  };
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem("userAccount");
-    setUser(null);
   };
 
   const isDesktop = width >= 900;
@@ -1040,26 +1092,23 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     }
   };
 
-  const toggleStopCheckIn = (stopId: string) => {
-    setCheckedStops((prev) =>
-      prev.includes(stopId)
-        ? prev.filter((id) => id !== stopId)
-        : [...prev, stopId],
+  const handleCheckInDish = (dish: Dish) => {
+    const isAlreadyChecked = checkedDishIds.includes(dish.id);
+    setCheckedDishIds((prev) =>
+      prev.includes(dish.id)
+        ? prev.filter((id) => id !== dish.id)
+        : [...prev, dish.id],
     );
-  };
-
-  // DẪN ĐƯỜNG ĐI BỘ CẢ 3 TRẠM: LUÔN MẶC ĐỊNH TRẠM 1 LÀ ĐIỂM KHỞI ĐẦU -> TRẠM 2 -> TRẠM 3 CHO CẢ SÁNG, TRƯA, TỐI
-  const handleRouteAllThreeStops = () => {
-    const rawStops = SCHEDULE_DATA[activeSlot];
-    if (!rawStops || rawStops.length < 3) return;
-
-    const orderedStops = [...rawStops].sort((a, b) => a.order - b.order);
-    const origin = `${orderedStops[0].lat},${orderedStops[0].lng}`;
-    const waypoint = `${orderedStops[1].lat},${orderedStops[1].lng}`;
-    const destination = `${orderedStops[2].lat},${orderedStops[2].lng}`;
-
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoint}&travelmode=walking`;
-    Linking.openURL(url);
+    if (!isAlreadyChecked) {
+      api("/checkins", {
+        method: "POST",
+        body: JSON.stringify({
+          device_id: getClientDeviceId(),
+          dish_id: dish.id,
+          note: `Check-in món ${dish.name.vi}`,
+        }),
+      }).catch(() => {});
+    }
   };
 
   const toggleDietaryOption = (id: string) => {
@@ -1095,17 +1144,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const qrTargetUrl = `${customUrl}?mobile=1&lang=${lang}${selectedDish ? `&dish=${selectedDish.id}` : ""}`;
   const qrImageUri = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(qrTargetUrl)}`;
-
-  const currentStops = useMemo(
-    () => [...SCHEDULE_DATA[activeSlot]].sort((a, b) => a.order - b.order),
-    [activeSlot],
-  );
-
-  const slotTabs: { key: TimeSlotKey; title: string; timeRange: string }[] = [
-    { key: "morning", title: ui.slotMorning, timeRange: "07:00 - 10:30" },
-    { key: "noon", title: ui.slotNoon, timeRange: "11:00 - 15:00" },
-    { key: "night", title: ui.slotNight, timeRange: "17:00 - 22:00" },
-  ];
 
   const activeExtraNoteVi = (
     translatedCustomNoteVi || translateNoteInstant(customDietaryNote)
@@ -1148,47 +1186,13 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           >
             <Text style={styles.qrTriggerText}>{ui.qrMobileBtn}</Text>
           </TouchableOpacity>
-
-          {user ? (
-            <>
-              <View style={styles.userChip}>
-                <Text style={styles.userChipText} numberOfLines={1}>
-                  {user.name || user.email}
-                </Text>
-              </View>
-              <TouchableOpacity style={styles.loginBtn} onPress={handleLogout}>
-                <Text style={styles.loginBtnText}>{ui.logoutBtn}</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={() =>
-                  router.push({ pathname: "/login" as any, params: { lang } })
-                }
-              >
-                <Text style={styles.loginBtnText}>{ui.loginBtn}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.registerBtn}
-                onPress={() =>
-                  router.push({
-                    pathname: "/register" as any,
-                    params: { lang },
-                  })
-                }
-              >
-                <Text style={styles.registerBtnText}>{ui.registerBtn}</Text>
-              </TouchableOpacity>
-            </>
-          )}
         </View>
       </View>
 
       <FlatList
-        key={numColumns}
+        key={"${numColumns}-${lang}"}
         data={filtered}
+        extraData={{ lang, checkedDishIds }}
         numColumns={numColumns}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
@@ -1208,7 +1212,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 contentContainerStyle={styles.catRow}
               >
                 {[
-                  ["all", ui.catAll],
+                  ["all", `${ui.catAll.replace(/\s*\(\d+\)/, "")} (${apiDishes.length})`],
                   ["main", ui.catMain],
                   ["snack", ui.catSnack],
                   ["street", ui.catStreet],
@@ -1238,31 +1242,86 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.card}
+            style={[
+              styles.card,
+              numColumns === 3 && {
+                maxWidth:
+                  Platform.OS === "web"
+                    ? ("calc(33.333% - 16px)" as any)
+                    : "31.5%",
+              },
+              numColumns === 2 && {
+                maxWidth:
+                  Platform.OS === "web"
+                    ? ("calc(50% - 16px)" as any)
+                    : "48%",
+              },
+            ]}
             onPress={() => setSelectedDish(item)}
             activeOpacity={0.88}
           >
-            <Image source={{ uri: item.img }} style={styles.cardImg} />
+            <View style={styles.cardImgWrap}>
+              {item.img ? (
+                <Image
+                  source={{ uri: item.img }}
+                  style={styles.cardImg}
+                  resizeMode="cover"
+                />
+              ) : null}
+            </View>
             <View style={styles.cardBody}>
-              <View style={styles.cardMeta}>
-                <Text style={styles.cardPrice}>{item.price}</Text>
-                <Text style={styles.cardRating}>★ {item.rating}</Text>
+              <View style={styles.cardTopContent}>
+                <View style={styles.cardMeta}>
+                  <Text style={styles.cardPrice}>
+                    {item.price}
+                  </Text>
+                </View>
+                <Text style={styles.cardTitle} numberOfLines={1}>
+                  {item.name[lang] || item.name.vi}
+                </Text>
+                <Text style={styles.cardSub} numberOfLines={1}>
+                  {lang === "vi"
+                    ? item.name.en || item.name.vi
+                    : item.name.vi}
+                </Text>
+                <Text style={styles.cardDesc} numberOfLines={3}>
+                  {item.desc[lang] || item.desc.vi}
+                </Text>
               </View>
-              <Text style={styles.cardTitle}>{item.name[lang]}</Text>
-              <Text style={styles.cardSub}>{item.name.vi}</Text>
-              <Text style={styles.cardDesc} numberOfLines={3}>
-                {item.desc[lang]}
-              </Text>
 
               <View style={styles.cardActions}>
                 <TouchableOpacity
                   style={styles.listenBtn}
                   onPress={() => {
                     setSelectedDish(item);
-                    speakText(item.desc[lang]);
+                    speakText(item.desc[lang] || item.desc.vi);
                   }}
                 >
                   <Text style={styles.listenBtnText}>{ui.listenBtn}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.85}
+                  onPress={() => handleCheckInDish(item)}
+                  style={[
+                    styles.checkInActionBtn,
+                    checkedDishIds.includes(item.id)
+                      ? styles.checkInActionBtnDone
+                      : styles.checkInActionBtnPending,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.checkInActionText,
+                      checkedDishIds.includes(item.id)
+                        ? styles.checkInActionTextDone
+                        : styles.checkInActionTextPending,
+                    ]}
+                  >
+                    {checkedDishIds.includes(item.id)
+                      ? ui.checkInDone
+                      : ui.checkInNow}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -1272,7 +1331,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           <View style={styles.assistantSection}>
             <View style={styles.assistantHeaderRow}>
               <View style={styles.assistantTitleGroup}>
-                <Text style={styles.assistantTitle}>{ui.assistantTitle}</Text>
+                <Text style={styles.assistantTitle}>{ui.dietaryTitle}</Text>
               </View>
               <View style={styles.practicalBadge}>
                 <Text style={styles.practicalBadgeText}>
@@ -1281,7 +1340,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               </View>
             </View>
 
-            <Text style={styles.assistantSub}>{ui.assistantSub}</Text>
+            <Text style={styles.assistantSub}>{ui.dietarySub}</Text>
 
             <View
               style={[
@@ -1290,122 +1349,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               ]}
             >
               <View style={[styles.panelBox, isDesktop && { flex: 1 }]}>
-                <View style={styles.slotTabsRow}>
-                  {slotTabs.map((slot) => {
-                    const isActive = activeSlot === slot.key;
-                    return (
-                      <TouchableOpacity
-                        key={slot.key}
-                        activeOpacity={0.85}
-                        onPress={() => setActiveSlot(slot.key)}
-                        style={[
-                          styles.slotTabBtn,
-                          isActive && styles.slotTabBtnActive,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.slotTabTitle,
-                            isActive && styles.slotTabTitleActive,
-                          ]}
-                        >
-                          {slot.title}
-                        </Text>
-                        <Text
-                          style={[
-                            styles.slotTabTime,
-                            isActive && styles.slotTabTimeActive,
-                          ]}
-                        >
-                          {slot.timeRange}
-                        </Text>
-                      </TouchableOpacity>
-                    );
-                  })}
-                </View>
-
-                <View style={styles.stopsList}>
-                  {currentStops.map((stop) => {
-                    const isChecked = checkedStops.includes(stop.id);
-                    const stopDishName =
-                      stop.dishName[lang] || stop.dishName.vi;
-                    const stopShopName =
-                      stop.shopName[lang] || stop.shopName.vi;
-                    return (
-                      <View key={stop.id} style={styles.stopCard}>
-                        <View
-                          style={[
-                            styles.stopNumberBadge,
-                            isChecked
-                              ? styles.stopNumberBadgeDone
-                              : styles.stopNumberBadgePending,
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.stopNumberText,
-                              isChecked && { color: "#ffffff" },
-                            ]}
-                          >
-                            {stop.order}
-                          </Text>
-                        </View>
-
-                        <View style={styles.stopInfoCol}>
-                          <Text style={styles.stopDishTitle}>
-                            {stopDishName}
-                          </Text>
-                          <Text style={styles.stopShopMeta}>
-                            {stopShopName} • {stop.hours}
-                          </Text>
-                        </View>
-
-                        <TouchableOpacity
-                          activeOpacity={0.85}
-                          onPress={() => toggleStopCheckIn(stop.id)}
-                          style={[
-                            styles.checkInActionBtn,
-                            isChecked
-                              ? styles.checkInActionBtnDone
-                              : styles.checkInActionBtnPending,
-                          ]}
-                        >
-                          <Text
-                            style={[
-                              styles.checkInActionText,
-                              isChecked
-                                ? styles.checkInActionTextDone
-                                : styles.checkInActionTextPending,
-                            ]}
-                          >
-                            {isChecked ? ui.checkInDone : ui.checkInNow}
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  })}
-                </View>
-
-                <TouchableOpacity
-                  activeOpacity={0.88}
-                  onPress={handleRouteAllThreeStops}
-                  style={styles.walkRouteBtn}
-                >
-                  <Text style={styles.walkRouteBtnText}>
-                    {ui.walkAllThreeBtn}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <View style={[styles.panelBox, isDesktop && { flex: 1 }]}>
-                <View style={styles.dietaryHeaderRow}>
-                  <Text style={styles.dietaryPanelTitle}>
-                    {ui.dietaryTitle}
-                  </Text>
-                </View>
-
-                <Text style={styles.dietaryPanelSub}>{ui.dietarySub}</Text>
-
                 <View style={styles.dietaryOptionsList}>
                   {DIETARY_OPTIONS.map((opt) => {
                     const isSelected = selectedDietary.includes(opt.id);
@@ -1568,6 +1511,30 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                   >
                     <Text style={styles.secondaryBtnText}>
                       {ui.directionsModalBtn}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={[
+                      styles.secondaryBtn,
+                      checkedDishIds.includes(selectedDish.id) && {
+                        backgroundColor: "#10b981",
+                        borderColor: "#10b981",
+                      },
+                    ]}
+                    onPress={() => handleCheckInDish(selectedDish)}
+                  >
+                    <Text
+                      style={[
+                        styles.secondaryBtnText,
+                        checkedDishIds.includes(selectedDish.id) && {
+                          color: "#fff",
+                        },
+                      ]}
+                    >
+                      {checkedDishIds.includes(selectedDish.id)
+                        ? ui.checkInDone
+                        : ui.checkInNow}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1824,7 +1791,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 19,
     fontWeight: "bold",
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
   },
   practicalBadge: {
     backgroundColor: "#047857",
@@ -2090,16 +2056,54 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e9c26b33",
     overflow: "hidden",
+    justifyContent: "space-between",
   },
-  cardImg: { width: "100%", height: 170 },
-  cardBody: { padding: 14, gap: 6 },
-  cardMeta: { flexDirection: "row", justifyContent: "space-between" },
-  cardPrice: { color: "#e9c26b", fontSize: 12, fontWeight: "bold" },
-  cardRating: { color: "#e9c26b", fontSize: 12, fontWeight: "bold" },
-  cardTitle: { color: "#f5ead4", fontSize: 20, fontWeight: "bold" },
+  cardImgWrap: {
+    width: "100%",
+    height: 180,
+    backgroundColor: "#1f1111",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9c26b22",
+  },
+  cardImgFallbackEmoji: {
+    fontSize: 44,
+    opacity: 0.45,
+  },
+  cardImg: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  cardBody: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "space-between",
+    gap: 10,
+  },
+  cardTopContent: {
+    gap: 6,
+  },
+  cardMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  cardPrice: { color: "#e9c26b", fontSize: 13, fontWeight: "bold" },
+  cardRating: { color: "#e9c26b", fontSize: 13, fontWeight: "bold" },
+  cardTitle: { color: "#f5ead4", fontSize: 19, fontWeight: "bold" },
   cardSub: { color: "#a89a82", fontSize: 12 },
-  cardDesc: { color: "#d6c7b2", fontSize: 13, lineHeight: 19 },
-  cardActions: { flexDirection: "row", gap: 8, marginTop: 8 },
+  cardDesc: {
+    color: "#d6c7b2",
+    fontSize: 13,
+    lineHeight: 19,
+    minHeight: 57,
+  },
+  cardActions: { flexDirection: "row", gap: 8, marginTop: 4 },
   listenBtn: {
     flex: 1,
     backgroundColor: "#d4152f",
