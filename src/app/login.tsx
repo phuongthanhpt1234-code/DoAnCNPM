@@ -135,17 +135,20 @@ export default function LoginScreen() {
   const rawParamLang = localParams.lang || globalParams.lang;
 
   useEffect(() => {
+    let cancelled = false;
     if (rawParamLang) {
       const code = toLangCode(rawParamLang);
-      setStoredLang(code);
-      AsyncStorage.setItem('appLanguage', code).catch(() => {});
+      AsyncStorage.setItem('appLanguage', code)
+        .then(() => { if (!cancelled) setStoredLang(code); })
+        .catch(() => {});
     } else {
       AsyncStorage.getItem('appLanguage')
         .then((saved) => {
-          if (saved) setStoredLang(toLangCode(saved));
+          if (!cancelled && saved) setStoredLang(toLangCode(saved));
         })
         .catch(() => {});
     }
+    return () => { cancelled = true; };
   }, [rawParamLang]);
 
   // Lấy trực tiếp ngôn ngữ ngay trong lúc render
