@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useGlobalSearchParams, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type LangCode = 'vi' | 'en' | 'zh' | 'ko' | 'ja' | 'es' | 'ar';
@@ -276,9 +276,6 @@ export default function RegisterScreen() {
     }, [syncLanguage])
   );
 
-  useEffect(() => {
-    syncLanguage();
-  }, [syncLanguage]);
 
   const ui = REGISTER_I18N[lang] || REGISTER_I18N.vi;
 
