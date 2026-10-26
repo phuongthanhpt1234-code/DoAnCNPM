@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api } from "./api";
 
 export type Dish = {
@@ -18,13 +18,51 @@ export function useDishes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const reload = () => {
-    setLoading(true);
+  // Tải dữ liệu khi mở trang.
+  useEffect(() => {
+    let cancelled = false;
+
     api<Dish[]>("/dishes")
-      .then((d) => setDishes(d.filter((x) => x.is_active)))
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  };
-  useEffect(reload, []);
+      .then((data) => {
+        if (cancelled) return;
+
+        setDishes(data.filter((dish) => dish.is_active));
+        setError("");
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+
+        setError(
+          err instanceof Error ? err.message : "Không tải được món ăn",
+        );
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Tải lại khi người dùng yêu cầu.
+  const reload = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await api<Dish[]>("/dishes");
+      setDishes(data.filter((dish) => dish.is_active));
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Không tải được món ăn",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return { dishes, loading, error, reload };
 }
