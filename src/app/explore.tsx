@@ -402,10 +402,10 @@ export default function ExploreScreen() {
   const [letterFeedback, setLetterFeedback] = useState('');
   const [showEmbeddedAlleyMap, setShowEmbeddedAlleyMap] = useState(false);
 
-  const letterScaleAnim = useRef(new Animated.Value(0.75)).current;
-  const letterOpacityAnim = useRef(new Animated.Value(0)).current;
-  const letterFloatAnim = useRef(new Animated.Value(0)).current;
-  const sealRotateAnim = useRef(new Animated.Value(0)).current;
+const [letterScaleAnim] = useState(() => new Animated.Value(0.75));
+const [letterOpacityAnim] = useState(() => new Animated.Value(0));
+const [letterFloatAnim] = useState(() => new Animated.Value(0));
+const [sealRotateAnim] = useState(() => new Animated.Value(0));
 
   const langCode = (((i18n.language || 'vi').split('-')[0].toLowerCase()) as LangCode) || 'vi';
   const ui = EXPLORE_I18N[langCode] || EXPLORE_I18N.vi;
