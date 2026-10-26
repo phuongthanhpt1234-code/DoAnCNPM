@@ -6,15 +6,18 @@ on:
   pull_request:
     branches: [main]
 
-defaults:
-  run:
-    working-directory: frontend
+permissions:
+  contents: read
 
 jobs:
-  # 1. KIỂM TRA CHẤT LƯỢNG CODE & BUILD THỬ WEB (CONTINUOUS INTEGRATION)
+  # 1. KIỂM TRA CODE VÀ BUILD WEB
   quality-check:
     name: Lint, TypeScript & Web Build Check
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -27,10 +30,7 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      - name: Ensure ESLint is installed for Expo Lint
-        run: npx expo install eslint eslint-config-expo
+        run: npm ci --legacy-peer-deps
 
       - name: Run TypeScript Typecheck
         run: npx tsc --noEmit
@@ -38,7 +38,7 @@ jobs:
       - name: Run Expo Lint
         run: npx expo lint
 
-      - name: Verify Static Web Build (Expo Web)
+      - name: Build Expo Web
         run: npx expo export --platform web
 
       - name: Upload Web Build Artifact
@@ -46,8 +46,10 @@ jobs:
         with:
           name: web-dist
           path: frontend/dist
+          if-no-files-found: error
+          retention-days: 3
 
-  # 2. DEPLOY WEB TO VERCEL
+  # 2. DEPLOY WEB LÊN VERCEL
   deploy-web:
     name: Deploy Web to Vercel
     needs: quality-check
@@ -56,6 +58,7 @@ jobs:
     defaults:
       run:
         working-directory: frontend
+
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -73,59 +76,71 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Validate Vercel Secrets
+        shell: bash
         run: |
-          test -n "$VERCEL_TOKEN" || (echo "Missing VERCEL_TOKEN" && exit 1)
-          test -n "$VERCEL_ORG_ID" || (echo "Missing VERCEL_ORG_ID" && exit 1)
-          test -n "$VERCEL_PROJECT_ID" || (echo "Missing VERCEL_PROJECT_ID" && exit 1)
+          test -n "$VERCEL_TOKEN" || {
+            echo "::error::Missing GitHub Secret VERCEL_TOKEN"
+            exit 1
+          }
+          test -n "$VERCEL_ORG_ID" || {
+            echo "::error::Missing GitHub Secret VERCEL_ORG_ID"
+            exit 1
+          }
+          test -n "$VERCEL_PROJECT_ID" || {
+            echo "::error::Missing GitHub Secret VERCEL_PROJECT_ID"
+            exit 1
+          }
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
       - name: Link Vercel Project
+        shell: bash
         run: |
           mkdir -p .vercel
-          printf '{"orgId":"%s","projectId":"%s"}' \
+          printf '{"orgId":"%s","projectId":"%s"}\n' \
             "$VERCEL_ORG_ID" "$VERCEL_PROJECT_ID" \
             > .vercel/project.json
 
-      - name: Pull Vercel Configuration
-        run: npx vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
+      - name: Deploy Web to Vercel
+        shell: bash
+        run: |
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN"
 
-      - name: Build Production
-        run: npx vercel@latest build --prod --token="$VERCEL_TOKEN"
-
-      - name: Deploy Production
-        run: npx vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN" --yes
-
-  # 3. CẬP NHẬT ỨNG DỤNG DI ĐỘNG QUA OTA (CHẠY KHI ĐÃ CẤU HÌNH EXPO_TOKEN)
+  # 3. CẬP NHẬT ỨNG DỤNG MOBILE QUA EXPO EAS
   deploy-mobile-ota:
     name: Publish Expo EAS Update (Mobile)
     needs: quality-check
-    if: github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    env:
-      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+    defaults:
+      run:
+        working-directory: frontend
+
     steps:
       - name: Checkout repository
-        if: env.EXPO_TOKEN != ''
         uses: actions/checkout@v4
 
       - name: Setup Node.js 22
-        if: env.EXPO_TOKEN != ''
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Setup Expo & EAS CLI
-        if: env.EXPO_TOKEN != ''
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Publish Expo EAS Update
+        if: ${{ secrets.EXPO_TOKEN != '' }}
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install dependencies
-        if: env.EXPO_TOKEN != ''
-        run: npm install --legacy-peer-deps
-
-      - name: Publish Over-The-Air (OTA) Update
-        if: env.EXPO_TOKEN != ''
+      - name: Publish OTA Update
+        if: ${{ secrets.EXPO_TOKEN != '' }}
         run: npx eas-cli@latest update --auto --non-interactive
