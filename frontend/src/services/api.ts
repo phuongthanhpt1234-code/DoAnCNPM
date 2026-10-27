@@ -1,18 +1,17 @@
 import { AppState, Platform } from "react-native";
 import { LangKey } from "../data/dishesData";
 
-const RENDER_BACKEND_URL = "https://doancnpm-backend.onrender.com";
-
+// Tự động nhận diện backend URL linh hoạt cho cả Local, Render và Vercel
 const getFallbackUrl = () => {
-  if (
-    Platform.OS === "web" &&
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1")
-  ) {
-    return "http://localhost:4000";
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    const host = window.location.hostname;
+    // Nếu đang chạy local (localhost hoặc IP mạng LAN như 192.168.x.x)
+    if (host === "localhost" || host === "127.0.0.1" || /^192\.168\./.test(host) || /^10\./.test(host)) {
+      return `http://${host}:4000`;
+    }
   }
-  return RENDER_BACKEND_URL;
+  // Mặc định gọi đến Backend triển khai trên Render
+  return "https://doancnpm-backend.onrender.com";
 };
 
 export const API_URL = (
