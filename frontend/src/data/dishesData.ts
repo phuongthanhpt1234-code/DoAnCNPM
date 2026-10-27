@@ -20,6 +20,7 @@ export interface Dish {
   lat: number;
   lng: number;
   img: string;
+  fallbackImg?: string;
   address?: string;
   favorite_count?: number;
   name: Record<LangKey, string>;

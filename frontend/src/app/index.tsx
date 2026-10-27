@@ -25,6 +25,35 @@ import {
   startPresenceSession,
 } from "../services/api";
 
+function DishCardImage({
+  uri,
+  fallbackUri,
+  style,
+}: {
+  uri?: string;
+  fallbackUri: string;
+  style: any;
+}) {
+  const [currentUri, setCurrentUri] = useState<string>(() => uri || fallbackUri);
+
+  useEffect(() => {
+    setCurrentUri(uri || fallbackUri);
+  }, [uri, fallbackUri]);
+
+  return (
+    <Image
+      source={{ uri: currentUri }}
+      style={style}
+      resizeMode="cover"
+      onError={() => {
+        if (currentUri !== fallbackUri) {
+          setCurrentUri(fallbackUri);
+        }
+      }}
+    />
+  );
+}
+
 type TimeSlotKey = "morning" | "noon" | "night";
 
 interface LocalizedText {
@@ -846,6 +875,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               if (rowNameNorm.includes("mot") && (s1.includes("mot") || s2.includes("mot"))) return true;
               if (rowNameNorm.includes("banh mi") && (s1.includes("banh mi") || s2.includes("banh mi"))) return true;
               if (rowNameNorm.includes("com ga") && (s1.includes("com ga") || s2.includes("com ga"))) return true;
+              if (rowNameNorm.includes("banh beo") && (s1.includes("banh beo") || s2.includes("banh beo"))) return true;
+              if (rowNameNorm.includes("banh xeo") && (s1.includes("banh xeo") || s2.includes("banh xeo"))) return true;
+              if (rowNameNorm.includes("mi quang") && (s1.includes("mi quang") || s2.includes("mi quang"))) return true;
+              if (rowNameNorm.includes("che") && (s1.includes("che") || s2.includes("che"))) return true;
+              if ((rowNameNorm.includes("bong hong") || rowNameNorm.includes("banh vac")) && (s1.includes("bong hong") || s2.includes("banh vac"))) return true;
               return false;
             });
 
@@ -900,12 +934,28 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               ja: localDish?.translations?.ja?.tag || "",
             };
 
-            let dishImg = row.image_url || localDish?.image || "";
+            const defaultCatImg =
+              row.category_slug === "snack"
+                ? "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&q=80&w=800"
+                : row.category_slug === "street"
+                ? "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800"
+                : row.category_slug === "sweet"
+                ? "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=800"
+                : "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
+
+            const fallbackImg = localDish?.image || defaultCatImg;
+
+            let dishImg = row.image_url || fallbackImg;
             if (dishImg.startsWith("http://doancnpm-backend.onrender.com")) {
               dishImg = dishImg.replace("http://", "https://");
             }
-            if (!dishImg || dishImg.includes("1793066302767")) {
-              dishImg = localDish?.image || "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+            if (
+              !dishImg ||
+              dishImg.includes("/uploads/") ||
+              dishImg.includes("onrender.com") ||
+              dishImg.startsWith("http://")
+            ) {
+              dishImg = fallbackImg;
             }
 
             return {
@@ -922,6 +972,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               desc: mergedDesc,
               tag: mergedTag,
               img: dishImg,
+              fallbackImg,
               price:
                 row.price_vnd != null
                   ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
@@ -1386,13 +1437,14 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             activeOpacity={0.88}
           >
             <View style={styles.cardImgWrap}>
-              {item.img ? (
-                <Image
-                  source={{ uri: item.img }}
-                  style={styles.cardImg}
-                  resizeMode="cover"
-                />
-              ) : null}
+              <DishCardImage
+                uri={item.img}
+                fallbackUri={
+                  item.fallbackImg ||
+                  "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800"
+                }
+                style={styles.cardImg}
+              />
               <TouchableOpacity
                 style={[
                   styles.cardHeartBtn,
@@ -1615,8 +1667,12 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         <View style={styles.modalOverlay}>
           {selectedDish && (
             <View style={styles.modalBox}>
-              <Image
-                source={{ uri: selectedDish.img }}
+              <DishCardImage
+                uri={selectedDish.img}
+                fallbackUri={
+                  selectedDish.fallbackImg ||
+                  "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800"
+                }
                 style={styles.modalImg}
               />
               <View style={styles.modalContent}>

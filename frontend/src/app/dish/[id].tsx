@@ -49,6 +49,22 @@ export default function DishDetailScreen() {
     api<ApiDish>(`/dishes/${id}`)
       .then((row) => {
         if (cancelled || !row) return;
+        const fallbackImg =
+          fallbackDish.img ||
+          "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
+        let dishImg = row.image_url || fallbackImg;
+        if (dishImg.startsWith("http://doancnpm-backend.onrender.com")) {
+          dishImg = dishImg.replace("http://", "https://");
+        }
+        if (
+          !dishImg ||
+          dishImg.includes("/uploads/") ||
+          dishImg.includes("onrender.com") ||
+          dishImg.startsWith("http://")
+        ) {
+          dishImg = fallbackImg;
+        }
+
         setDish({
           id: row.id,
           cat: (row.category_slug as Dish["cat"]) || fallbackDish.cat,
@@ -60,7 +76,8 @@ export default function DishDetailScreen() {
           rating: row.rating != null ? Number(row.rating) : fallbackDish.rating,
           lat: row.lat != null ? Number(row.lat) : fallbackDish.lat,
           lng: row.lng != null ? Number(row.lng) : fallbackDish.lng,
-          img: row.image_url || fallbackDish.img,
+          img: dishImg,
+          fallbackImg,
           name: row.name_i18n || fallbackDish.name,
           desc: row.desc_i18n || fallbackDish.desc,
           favorite_count: Number(row.favorite_count || 0),
@@ -112,7 +129,18 @@ export default function DishDetailScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <Image source={{ uri: dish.img }} style={styles.image} />
+      <Image
+        source={{ uri: dish.img }}
+        style={styles.image}
+        onError={() => {
+          const fallback =
+            dish.fallbackImg ||
+            "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
+          if (dish.img !== fallback) {
+            setDish((prev) => ({ ...prev, img: fallback }));
+          }
+        }}
+      />
 
       {/* Thanh chuyển đổi 5 ngôn ngữ ngay trên Mobile */}
       <View style={styles.langRow}>
