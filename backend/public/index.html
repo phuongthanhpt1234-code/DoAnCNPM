@@ -1564,11 +1564,10 @@
                     <h3>Biểu Đồ Cột</h3>
                   </div>
                   <div class="mini-tabs" id="barModeTabs">
-                    <button type="button" class="active" data-bmode="price">Giá bán</button>
-                    <button type="button" data-bmode="engage">Tương tác</button>
+                    <button type="button" class="active" data-bmode="engage">Lượt tương tác</button>
                   </div>
                 </div>
-                <div class="chart-sub" id="barChartSub">So sánh trực tiếp mức giá (nghìn đ) của từng món ăn (Bấm vào cột để +1 Check-in)</div>
+                <div class="chart-sub" id="barChartSub">Tổng lượt tương tác và check-in thực tế của từng món (Bấm vào cột để +1 Check-in)</div>
               </div>
               <div class="live-bars-box" id="liveBarChart"></div>
             </div>
@@ -1580,9 +1579,8 @@
                   <div class="chart-title-wrap">
                     <h3>Biểu Đồ Tròn</h3>
                   </div>
-                  <div class="mini-tabs" id="pieModeTabs">
+                  <div class="mini-tabs" id="pieModeTabs" style="display:none">
                     <button type="button" class="active" data-pmode="cat">Danh mục</button>
-                    <button type="button" data-pmode="price">Tỷ trọng giá</button>
                   </div>
                 </div>
                 <div class="chart-sub" id="pieChartSub">Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực</div>
@@ -1659,7 +1657,6 @@
                       <tr>
                         <th>Món ăn & Bản dịch</th>
                         <th>Danh mục</th>
-                        <th>Giá bán</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -1776,7 +1773,6 @@
 
         <div class="row">
           <label>Danh mục<select name="category_id"></select></label>
-          <label>Giá (VNĐ)<input name="price_vnd" type="number" min="0" step="1000" placeholder="40000" /></label>
         </div>
 
         <div class="row">
@@ -1853,7 +1849,7 @@
         viewMode = "table",
         currentLang = "vi",
         dishLangMap = {},
-        barMode = "price",
+        barMode = "engage",
         pieMode = "cat",
         lineMode = "dish",
         lastStats = { totals: {}, daily: [], top: [], by_category: [] },
@@ -2244,9 +2240,6 @@
               </div>
             </td>
             <td><span class="dish-card-cat">${esc(catLabel)}</span></td>
-            <td>
-              <span class="price-tag">${vnd(d.price_vnd)}</span>
-            </td>
             <td class="act">
               <button data-edit="${d.id}">Sửa</button>
               <button class="danger" data-del="${d.id}">Xoá</button>
@@ -2271,7 +2264,6 @@
               }
               <div class="dish-card-body">
                 <div class="dish-card-meta">
-                  <span class="dish-card-price">${vnd(d.price_vnd)}</span>
                   <span class="dish-card-cat">${esc(catLabel)}</span>
                 </div>
                 <h3 class="dish-card-title">${esc(localName)}</h3>
@@ -2355,7 +2347,7 @@
         }
 
         f.category_id.value = d?.category_id ?? (cats[0]?.id ?? "");
-        f.price_vnd.value = d?.price_vnd ?? "";
+        if (f.price_vnd) f.price_vnd.value = d?.price_vnd ?? "";
         f.emoji.value = d?.emoji ?? "";
         f.lat.value = d?.lat ?? 15.878;
         f.lng.value = d?.lng ?? 108.327;
@@ -2600,7 +2592,7 @@
           name: nameVi,
           description: descVi,
           category_id: f.category_id.value ? Number(f.category_id.value) : null,
-          price_vnd: f.price_vnd.value ? Number(f.price_vnd.value) : null,
+          price_vnd: f.price_vnd?.value ? Number(f.price_vnd.value) : null,
           emoji: f.emoji.value.trim() || "🍜",
           lat: f.lat.value ? Number(f.lat.value) : 15.878,
           lng: f.lng.value ? Number(f.lng.value) : 108.327,
