@@ -95,7 +95,6 @@ export default function DishDetailScreen() {
 
       <View style={styles.body}>
         <Text style={styles.title}>{dish.name[lang] || dish.name.vi}</Text>
-        <Text style={styles.subtitle}>Tên gốc: {dish.name.vi}</Text>
 
         <View style={styles.card}>
           <Text style={styles.sectionHeader}>

@@ -1304,11 +1304,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 <Text style={styles.cardTitle} numberOfLines={1}>
                   {item.name[lang] || item.name.vi}
                 </Text>
-                <Text style={styles.cardSub} numberOfLines={1}>
-                  {lang === "vi"
-                    ? item.tag?.vi || item.name.en || item.name.vi
-                    : item.tag?.[lang] || item.name.en || item.name[lang]}
-                </Text>
                 <Text style={styles.cardDesc} numberOfLines={3}>
                   {item.desc[lang] || item.desc.vi}
                 </Text>
@@ -1507,11 +1502,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               />
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>{selectedDish.name[lang]}</Text>
-                <Text style={styles.modalSub}>
-                  {lang === "vi"
-                    ? selectedDish.tag?.vi || selectedDish.name.en || selectedDish.name.vi
-                    : selectedDish.tag?.[lang] || selectedDish.name.en || selectedDish.name[lang]}
-                </Text>
                 <ScrollView style={{ maxHeight: 160 }}>
                   <Text style={styles.modalDesc}>
                     {selectedDish.desc[lang]}
