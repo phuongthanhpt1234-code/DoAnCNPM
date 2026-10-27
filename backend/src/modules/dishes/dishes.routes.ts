@@ -369,8 +369,17 @@ function formatDishRow(row: any, requestedLang?: string) {
       ? (requestedLang as SupportedLang)
       : 'vi';
 
+  let imageUrl = row.image_url ? nfc(row.image_url) : '';
+  if (imageUrl.startsWith('http://doancnpm-backend.onrender.com')) {
+    imageUrl = imageUrl.replace('http://', 'https://');
+  }
+  if (!imageUrl || imageUrl.includes('1793066302767')) {
+    imageUrl = preset?.image || imageUrl || 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';
+  }
+
   return {
     ...row,
+    image_url: imageUrl,
     name: rowName,
     description: rowDesc,
     address: row.address ? nfc(row.address) : row.address,
@@ -455,12 +464,21 @@ async function upsertTranslations(
 // Đồng bộ và tự động vá bản dịch 5 ngôn ngữ cho tất cả món ăn trong cơ sở dữ liệu
 export async function syncDishTranslations() {
   try {
-    const { rows: dishes } = await pool.query<{ id: number; name: string; description: string | null }>(
-      'SELECT id, name, description FROM dishes ORDER BY id ASC',
+    const { rows: dishes } = await pool.query<{ id: number; name: string; description: string | null; image_url: string | null }>(
+      'SELECT id, name, description, image_url FROM dishes ORDER BY id ASC',
     );
     if (!dishes.length) return;
 
     for (const dish of dishes) {
+      const preset = findHoiAnPreset(dish.name);
+
+      // Cập nhật ảnh đại diện chuẩn sắc nét nếu chưa có hoặc đang bị 404
+      if (preset?.image && (!dish.image_url || dish.image_url.includes('1793066302767') || dish.image_url.startsWith('http://'))) {
+        const finalImg = dish.image_url?.startsWith('http://doancnpm-backend.onrender.com')
+          ? dish.image_url.replace('http://', 'https://')
+          : preset.image;
+        await pool.query('UPDATE dishes SET image_url = $1 WHERE id = $2', [finalImg, dish.id]);
+      }
       const { rows: translations } = await pool.query<{ lang: string; name: string; description: string | null }>(
         'SELECT lang, name, description FROM dish_translations WHERE dish_id = $1',
         [dish.id],
@@ -469,7 +487,6 @@ export async function syncDishTranslations() {
       const transMap = new Map<string, { name: string; description: string | null }>();
       translations.forEach((t) => transMap.set(t.lang, t));
 
-      const preset = findHoiAnPreset(dish.name);
       const targetLangs: Exclude<SupportedLang, 'vi'>[] = ['en', 'zh', 'ko', 'ja'];
 
       for (const lang of targetLangs) {

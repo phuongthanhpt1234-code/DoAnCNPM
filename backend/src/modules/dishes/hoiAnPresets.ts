@@ -6,6 +6,7 @@ export interface HoiAnPresetTranslation {
   name: Record<SupportedLang, string>;
   description: Record<SupportedLang, string>;
   tag?: Record<SupportedLang, string>;
+  image?: string;
 }
 
 const ALIASES: Array<{ keywords: string[]; targetId: string }> = [
@@ -107,6 +108,7 @@ export function findHoiAnPreset(nameOrShop: string, dishId?: string | number): H
       ko: t.ko?.tag || '',
       ja: t.ja?.tag || '',
     },
+    image: raw.image || '',
   };
 }
 

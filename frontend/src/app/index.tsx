@@ -882,6 +882,14 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               ja: localDish?.translations?.ja?.tag || "",
             };
 
+            let dishImg = row.image_url || localDish?.image || "";
+            if (dishImg.startsWith("http://doancnpm-backend.onrender.com")) {
+              dishImg = dishImg.replace("http://", "https://");
+            }
+            if (!dishImg || dishImg.includes("1793066302767")) {
+              dishImg = localDish?.image || "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+            }
+
             return {
               id: Number(row.id),
               cat:
@@ -895,7 +903,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               name: mergedName,
               desc: mergedDesc,
               tag: mergedTag,
-              img: row.image_url || localDish?.image || "",
+              img: dishImg,
               price:
                 row.price_vnd != null
                   ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"

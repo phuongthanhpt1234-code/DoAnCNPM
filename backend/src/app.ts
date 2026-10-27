@@ -11,6 +11,7 @@ import presence from "./modules/presence/presence.routes";
 import stats from "./modules/stats/stats.routes";
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 app.use(express.json({ limit: "20mb" }));
 app.use(express.text({ type: "text/plain" }));
@@ -59,7 +60,9 @@ app.post("/api/upload", (req, res) => {
   const filePath = path.join(uploadsDir, finalName);
 
   fs.writeFileSync(filePath, Buffer.from(match[2], "base64"));
-  const hostUrl = `${req.protocol}://${req.get("host")}`;
+  const proto = req.headers["x-forwarded-proto"] || req.protocol || "https";
+  const host = req.get("host") || "";
+  const hostUrl = host.includes("onrender.com") ? `https://${host}` : `${proto}://${host}`;
   return res.status(201).json({
     url: `${hostUrl}/uploads/${finalName}`,
     path: `/uploads/${finalName}`,

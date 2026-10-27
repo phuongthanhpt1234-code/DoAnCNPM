@@ -2232,8 +2232,8 @@
               <div class="dish-row-cell">
                 ${
                   d.image_url
-                    ? `<img class="dish-thumb" src="${esc(d.image_url)}" alt="${esc(localName)}" loading="lazy" />`
-                    : `<div class="dish-thumb">Ảnh</div>`
+                    ? `<img class="dish-thumb" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender\.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
+                    : `<img class="dish-thumb" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
                 }
                 <div>
                   <b>${esc(localName)}</b>
@@ -2266,8 +2266,8 @@
             <div>
               ${
                 d.image_url
-                  ? `<img class="dish-card-img" src="${esc(d.image_url)}" alt="${esc(localName)}" loading="lazy" />`
-                  : `<div class="dish-card-fallback">Ảnh</div>`
+                  ? `<img class="dish-card-img" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
+                  : `<img class="dish-card-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
               }
               <div class="dish-card-body">
                 <div class="dish-card-meta">
