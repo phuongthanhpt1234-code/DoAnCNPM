@@ -52,11 +52,8 @@ export function findHoiAnPreset(nameOrShop: string, dishId?: string | number): H
 
   let raw: any = null;
 
-  if (dishId != null) {
-    raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === String(dishId));
-  }
-
-  if (!raw && norm) {
+  // 1. Luôn ưu tiên đối chiếu theo tên món ăn / tên quán / từ khoá ẩm thực thực tế
+  if (norm) {
     for (const alias of ALIASES) {
       if (alias.keywords.some((k) => norm.includes(k) || k.includes(norm))) {
         raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === alias.targetId);
@@ -78,6 +75,11 @@ export function findHoiAnPreset(nameOrShop: string, dishId?: string | number): H
         s2.includes(norm)
       );
     });
+  }
+
+  // 2. Chỉ dùng dishId làm fallback cuối nếu không tìm thấy tên phù hợp
+  if (!raw && dishId != null) {
+    raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === String(dishId));
   }
 
   if (!raw || !raw.translations) return null;

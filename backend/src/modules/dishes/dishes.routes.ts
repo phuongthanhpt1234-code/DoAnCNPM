@@ -314,7 +314,7 @@ function formatDishRow(row: any, requestedLang?: string) {
   const rawTrans = row.translations || {};
   const rowName = nfc(row.name);
   const rowDesc = nfc(row.description);
-  const preset = findHoiAnPreset(rowName, row.id);
+  const preset = findHoiAnPreset(rowName);
 
   const name_i18n: Record<SupportedLang, string> = {
     vi: nfc(rawTrans.vi?.name) || rowName,
@@ -469,7 +469,7 @@ export async function syncDishTranslations() {
       const transMap = new Map<string, { name: string; description: string | null }>();
       translations.forEach((t) => transMap.set(t.lang, t));
 
-      const preset = findHoiAnPreset(dish.name, dish.id);
+      const preset = findHoiAnPreset(dish.name);
       const targetLangs: Exclude<SupportedLang, 'vi'>[] = ['en', 'zh', 'ko', 'ja'];
 
       for (const lang of targetLangs) {
@@ -481,7 +481,7 @@ export async function syncDishTranslations() {
           !current.description ||
           (dish.description && current.description.trim() === dish.description.trim());
 
-        if (isNameMissingOrVi || isDescMissingOrVi) {
+        if (preset || isNameMissingOrVi || isDescMissingOrVi) {
           const finalName =
             preset?.name?.[lang] ||
             (await autoTranslateFromVi(dish.name, lang)) ||

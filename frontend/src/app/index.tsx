@@ -798,7 +798,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               .trim();
 
             const localDish = ALL_DISHES_DATA.find((d) => {
-              if (String(d.id) === String(row.id)) return true;
               const s1 = (d.shopVi || "")
                 .normalize("NFD")
                 .replace(/[\u0300-\u036f]/g, "")
@@ -815,14 +814,21 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 .replace(/[^a-z0-9]/g, " ")
                 .replace(/\s+/g, " ")
                 .trim();
-              return (
+              if (
                 s1 === rowNameNorm ||
                 s2 === rowNameNorm ||
                 (s1 && rowNameNorm.includes(s1)) ||
                 (s1 && s1.includes(rowNameNorm)) ||
                 (s2 && rowNameNorm.includes(s2)) ||
                 (s2 && s2.includes(rowNameNorm))
-              );
+              ) {
+                return true;
+              }
+              if (rowNameNorm.includes("cao lau") && (s1.includes("cao lau") || s2.includes("cao lau"))) return true;
+              if (rowNameNorm.includes("mot") && (s1.includes("mot") || s2.includes("mot"))) return true;
+              if (rowNameNorm.includes("banh mi") && (s1.includes("banh mi") || s2.includes("banh mi"))) return true;
+              if (rowNameNorm.includes("com ga") && (s1.includes("com ga") || s2.includes("com ga"))) return true;
+              return false;
             });
 
             const getLocalizedName = (k: LangKey): string => {
