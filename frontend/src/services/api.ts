@@ -1,16 +1,34 @@
 import { AppState, Platform } from "react-native";
 import { LangKey } from "../data/dishesData";
 
-const fallback =
-  Platform.OS === "android" ? "http://10.0.2.2:4000" : "http://localhost:4000";
-export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? fallback;
+const RENDER_BACKEND_URL = "https://doancnpm-backend.onrender.com";
+
+const getFallbackUrl = () => {
+  if (
+    Platform.OS === "web" &&
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1")
+  ) {
+    return "http://localhost:4000";
+  }
+  return RENDER_BACKEND_URL;
+};
+
+export const API_URL = (
+  process.env.EXPO_PUBLIC_API_URL ?? getFallbackUrl()
+).replace(/\/+$/, "");
 
 const SESSION_TAB_ID = `tab_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 let cachedDeviceId: string | null = null;
 
 export function getClientDeviceId(): string {
   if (cachedDeviceId) return cachedDeviceId;
-  if (Platform.OS === "web" && typeof window !== "undefined" && window.localStorage) {
+  if (
+    Platform.OS === "web" &&
+    typeof window !== "undefined" &&
+    window.localStorage
+  ) {
     const saved = window.localStorage.getItem("hoian_device_id");
     if (saved) {
       cachedDeviceId = saved;
@@ -81,7 +99,9 @@ export function startPresenceSession(getLang: () => LangKey): () => void {
             tab_id: tabId,
             lang: currentPresenceLang,
           });
-          es = new window.EventSource(`${API_URL}/api/presence/stream?${q.toString()}`);
+          es = new window.EventSource(
+            `${API_URL}/api/presence/stream?${q.toString()}`,
+          );
         } catch {}
       }
       window.addEventListener("pagehide", sendLeave);
