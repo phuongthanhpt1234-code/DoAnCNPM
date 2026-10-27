@@ -1605,7 +1605,7 @@
                     <h3>Biểu Đồ Đường</h3>
                   </div>
                   <div class="mini-tabs" id="lineModeTabs">
-                    <button type="button" class="active" data-lmode="dish">Món ăn & Giá</button>
+                    <button type="button" class="active" data-lmode="dish">Lượt tương tác</button>
                     <button type="button" data-lmode="online">Thiết bị Live</button>
                   </div>
                 </div>
@@ -1904,9 +1904,8 @@
           const m = topMetrics[d.id] || {};
           const favs = Number(d.favorite_count ?? m.favorites ?? 0);
           const checks = Number(m.check_ins ?? 0);
-          const priceK = Math.round(Number(d.price_vnd ?? m.price_vnd ?? 0) / 1000);
-          const val = barMode === "price" ? priceK : favs + checks;
-          const unit = barMode === "price" ? `${priceK}k` : `${val} lượt`;
+          const val = favs + checks;
+          const unit = `${val} lượt`;
           const shortName = (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 11);
           return { id: d.id, name: d.name, shortName, val, unit };
         });
@@ -1941,14 +1940,21 @@
           $("#pieCenterVal").textContent = dishes.length;
           $("#pieCenterLbl").textContent = "tổng món";
         } else {
-          segments = dishes.slice(0, 6).map((d) => ({
-            label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 14),
-            val: Math.max(1, Math.round(Number(d.price_vnd || 10000) / 1000)),
-            catId: d.category_id || "",
-          }));
-          const totalK = segments.reduce((s, x) => s + x.val, 0);
-          $("#pieCenterVal").textContent = `${totalK}k`;
-          $("#pieCenterLbl").textContent = "tổng giá";
+          const topMetrics = {};
+          for (const item of lastStats.top || []) topMetrics[item.id] = item;
+          segments = dishes.slice(0, 6).map((d) => {
+            const m = topMetrics[d.id] || {};
+            const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+            const checks = Number(m.check_ins ?? 0);
+            return {
+              label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 14),
+              val: Math.max(1, favs + checks),
+              catId: d.category_id || "",
+            };
+          });
+          const totalEngage = segments.reduce((s, x) => s + x.val, 0);
+          $("#pieCenterVal").textContent = totalEngage;
+          $("#pieCenterLbl").textContent = "lượt tương tác";
         }
 
         const total = segments.reduce((acc, s) => acc + s.val, 0);
@@ -2010,13 +2016,13 @@
           for (const item of lastStats.top || []) topMetrics[item.id] = item;
           pointsData = dishes.slice(0, 7).map((d) => {
             const m = topMetrics[d.id] || {};
-            const priceK = Math.round(Number(d.price_vnd || 0) / 1000);
-            const bonus = (Number(d.favorite_count ?? m.favorites ?? 0) + Number(m.check_ins ?? 0)) * 5;
-            const val = priceK + bonus;
+            const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+            const checks = Number(m.check_ins ?? 0);
+            const val = favs + checks;
             return {
               label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 9),
               val,
-              display: `${priceK}k`,
+              display: `${val} lượt`,
             };
           });
         }
@@ -2405,9 +2411,7 @@
           b.classList.toggle("active", b.dataset.bmode === barMode),
         );
         $("#barChartSub").textContent =
-          barMode === "price"
-            ? "So sánh trực tiếp mức giá (nghìn đ) của từng món ăn (Bấm vào cột để +1 Check-in)"
-            : "Tổng lượt Yêu thích + Check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
+          "Tổng lượt Yêu thích + Check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
         renderBarChart();
       };
 
@@ -2421,7 +2425,7 @@
         $("#pieChartSub").textContent =
           pieMode === "cat"
             ? "Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực"
-            : "Tỷ trọng (%) phân bổ mức giá giữa các món ăn Hội An";
+            : "Tỷ trọng (%) mức độ tương tác giữa các món ăn Hội An";
         renderPieChart();
       };
 
@@ -2434,7 +2438,7 @@
         );
         $("#lineChartSub").textContent =
           lineMode === "dish"
-            ? "Đường biến thiên trực tiếp theo giá và mức độ tương tác của món ăn"
+            ? "Đường biến thiên mức độ tương tác và check-in của các món ăn"
             : "Đường biến thiên số lượng thiết bị truy cập theo thời gian thực";
         renderLineChart();
       };
