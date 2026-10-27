@@ -1,4 +1,7 @@
--- Đồng bộ 4 danh mục chuẩn với Frontend (main, snack, street, sweet) kèm 5 ngôn ngữ
+-- 1. Làm sạch dữ liệu cũ của bảng dishes để tránh bị trùng lặp
+TRUNCATE TABLE dishes RESTART IDENTITY CASCADE;
+
+-- 2. Đồng bộ 4 danh mục chuẩn (main, snack, street, sweet) kèm 5 ngôn ngữ
 INSERT INTO categories (name, slug, translations) VALUES
   ('Món chính', 'main', '{"vi":"Món chính","en":"Main Dishes","zh":"主菜","ko":"메인 요리","ja":"メイン料理"}'::jsonb),
   ('Bánh & Ăn vặt', 'snack', '{"vi":"Bánh & Ăn vặt","en":"Snacks & Cakes","zh":"糕点与小吃","ko":"떡 & 간식","ja":"軽食・餅"}'::jsonb),
@@ -7,7 +10,11 @@ INSERT INTO categories (name, slug, translations) VALUES
 ON CONFLICT (slug) DO UPDATE SET
   name = EXCLUDED.name,
   translations = EXCLUDED.translations;
--- Thêm dữ liệu mẫu các món ăn kèm bản dịch 5 ngôn ngữ
+
+-- Xóa các danh mục ngoài 4 danh mục chuẩn
+DELETE FROM categories WHERE slug NOT IN ('main', 'snack', 'street', 'sweet');
+
+-- 3. Thêm dữ liệu mẫu các món ăn kèm đầy đủ bản dịch 5 ngôn ngữ
 INSERT INTO dishes (name, description, address, price_vnd, image_url, emoji, rating, lat, lng, category_id, translations) 
 VALUES
 (
@@ -17,7 +24,7 @@ VALUES
   20000, 
   'https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=800', 
   '', 
-  4.8, 
+  , 
   15.8788, 
   108.3275, 
   (SELECT id FROM categories WHERE slug = 'sweet'),
@@ -30,7 +37,7 @@ VALUES
   60000, 
   'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800', 
   '', 
-  4.9, 
+  , 
   15.8765, 
   108.3312, 
   (SELECT id FROM categories WHERE slug = 'main'),
@@ -43,10 +50,9 @@ VALUES
   40000, 
   'https://images.unsplash.com/photo-1626803775151-61d756612f97?auto=format&fit=crop&q=80&w=800', 
   '', 
-  4.9, 
+  , 
   15.8795, 
   108.3301, 
   (SELECT id FROM categories WHERE slug = 'street'),
   '{"vi": {"name": "Bánh Mì Phượng", "description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm và nước sốt gia truyền."}, "en": {"name": "Banh Mi Phuong", "description": "World-famous Vietnamese sandwich with crispy crust, rich pate, and special homemade sauce."}, "zh": {"name": "Phượng越南法棍", "description": "闻名全球的越南三明治，外皮酥脆，配有浓郁的肉酱和秘制酱汁。"}, "ko": {"name": "뱐미 프엉", "description": "바삭한 바게트와 풍부한 파테, 특제 소스가 어우러진 세계적으로 유명한 반미입니다."}, "ja": {"name": "バインミー・フォン", "description": "サクサクのパンに特製パテと特製ソースを挟んだ、世界的に有名なベトナム風サンドイッチ。"}}'::jsonb
 );
-DELETE FROM categories WHERE slug NOT IN ('main', 'snack', 'street', 'sweet');
