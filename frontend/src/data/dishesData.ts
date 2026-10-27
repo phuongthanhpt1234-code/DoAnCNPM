@@ -23,6 +23,7 @@ export interface Dish {
   address?: string;
   name: Record<LangKey, string>;
   desc: Record<LangKey, string>;
+  tag?: Record<LangKey, string>;
 }
 
 // Đã xoá toàn bộ món ăn mẫu: Danh sách món ăn được lấy 100% từ Backend API

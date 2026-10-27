@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import app from './app';
 import { runMigrations } from './migrate';
+import { syncDishTranslations } from './modules/dishes/dishes.routes';
 
 const port = Number(process.env.PORT) || 4000;
 
@@ -11,6 +12,7 @@ async function bootstrap() {
       console.log('🔄 Đang đồng bộ cấu trúc cơ sở dữ liệu (Neon / Postgres)...');
       await runMigrations();
       console.log('✅ Cơ sở dữ liệu đã sẵn sàng!');
+      await syncDishTranslations();
     } catch (err) {
       console.error('⚠️ Không thể tự chạy migration khi khởi động:', err);
     }

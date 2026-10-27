@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { findHoiAnPreset } from './hoiAnPresets';
 
 const r = Router();
 
@@ -15,13 +16,13 @@ const LANG_TARGET_MAP: Record<Exclude<SupportedLang, 'vi'>, string> = {
   ja: 'ja',
 };
 
-// Chuẩn hoá thuật ngữ ẩm thực Hội An trước và sau khi dịch tự động
+// Chuẩn hoá thuật ngữ ẩm thực Hội An bằng regex Unicode an toàn (lookaround Unicode \p{L}\p{N})
 const CULINARY_GLOSSARY: Array<{
   pattern: RegExp;
   replacement: Record<Exclude<SupportedLang, 'vi'>, string>;
 }> = [
   {
-    pattern: /\bQuán\s+Cao\s+[lL]ầu\s+Bá\s+Lễ\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Quán\s+Cao\s+[lL]ầu\s+Bá\s+Lễ(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Ba Le Cao Lau Noodles',
       zh: '霸礼高楼面馆 (Cao Lầu Bá Lễ)',
@@ -30,16 +31,16 @@ const CULINARY_GLOSSARY: Array<{
     },
   },
   {
-    pattern: /\bBánh\s+M[ìì]\s+Phượng\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Bánh\s+M[ìì]\s+Phượng(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Banh Mi Phuong',
       zh: '会安Phượng法棍三明治 (Bánh Mì Phượng)',
       ko: '반미 프엉 (Bánh Mì Phượng)',
-      ja: 'バインミー・フ엉 (Bánh Mì Phượng)',
+      ja: 'バインミー・フオン (Bánh Mì Phượng)',
     },
   },
   {
-    pattern: /\bCơm\s+Gà\s+B[àà]\s+Bu[ộọ]i\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Cơm\s+Gà\s+B[àà]\s+Bu[ộọ]i(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Ba Buoi Hoi An Chicken Rice',
       zh: '会安Bà Buội鸡饭 (Cơm Gà Bà Buội)',
@@ -48,7 +49,7 @@ const CULINARY_GLOSSARY: Array<{
     },
   },
   {
-    pattern: /\bTrà\s+[mM]ót\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Trà\s+[mM]ót(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Mot Hoi An Herbal Tea',
       zh: '会安Mót草本凉茶',
@@ -57,7 +58,16 @@ const CULINARY_GLOSSARY: Array<{
     },
   },
   {
-    pattern: /\bBánh\s+bao\s+bánh\s+vạc(\s+Hội\s+An)?\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Nước\s+[mM]ót(\s+Hội\s+An)?(?![\p{L}\p{N}])/giu,
+    replacement: {
+      en: 'Mot Hoi An Herbal Tea',
+      zh: '会安Mót草本凉茶',
+      ko: '호이안 못(Mót) 전통 허브티',
+      ja: 'ホイアン名物モット（Mót）伝統ハーブティー',
+    },
+  },
+  {
+    pattern: /(?<![\p{L}\p{N}])Bánh\s+bao\s+bánh\s+vạc(\s+Hội\s+An)?(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'White Rose Dumplings (Bánh Bao Bánh Vạc)',
       zh: '会安白玫瑰虾饺 (Bánh Bao Bánh Vạc)',
@@ -66,7 +76,16 @@ const CULINARY_GLOSSARY: Array<{
     },
   },
   {
-    pattern: /\bM[ìi]\s+Quảng(\s+Hội\s+An)?\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Bông\s+Hồng\s+Trắng(?![\p{L}\p{N}])/giu,
+    replacement: {
+      en: 'White Rose Shrimp Dumplings',
+      zh: '会安白玫瑰虾饺',
+      ko: '화이트 로즈 새우 만두 (반박)',
+      ja: 'ホワイトローズ（米粉の蒸し餃子）',
+    },
+  },
+  {
+    pattern: /(?<![\p{L}\p{N}])M[ìi]\s+Quảng(\s+Hội\s+An)?(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Mi Quang Turmeric Noodles',
       zh: '广南姜黄面 (Mì Quảng)',
@@ -75,12 +94,30 @@ const CULINARY_GLOSSARY: Array<{
     },
   },
   {
-    pattern: /\bHoành\s+thánh(\s+chiên)?(\s+Hội\s+An)?\b/gi,
+    pattern: /(?<![\p{L}\p{N}])Hoành\s+thánh(\s+chiên)?(\s+Hội\s+An)?(?![\p{L}\p{N}])/giu,
     replacement: {
       en: 'Hoi An Crispy Wontons (Hoành Thánh)',
       zh: '会安炸云吞 (Hoành Thánh)',
       ko: '호이안 프라이드 완탄 (Hoành Thánh)',
       ja: 'ホイアン風揚げワンタン (Hoành Thánh)',
+    },
+  },
+  {
+    pattern: /(?<![\p{L}\p{N}])Cao\s+[lL]ầu(\s+Hội\s+An)?(?![\p{L}\p{N}])/giu,
+    replacement: {
+      en: 'Traditional Hoi An Cao Lau Noodles',
+      zh: '会安传统高楼面 (Cao Lầu)',
+      ko: '호이안 전통 까오러우 (Cao Lầu)',
+      ja: 'ホイアン伝統カオラウ（伊勢うどん風麺）',
+    },
+  },
+  {
+    pattern: /(?<![\p{L}\p{N}])Bánh\s+Xèo(\s+Tôm\s+Đất)?(?![\p{L}\p{N}])/giu,
+    replacement: {
+      en: 'Quang-Style Crispy Rice Pancake (Banh Xeo)',
+      zh: '广南风味鲜虾脆煎饼 (Bánh Xèo)',
+      ko: '꽝남식 바삭한 새우 반쎄오',
+      ja: 'クアンナム風パリパリお好み焼き（バインセオ）',
     },
   },
 ];
@@ -115,10 +152,15 @@ async function translateSingleChunk(
 ): Promise<string> {
   const tl = LANG_TARGET_MAP[targetLang];
 
-  // 1. Thử Google Translate GTX trước
+  // 1. Thử Google Translate GTX
   try {
     const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${tl}&dt=t&q=${encodeURIComponent(chunk)}`;
-    const gRes = await fetch(gUrl);
+    const gRes = await fetch(gUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      },
+    });
     if (gRes.ok) {
       const data: any = await gRes.json();
       if (Array.isArray(data) && Array.isArray(data[0])) {
@@ -133,7 +175,21 @@ async function translateSingleChunk(
     // Chuyển sang provider dự phòng bên dưới
   }
 
-  // 2. Dự phòng MyMemory Neural MT (hoạt động ổn định ngay cả khi IP bị Google giới hạn 429)
+  // 2. Thử Google Translate Client Dict-Chrome-Ex
+  try {
+    const cUrl = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=vi&tl=${tl}&q=${encodeURIComponent(chunk)}`;
+    const cRes = await fetch(cUrl);
+    if (cRes.ok) {
+      const data: any = await cRes.json();
+      if (Array.isArray(data) && typeof data[0] === 'string' && data[0].trim()) {
+        return data[0].trim();
+      }
+    }
+  } catch {
+    // Chuyển sang MyMemory
+  }
+
+  // 3. Dự phòng MyMemory Neural MT
   try {
     const emailParam = `hoian_culinary_${Math.floor(Math.random() * 900000 + 100000)}@gmail.com`;
     const mUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=vi|${tl}&de=${emailParam}`;
@@ -163,16 +219,26 @@ export async function autoTranslateFromVi(
   const clean = (textVi || '').normalize('NFC').trim();
   if (!clean) return null;
 
-  // Kiểm tra khớp chính xác tên các món đặc sản nổi tiếng Hội An
+  // 1. Kiểm tra khớp từ điển đặc sản Hội An chuẩn
+  const preset = findHoiAnPreset(clean);
+  if (preset) {
+    if (clean.length < 60 && preset.name[targetLang]) {
+      return preset.name[targetLang];
+    }
+  }
+
+  // 2. Kiểm tra danh mục thuật ngữ regex Unicode
   for (const item of CULINARY_GLOSSARY) {
-    if (item.pattern.test(clean) && clean.replace(item.pattern, '').trim() === '') {
+    if (item.pattern.test(clean)) {
       item.pattern.lastIndex = 0;
-      return item.replacement[targetLang];
+      if (clean.replace(item.pattern, '').trim().length <= 3) {
+        return item.replacement[targetLang];
+      }
     }
     item.pattern.lastIndex = 0;
   }
 
-  // Tách theo đoạn xuống dòng (\n) để giữ nguyên bố cục đoạn văn
+  // 3. Tách theo đoạn xuống dòng (\n) để giữ nguyên bố cục đoạn văn
   const paragraphs = clean.split(/\n+/);
   const translatedParagraphs: string[] = [];
 
@@ -248,19 +314,54 @@ function formatDishRow(row: any, requestedLang?: string) {
   const rawTrans = row.translations || {};
   const rowName = nfc(row.name);
   const rowDesc = nfc(row.description);
+  const preset = findHoiAnPreset(rowName, row.id);
+
   const name_i18n: Record<SupportedLang, string> = {
     vi: nfc(rawTrans.vi?.name) || rowName,
-    en: nfc(rawTrans.en?.name) || nfc(rawTrans.vi?.name) || rowName,
-    zh: nfc(rawTrans.zh?.name) || nfc(rawTrans.vi?.name) || rowName,
-    ko: nfc(rawTrans.ko?.name) || nfc(rawTrans.vi?.name) || rowName,
-    ja: nfc(rawTrans.ja?.name) || nfc(rawTrans.vi?.name) || rowName,
+    en:
+      (rawTrans.en?.name && rawTrans.en.name !== rowName ? nfc(rawTrans.en.name) : '') ||
+      preset?.name.en ||
+      nfc(rawTrans.en?.name) ||
+      rowName,
+    zh:
+      (rawTrans.zh?.name && rawTrans.zh.name !== rowName ? nfc(rawTrans.zh.name) : '') ||
+      preset?.name.zh ||
+      nfc(rawTrans.zh?.name) ||
+      rowName,
+    ko:
+      (rawTrans.ko?.name && rawTrans.ko.name !== rowName ? nfc(rawTrans.ko.name) : '') ||
+      preset?.name.ko ||
+      nfc(rawTrans.ko?.name) ||
+      rowName,
+    ja:
+      (rawTrans.ja?.name && rawTrans.ja.name !== rowName ? nfc(rawTrans.ja.name) : '') ||
+      preset?.name.ja ||
+      nfc(rawTrans.ja?.name) ||
+      rowName,
   };
+
   const desc_i18n: Record<SupportedLang, string> = {
     vi: nfc(rawTrans.vi?.description) || rowDesc,
-    en: nfc(rawTrans.en?.description) || nfc(rawTrans.vi?.description) || rowDesc,
-    zh: nfc(rawTrans.zh?.description) || nfc(rawTrans.vi?.description) || rowDesc,
-    ko: nfc(rawTrans.ko?.description) || nfc(rawTrans.vi?.description) || rowDesc,
-    ja: nfc(rawTrans.ja?.description) || nfc(rawTrans.vi?.description) || rowDesc,
+    en:
+      (rawTrans.en?.description && rawTrans.en.description !== rowDesc ? nfc(rawTrans.en.description) : '') ||
+      preset?.description.en ||
+      nfc(rawTrans.en?.description) ||
+      rowDesc,
+    zh:
+      (rawTrans.zh?.description && rawTrans.zh.description !== rowDesc ? nfc(rawTrans.zh.description) : '') ||
+      preset?.description.zh ||
+      nfc(rawTrans.zh?.description) ||
+      rowDesc,
+    ko:
+      (rawTrans.ko?.description && rawTrans.ko.description !== rowDesc ? nfc(rawTrans.ko.description) : '') ||
+      preset?.description.ko ||
+      nfc(rawTrans.ko?.description) ||
+      rowDesc,
+    ja:
+      (rawTrans.ja?.description && rawTrans.ja.description !== rowDesc ? nfc(rawTrans.ja.description) : '') ||
+      preset?.description.ja ||
+      nfc(rawTrans.ja?.description) ||
+      rowDesc,
   };
 
   const lang: SupportedLang =
@@ -300,6 +401,7 @@ async function upsertTranslations(
 ) {
   const baseViName = translations?.vi?.name?.trim() || viName.trim();
   const baseViDesc = translations?.vi?.description?.trim() || viDesc?.trim() || null;
+  const preset = findHoiAnPreset(baseViName, dishId);
 
   const merged: Record<SupportedLang, { name: string; description: string | null }> = {
     vi: { name: baseViName, description: baseViDesc },
@@ -319,10 +421,18 @@ async function upsertTranslations(
       const needsAutoName = !providedName || providedName === baseViName;
       const needsAutoDesc = baseViDesc && (!providedDesc || providedDesc === baseViDesc);
 
-      const [finalName, finalDesc] = await Promise.all([
-        needsAutoName ? autoTranslateFromVi(baseViName, lang) : Promise.resolve(providedName!),
-        needsAutoDesc ? autoTranslateFromVi(baseViDesc, lang) : Promise.resolve(providedDesc ?? baseViDesc),
-      ]);
+      let finalName = providedName;
+      let finalDesc = providedDesc;
+
+      if (needsAutoName) {
+        finalName = preset?.name[lang] || (await autoTranslateFromVi(baseViName, lang)) || baseViName;
+      }
+      if (needsAutoDesc) {
+        finalDesc =
+          preset?.description[lang] ||
+          (baseViDesc ? await autoTranslateFromVi(baseViDesc, lang) : null) ||
+          baseViDesc;
+      }
 
       merged[lang] = {
         name: finalName || baseViName,
@@ -342,129 +452,211 @@ async function upsertTranslations(
   }
 }
 
-// Danh sách món ăn (hỗ trợ tìm kiếm đa ngôn ngữ ?q=..., lọc ?category_id=..., ?category_slug=..., ?lang=...)
-r.get('/', ah(async (req, res) => {
-  const q = typeof req.query.q === 'string' && req.query.q.trim() ? req.query.q.trim() : null;
-  const cat = req.query.category_id ? Number(req.query.category_id) : null;
-  const catSlug = typeof req.query.category_slug === 'string' && req.query.category_slug ? req.query.category_slug : null;
-  const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
+// Đồng bộ và tự động vá bản dịch 5 ngôn ngữ cho tất cả món ăn trong cơ sở dữ liệu
+export async function syncDishTranslations() {
+  try {
+    const { rows: dishes } = await pool.query<{ id: number; name: string; description: string | null }>(
+      'SELECT id, name, description FROM dishes ORDER BY id ASC',
+    );
+    if (!dishes.length) return;
 
-  const { rows } = await pool.query(
-    `${DISH_SELECT_SQL}
-     WHERE (
-       $1::text IS NULL
-       OR d.name ILIKE '%' || $1 || '%'
-       OR COALESCE(d.description, '') ILIKE '%' || $1 || '%'
-       OR COALESCE(d.address, '') ILIKE '%' || $1 || '%'
-       OR EXISTS (
-         SELECT 1 FROM dish_translations dt
-         WHERE dt.dish_id = d.id
-           AND (dt.name ILIKE '%' || $1 || '%' OR COALESCE(dt.description, '') ILIKE '%' || $1 || '%')
+    for (const dish of dishes) {
+      const { rows: translations } = await pool.query<{ lang: string; name: string; description: string | null }>(
+        'SELECT lang, name, description FROM dish_translations WHERE dish_id = $1',
+        [dish.id],
+      );
+
+      const transMap = new Map<string, { name: string; description: string | null }>();
+      translations.forEach((t) => transMap.set(t.lang, t));
+
+      const preset = findHoiAnPreset(dish.name, dish.id);
+      const targetLangs: Exclude<SupportedLang, 'vi'>[] = ['en', 'zh', 'ko', 'ja'];
+
+      for (const lang of targetLangs) {
+        const current = transMap.get(lang);
+        const isNameMissingOrVi =
+          !current || !current.name || current.name.trim() === dish.name.trim();
+        const isDescMissingOrVi =
+          !current ||
+          !current.description ||
+          (dish.description && current.description.trim() === dish.description.trim());
+
+        if (isNameMissingOrVi || isDescMissingOrVi) {
+          const finalName =
+            preset?.name?.[lang] ||
+            (await autoTranslateFromVi(dish.name, lang)) ||
+            dish.name;
+          const finalDesc =
+            preset?.description?.[lang] ||
+            (dish.description ? await autoTranslateFromVi(dish.description, lang) : null) ||
+            dish.description;
+
+          await pool.query(
+            `INSERT INTO dish_translations (dish_id, lang, name, description)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (dish_id, lang)
+             DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description`,
+            [dish.id, lang, finalName, finalDesc],
+          );
+        }
+      }
+    }
+    console.log('✅ Đã đồng bộ bản dịch đa ngôn ngữ cho toàn bộ món ăn!');
+  } catch (err) {
+    console.error('⚠️ Lỗi khi đồng bộ bản dịch món ăn:', err);
+  }
+}
+
+// Endpoint cập nhật/đồng bộ lại bản dịch toàn hệ thống
+r.post(
+  '/sync-translations',
+  ah(async (_req, res) => {
+    await syncDishTranslations();
+    res.json({ success: true, message: 'Đã hoàn tất đồng bộ bản dịch đa ngôn ngữ' });
+  }),
+);
+
+// Danh sách món ăn (hỗ trợ tìm kiếm đa ngôn ngữ ?q=..., lọc ?category_id=..., ?category_slug=..., ?lang=...)
+r.get(
+  '/',
+  ah(async (req, res) => {
+    const q = typeof req.query.q === 'string' && req.query.q.trim() ? req.query.q.trim() : null;
+    const cat = req.query.category_id ? Number(req.query.category_id) : null;
+    const catSlug = typeof req.query.category_slug === 'string' && req.query.category_slug ? req.query.category_slug : null;
+    const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
+
+    const { rows } = await pool.query(
+      `${DISH_SELECT_SQL}
+       WHERE (
+         $1::text IS NULL
+         OR d.name ILIKE '%' || $1 || '%'
+         OR COALESCE(d.description, '') ILIKE '%' || $1 || '%'
+         OR COALESCE(d.address, '') ILIKE '%' || $1 || '%'
+         OR EXISTS (
+           SELECT 1 FROM dish_translations dt
+           WHERE dt.dish_id = d.id
+             AND (dt.name ILIKE '%' || $1 || '%' OR COALESCE(dt.description, '') ILIKE '%' || $1 || '%')
+         )
        )
-     )
-       AND ($2::int IS NULL OR d.category_id = $2)
-       AND ($3::text IS NULL OR c.slug = $3)
-     ORDER BY d.id ASC`,
-    [q, cat, catSlug],
-  );
-  res.json(rows.map((row) => formatDishRow(row, lang)));
-}));
+         AND ($2::int IS NULL OR d.category_id = $2)
+         AND ($3::text IS NULL OR c.slug = $3)
+       ORDER BY d.id ASC`,
+      [q, cat, catSlug],
+    );
+    res.json(rows.map((row) => formatDishRow(row, lang)));
+  }),
+);
 
 // Chi tiết 1 món ăn kèm đủ 5 ngôn ngữ
-r.get('/:id', ah(async (req, res) => {
-  const id = Number(req.params.id);
-  const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
-  const { rows } = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
-  if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
-  res.json(formatDishRow(rows[0], lang));
-}));
+r.get(
+  '/:id',
+  ah(async (req, res) => {
+    const id = Number(req.params.id);
+    const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
+    const { rows } = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
+    if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+    res.json(formatDishRow(rows[0], lang));
+  }),
+);
 
 // Thêm món ăn mới (tự động dịch sang 5 ngôn ngữ nếu chỉ nhập Tiếng Việt)
-r.post('/', ah(async (req, res) => {
-  const b = dishSchema.parse(req.body);
-  const { rows } = await pool.query(
-    `INSERT INTO dishes (category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
-    [
-      b.category_id ?? null,
-      b.name,
-      b.description ?? null,
-      b.address ?? null,
-      b.price_vnd ?? null,
-      b.image_url ?? null,
-      b.emoji ?? '🍜',
-      b.rating ?? 4.8,
-      b.lat ?? 15.877,
-      b.lng ?? 108.327,
-      b.is_active,
-    ],
-  );
-  const newId = rows[0].id;
-  await upsertTranslations(newId, b.name, b.description, b.translations);
+r.post(
+  '/',
+  ah(async (req, res) => {
+    const b = dishSchema.parse(req.body);
+    const { rows } = await pool.query(
+      `INSERT INTO dishes (category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+      [
+        b.category_id ?? null,
+        b.name,
+        b.description ?? null,
+        b.address ?? null,
+        b.price_vnd ?? null,
+        b.image_url ?? null,
+        b.emoji ?? '🍜',
+        b.rating ?? 4.8,
+        b.lat ?? 15.877,
+        b.lng ?? 108.327,
+        b.is_active,
+      ],
+    );
+    const newId = rows[0].id;
+    await upsertTranslations(newId, b.name, b.description, b.translations);
 
-  const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [newId]);
-  res.status(201).json(formatDishRow(full.rows[0]));
-}));
+    const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [newId]);
+    res.status(201).json(formatDishRow(full.rows[0]));
+  }),
+);
 
 // Cập nhật món ăn (tự động dịch sang 5 ngôn ngữ nếu chưa nhập bản dịch)
-r.put('/:id', ah(async (req, res) => {
-  const id = Number(req.params.id);
-  const b = dishSchema.parse(req.body);
-  const { rows } = await pool.query(
-    `UPDATE dishes
-     SET category_id=$1, name=$2, description=$3, address=$4, price_vnd=$5,
-         image_url=$6, emoji=$7, rating=$8, lat=$9, lng=$10, is_active=$11
-     WHERE id=$12 RETURNING id`,
-    [
-      b.category_id ?? null,
-      b.name,
-      b.description ?? null,
-      b.address ?? null,
-      b.price_vnd ?? null,
-      b.image_url ?? null,
-      b.emoji ?? '🍜',
-      b.rating ?? 4.8,
-      b.lat ?? 15.877,
-      b.lng ?? 108.327,
-      b.is_active,
-      id,
-    ],
-  );
-  if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+r.put(
+  '/:id',
+  ah(async (req, res) => {
+    const id = Number(req.params.id);
+    const b = dishSchema.parse(req.body);
+    const { rows } = await pool.query(
+      `UPDATE dishes
+       SET category_id=$1, name=$2, description=$3, address=$4, price_vnd=$5,
+           image_url=$6, emoji=$7, rating=$8, lat=$9, lng=$10, is_active=$11
+       WHERE id=$12 RETURNING id`,
+      [
+        b.category_id ?? null,
+        b.name,
+        b.description ?? null,
+        b.address ?? null,
+        b.price_vnd ?? null,
+        b.image_url ?? null,
+        b.emoji ?? '🍜',
+        b.rating ?? 4.8,
+        b.lat ?? 15.877,
+        b.lng ?? 108.327,
+        b.is_active,
+        id,
+      ],
+    );
+    if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
 
-  await upsertTranslations(id, b.name, b.description, b.translations);
-  const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
-  res.json(formatDishRow(full.rows[0]));
-}));
+    await upsertTranslations(id, b.name, b.description, b.translations);
+    const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
+    res.json(formatDishRow(full.rows[0]));
+  }),
+);
 
 // Xoá món ăn
-r.delete('/:id', ah(async (req, res) => {
-  const { rowCount } = await pool.query('DELETE FROM dishes WHERE id = $1', [Number(req.params.id)]);
-  if (!rowCount) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
-  res.status(204).end();
-}));
+r.delete(
+  '/:id',
+  ah(async (req, res) => {
+    const { rowCount } = await pool.query('DELETE FROM dishes WHERE id = $1', [Number(req.params.id)]);
+    if (!rowCount) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+    res.status(204).end();
+  }),
+);
 
 // Cập nhật riêng lẻ 1 bản dịch ngôn ngữ (vi | en | zh | ko | ja)
-r.put('/:id/translations/:lang', ah(async (req, res) => {
-  const lang = z.enum(SUPPORTED_LANGS).parse(req.params.lang);
-  const b = transItemSchema.parse(req.body);
-  const dishId = Number(req.params.id);
+r.put(
+  '/:id/translations/:lang',
+  ah(async (req, res) => {
+    const lang = z.enum(SUPPORTED_LANGS).parse(req.params.lang);
+    const b = transItemSchema.parse(req.body);
+    const dishId = Number(req.params.id);
 
-  const { rows } = await pool.query(
-    `INSERT INTO dish_translations (dish_id, lang, name, description) VALUES ($1,$2,$3,$4)
-     ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description
-     RETURNING *`,
-    [dishId, lang, b.name, b.description ?? null],
-  );
+    const { rows } = await pool.query(
+      `INSERT INTO dish_translations (dish_id, lang, name, description) VALUES ($1,$2,$3,$4)
+       ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description
+       RETURNING *`,
+      [dishId, lang, b.name, b.description ?? null],
+    );
 
-  if (lang === 'vi') {
-    await pool.query('UPDATE dishes SET name = $1, description = $2 WHERE id = $3', [
-      b.name,
-      b.description ?? null,
-      dishId,
-    ]);
-  }
-  res.json(rows[0]);
-}));
+    if (lang === 'vi') {
+      await pool.query('UPDATE dishes SET name = $1, description = $2 WHERE id = $3', [
+        b.name,
+        b.description ?? null,
+        dishId,
+      ]);
+    }
+    res.json(rows[0]);
+  }),
+);
 
 export default r;

@@ -16,6 +16,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { DISHES, Dish, LANGS, LangKey } from "../data/dishesData";
+import { ALL_DISHES_DATA } from "../locales";
 import {
   api,
   getClientDeviceId,
@@ -786,98 +787,113 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
         const converted: Dish[] = rows
           .filter((row) => row.is_active !== false)
-   .map((row): Dish => {
-            const localDish = DISHES.find(
-              (d) =>
-                d.name.vi.trim().toLowerCase() ===
-                String(row.name).trim().toLowerCase(),
-            );
+          .map((row): Dish => {
+            const rowNameNorm = String(row.name || "")
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g, "")
+              .toLowerCase()
+              .replace(/đ/g, "d")
+              .replace(/[^a-z0-9]/g, " ")
+              .replace(/\s+/g, " ")
+              .trim();
 
-            const base: Dish = localDish ?? {
-              id: row.id,
-              cat: "main",
-              emoji: row.emoji || "🍜",
-              price: "Đang cập nhật",
-              rating: Number(row.rating ?? 4.8),
-              lat: Number(row.lat ?? 15.877),
-              lng: Number(row.lng ?? 108.327),
-              img: row.image_url || "",
-              name: row.name_i18n ?? {
-                vi: row.name,
-                en: row.name,
-                zh: row.name,
-                ko: row.name,
-                ja: row.name,
-              },
-              desc: row.desc_i18n ?? {
-                vi: row.description ?? "",
-                en: row.description ?? "",
-                zh: row.description ?? "",
-                ko: row.description ?? "",
-                ja: row.description ?? "",
-              },
+            const localDish = ALL_DISHES_DATA.find((d) => {
+              if (String(d.id) === String(row.id)) return true;
+              const s1 = (d.shopVi || "")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/đ/g, "d")
+                .replace(/[^a-z0-9]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+              const s2 = (d.translations?.vi?.name || "")
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .replace(/đ/g, "d")
+                .replace(/[^a-z0-9]/g, " ")
+                .replace(/\s+/g, " ")
+                .trim();
+              return (
+                s1 === rowNameNorm ||
+                s2 === rowNameNorm ||
+                (s1 && rowNameNorm.includes(s1)) ||
+                (s1 && s1.includes(rowNameNorm)) ||
+                (s2 && rowNameNorm.includes(s2)) ||
+                (s2 && s2.includes(rowNameNorm))
+              );
+            });
+
+            const getLocalizedName = (k: LangKey): string => {
+              if (k === "vi") return row.name_i18n?.vi || row.name || localDish?.translations?.vi?.name || "Món Hội An";
+              const rName = row.name_i18n?.[k];
+              if (rName && rName.trim() && rName !== row.name) {
+                return rName;
+              }
+              const localName = localDish?.translations?.[k]?.name;
+              if (localName && localName.trim()) {
+                return localName;
+              }
+              return rName || localDish?.translations?.en?.name || row.name;
+            };
+
+            const rawDescVi = row.desc_i18n?.vi || row.description || localDish?.translations?.vi?.story || "";
+            const getLocalizedDesc = (k: LangKey): string => {
+              if (k === "vi") return rawDescVi;
+              const rDesc = row.desc_i18n?.[k];
+              if (rDesc && rDesc.trim() && rDesc !== rawDescVi) {
+                return rDesc;
+              }
+              const localStory = localDish?.translations?.[k]?.story;
+              if (localStory && localStory.trim()) {
+                return localStory;
+              }
+              return rDesc || localDish?.translations?.en?.story || rawDescVi;
             };
 
             const mergedName: Record<LangKey, string> = {
-              vi: row.name_i18n?.vi || row.name || base.name.vi,
-              en:
-                row.name_i18n?.en && row.name_i18n.en !== row.name
-                  ? row.name_i18n.en
-                  : localDish?.name.en || row.name_i18n?.en || row.name,
-              zh:
-                row.name_i18n?.zh && row.name_i18n.zh !== row.name
-                  ? row.name_i18n.zh
-                  : localDish?.name.zh || row.name_i18n?.zh || row.name,
-              ko:
-                row.name_i18n?.ko && row.name_i18n.ko !== row.name
-                  ? row.name_i18n.ko
-                  : localDish?.name.ko || row.name_i18n?.ko || row.name,
-              ja:
-                row.name_i18n?.ja && row.name_i18n.ja !== row.name
-                  ? row.name_i18n.ja
-                  : localDish?.name.ja || row.name_i18n?.ja || row.name,
+              vi: getLocalizedName("vi"),
+              en: getLocalizedName("en"),
+              zh: getLocalizedName("zh"),
+              ko: getLocalizedName("ko"),
+              ja: getLocalizedName("ja"),
             };
 
-            const rawDescVi = row.desc_i18n?.vi || row.description || base.desc.vi;
             const mergedDesc: Record<LangKey, string> = {
-              vi: rawDescVi,
-              en:
-                row.desc_i18n?.en && row.desc_i18n.en !== rawDescVi
-                  ? row.desc_i18n.en
-                  : localDish?.desc.en || row.desc_i18n?.en || rawDescVi,
-              zh:
-                row.desc_i18n?.zh && row.desc_i18n.zh !== rawDescVi
-                  ? row.desc_i18n.zh
-                  : localDish?.desc.zh || row.desc_i18n?.zh || rawDescVi,
-              ko:
-                row.desc_i18n?.ko && row.desc_i18n.ko !== rawDescVi
-                  ? row.desc_i18n.ko
-                  : localDish?.desc.ko || row.desc_i18n?.ko || rawDescVi,
-              ja:
-                row.desc_i18n?.ja && row.desc_i18n.ja !== rawDescVi
-                  ? row.desc_i18n.ja
-                  : localDish?.desc.ja || row.desc_i18n?.ja || rawDescVi,
+              vi: getLocalizedDesc("vi"),
+              en: getLocalizedDesc("en"),
+              zh: getLocalizedDesc("zh"),
+              ko: getLocalizedDesc("ko"),
+              ja: getLocalizedDesc("ja"),
+            };
+
+            const mergedTag: Record<LangKey, string> = {
+              vi: localDish?.translations?.vi?.tag || "",
+              en: localDish?.translations?.en?.tag || "",
+              zh: localDish?.translations?.zh?.tag || "",
+              ko: localDish?.translations?.ko?.tag || "",
+              ja: localDish?.translations?.ja?.tag || "",
             };
 
             return {
-              ...base,
               id: Number(row.id),
-              emoji: row.emoji || base.emoji,
-              rating: row.rating != null ? Number(row.rating) : base.rating,
-              lat: row.lat != null ? Number(row.lat) : base.lat,
-              lng: row.lng != null ? Number(row.lng) : base.lng,
-              name: mergedName,
-              desc: mergedDesc,
-              img: row.image_url || base.img,
-              price:
-                row.price_vnd != null
-                  ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
-                  : base.price,
               cat:
                 (row.category_slug as Dish["cat"]) ??
                 CAT_BY_NAME[row.category_name] ??
-                localDish?.cat ??
                 "main",
+              emoji: row.emoji || "🍜",
+              rating: row.rating != null ? Number(row.rating) : 4.8,
+              lat: row.lat != null ? Number(row.lat) : 15.877,
+              lng: row.lng != null ? Number(row.lng) : 108.327,
+              name: mergedName,
+              desc: mergedDesc,
+              tag: mergedTag,
+              img: row.image_url || localDish?.image || "",
+              price:
+                row.price_vnd != null
+                  ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
+                  : "Đang cập nhật",
             };
           });
 
@@ -1281,8 +1297,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 </Text>
                 <Text style={styles.cardSub} numberOfLines={1}>
                   {lang === "vi"
-                    ? item.name.en || item.name.vi
-                    : item.name.vi}
+                    ? item.tag?.vi || item.name.en || item.name.vi
+                    : item.tag?.[lang] || item.name.en || item.name[lang]}
                 </Text>
                 <Text style={styles.cardDesc} numberOfLines={3}>
                   {item.desc[lang] || item.desc.vi}
@@ -1483,7 +1499,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>{selectedDish.name[lang]}</Text>
                 <Text style={styles.modalSub}>
-                  {selectedDish.name.vi} · {selectedDish.price}
+                  {lang === "vi"
+                    ? `${selectedDish.tag?.vi || selectedDish.name.en || selectedDish.name.vi} · ${selectedDish.price}`
+                    : `${selectedDish.tag?.[lang] || selectedDish.name.en || selectedDish.name[lang]} · ${selectedDish.price}`}
                 </Text>
                 <ScrollView style={{ maxHeight: 160 }}>
                   <Text style={styles.modalDesc}>
