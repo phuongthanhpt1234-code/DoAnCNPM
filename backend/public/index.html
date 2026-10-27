@@ -1660,7 +1660,6 @@
                         <th>Món ăn & Bản dịch</th>
                         <th>Danh mục</th>
                         <th>Giá bán</th>
-                        <th>Yêu thích</th>
                         <th></th>
                       </tr>
                     </thead>
@@ -2248,12 +2247,6 @@
             <td>
               <span class="price-tag">${vnd(d.price_vnd)}</span>
             </td>
-            <td>
-              <div style="display:flex;gap:6px;flex-wrap:wrap">
-                <button type="button" class="quick-metric-btn" data-add-fav="${d.id}" title="Bấm để +1 Yêu thích trực tiếp">Yêu thích: ${d.favorite_count} (+1)</button>
-                <button type="button" class="quick-metric-btn" data-add-check="${d.id}" title="Bấm để +1 Check-in trực tiếp">+Check-in</button>
-              </div>
-            </td>
             <td class="act">
               <button data-edit="${d.id}">Sửa</button>
               <button class="danger" data-del="${d.id}">Xoá</button>
@@ -2566,43 +2559,6 @@
           const [dId, lKey] = langBadge.dataset.dishLang.split(":");
           dishLangMap[dId] = lKey;
           renderDishes();
-          return;
-        }
-
-        const favBtn = e.target.closest("[data-add-fav]");
-        if (favBtn) {
-          const dishId = Number(favBtn.dataset.addFav);
-          try {
-            await api("/favorites", {
-              method: "POST",
-              body: JSON.stringify({
-                device_id: "fav_" + Date.now() + "_" + Math.floor(Math.random() * 999),
-                dish_id: dishId,
-              }),
-            });
-            await refresh();
-          } catch (err) {
-            $("#msg").textContent = err.message;
-          }
-          return;
-        }
-
-        const checkBtn = e.target.closest("[data-add-check]");
-        if (checkBtn) {
-          const dishId = Number(checkBtn.dataset.addCheck);
-          try {
-            await api("/checkins", {
-              method: "POST",
-              body: JSON.stringify({
-                device_id: "chk_" + Date.now(),
-                dish_id: dishId,
-                note: "Check-in tại quán",
-              }),
-            });
-            await refresh();
-          } catch (err) {
-            $("#msg").textContent = err.message;
-          }
           return;
         }
 
