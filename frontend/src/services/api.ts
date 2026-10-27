@@ -186,3 +186,21 @@ export function getDishes(lang?: LangKey) {
   const query = lang ? `?lang=${encodeURIComponent(lang)}` : "";
   return api<ApiDish[]>("/dishes" + query);
 }
+
+export function getFavorites(deviceId: string) {
+  return api<ApiDish[]>(`/favorites?device_id=${encodeURIComponent(deviceId)}`);
+}
+
+export function addFavorite(deviceId: string, dishId: number) {
+  return api<{ ok: boolean }>("/favorites", {
+    method: "POST",
+    body: JSON.stringify({ device_id: deviceId, dish_id: dishId }),
+  });
+}
+
+export function removeFavorite(deviceId: string, dishId: number) {
+  return api<void>(
+    `/favorites/${dishId}?device_id=${encodeURIComponent(deviceId)}`,
+    { method: "DELETE" },
+  );
+}

@@ -1,19 +1,36 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-// Dữ liệu giả lập cho Sổ tay yêu thích
-const favoriteDishes = [
-  { id: '1', name: 'Cao Lầu Hội An', category: 'Món Chính Cổ Truyền', isCheckIn: true, image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80' },
-  { id: '3', name: 'Bánh Mì Phượng', category: 'Ăn Vặt & Streetfood', isCheckIn: false, image: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?q=80' },
-];
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { api, ApiDish, getClientDeviceId } from '../services/api';
 
 export default function FavoriteScreen() {
   const router = useRouter();
-  const [favorites, setFavorites] = useState(favoriteDishes);
+  const [favorites, setFavorites] = useState<ApiDish[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const removeFavorite = (id: string) => setFavorites(favorites.filter(item => item.id !== id));
+  useEffect(() => {
+    const deviceId = getClientDeviceId();
+    if (!deviceId) return;
+    api<ApiDish[]>(`/favorites?device_id=${encodeURIComponent(deviceId)}`)
+      .then((data) => {
+        if (Array.isArray(data)) setFavorites(data);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const removeFavorite = async (dishId: number) => {
+    const deviceId = getClientDeviceId();
+    setFavorites((prev) => prev.filter((item) => Number(item.id) !== dishId));
+    try {
+      await api(`/favorites/${dishId}?device_id=${encodeURIComponent(deviceId)}`, {
+        method: "DELETE",
+      });
+    } catch (e) {
+      console.warn("Remove favorite failed:", e);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,7 +45,11 @@ export default function FavoriteScreen() {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.listContainer}>
         <Text style={styles.subTitle}>Các món đã lưu ({favorites.length})</Text>
 
-        {favorites.length === 0 ? (
+        {loading ? (
+          <View style={styles.emptyState}>
+            <ActivityIndicator size="large" color="#D4AF37" />
+          </View>
+        ) : favorites.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="book-outline" size={60} color="#332B25" />
             <Text style={styles.emptyText}>Sổ tay của bạn đang trống.</Text>
@@ -36,31 +57,24 @@ export default function FavoriteScreen() {
         ) : (
           favorites.map((item) => (
             <TouchableOpacity key={item.id} style={styles.foodCard} activeOpacity={0.9} onPress={() => router.push({ pathname: '/map', params: { name: item.name }})}>
-              <Image source={{ uri: item.image }} style={styles.cardImage} />
+              <Image source={{ uri: item.image_url || 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800' }} style={styles.cardImage} />
               
               <View style={styles.cardInfo}>
                 <View>
-                  <Text style={styles.cardCategory}>{item.category}</Text>
+                  <Text style={styles.cardCategory}>{item.category_name || "Món Hội An"}</Text>
                   <Text style={styles.cardTitle}>{item.name}</Text>
                 </View>
                 
                 <View style={styles.cardFooter}>
-                  {item.isCheckIn ? (
-                    <View style={styles.checkInBadge}>
-                      <Ionicons name="checkmark-circle" size={14} color="#4CAF50" />
-                      <Text style={styles.checkInText}>Đã Check-in</Text>
-                    </View>
-                  ) : (
-                    <View style={styles.lockedBadge}>
-                      <Ionicons name="lock-closed" size={14} color="#888" />
-                      <Text style={styles.lockedText}>Chưa Check-in</Text>
-                    </View>
-                  )}
+                  <View style={styles.checkInBadge}>
+                    <Ionicons name="heart" size={14} color="#e11d48" />
+                    <Text style={[styles.checkInText, { color: '#e11d48' }]}>Đã Yêu Thích</Text>
+                  </View>
                 </View>
               </View>
 
-              <TouchableOpacity style={styles.heartBtn} onPress={() => removeFavorite(item.id)} activeOpacity={0.7}>
-                <Ionicons name="heart" size={22} color="#8B2E2E" />
+              <TouchableOpacity style={styles.heartBtn} onPress={() => removeFavorite(Number(item.id))} activeOpacity={0.7}>
+                <Ionicons name="heart" size={22} color="#e11d48" />
               </TouchableOpacity>
             </TouchableOpacity>
           ))
@@ -84,8 +98,8 @@ const styles = StyleSheet.create({
   cardCategory: { fontSize: 10, color: '#D4AF37', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
   cardTitle: { fontSize: 17, fontWeight: 'bold', fontFamily: 'serif', color: '#FFF' },
   cardFooter: { flexDirection: 'row', alignItems: 'center' },
-  checkInBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(76, 175, 80, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
-  checkInText: { color: '#4CAF50', fontSize: 11, marginLeft: 4, fontWeight: 'bold' },
+  checkInBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(225, 29, 72, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
+  checkInText: { fontSize: 11, marginLeft: 4, fontWeight: 'bold' },
   lockedBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(136, 136, 136, 0.1)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
   lockedText: { color: '#888', fontSize: 11, marginLeft: 4, fontWeight: 'bold' },
   heartBtn: { position: 'absolute', top: 10, right: 10, backgroundColor: 'rgba(30, 26, 23, 0.8)', borderRadius: 15, padding: 5 }
