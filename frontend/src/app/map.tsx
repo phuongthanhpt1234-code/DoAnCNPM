@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Animated, Dimensions, Linking, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as LocalesData from '../locales';
+import { api, getClientDeviceId, getDishes } from '../services/api';
+import { playSpeech, stopSpeech } from '../services/speech';
 
 const { height } = Dimensions.get('window');
 
@@ -239,6 +241,17 @@ export default function MapScreen() {
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
   const allDishesList: any[] = (LocalesData as any).ALL_DISHES_DATA || [];
+  const [apiDishes, setApiDishes] = useState<any[]>([]);
+
+  useEffect(() => {
+    getDishes()
+      .then((rows) => {
+        if (Array.isArray(rows) && rows.length > 0) {
+          setApiDishes(rows);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   let parsedRouteStops: any[] = [];
   if (params.stopsJson) {
@@ -272,6 +285,29 @@ export default function MapScreen() {
   const findExactDish = () => {
     if (secretClueObj || isMultiStopMode) return null;
     if (params.id) {
+      const fromApi = apiDishes.find((d: any) => String(d.id) === String(params.id));
+      if (fromApi) {
+        return {
+          id: fromApi.id,
+          lat: Number(fromApi.lat) || 15.877,
+          lng: Number(fromApi.lng) || 108.327,
+          shopVi: fromApi.address || 'Phố cổ Hội An',
+          translations: {
+            vi: {
+              name: fromApi.name,
+              shop: fromApi.address || 'Phố cổ Hội An',
+              tag: 'Đặc sản Hội An',
+              story: fromApi.description || '',
+            },
+            en: {
+              name: fromApi.name_i18n?.en || fromApi.name,
+              shop: fromApi.address || 'Hoi An Ancient Town',
+              tag: 'Hoi An Speciality',
+              story: fromApi.desc_i18n?.en || fromApi.description || '',
+            },
+          },
+        };
+      }
       const byId = allDishesList.find((d: any) => String(d.id) === String(params.id));
       if (byId) return byId;
     }
@@ -432,32 +468,13 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
     const textToSpeak = buildVoiceScript(targetLang);
     const langMeta = VOICE_LANGS.find(l => l.id === targetLang) || VOICE_LANGS[0];
 
-    if (Platform.OS === 'web' && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = langMeta.bcp47;
-      utterance.rate = targetRate;
-
-      const voices = window.speechSynthesis.getVoices();
-      const matchedVoice = voices.find(v => v.lang.toLowerCase().startsWith(targetLang.toLowerCase())) ||
-                           voices.find(v => v.lang.toLowerCase().includes(langMeta.bcp47.toLowerCase()));
-      if (matchedVoice) utterance.voice = matchedVoice;
-
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
-      utterance.onerror = () => setIsSpeaking(false);
-
-      setIsSpeaking(true);
-      window.speechSynthesis.speak(utterance);
-    } else {
-      setIsSpeaking(true);
-    }
+    playSpeech(textToSpeak, langMeta.bcp47, targetRate, (speaking) => {
+      setIsSpeaking(speaking);
+    });
   };
 
   const stopDishNarration = () => {
-    if (Platform.OS === 'web' && typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    stopSpeech();
     setIsSpeaking(false);
   };
 
@@ -483,8 +500,10 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
   const handleDualModeCheckIn = async () => {
     setIsCheckedIn(true);
     const earnedXp = isInside20m ? 300 : 150;
+    const targetId = String(foundDish?.id || secretClueKey || params.id || '1');
+    const numericDishId = Number(foundDish?.id || params.id);
+
     try {
-      const targetId = String(foundDish?.id || secretClueKey || params.id || '1');
       const saved = await AsyncStorage.getItem('checkedInDishIds');
       const ids: string[] = saved ? JSON.parse(saved) : [];
       if (!ids.includes(targetId)) {
@@ -493,6 +512,19 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
       }
       setToastMsg(`${uiLabels.checkedInBtn} (+${earnedXp} XP)`);
       setTimeout(() => setToastMsg(''), 3000);
+
+      // Đồng bộ check-in lên máy chủ Backend
+      if (numericDishId && !isNaN(numericDishId)) {
+        const deviceId = getClientDeviceId();
+        api('/checkins', {
+          method: 'POST',
+          body: JSON.stringify({
+            device_id: deviceId,
+            dish_id: numericDishId,
+            note: `Check-in tại bản đồ di sản Hội An (${isInside20m ? '<=20m' : 'từ xa'})`,
+          }),
+        }).catch(() => {});
+      }
     } catch (e) {}
   };
 

@@ -1,10 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getClientDeviceId } from "./api";
 
-export async function getDeviceId() {
-  let id = await AsyncStorage.getItem("device_id");
-  if (!id) {
-    id = "dev-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
-    await AsyncStorage.setItem("device_id", id);
-  }
-  return id;
+/**
+ * Lấy mã định danh thiết bị duy nhất và đồng bộ giữa Web và Mobile
+ */
+export async function getDeviceId(): Promise<string> {
+  return getClientDeviceId();
 }

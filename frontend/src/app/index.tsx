@@ -27,6 +27,7 @@ import {
   onDishesUpdated,
   startPresenceSession,
 } from "../services/api";
+import { playSpeech, stopSpeech } from "../services/speech";
 
 function DishCardImage({
   uri,
@@ -1158,65 +1159,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const speakText = (text: string, customSpeechCode?: string) => {
     const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
-
-    if (Platform.OS === "web" && typeof window !== "undefined") {
-      // Hủy âm thanh cũ đang phát (nếu có)
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
-      if ((window as any).__currentAudio) {
-        (window as any).__currentAudio.pause();
-      }
-
-      const playFallbackOnlineVoice = () => {
-        try {
-          const shortLang = targetLang.split("-")[0];
-          const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(
-            text,
-          )}&tl=${shortLang}&client=tw-ob`;
-          const audio = new window.Audio(url);
-          (window as any).__currentAudio = audio;
-          audio.play().catch((err) => console.warn("Audio play error:", err));
-        } catch (e) {}
-      };
-
-      if ("speechSynthesis" in window) {
-        setTimeout(() => {
-          const voices = window.speechSynthesis.getVoices();
-          const matchedVoice = voices.find((v) =>
-            v.lang
-              .toLowerCase()
-              .replace("_", "-")
-              .startsWith(targetLang.toLowerCase().slice(0, 2)),
-          );
-
-          if (!matchedVoice && targetLang.toLowerCase().startsWith("vi")) {
-            playFallbackOnlineVoice();
-            return;
-          }
-
-          const utter = new SpeechSynthesisUtterance(text);
-
-          (window as any).__currentUtter = utter;
-          utter.lang = targetLang;
-          utter.rate = 0.95;
-
-          if (matchedVoice) {
-            utter.voice = matchedVoice;
-          }
-
-          utter.onerror = () => {
-            playFallbackOnlineVoice();
-          };
-
-          window.speechSynthesis.speak(utter);
-        }, 120);
-      } else {
-        playFallbackOnlineVoice();
-      }
-    } else if (!customSpeechCode) {
-      router.push(`/dish/${selectedDish?.id || 1}?lang=${lang}`);
-    }
+    playSpeech(text, targetLang);
   };
 
   const handleCheckInDish = (dish: Dish) => {

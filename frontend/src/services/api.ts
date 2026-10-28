@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, Platform } from "react-native";
 import { LangKey } from "../data/dishesData";
 
@@ -21,6 +22,17 @@ export const API_URL = (
 const SESSION_TAB_ID = `tab_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 let cachedDeviceId: string | null = null;
 
+// Khởi tạo và nạp trước Device ID từ AsyncStorage trên nền tảng Mobile
+if (Platform.OS !== "web") {
+  AsyncStorage.getItem("hoian_device_id")
+    .then((saved) => {
+      if (saved) {
+        cachedDeviceId = saved;
+      }
+    })
+    .catch(() => {});
+}
+
 export function getClientDeviceId(): string {
   if (cachedDeviceId) return cachedDeviceId;
   if (
@@ -38,7 +50,10 @@ export function getClientDeviceId(): string {
     cachedDeviceId = created;
     return created;
   }
+
+  // Mobile: tạo ID bền vững và lưu vào AsyncStorage
   cachedDeviceId = `mob_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+  AsyncStorage.setItem("hoian_device_id", cachedDeviceId).catch(() => {});
   return cachedDeviceId;
 }
 

@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { api, ApiDish, getClientDeviceId } from '../services/api';
+import { api, ApiDish, API_URL, getClientDeviceId } from '../services/api';
 
 export default function FavoriteScreen() {
   const router = useRouter();
@@ -55,9 +55,20 @@ export default function FavoriteScreen() {
             <Text style={styles.emptyText}>Sổ tay của bạn đang trống.</Text>
           </View>
         ) : (
-          favorites.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.foodCard} activeOpacity={0.9} onPress={() => router.push({ pathname: '/map', params: { name: item.name }})}>
-              <Image source={{ uri: item.image_url || 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800' }} style={styles.cardImage} />
+          favorites.map((item) => {
+            let imgUri = (item.image_url || '').trim();
+            if (imgUri.includes('/uploads/')) {
+              imgUri = `${API_URL}${imgUri.slice(imgUri.indexOf('/uploads/'))}`;
+            } else if (imgUri.startsWith('http://doancnpm-backend.onrender.com')) {
+              imgUri = imgUri.replace('http://', 'https://');
+            }
+            if (!imgUri) {
+              imgUri = 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';
+            }
+
+            return (
+              <TouchableOpacity key={item.id} style={styles.foodCard} activeOpacity={0.9} onPress={() => router.push(`/dish/${item.id}`)}>
+                <Image source={{ uri: imgUri }} style={styles.cardImage} />
               
               <View style={styles.cardInfo}>
                 <View>
@@ -77,7 +88,8 @@ export default function FavoriteScreen() {
                 <Ionicons name="heart" size={22} color="#e11d48" />
               </TouchableOpacity>
             </TouchableOpacity>
-          ))
+            );
+          })
         )}
       </ScrollView>
     </SafeAreaView>

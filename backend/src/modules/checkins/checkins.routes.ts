@@ -6,8 +6,8 @@ import { broadcastAdminRefresh } from '../presence/presence.routes';
 
 const r = Router();
 const schema = z.object({
-  device_id: z.string().min(1),
-  dish_id: z.number().int().optional(),
+  device_id: z.string().min(1, 'Thiếu device_id'),
+  dish_id: z.number().int({ message: 'Mã món ăn dish_id phải là số nguyên hợp lệ' }),
   note: z.string().nullable().optional(),
   day: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
@@ -23,29 +23,24 @@ r.get('/', ah(async (req, res) => {
 
 r.post('/', ah(async (req, res) => {
   const b = schema.parse(req.body);
-  let targetDishId = b.dish_id;
-  if (targetDishId) {
-    const checkDish = await pool.query('SELECT id FROM dishes WHERE id = $1', [targetDishId]);
-    if (checkDish.rowCount === 0) targetDishId = undefined;
+  const checkDish = await pool.query('SELECT id, name FROM dishes WHERE id = $1', [b.dish_id]);
+  if (checkDish.rowCount === 0) {
+    return res.status(404).json({ code: 'NOT_FOUND', message: `Không tìm thấy món ăn với ID = ${b.dish_id}` });
   }
-  if (!targetDishId) {
-    const firstDish = await pool.query('SELECT id FROM dishes ORDER BY id ASC LIMIT 1');
-    if (firstDish.rowCount === 0) {
-      return res.status(400).json({ message: 'Chưa có món ăn nào trong hệ thống' });
-    }
-    targetDishId = firstDish.rows[0].id;
-  }
+
+  const dishName = checkDish.rows[0].name;
+  const defaultNote = `Check-in món ${dishName}`;
 
   const { rows } = b.day
     ? await pool.query(
         `INSERT INTO check_ins (device_id, dish_id, note, created_at)
          VALUES ($1, $2, $3, ($4::date + localtime)::timestamptz)
          RETURNING *`,
-        [b.device_id, targetDishId, b.note ?? null, b.day],
+        [b.device_id, b.dish_id, b.note ?? defaultNote, b.day],
       )
     : await pool.query(
         'INSERT INTO check_ins (device_id, dish_id, note) VALUES ($1, $2, $3) RETURNING *',
-        [b.device_id, targetDishId, b.note ?? null],
+        [b.device_id, b.dish_id, b.note ?? defaultNote],
       );
   broadcastAdminRefresh();
   res.status(201).json(rows[0]);
