@@ -46,6 +46,15 @@ let activeMountCount = 0;
 let activeCleanup: (() => void) | null = null;
 let currentPresenceLang: LangKey = "vi";
 
+const dishUpdateListeners = new Set<() => void>();
+
+export function onDishesUpdated(callback: () => void): () => void {
+  dishUpdateListeners.add(callback);
+  return () => {
+    dishUpdateListeners.delete(callback);
+  };
+}
+
 export function startPresenceSession(getLang: () => LangKey): () => void {
   currentPresenceLang = getLang();
   activeMountCount += 1;
@@ -101,6 +110,13 @@ export function startPresenceSession(getLang: () => LangKey): () => void {
           es = new window.EventSource(
             `${API_URL}/api/presence/stream?${q.toString()}`,
           );
+          es.addEventListener("dishes_updated", () => {
+            dishUpdateListeners.forEach((fn) => {
+              try {
+                fn();
+              } catch {}
+            });
+          });
         } catch {}
       }
       window.addEventListener("pagehide", sendLeave);

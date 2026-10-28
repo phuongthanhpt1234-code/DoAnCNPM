@@ -265,4 +265,15 @@ r.post('/control', (req, res) => {
   return res.json(getPresenceSummary());
 });
 
+export function broadcastDishUpdate() {
+  const payload = `event: dishes_updated\ndata: ${JSON.stringify({ timestamp: Date.now() })}\n\n`;
+  for (const listener of sseListeners) {
+    try {
+      listener.write(payload);
+    } catch {
+      sseListeners.delete(listener);
+    }
+  }
+}
+
 export default r;

@@ -24,6 +24,7 @@ import {
   getClientDeviceId,
   getDishes,
   notifyPresenceLangChange,
+  onDishesUpdated,
   startPresenceSession,
 } from "../services/api";
 
@@ -44,6 +45,7 @@ function DishCardImage({
 
   return (
     <Image
+      key={currentUri}
       source={{ uri: currentUri }}
       style={style}
       resizeMode="cover"
@@ -930,10 +932,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             const fallbackImg = localDish?.image || defaultCatImg;
 
             let rawImg = (row.image_url || "").trim();
-            if (rawImg.startsWith("http://doancnpm-backend.onrender.com")) {
+            if (rawImg.includes("/uploads/")) {
+              const uploadPart = rawImg.slice(rawImg.indexOf("/uploads/"));
+              rawImg = `${API_URL}${uploadPart}`;
+            } else if (rawImg.startsWith("http://doancnpm-backend.onrender.com")) {
               rawImg = rawImg.replace("http://", "https://");
-            } else if (rawImg.startsWith("/uploads/")) {
-              rawImg = `${API_URL}${rawImg}`;
             }
 
             const dishImg = rawImg || fallbackImg;
@@ -961,6 +964,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           });
 
         setApiDishes(converted);
+        setSelectedDish((prev) => {
+          if (!prev) return null;
+          const updated = converted.find((d) => d.id === prev.id);
+          return updated || prev;
+        });
         console.log("API OK:", converted.length, "món");
         setApiError("");
       } catch (err) {
@@ -979,8 +987,35 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
     loadDishes();
 
+    // Lắng nghe tín hiệu SSE thời gian thực từ Backend khi Admin sửa món
+    const unsub = onDishesUpdated(() => {
+      loadDishes();
+    });
+
+    // Tự động đồng bộ lại khi quay lại tab trình duyệt
+    let handleFocus: (() => void) | null = null;
+    let handleVisibility: (() => void) | null = null;
+    if (Platform.OS === "web" && typeof window !== "undefined") {
+      handleFocus = () => loadDishes();
+      handleVisibility = () => {
+        if (document.visibilityState === "visible") loadDishes();
+      };
+      window.addEventListener("focus", handleFocus);
+      document.addEventListener("visibilitychange", handleVisibility);
+    }
+
+    // Polling định kỳ mỗi 8 giây đảm bảo dữ liệu và ảnh luôn mới nhất
+    const pollTimer = setInterval(() => {
+      loadDishes();
+    }, 8000);
+
     return () => {
       cancelled = true;
+      unsub();
+      clearInterval(pollTimer);
+      if (handleFocus) window.removeEventListener("focus", handleFocus);
+      if (handleVisibility)
+        document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 

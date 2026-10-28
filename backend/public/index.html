@@ -1175,7 +1175,9 @@
         cursor: pointer;
         padding: 4px 2px;
         border-radius: 10px;
-        transition: background 0.15s ease, transform 0.15s ease;
+        transition:
+          background 0.15s ease,
+          transform 0.15s ease;
         user-select: none;
       }
 
@@ -1495,7 +1497,11 @@
           </div>
 
           <div class="sidebar-label">Danh mục quản trị</div>
-          <nav class="nav-list" id="sidebarNav" aria-label="Menu điều hướng chính">
+          <nav
+            class="nav-list"
+            id="sidebarNav"
+            aria-label="Menu điều hướng chính"
+          >
             <button type="button" class="nav-btn active" data-nav="overview">
               <span class="nav-btn-left">
                 <span>Tổng Quan Chung</span>
@@ -1539,7 +1545,10 @@
           <div class="topbar-inner">
             <div class="page-heading">
               <h1 id="pageTitle">Tổng Quan Hệ Thống</h1>
-              <p id="pageSub">Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ thời gian thực</p>
+              <p id="pageSub">
+                Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ
+                thời gian thực
+              </p>
             </div>
 
             <div class="topbar-actions">
@@ -1564,10 +1573,15 @@
                     <h3>Biểu Đồ Cột</h3>
                   </div>
                   <div class="mini-tabs" id="barModeTabs">
-                    <button type="button" class="active" data-bmode="engage">Lượt tương tác</button>
+                    <button type="button" class="active" data-bmode="engage">
+                      Lượt tương tác
+                    </button>
                   </div>
                 </div>
-                <div class="chart-sub" id="barChartSub">Tổng lượt tương tác và check-in thực tế của từng món (Bấm vào cột để +1 Check-in)</div>
+                <div class="chart-sub" id="barChartSub">
+                  Tổng lượt tương tác và check-in thực tế của từng món (Bấm vào
+                  cột để +1 Check-in)
+                </div>
               </div>
               <div class="live-bars-box" id="liveBarChart"></div>
             </div>
@@ -1579,15 +1593,24 @@
                   <div class="chart-title-wrap">
                     <h3>Biểu Đồ Tròn</h3>
                   </div>
-                  <div class="mini-tabs" id="pieModeTabs" style="display:none">
-                    <button type="button" class="active" data-pmode="cat">Danh mục</button>
+                  <div class="mini-tabs" id="pieModeTabs" style="display: none">
+                    <button type="button" class="active" data-pmode="cat">
+                      Danh mục
+                    </button>
                   </div>
                 </div>
-                <div class="chart-sub" id="pieChartSub">Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực</div>
+                <div class="chart-sub" id="pieChartSub">
+                  Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực
+                </div>
               </div>
               <div class="pie-wrap">
                 <div class="pie-svg-box">
-                  <svg viewBox="0 0 42 42" width="136" height="136" id="livePieSvg"></svg>
+                  <svg
+                    viewBox="0 0 42 42"
+                    width="136"
+                    height="136"
+                    id="livePieSvg"
+                  ></svg>
                   <div class="pie-center">
                     <b id="pieCenterVal">0</b>
                     <span id="pieCenterLbl">tổng món</span>
@@ -1605,14 +1628,24 @@
                     <h3>Biểu Đồ Đường</h3>
                   </div>
                   <div class="mini-tabs" id="lineModeTabs">
-                    <button type="button" class="active" data-lmode="dish">Lượt tương tác</button>
-                    <button type="button" data-lmode="online">Thiết bị Live</button>
+                    <button type="button" class="active" data-lmode="dish">
+                      Lượt tương tác
+                    </button>
+                    <button type="button" data-lmode="online">
+                      Thiết bị Live
+                    </button>
                   </div>
                 </div>
-                <div class="chart-sub" id="lineChartSub">Đường biến thiên trực tiếp theo số liệu thực tế của hệ thống</div>
+                <div class="chart-sub" id="lineChartSub">
+                  Đường biến thiên trực tiếp theo số liệu thực tế của hệ thống
+                </div>
               </div>
               <div class="line-box">
-                <svg viewBox="0 0 320 125" class="line-svg" id="liveLineSvg"></svg>
+                <svg
+                  viewBox="0 0 320 125"
+                  class="line-svg"
+                  id="liveLineSvg"
+                ></svg>
                 <div class="line-x-labels" id="liveLineLabels"></div>
               </div>
             </div>
@@ -1626,14 +1659,29 @@
                     <h2>Danh Sách Món Ăn Hội An</h2>
                     <span class="badge-gold" id="dishCountBadge">0 món</span>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-                    <div class="view-switch" role="group" aria-label="Chế độ hiển thị">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 10px;
+                      flex-wrap: wrap;
+                    "
+                  >
+                    <div
+                      class="view-switch"
+                      role="group"
+                      aria-label="Chế độ hiển thị"
+                    >
                       <button type="button" id="viewTableBtn" class="active">
                         Dạng bảng
                       </button>
-                      <button type="button" id="viewCardBtn">Dạng thẻ (App)</button>
+                      <button type="button" id="viewCardBtn">
+                        Dạng thẻ (App)
+                      </button>
                     </div>
-                    <button type="button" class="gold-btn" id="add">+ Thêm món mới</button>
+                    <button type="button" class="gold-btn" id="add">
+                      + Thêm món mới
+                    </button>
                   </div>
                 </div>
 
@@ -1667,8 +1715,8 @@
                 <div id="cardView" class="cards-grid" hidden></div>
 
                 <p class="empty" id="noDish" hidden>
-                  Chưa có món ăn nào khớp bộ lọc. Bấm “+ Thêm món mới” để tạo món
-                  đầu tiên.
+                  Chưa có món ăn nào khớp bộ lọc. Bấm “+ Thêm món mới” để tạo
+                  món đầu tiên.
                 </p>
               </section>
             </div>
@@ -1685,19 +1733,24 @@
                 <div class="presence-box">
                   <div class="presence-big-row" style="margin-bottom: 0">
                     <div>
-                      <span class="presence-meta">Số thiết bị đang mở ứng dụng</span>
+                      <span class="presence-meta"
+                        >Số thiết bị đang mở ứng dụng</span
+                      >
                       <div class="presence-big-num" id="liveOnlineNum">0</div>
                     </div>
                     <div style="text-align: right">
                       <span class="presence-meta">Trạng thái kết nối</span>
                       <br />
-                      <b style="color: #34d399; font-size: 13px">● Đang đồng bộ thời gian thực</b>
+                      <b style="color: #34d399; font-size: 13px"
+                        >● Đang đồng bộ thời gian thực</b
+                      >
                     </div>
                   </div>
                 </div>
                 <ul id="activeDevicesList"></ul>
                 <p class="empty" id="noActiveDevice">
-                  Hiện chưa có thiết bị nào mở trang Frontend. Khi mở tab/app mới số lượng sẽ tăng ngay và khi đóng sẽ giảm ngay lập tức.
+                  Hiện chưa có thiết bị nào mở trang giao diện. Khi mở tab/app
+                  mới số lượng sẽ tăng ngay và khi đóng sẽ giảm ngay lập tức.
                 </p>
               </section>
 
@@ -1705,7 +1758,9 @@
                 <div class="sec-head">
                   <div class="sec-title-group">
                     <h2>Check-in 7 Ngày Gần Nhất</h2>
-                    <span class="badge-emerald" id="dailyTotalBadge">THỰC TIỄN</span>
+                    <span class="badge-emerald" id="dailyTotalBadge"
+                      >THỰC TIỄN</span
+                    >
                   </div>
                 </div>
                 <div class="bars" id="bars"></div>
@@ -1728,7 +1783,7 @@
                 </div>
                 <ul id="recent"></ul>
                 <p class="empty" id="noCheck" hidden>
-                  Chưa có lượt check-in nào từ ứng dụng.
+                  Chưa có lượt check-in nào.
                 </p>
               </section>
             </div>
@@ -1743,32 +1798,87 @@
 
         <!-- TAB 5 NGÔN NGỮ TRONG FORM -->
         <div class="form-lang-tabs" id="formLangTabs">
-          <button type="button" class="form-lang-tab active" data-flang="vi">VI Tiếng Việt</button>
-          <button type="button" class="form-lang-tab" data-flang="en">EN English</button>
-          <button type="button" class="form-lang-tab" data-flang="zh">ZH 中文</button>
-          <button type="button" class="form-lang-tab" data-flang="ko">KO 한국어</button>
-          <button type="button" class="form-lang-tab" data-flang="ja">JA 日本語</button>
+          <button type="button" class="form-lang-tab active" data-flang="vi">
+            VI Tiếng Việt
+          </button>
+          <button type="button" class="form-lang-tab" data-flang="en">
+            EN English
+          </button>
+          <button type="button" class="form-lang-tab" data-flang="zh">
+            ZH 中文
+          </button>
+          <button type="button" class="form-lang-tab" data-flang="ko">
+            KO 한국어
+          </button>
+          <button type="button" class="form-lang-tab" data-flang="ja">
+            JA 日本語
+          </button>
         </div>
 
         <div class="lang-pane" data-pane="vi">
-          <label>Tên món (Tiếng Việt - Bắt buộc)<input name="name_vi" placeholder="VD: Cao lầu Hội An" required /></label>
-          <label>Thuyết minh món ăn (Tiếng Việt)<textarea name="desc_vi" rows="3" placeholder="Nội dung thuyết minh Tiếng Việt..."></textarea></label>
+          <label
+            >Tên món (Tiếng Việt - Bắt buộc)<input
+              name="name_vi"
+              placeholder="VD: Cao lầu Hội An"
+              required
+          /></label>
+          <label
+            >Thuyết minh món ăn (Tiếng Việt)<textarea
+              name="desc_vi"
+              rows="3"
+              placeholder="Nội dung thuyết minh Tiếng Việt..."
+            ></textarea>
+          </label>
         </div>
         <div class="lang-pane" data-pane="en" hidden>
-          <label>Dish Name (English)<input name="name_en" placeholder="e.g. Cao Lau" /></label>
-          <label>Narration / Description (English)<textarea name="desc_en" rows="3" placeholder="English audio narration text..."></textarea></label>
+          <label
+            >Dish Name (English)<input
+              name="name_en"
+              placeholder="e.g. Cao Lau"
+          /></label>
+          <label
+            >Narration / Description (English)<textarea
+              name="desc_en"
+              rows="3"
+              placeholder="English audio narration text..."
+            ></textarea>
+          </label>
         </div>
         <div class="lang-pane" data-pane="zh" hidden>
-          <label>菜品名称 (中文)<input name="name_zh" placeholder="例如：高楼面" /></label>
-          <label>语音讲解内容 (中文)<textarea name="desc_zh" rows="3" placeholder="中文介绍与讲解..."></textarea></label>
+          <label
+            >菜品名称 (中文)<input name="name_zh" placeholder="例如：高楼面"
+          /></label>
+          <label
+            >语音讲解内容 (中文)<textarea
+              name="desc_zh"
+              rows="3"
+              placeholder="中文介绍与讲解..."
+            ></textarea>
+          </label>
         </div>
         <div class="lang-pane" data-pane="ko" hidden>
-          <label>음식 이름 (한국어)<input name="name_ko" placeholder="예: 까오러우" /></label>
-          <label>오디오 가이드 설명 (한국어)<textarea name="desc_ko" rows="3" placeholder="한국어 음식 설명..."></textarea></label>
+          <label
+            >음식 이름 (한국어)<input name="name_ko" placeholder="예: 까오러우"
+          /></label>
+          <label
+            >오디오 가이드 설명 (한국어)<textarea
+              name="desc_ko"
+              rows="3"
+              placeholder="한국어 음식 설명..."
+            ></textarea>
+          </label>
         </div>
         <div class="lang-pane" data-pane="ja" hidden>
-          <label>料理名 (日本語)<input name="name_ja" placeholder="例：カオラウ" /></label>
-          <label>音声ガイド解説 (日本語)<textarea name="desc_ja" rows="3" placeholder="日本語の料理解説..."></textarea></label>
+          <label
+            >料理名 (日本語)<input name="name_ja" placeholder="例：カオラウ"
+          /></label>
+          <label
+            >音声ガイド解説 (日本語)<textarea
+              name="desc_ja"
+              rows="3"
+              placeholder="日本語の料理解説..."
+            ></textarea>
+          </label>
         </div>
 
         <div class="row">
@@ -1777,32 +1887,80 @@
 
         <div class="row">
           <input type="hidden" name="emoji" value="" />
-          <label>Địa chỉ quán tại Hội An<input name="address" placeholder="VD: 687 Hai Bà Trưng, Hội An" /></label>
+          <label
+            >Địa chỉ quán tại Hội An<input
+              name="address"
+              placeholder="VD: 687 Hai Bà Trưng, Hội An"
+          /></label>
         </div>
 
         <div class="row">
-          <label>Vĩ độ GPS (Lat)<input name="lat" type="number" step="any" value="15.878" /></label>
-          <label>Kinh độ GPS (Lng)<input name="lng" type="number" step="any" value="108.327" /></label>
+          <label
+            >Vĩ độ GPS (Lat)<input
+              name="lat"
+              type="number"
+              step="any"
+              value="15.878"
+          /></label>
+          <label
+            >Kinh độ GPS (Lng)<input
+              name="lng"
+              type="number"
+              step="any"
+              value="108.327"
+          /></label>
         </div>
 
-        <label>Ảnh món ăn (Dán link ảnh web hoặc chọn file tải lên từ máy tính)</label>
+        <label
+          >Ảnh món ăn (Dán link ảnh web hoặc chọn file tải lên từ máy
+          tính)</label
+        >
         <div class="upload-box">
           <div class="upload-preview" id="imgPreviewBox">Ảnh</div>
           <div class="upload-controls">
-            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-              <input type="text" name="image_url" id="imageUrlInput" placeholder="Dán link ảnh URL (https://...)" style="flex: 1;" />
-              <button type="button" id="btnClearImage" style="padding: 7px 12px; font-size: 12px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid var(--gold-border); color: var(--gold-text); cursor: pointer; white-space: nowrap;">Xóa ảnh</button>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+              <input
+                type="text"
+                name="image_url"
+                id="imageUrlInput"
+                placeholder="Dán link ảnh URL (https://...)"
+                style="flex: 1"
+              />
+              <button
+                type="button"
+                id="btnClearImage"
+                style="
+                  padding: 7px 12px;
+                  font-size: 12px;
+                  border-radius: 10px;
+                  background: rgba(255, 255, 255, 0.08);
+                  border: 1px solid var(--gold-border);
+                  color: var(--gold-text);
+                  cursor: pointer;
+                  white-space: nowrap;
+                "
+              >
+                Xóa ảnh
+              </button>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px;">
-              <input type="file" id="imageFile" accept="image/*" style="flex: 1;" />
+            <div style="display: flex; align-items: center; gap: 8px">
+              <input
+                type="file"
+                id="imageFile"
+                accept="image/*"
+                style="flex: 1"
+              />
             </div>
-            <small class="upload-status" id="uploadStatus">Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính (JPG, PNG, WEBP)</small>
+            <small class="upload-status" id="uploadStatus"
+              >Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính
+              (JPG, PNG, WEBP)</small
+            >
           </div>
         </div>
 
         <label class="check">
           <input type="checkbox" name="is_active" checked />
-          Hiển thị món ăn này trên ứng dụng Frontend
+          Hiển thị món ăn này trên trang chủ
         </label>
         <p id="formErr" style="color: var(--danger); margin: 8px 0 0"></p>
         <div class="foot">
@@ -1859,9 +2017,21 @@
         lineMode = "dish",
         lastStats = { totals: {}, daily: [], top: [], by_category: [] },
         onlineHistory = [],
-        latestPresence = { online_count: 0, real_online: 0, config: { OFFSET_ONLINE_COUNT: 0, FIXED_ONLINE_COUNT: null }, devices: [] };
+        latestPresence = {
+          online_count: 0,
+          real_online: 0,
+          config: { OFFSET_ONLINE_COUNT: 0, FIXED_ONLINE_COUNT: null },
+          devices: [],
+        };
 
-      const PIE_COLORS = ["#d4152f", "#e9c26b", "#10b981", "#3b82f6", "#a855f7", "#f97316"];
+      const PIE_COLORS = [
+        "#d4152f",
+        "#e9c26b",
+        "#10b981",
+        "#3b82f6",
+        "#a855f7",
+        "#f97316",
+      ];
 
       async function api(path, opts = {}) {
         const r = await fetch("/api" + path, {
@@ -1911,7 +2081,9 @@
           const checks = Number(m.check_ins ?? 0);
           const val = favs + checks;
           const unit = `${val} lượt`;
-          const shortName = (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 11);
+          const shortName = (d.name || "")
+            .replace(/^(Quán|Tiệm)\s+/i, "")
+            .slice(0, 11);
           return { id: d.id, name: d.name, shortName, val, unit };
         });
 
@@ -1936,11 +2108,18 @@
         let segments = [];
         if (pieMode === "cat") {
           const catCounts = cats.map((c) => {
-            const cnt = dishes.filter((d) => String(d.category_id) === String(c.id)).length;
-            return { label: c.translations?.vi || c.name, val: cnt, catId: c.id };
+            const cnt = dishes.filter(
+              (d) => String(d.category_id) === String(c.id),
+            ).length;
+            return {
+              label: c.translations?.vi || c.name,
+              val: cnt,
+              catId: c.id,
+            };
           });
           const uncat = dishes.filter((d) => !d.category_id).length;
-          if (uncat > 0) catCounts.push({ label: "Khác", val: uncat, catId: "" });
+          if (uncat > 0)
+            catCounts.push({ label: "Khác", val: uncat, catId: "" });
           segments = catCounts.filter((x) => x.val > 0);
           $("#pieCenterVal").textContent = dishes.length;
           $("#pieCenterLbl").textContent = "tổng món";
@@ -1952,7 +2131,9 @@
             const favs = Number(d.favorite_count ?? m.favorites ?? 0);
             const checks = Number(m.check_ins ?? 0);
             return {
-              label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 14),
+              label: (d.name || "")
+                .replace(/^(Quán|Tiệm)\s+/i, "")
+                .slice(0, 14),
               val: Math.max(1, favs + checks),
               catId: d.category_id || "",
             };
@@ -1988,7 +2169,10 @@
           .map((seg, idx) => {
             const pct = Math.round((seg.val / total) * 100);
             const color = PIE_COLORS[idx % PIE_COLORS.length];
-            const unitTxt = pieMode === "cat" ? `${seg.val} món (${pct}%)` : `${seg.val}k (${pct}%)`;
+            const unitTxt =
+              pieMode === "cat"
+                ? `${seg.val} món (${pct}%)`
+                : `${seg.val}k (${pct}%)`;
             return `
             <div class="pie-item" style="cursor:pointer" data-filter-cat="${esc(seg.catId ?? "")}" title="Bấm để lọc theo nhóm này">
               <div class="pie-item-left">
@@ -2054,7 +2238,11 @@
         const coords = pointsData.map((p, i) => {
           const x = padX + (i / (pointsData.length - 1)) * usableW;
           const y = padTop + usableH - (p.val / maxVal) * usableH;
-          return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, ...p };
+          return {
+            x: Math.round(x * 10) / 10,
+            y: Math.round(y * 10) / 10,
+            ...p,
+          };
         });
 
         const polyPoints = coords.map((c) => `${c.x},${c.y}`).join(" ");
@@ -2080,7 +2268,9 @@
             .join("")}
         `;
 
-        labelsEl.innerHTML = coords.map((c) => `<span>${esc(c.label)}</span>`).join("");
+        labelsEl.innerHTML = coords
+          .map((c) => `<span>${esc(c.label)}</span>`)
+          .join("");
       }
 
       function renderAllCharts() {
@@ -2136,7 +2326,11 @@
           renderPresence(s.presence);
         }
         const statItems = [
-          ["Thiết bị đang truy cập", t.online_devices ?? latestPresence.online_count, true],
+          [
+            "Thiết bị đang truy cập",
+            t.online_devices ?? latestPresence.online_count,
+            true,
+          ],
           ["Món ăn Hội An", t.dishes, false],
           ["Danh mục ẩm thực", t.categories, false],
           ["Lượt yêu thích", t.favorites, false],
@@ -2155,7 +2349,8 @@
           .join("");
 
         const navCheckEl = $("#navCheckinCount");
-        if (navCheckEl) navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
+        if (navCheckEl)
+          navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
 
         const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
         const dailyBadge = $("#dailyTotalBadge");
@@ -2165,7 +2360,8 @@
         $("#bars").innerHTML = s.daily
           .map((d) => {
             const label = `${esc(d.day.slice(8))}/${esc(d.day.slice(5, 7))}`;
-            const pct = d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
+            const pct =
+              d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
             return `
               <div class="day-col" title="Ngày ${label}: ${d.n} lượt check-in">
                 <b>${d.n}</b>
@@ -2224,9 +2420,7 @@
             const localName = d.name_i18n?.[dLang] || d.name;
             const localDesc = d.desc_i18n?.[dLang] || d.description || "";
             const catLabel = getCatLabel(d.category_id, d.category_name);
-            const badges = LANG_KEYS.filter(
-              (k) => d.translations?.[k]?.name,
-            )
+            const badges = LANG_KEYS.filter((k) => d.translations?.[k]?.name)
               .map(
                 (k) =>
                   `<span class="lang-mini ${dLang === k ? "active-mini" : ""}" data-dish-lang="${d.id}:${k}" title="Bấm để xem nội dung món này bằng tiếng ${k.toUpperCase()}">${k}</span>`,
@@ -2349,15 +2543,25 @@
           : "Thêm món ăn mới (5 ngôn ngữ)";
 
         const baseViName = (d?.translations?.vi?.name ?? d?.name ?? "").trim();
-        const baseViDesc = (d?.translations?.vi?.description ?? d?.description ?? "").trim();
+        const baseViDesc = (
+          d?.translations?.vi?.description ??
+          d?.description ??
+          ""
+        ).trim();
         for (const k of LANG_KEYS) {
-          const tName = (d?.translations?.[k]?.name ?? (k === "vi" ? baseViName : "")).trim();
-          const tDesc = (d?.translations?.[k]?.description ?? (k === "vi" ? baseViDesc : "")).trim();
-          f[`name_${k}`].value = k !== "vi" && tName === baseViName ? "" : tName;
-          f[`desc_${k}`].value = k !== "vi" && tDesc === baseViDesc ? "" : tDesc;
+          const tName = (
+            d?.translations?.[k]?.name ?? (k === "vi" ? baseViName : "")
+          ).trim();
+          const tDesc = (
+            d?.translations?.[k]?.description ?? (k === "vi" ? baseViDesc : "")
+          ).trim();
+          f[`name_${k}`].value =
+            k !== "vi" && tName === baseViName ? "" : tName;
+          f[`desc_${k}`].value =
+            k !== "vi" && tDesc === baseViDesc ? "" : tDesc;
         }
 
-        f.category_id.value = d?.category_id ?? (cats[0]?.id ?? "");
+        f.category_id.value = d?.category_id ?? cats[0]?.id ?? "";
         if (f.price_vnd) f.price_vnd.value = d?.price_vnd ?? "";
         f.emoji.value = d?.emoji ?? "";
         f.lat.value = d?.lat ?? 15.878;
@@ -2378,10 +2582,13 @@
         const cleanUrl = (url || "").trim();
         if (cleanUrl) {
           previewBox.innerHTML = `<img src="${esc(cleanUrl)}" alt="preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:11px;color:var(--danger);text-align:center;line-height:1.2;padding:2px;\\'>Lỗi link ảnh</span>';" />`;
-          statusEl.textContent = "✔ Đang dùng ảnh: " + (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
+          statusEl.textContent =
+            "✔ Đang dùng ảnh: " +
+            (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
         } else {
           previewBox.textContent = "Ảnh";
-          statusEl.textContent = "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
+          statusEl.textContent =
+            "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
         }
       }
 
@@ -2403,14 +2610,16 @@
         reader.onload = async () => {
           try {
             const dataUrl = reader.result;
-            $("#imgPreviewBox").innerHTML = `<img src="${dataUrl}" alt="preview" />`;
+            $("#imgPreviewBox").innerHTML =
+              `<img src="${dataUrl}" alt="preview" />`;
             const res = await api("/upload", {
               method: "POST",
               body: JSON.stringify({ filename: file.name, dataUrl }),
             });
             $("#imageUrlInput").value = res.url;
             updateImgPreview(res.url);
-            $("#uploadStatus").textContent = "✔ Đã tải lên và lưu đường dẫn ảnh: " + file.name;
+            $("#uploadStatus").textContent =
+              " Đã tải lên và lưu đường dẫn ảnh: " + file.name;
           } catch (err) {
             $("#uploadStatus").textContent = "Lỗi tải ảnh: " + err.message;
           }
@@ -2434,7 +2643,7 @@
           b.classList.toggle("active", b.dataset.bmode === barMode),
         );
         $("#barChartSub").textContent =
-          "Tổng lượt check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
+          "Tổng lượt check-in thực tế của từng món ";
         renderBarChart();
       };
 
@@ -2494,7 +2703,8 @@
         const item = e.target.closest("[data-filter-cat]");
         if (!item) return;
         const catId = item.dataset.filterCat;
-        $("#cat").value = $("#cat").value === String(catId) ? "" : String(catId);
+        $("#cat").value =
+          $("#cat").value === String(catId) ? "" : String(catId);
         renderCatChips();
         loadDishes();
       };
@@ -2653,6 +2863,9 @@
       function connectPresenceStream() {
         try {
           const es = new EventSource("/api/presence/stream?role=admin");
+          es.addEventListener("dishes_updated", () => {
+            loadDishes();
+          });
           es.onmessage = (ev) => {
             try {
               const data = JSON.parse(ev.data);

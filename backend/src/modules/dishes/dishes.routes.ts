@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { broadcastDishUpdate } from '../presence/presence.routes';
 import { findHoiAnPreset } from './hoiAnPresets';
 
 const r = Router();
@@ -369,16 +370,11 @@ function formatDishRow(row: any, requestedLang?: string) {
       ? (requestedLang as SupportedLang)
       : 'vi';
 
-  let imageUrl = row.image_url ? nfc(row.image_url) : '';
+  let imageUrl = row.image_url ? nfc(row.image_url).trim() : '';
   if (imageUrl.startsWith('http://doancnpm-backend.onrender.com')) {
     imageUrl = imageUrl.replace('http://', 'https://');
   }
-  if (
-    !imageUrl ||
-    imageUrl.includes('/uploads/') ||
-    imageUrl.includes('onrender.com') ||
-    imageUrl.startsWith('http://')
-  ) {
+  if (!imageUrl) {
     imageUrl = preset?.image || 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';
   }
 
@@ -604,6 +600,7 @@ r.post(
     await upsertTranslations(newId, b.name, b.description, b.translations);
 
     const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [newId]);
+    broadcastDishUpdate();
     res.status(201).json(formatDishRow(full.rows[0]));
   }),
 );
@@ -638,6 +635,7 @@ r.put(
 
     await upsertTranslations(id, b.name, b.description, b.translations);
     const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
+    broadcastDishUpdate();
     res.json(formatDishRow(full.rows[0]));
   }),
 );
@@ -648,6 +646,7 @@ r.delete(
   ah(async (req, res) => {
     const { rowCount } = await pool.query('DELETE FROM dishes WHERE id = $1', [Number(req.params.id)]);
     if (!rowCount) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+    broadcastDishUpdate();
     res.status(204).end();
   }),
 );
