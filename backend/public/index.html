@@ -1518,7 +1518,7 @@
 
             <button type="button" class="nav-btn" data-nav="checkins">
               <span class="nav-btn-left">
-                <span>Check-in & Yêu Thích</span>
+                <span>Lịch Sử Check-in</span>
               </span>
               <span class="nav-badge" id="navCheckinCount">0</span>
             </button>
@@ -1714,7 +1714,7 @@
               <section class="alt-panel" id="secTopFav">
                 <div class="sec-head">
                   <div class="sec-title-group">
-                    <h2>Món Được Yêu Thích Nhất</h2>
+                    <h2>Top Món Ăn Nổi Bật</h2>
                   </div>
                 </div>
                 <ol id="top"></ol>
@@ -2134,7 +2134,6 @@
           ["Thiết bị đang truy cập", t.online_devices ?? latestPresence.online_count, true],
           ["Món ăn Hội An", t.dishes, false],
           ["Danh mục ẩm thực", t.categories, false],
-          ["Lượt yêu thích", t.favorites, false],
           ["Lượt check-in", t.check_ins, false],
         ];
         $("#strip").innerHTML = statItems
@@ -2150,7 +2149,7 @@
           .join("");
 
         const navCheckEl = $("#navCheckinCount");
-        if (navCheckEl) navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
+        if (navCheckEl) navCheckEl.textContent = t.check_ins || 0;
 
         const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
         const dailyBadge = $("#dailyTotalBadge");
@@ -2184,7 +2183,7 @@
                   <small class="stop-sub">${d.check_ins} lượt check-in tại quán</small>
                 </div>
               </div>
-              <span class="stop-right">${d.favorites} yêu thích</span>
+              <span class="stop-right">${d.check_ins} check-in</span>
             </li>`,
           )
           .join("");
@@ -2411,7 +2410,7 @@
           b.classList.toggle("active", b.dataset.bmode === barMode),
         );
         $("#barChartSub").textContent =
-          "Tổng lượt Yêu thích + Check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
+          "Tổng lượt check-in thực tế của từng món (Bấm vào cột để +1 Check-in)";
         renderBarChart();
       };
 
@@ -2496,8 +2495,8 @@
           "Giám sát trực tiếp các thiết bị đang mở ứng dụng theo thời gian thực",
         ],
         checkins: [
-          "Lịch Sử Check-in & Yêu Thích",
-          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn được yêu thích",
+          "Lịch Sử Check-in",
+          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn nổi bật",
         ],
       };
 
@@ -2565,7 +2564,7 @@
           return openForm(dishes.find((d) => d.id == id));
         }
         if (
-          !confirm("Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.")
+          !confirm("Xoá món này? Dữ liệu check-in liên quan cũng bị xoá.")
         )
           return;
         try {

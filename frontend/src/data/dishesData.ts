@@ -22,7 +22,6 @@ export interface Dish {
   img: string;
   fallbackImg?: string;
   address?: string;
-  favorite_count?: number;
   name: Record<LangKey, string>;
   desc: Record<LangKey, string>;
   tag?: Record<LangKey, string>;

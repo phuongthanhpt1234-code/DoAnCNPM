@@ -303,9 +303,6 @@ const PAGE_UI: Record<
     qrModalTitle: string;
     qrModalDesc: string;
     closeQrModalBtn: string;
-    favorite: string;
-    favorited: string;
-    favoriteTextShort: string;
   }
 > = {
   vi: {
@@ -355,9 +352,6 @@ const PAGE_UI: Record<
     qrModalDesc:
       "Dùng Camera điện thoại hoặc Zalo quét mã QR dưới đây để mở ngay giao diện Mobile thuyết minh tự động",
     closeQrModalBtn: "Đóng cửa sổ QR",
-    favorite: "Yêu thích",
-    favorited: "Đã thích",
-    favoriteTextShort: "yêu thích",
   },
   en: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -407,9 +401,6 @@ const PAGE_UI: Record<
     qrModalDesc:
       "Use your phone camera to scan the QR code below to open the automated mobile audio guide",
     closeQrModalBtn: "Close QR Window",
-    favorite: "Favorite",
-    favorited: "Favorited",
-    favoriteTextShort: "likes",
   },
   zh: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -455,9 +446,6 @@ const PAGE_UI: Record<
     qrModalTitle: "使用手机扫描二维码",
     qrModalDesc: "使用手机相机扫描下方二维码，即可打开移动端多语言自动语音导览",
     closeQrModalBtn: "关闭二维码窗口",
-    favorite: "收藏",
-    favorited: "已收藏",
-    favoriteTextShort: "点赞",
   },
   ko: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -506,9 +494,6 @@ const PAGE_UI: Record<
     qrModalDesc:
       "휴대폰 카메라로 아래 QR 코드를 스캔하면 모바일 자동 음성 가이드가 열립니다",
     closeQrModalBtn: "QR 창 닫기",
-    favorite: "즐겨찾기",
-    favorited: "찜 완료",
-    favoriteTextShort: "좋아요",
   },
   ja: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -556,9 +541,6 @@ const PAGE_UI: Record<
     qrModalDesc:
       "スマートフォンのカメラで下のQRコードを読み取ると、モバイル音声ガイドが開きます",
     closeQrModalBtn: "QR画面を閉じる",
-    favorite: "お気に入り",
-    favorited: "保存済み",
-    favoriteTextShort: "いいね",
   },
 };
 
@@ -977,7 +959,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 row.price_vnd != null
                   ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
                   : "Đang cập nhật",
-              favorite_count: Number(row.favorite_count || 0),
             };
           });
 
@@ -1030,19 +1011,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   );
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
-  const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
-
-  useEffect(() => {
-    const deviceId = getClientDeviceId();
-    if (!deviceId) return;
-    api<any[]>(`/favorites?device_id=${encodeURIComponent(deviceId)}`)
-      .then((favs) => {
-        if (Array.isArray(favs)) {
-          setFavoritedDishIds(favs.map((f) => Number(f.id)));
-        }
-      })
-      .catch(() => {});
-  }, []);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
     "no_spicy",
@@ -1129,12 +1097,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const filtered = useMemo(() => {
     return apiDishes.filter((d) => {
-      const matchCat =
-        cat === "all"
-          ? true
-          : cat === "favorite"
-            ? favoritedDishIds.includes(d.id)
-            : d.cat === cat;
+      const matchCat = cat === "all" || d.cat === cat;
       const q = search.toLowerCase();
       const matchSearch = (
         (d.name[lang] || "") +
@@ -1145,7 +1108,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         .includes(q);
       return matchCat && matchSearch;
     });
-  }, [apiDishes, cat, search, lang, favoritedDishIds]);
+  }, [apiDishes, cat, search, lang]);
 
   const speakText = (text: string, customSpeechCode?: string) => {
     const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
@@ -1226,63 +1189,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           note: `Check-in món ${dish.name.vi}`,
         }),
       }).catch(() => {});
-    }
-  };
-
-  const handleToggleFavorite = async (dish: Dish) => {
-    const isFav = favoritedDishIds.includes(dish.id);
-    const nextFav = !isFav;
-    const deviceId = getClientDeviceId();
-
-    setFavoritedDishIds((prev) =>
-      isFav ? prev.filter((id) => id !== dish.id) : [...prev, dish.id],
-    );
-
-    setApiDishes((prev) =>
-      prev.map((d) =>
-        d.id === dish.id
-          ? {
-              ...d,
-              favorite_count: Math.max(
-                0,
-                (d.favorite_count || 0) + (nextFav ? 1 : -1),
-              ),
-            }
-          : d,
-      ),
-    );
-
-    if (selectedDish && selectedDish.id === dish.id) {
-      setSelectedDish((prev) =>
-        prev
-          ? {
-              ...prev,
-              favorite_count: Math.max(
-                0,
-                (prev.favorite_count || 0) + (nextFav ? 1 : -1),
-              ),
-            }
-          : null,
-      );
-    }
-
-    try {
-      if (nextFav) {
-        await api("/favorites", {
-          method: "POST",
-          body: JSON.stringify({
-            device_id: deviceId,
-            dish_id: dish.id,
-          }),
-        });
-      } else {
-        await api(
-          `/favorites/${dish.id}?device_id=${encodeURIComponent(deviceId)}`,
-          { method: "DELETE" },
-        );
-      }
-    } catch (e) {
-      console.warn("Toggle favorite error:", e);
     }
   };
 
@@ -1367,7 +1273,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       <FlatList
         key={"${numColumns}-${lang}"}
         data={filtered}
-        extraData={{ lang, checkedDishIds, favoritedDishIds }}
+        extraData={{ lang, checkedDishIds }}
         numColumns={numColumns}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
@@ -1388,7 +1294,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               >
                 {[
                   ["all", `${ui.catAll.replace(/\s*\(\d+\)/, "")} (${apiDishes.length})`],
-                  ["favorite", `❤️ ${ui.favorite} (${favoritedDishIds.length})`],
                   ["main", ui.catMain],
                   ["snack", ui.catSnack],
                   ["street", ui.catStreet],
@@ -1445,30 +1350,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 }
                 style={styles.cardImg}
               />
-              <TouchableOpacity
-                style={[
-                  styles.cardHeartBtn,
-                  favoritedDishIds.includes(item.id) && styles.cardHeartBtnActive,
-                ]}
-                onPress={(e) => {
-                  e.stopPropagation?.();
-                  handleToggleFavorite(item);
-                }}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.cardHeartIcon}>
-                  {favoritedDishIds.includes(item.id) ? "❤️" : "🤍"}
-                </Text>
-                <Text
-                  style={[
-                    styles.cardHeartCount,
-                    favoritedDishIds.includes(item.id) &&
-                      styles.cardHeartCountActive,
-                  ]}
-                >
-                  {item.favorite_count || 0} {ui.favoriteTextShort}
-                </Text>
-              </TouchableOpacity>
             </View>
             <View style={styles.cardBody}>
               <View style={styles.cardTopContent}>
@@ -1727,31 +1608,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       {checkedDishIds.includes(selectedDish.id)
                         ? ui.checkInDone
                         : ui.checkInNow}
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[
-                      styles.secondaryBtn,
-                      favoritedDishIds.includes(selectedDish.id) && {
-                        backgroundColor: "#b91c1c",
-                        borderColor: "#e11d48",
-                      },
-                    ]}
-                    onPress={() => handleToggleFavorite(selectedDish)}
-                  >
-                    <Text
-                      style={[
-                        styles.secondaryBtnText,
-                        favoritedDishIds.includes(selectedDish.id) && {
-                          color: "#fff",
-                          fontWeight: "bold",
-                        },
-                      ]}
-                    >
-                      {favoritedDishIds.includes(selectedDish.id)
-                        ? `❤️ ${ui.favorited} (${selectedDish.favorite_count || 0})`
-                        : `🤍 ${ui.favorite} (${selectedDish.favorite_count || 0})`}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -2295,36 +2151,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-  },
-  cardHeartBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(18, 12, 12, 0.85)",
-    borderColor: "rgba(233, 194, 107, 0.4)",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 20,
-    gap: 5,
-    zIndex: 10,
-  },
-  cardHeartBtnActive: {
-    backgroundColor: "rgba(185, 28, 28, 0.9)",
-    borderColor: "#e11d48",
-  },
-  cardHeartIcon: {
-    fontSize: 13,
-  },
-  cardHeartCount: {
-    color: "#e9c26b",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  cardHeartCountActive: {
-    color: "#ffffff",
   },
   cardBody: {
     flex: 1,
