@@ -477,14 +477,8 @@ export async function syncDishTranslations() {
     for (const dish of dishes) {
       const preset = findHoiAnPreset(dish.name);
 
-      // Cập nhật ảnh đại diện chuẩn sắc nét nếu chưa có hoặc đang bị 404 (do Render xóa thư mục uploads khi redeploy)
-      if (
-        preset?.image &&
-        (!dish.image_url ||
-          dish.image_url.includes('/uploads/') ||
-          dish.image_url.includes('onrender.com') ||
-          dish.image_url.startsWith('http://'))
-      ) {
+      // Chỉ tự động gán ảnh preset nếu món ăn hoàn toàn chưa có ảnh (null hoặc rỗng)
+      if (preset?.image && !dish.image_url) {
         await pool.query('UPDATE dishes SET image_url = $1 WHERE id = $2', [preset.image, dish.id]);
       }
       const { rows: translations } = await pool.query<{ lang: string; name: string; description: string | null }>(

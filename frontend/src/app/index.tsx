@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -18,6 +19,7 @@ import {
 import { DISHES, Dish, LANGS, LangKey } from "../data/dishesData";
 import { ALL_DISHES_DATA } from "../locales";
 import {
+  API_URL,
   api,
   getClientDeviceId,
   getDishes,
@@ -927,18 +929,14 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
             const fallbackImg = localDish?.image || defaultCatImg;
 
-            let dishImg = row.image_url || fallbackImg;
-            if (dishImg.startsWith("http://doancnpm-backend.onrender.com")) {
-              dishImg = dishImg.replace("http://", "https://");
+            let rawImg = (row.image_url || "").trim();
+            if (rawImg.startsWith("http://doancnpm-backend.onrender.com")) {
+              rawImg = rawImg.replace("http://", "https://");
+            } else if (rawImg.startsWith("/uploads/")) {
+              rawImg = `${API_URL}${rawImg}`;
             }
-            if (
-              !dishImg ||
-              dishImg.includes("/uploads/") ||
-              dishImg.includes("onrender.com") ||
-              dishImg.startsWith("http://")
-            ) {
-              dishImg = fallbackImg;
-            }
+
+            const dishImg = rawImg || fallbackImg;
 
             return {
               id: Number(row.id),
@@ -1011,6 +1009,19 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   );
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
+  const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
+
+  useEffect(() => {
+    const deviceId = getClientDeviceId();
+    if (!deviceId) return;
+    api<any[]>(`/favorites?device_id=${encodeURIComponent(deviceId)}`)
+      .then((favs) => {
+        if (Array.isArray(favs)) {
+          setFavoritedDishIds(favs.map((f) => Number(f.id)));
+        }
+      })
+      .catch(() => {});
+  }, []);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
     "no_spicy",
@@ -1192,6 +1203,35 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     }
   };
 
+  const handleToggleFavorite = async (dish: Dish) => {
+    const isFav = favoritedDishIds.includes(dish.id);
+    const nextFav = !isFav;
+    const deviceId = getClientDeviceId();
+
+    setFavoritedDishIds((prev) =>
+      isFav ? prev.filter((id) => id !== dish.id) : [...prev, dish.id],
+    );
+
+    try {
+      if (nextFav) {
+        await api("/favorites", {
+          method: "POST",
+          body: JSON.stringify({
+            device_id: deviceId,
+            dish_id: dish.id,
+          }),
+        });
+      } else {
+        await api(
+          `/favorites/${dish.id}?device_id=${encodeURIComponent(deviceId)}`,
+          { method: "DELETE" },
+        );
+      }
+    } catch (e) {
+      console.warn("Toggle favorite error:", e);
+    }
+  };
+
   const toggleDietaryOption = (id: string) => {
     setSelectedDietary((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
@@ -1273,7 +1313,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       <FlatList
         key={"${numColumns}-${lang}"}
         data={filtered}
-        extraData={{ lang, checkedDishIds }}
+        extraData={{ lang, checkedDishIds, favoritedDishIds }}
         numColumns={numColumns}
         keyExtractor={(item) => String(item.id)}
         contentContainerStyle={styles.listContent}
@@ -1394,6 +1434,24 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       ? ui.checkInDone
                       : ui.checkInNow}
                   </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={(e) => {
+                    e.stopPropagation?.();
+                    handleToggleFavorite(item);
+                  }}
+                  style={[
+                    styles.favoriteHeartBtn,
+                    favoritedDishIds.includes(item.id) && styles.favoriteHeartBtnActive,
+                  ]}
+                >
+                  <Ionicons
+                    name="heart"
+                    size={20}
+                    color={favoritedDishIds.includes(item.id) ? "#ef4444" : "#ffffff"}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -2176,7 +2234,7 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     minHeight: 57,
   },
-  cardActions: { flexDirection: "row", gap: 8, marginTop: 4 },
+  cardActions: { flexDirection: "row", gap: 8, marginTop: 4, alignItems: "center" },
   listenBtn: {
     flex: 1,
     backgroundColor: "#d4152f",
@@ -2185,6 +2243,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   listenBtnText: { color: "#fff", fontWeight: "bold", fontSize: 13 },
+  favoriteHeartBtn: {
+    width: 40,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#201616",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.22)",
+  },
+  favoriteHeartBtnActive: {
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: "#ef4444",
+  },
   qrMiniBtn: {
     paddingHorizontal: 14,
     paddingVertical: 10,

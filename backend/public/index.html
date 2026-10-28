@@ -1518,7 +1518,7 @@
 
             <button type="button" class="nav-btn" data-nav="checkins">
               <span class="nav-btn-left">
-                <span>Lịch Sử Check-in</span>
+                <span>Check-in & Yêu Thích</span>
               </span>
               <span class="nav-badge" id="navCheckinCount">0</span>
             </button>
@@ -1714,7 +1714,7 @@
               <section class="alt-panel" id="secTopFav">
                 <div class="sec-head">
                   <div class="sec-title-group">
-                    <h2>Top Món Ăn Nổi Bật</h2>
+                    <h2>Món Được Yêu Thích Nhất</h2>
                   </div>
                 </div>
                 <ol id="top"></ol>
@@ -1785,13 +1785,18 @@
           <label>Kinh độ GPS (Lng)<input name="lng" type="number" step="any" value="108.327" /></label>
         </div>
 
-        <label>Ảnh món ăn (Chọn file ảnh đã tải xuống từ máy tính)</label>
+        <label>Ảnh món ăn (Dán link ảnh web hoặc chọn file tải lên từ máy tính)</label>
         <div class="upload-box">
           <div class="upload-preview" id="imgPreviewBox">Ảnh</div>
           <div class="upload-controls">
-            <input type="file" id="imageFile" accept="image/*" />
-            <input type="hidden" name="image_url" />
-            <small class="upload-status" id="uploadStatus">Chưa chọn file ảnh (Hỗ trợ JPG, PNG, WEBP...)</small>
+            <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+              <input type="text" name="image_url" id="imageUrlInput" placeholder="Dán link ảnh URL (https://...)" style="flex: 1;" />
+              <button type="button" id="btnClearImage" style="padding: 7px 12px; font-size: 12px; border-radius: 10px; background: rgba(255,255,255,0.08); border: 1px solid var(--gold-border); color: var(--gold-text); cursor: pointer; white-space: nowrap;">Xóa ảnh</button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <input type="file" id="imageFile" accept="image/*" style="flex: 1;" />
+            </div>
+            <small class="upload-status" id="uploadStatus">Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính (JPG, PNG, WEBP)</small>
           </div>
         </div>
 
@@ -2134,6 +2139,7 @@
           ["Thiết bị đang truy cập", t.online_devices ?? latestPresence.online_count, true],
           ["Món ăn Hội An", t.dishes, false],
           ["Danh mục ẩm thực", t.categories, false],
+          ["Lượt yêu thích", t.favorites, false],
           ["Lượt check-in", t.check_ins, false],
         ];
         $("#strip").innerHTML = statItems
@@ -2149,7 +2155,7 @@
           .join("");
 
         const navCheckEl = $("#navCheckinCount");
-        if (navCheckEl) navCheckEl.textContent = t.check_ins || 0;
+        if (navCheckEl) navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
 
         const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
         const dailyBadge = $("#dailyTotalBadge");
@@ -2180,10 +2186,10 @@
                 <span class="stop-badge">${idx + 1}</span>
                 <div>
                   <span class="stop-title">${esc(d.name)}</span>
-                  <small class="stop-sub">${d.check_ins} lượt check-in tại quán</small>
+                  <small class="stop-sub">${d.favorites} lượt yêu thích từ thực khách</small>
                 </div>
               </div>
-              <span class="stop-right">${d.check_ins} check-in</span>
+              <span class="stop-right">${d.favorites} yêu thích</span>
             </li>`,
           )
           .join("");
@@ -2359,23 +2365,40 @@
         f.address.value = d?.address ?? "";
         f.image_url.value = d?.image_url ?? "";
         $("#imageFile").value = "";
-        if (d?.image_url) {
-          $("#imgPreviewBox").innerHTML = `<img src="${esc(d.image_url)}" alt="preview" />`;
-          $("#uploadStatus").textContent = "Đang dùng ảnh hiện tại (Chọn file mới nếu muốn thay đổi)";
-        } else {
-          $("#imgPreviewBox").textContent = "Ảnh";
-          $("#uploadStatus").textContent = "Chưa chọn file ảnh (Hỗ trợ JPG, PNG, WEBP...)";
-        }
+        updateImgPreview(d?.image_url);
         f.is_active.checked = d ? d.is_active : true;
         $("#formErr").textContent = "";
         switchFormLangTab(currentLang);
         $("#dlg").showModal();
       }
 
+      function updateImgPreview(url) {
+        const previewBox = $("#imgPreviewBox");
+        const statusEl = $("#uploadStatus");
+        const cleanUrl = (url || "").trim();
+        if (cleanUrl) {
+          previewBox.innerHTML = `<img src="${esc(cleanUrl)}" alt="preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:11px;color:var(--danger);text-align:center;line-height:1.2;padding:2px;\\'>Lỗi link ảnh</span>';" />`;
+          statusEl.textContent = "✔ Đang dùng ảnh: " + (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
+        } else {
+          previewBox.textContent = "Ảnh";
+          statusEl.textContent = "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
+        }
+      }
+
+      $("#imageUrlInput").oninput = (e) => {
+        updateImgPreview(e.target.value);
+      };
+
+      $("#btnClearImage").onclick = () => {
+        $("#imageUrlInput").value = "";
+        $("#imageFile").value = "";
+        updateImgPreview("");
+      };
+
       $("#imageFile").onchange = async (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        $("#uploadStatus").textContent = "Đang tải ảnh lên...";
+        $("#uploadStatus").textContent = "Đang tải ảnh lên máy chủ...";
         const reader = new FileReader();
         reader.onload = async () => {
           try {
@@ -2385,8 +2408,9 @@
               method: "POST",
               body: JSON.stringify({ filename: file.name, dataUrl }),
             });
-            $("#form").image_url.value = res.url;
-            $("#uploadStatus").textContent = "✔ Đã tải ảnh: " + file.name;
+            $("#imageUrlInput").value = res.url;
+            updateImgPreview(res.url);
+            $("#uploadStatus").textContent = "✔ Đã tải lên và lưu đường dẫn ảnh: " + file.name;
           } catch (err) {
             $("#uploadStatus").textContent = "Lỗi tải ảnh: " + err.message;
           }
@@ -2495,8 +2519,8 @@
           "Giám sát trực tiếp các thiết bị đang mở ứng dụng theo thời gian thực",
         ],
         checkins: [
-          "Lịch Sử Check-in",
-          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn nổi bật",
+          "Lịch Sử Check-in & Yêu Thích",
+          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn được yêu thích",
         ],
       };
 
@@ -2564,7 +2588,7 @@
           return openForm(dishes.find((d) => d.id == id));
         }
         if (
-          !confirm("Xoá món này? Dữ liệu check-in liên quan cũng bị xoá.")
+          !confirm("Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.")
         )
           return;
         try {
