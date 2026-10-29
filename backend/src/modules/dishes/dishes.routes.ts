@@ -332,50 +332,18 @@ function formatDishRow(row: any, requestedLang?: string) {
 
   const name_i18n: Record<SupportedLang, string> = {
     vi: nfc(rawTrans.vi?.name) || rowName,
-    en:
-      (rawTrans.en?.name && rawTrans.en.name !== rowName ? nfc(rawTrans.en.name) : '') ||
-      preset?.name.en ||
-      nfc(rawTrans.en?.name) ||
-      rowName,
-    zh:
-      (rawTrans.zh?.name && rawTrans.zh.name !== rowName ? nfc(rawTrans.zh.name) : '') ||
-      preset?.name.zh ||
-      nfc(rawTrans.zh?.name) ||
-      rowName,
-    ko:
-      (rawTrans.ko?.name && rawTrans.ko.name !== rowName ? nfc(rawTrans.ko.name) : '') ||
-      preset?.name.ko ||
-      nfc(rawTrans.ko?.name) ||
-      rowName,
-    ja:
-      (rawTrans.ja?.name && rawTrans.ja.name !== rowName ? nfc(rawTrans.ja.name) : '') ||
-      preset?.name.ja ||
-      nfc(rawTrans.ja?.name) ||
-      rowName,
+    en: nfc(rawTrans.en?.name) || preset?.name.en || rowName,
+    zh: nfc(rawTrans.zh?.name) || preset?.name.zh || rowName,
+    ko: nfc(rawTrans.ko?.name) || preset?.name.ko || rowName,
+    ja: nfc(rawTrans.ja?.name) || preset?.name.ja || rowName,
   };
 
   const desc_i18n: Record<SupportedLang, string> = {
     vi: nfc(rawTrans.vi?.description) || rowDesc,
-    en:
-      (rawTrans.en?.description && rawTrans.en.description !== rowDesc ? nfc(rawTrans.en.description) : '') ||
-      preset?.description.en ||
-      nfc(rawTrans.en?.description) ||
-      rowDesc,
-    zh:
-      (rawTrans.zh?.description && rawTrans.zh.description !== rowDesc ? nfc(rawTrans.zh.description) : '') ||
-      preset?.description.zh ||
-      nfc(rawTrans.zh?.description) ||
-      rowDesc,
-    ko:
-      (rawTrans.ko?.description && rawTrans.ko.description !== rowDesc ? nfc(rawTrans.ko.description) : '') ||
-      preset?.description.ko ||
-      nfc(rawTrans.ko?.description) ||
-      rowDesc,
-    ja:
-      (rawTrans.ja?.description && rawTrans.ja.description !== rowDesc ? nfc(rawTrans.ja.description) : '') ||
-      preset?.description.ja ||
-      nfc(rawTrans.ja?.description) ||
-      rowDesc,
+    en: nfc(rawTrans.en?.description) || preset?.description.en || rowDesc,
+    zh: nfc(rawTrans.zh?.description) || preset?.description.zh || rowDesc,
+    ko: nfc(rawTrans.ko?.description) || preset?.description.ko || rowDesc,
+    ja: nfc(rawTrans.ja?.description) || preset?.description.ja || rowDesc,
   };
 
   const lang: SupportedLang =

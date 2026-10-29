@@ -50,37 +50,24 @@ function normalize(s: string | null | undefined): string {
 
 export function findHoiAnPreset(nameOrShop: string, dishId?: string | number): HoiAnPresetTranslation | null {
   const norm = normalize(nameOrShop);
+  if (!norm) return null;
 
   let raw: any = null;
 
-  // 1. Luôn ưu tiên đối chiếu theo tên món ăn / tên quán / từ khoá ẩm thực thực tế
-  if (norm) {
-    for (const alias of ALIASES) {
-      if (alias.keywords.some((k) => norm.includes(k) || k.includes(norm))) {
-        raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === alias.targetId);
-        if (raw) break;
-      }
+  // Chỉ đối chiếu CHÍNH XÁC theo tên món / tên quán (không đối chiếu mập mờ một phần từ khóa)
+  for (const alias of ALIASES) {
+    if (alias.keywords.some((k) => norm === k)) {
+      raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === alias.targetId);
+      if (raw) break;
     }
   }
 
-  if (!raw && norm) {
+  if (!raw) {
     raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => {
       const s1 = normalize(d.shopVi);
       const s2 = normalize(d.translations?.vi?.name);
-      return (
-        s1 === norm ||
-        s2 === norm ||
-        norm.includes(s1) ||
-        s1.includes(norm) ||
-        norm.includes(s2) ||
-        s2.includes(norm)
-      );
+      return s1 === norm || s2 === norm;
     });
-  }
-
-  // 2. Chỉ dùng dishId làm fallback cuối nếu không tìm thấy tên phù hợp
-  if (!raw && dishId != null) {
-    raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === String(dishId));
   }
 
   if (!raw || !raw.translations) return null;

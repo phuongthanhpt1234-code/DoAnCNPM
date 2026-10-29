@@ -93,7 +93,17 @@ app.use("/api/stats", stats);
 // Dashboard quản trị: mở http://localhost:4000 hoặc http://localhost:4000/admin
 const publicDir = path.join(__dirname, "..", "public");
 app.use("/admin", express.static(publicDir));
-app.use(express.static(publicDir));
+app.use("/uploads", express.static(uploadsDir));
+
+// Trang chủ root /: Không phục vụ mã nguồn Admin cho khách vãng lai, trả về thông tin API an toàn
+app.get("/", (_req, res) => {
+  res.json({
+    name: "Theo Dấu Vị Hội - Hoi An Culinary API",
+    status: "active",
+    health: "/api/health",
+    admin_portal: "/admin",
+  });
+});
 
 app.use(errorHandler);
 export default app;

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { requireAdminAuth } from '../../middlewares/auth';
 import { broadcastAdminRefresh } from '../presence/presence.routes';
 
 const r = Router();
@@ -25,11 +26,14 @@ r.get('/', ah(async (req, res) => {
     return res.json(rows);
   }
 
-  const { rows } = await pool.query(
-    `SELECT c.id, c.device_id, c.note, c.created_at, d.id AS dish_id, d.name AS dish_name
-     FROM check_ins c JOIN dishes d ON d.id = c.dish_id
-     ORDER BY c.created_at DESC LIMIT $1`, [limit]);
-  res.json(rows);
+  // Truy vấn toàn bộ lịch sử check-in hệ thống: Yêu cầu quyền quản trị viên
+  return requireAdminAuth(req, res, async () => {
+    const { rows } = await pool.query(
+      `SELECT c.id, c.device_id, c.note, c.created_at, d.id AS dish_id, d.name AS dish_name
+       FROM check_ins c JOIN dishes d ON d.id = c.dish_id
+       ORDER BY c.created_at DESC LIMIT $1`, [limit]);
+    res.json(rows);
+  });
 }));
 
 r.post('/', ah(async (req, res) => {
@@ -79,7 +83,7 @@ r.post('/', ah(async (req, res) => {
   res.status(201).json(rows[0]);
 }));
 
-r.delete('/day/:day', ah(async (req, res) => {
+r.delete('/day/:day', requireAdminAuth, ah(async (req, res) => {
   const day = String(req.params.day || '');
   if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) {
     return res.status(400).json({ message: 'Ngày không hợp lệ' });

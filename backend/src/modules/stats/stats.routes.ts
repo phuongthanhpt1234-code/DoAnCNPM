@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { requireAdminAuth } from '../../middlewares/auth';
 import { getPresenceSummary } from '../presence/presence.routes';
 
 const r = Router();
 
-r.get('/', ah(async (_req, res) => {
+r.get('/', requireAdminAuth, ah(async (_req, res) => {
   // Tự động đồng bộ ngày check-in cũ vào khung 7 ngày gần nhất nếu đồng hồ hệ thống thay đổi
   const checkWindow = await pool.query(`
     SELECT

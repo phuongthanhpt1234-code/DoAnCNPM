@@ -16,7 +16,6 @@ export function hashPassword(password: string): string {
 }
 
 export function comparePassword(password: string, stored: string): boolean {
-  if (stored === password) return true;
   const parts = stored.split(":");
   if (parts.length !== 2) return false;
   const [salt, hash] = parts;

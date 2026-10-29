@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { PRESENCE_CONFIG, PresenceControlConfig } from './presence.config';
+import { requireAdminAuth, verifyAdminToken } from '../../middlewares/auth';
 
 const r = Router();
 
@@ -19,7 +20,12 @@ export interface ActiveDeviceSession {
 const activeSessions = new Map<string, ActiveDeviceSession>();
 
 // Danh sách kết nối SSE đang lắng nghe để cập nhật giao diện Admin tức thì
-const sseListeners = new Set<Response>();
+interface SseClient {
+  res: Response;
+  role: 'admin' | 'client';
+}
+
+const sseClients = new Set<SseClient>();
 
 // Cấu hình điều khiển hiện hành (khởi tạo từ file presence.config.ts)
 const runtimeConfig: PresenceControlConfig = { ...PRESENCE_CONFIG };
@@ -94,13 +100,16 @@ export function getPresenceSummary() {
 }
 
 function broadcastPresence(extra?: Record<string, unknown>) {
-  if (sseListeners.size === 0) return;
-  const payload = `data: ${JSON.stringify({ ...getPresenceSummary(), ...(extra || {}) })}\n\n`;
-  for (const res of sseListeners) {
+  if (sseClients.size === 0) return;
+  const adminSummary = getPresenceSummary();
+  const adminPayload = `data: ${JSON.stringify({ ...adminSummary, ...(extra || {}) })}\n\n`;
+  const clientPayload = `data: ${JSON.stringify({ online_count: adminSummary.online_count, real_online: adminSummary.real_online, ...(extra || {}) })}\n\n`;
+
+  for (const client of sseClients) {
     try {
-      res.write(payload);
+      client.res.write(client.role === 'admin' ? adminPayload : clientPayload);
     } catch {
-      sseListeners.delete(res);
+      sseClients.delete(client);
     }
   }
 }
@@ -117,20 +126,46 @@ setInterval(() => {
 }, 3000).unref();
 
 // 1. Lấy trạng thái số lượng thiết bị đang truy cập hiện tại
-r.get('/', (_req, res) => {
-  res.json(getPresenceSummary());
+r.get('/', (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : (req.query.token as string);
+  const isAdmin = Boolean(token && verifyAdminToken(token));
+  const summary = getPresenceSummary();
+
+  if (isAdmin) {
+    return res.json(summary);
+  }
+
+  // Khách truy cập công khai: Chỉ trả về số lượng, giấu chi tiết thiết bị & địa chỉ IP
+  return res.json({
+    online_count: summary.online_count,
+    real_online: summary.real_online,
+  });
 });
 
 // 2. Kết nối thời gian thực (SSE):
 // - Nếu role=client (Frontend mở trang): Tăng số lượng ngay lập tức; khi đóng tab/cửa sổ -> giảm ngay lập tức!
-// - Nếu role=admin (Trang quản trị): Nhận dữ liệu cập nhật trực tiếp mỗi khi có thiết bị vào/ra.
+// - Nếu role=admin (Trang quản trị): Yêu cầu token xác thực; nhận dữ liệu chi tiết thiết bị vào/ra.
 r.get('/stream', (req, res) => {
+  const role = String(req.query.role || 'client');
+
+  if (role === 'admin') {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : (req.query.token as string);
+    const verified = token ? verifyAdminToken(token) : null;
+    if (!verified) {
+      return res.status(401).json({
+        code: 'UNAUTHORIZED',
+        message: 'Yêu cầu token xác thực quản trị viên để kết nối luồng quản trị',
+      });
+    }
+  }
+
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders?.();
 
-  const role = String(req.query.role || 'client');
   let clientKey: string | null = null;
 
   if (role === 'client') {
@@ -154,8 +189,10 @@ r.get('/stream', (req, res) => {
     });
   }
 
-  sseListeners.add(res);
-  // Gửi ngay trạng thái mới nhất cho mọi listener (bao gồm cả Admin)
+  const sseClient: SseClient = { res, role: role === 'admin' ? 'admin' : 'client' };
+  sseClients.add(sseClient);
+
+  // Gửi ngay trạng thái mới nhất cho listener
   broadcastPresence();
 
   const keepAliveTimer = setInterval(() => {
@@ -172,7 +209,7 @@ r.get('/stream', (req, res) => {
 
   req.on('close', () => {
     clearInterval(keepAliveTimer);
-    sseListeners.delete(res);
+    sseClients.delete(sseClient);
     if (clientKey && activeSessions.has(clientKey)) {
       activeSessions.delete(clientKey);
       broadcastPresence();
@@ -239,7 +276,7 @@ r.post('/leave', (req, res) => {
 });
 
 // 5. Điều khiển (Control) số liệu hiển thị trực tiếp từ Admin hoặc API
-r.post('/control', (req, res) => {
+r.post('/control', requireAdminAuth, (req, res) => {
   const b = req.body || {};
 
   if ('fixed_online_count' in b) {
@@ -267,11 +304,11 @@ r.post('/control', (req, res) => {
 
 export function broadcastDishUpdate() {
   const payload = `event: dishes_updated\ndata: ${JSON.stringify({ timestamp: Date.now() })}\n\n`;
-  for (const listener of sseListeners) {
+  for (const client of sseClients) {
     try {
-      listener.write(payload);
+      client.res.write(payload);
     } catch {
-      sseListeners.delete(listener);
+      sseClients.delete(client);
     }
   }
 }

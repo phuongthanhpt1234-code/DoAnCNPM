@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { requireAdminAuth } from '../../middlewares/auth';
 
 const r = Router();
 
@@ -22,7 +23,7 @@ r.get('/', ah(async (req, res) => {
   res.json(enriched);
 }));
 
-r.post('/', ah(async (req, res) => {
+r.post('/', requireAdminAuth, ah(async (req, res) => {
   const b = schema.parse(req.body);
   const translations = {
     vi: b.name,

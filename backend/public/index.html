@@ -1445,28 +1445,34 @@
 
       .upload-box {
         background: var(--card-item);
-        border: 1px dashed var(--gold-border-strong);
-        border-radius: 16px;
-        padding: 12px 14px;
-        margin-bottom: 10px;
+        border: 1.5px dashed var(--gold-border-strong);
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 14px;
+        gap: 16px;
+        transition: all 0.2s ease;
+      }
+
+      .upload-box:hover {
+        border-color: var(--gold);
+        background: rgba(217, 119, 6, 0.03);
       }
 
       .upload-preview {
-        width: 72px;
-        height: 72px;
-        border-radius: 12px;
-        object-fit: cover;
+        width: 82px;
+        height: 82px;
+        border-radius: 14px;
         background: var(--input-bg);
-        border: 1px solid var(--gold-border);
+        border: 1.5px solid var(--gold-border);
         flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 26px;
+        font-size: 30px;
         overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
       }
 
       .upload-preview img {
@@ -1480,10 +1486,75 @@
         min-width: 0;
       }
 
-      .upload-controls input[type="file"] {
-        padding: 7px 10px;
+      .file-upload-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+
+      .btn-custom-upload {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        color: #ffffff !important;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 9px 18px;
+        border-radius: 12px;
         cursor: pointer;
+        box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+        transition: all 0.2s ease;
+        user-select: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin: 0 !important;
+      }
+
+      .btn-custom-upload:hover {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 5px 14px rgba(217, 119, 6, 0.35);
+      }
+
+      .btn-custom-upload:active {
+        transform: translateY(0);
+      }
+
+      .upload-file-name {
         font-size: 12px;
+        color: var(--muted);
+        font-weight: 500;
+        max-width: 220px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        background: var(--bg);
+        border: 1px solid var(--dark-border);
+        padding: 6px 12px;
+        border-radius: 8px;
+      }
+
+      .btn-clear-img {
+        padding: 7px 14px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 10px;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.25);
+        color: #ef4444;
+        cursor: pointer;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-clear-img:hover {
+        background: rgba(239, 68, 68, 0.16);
+        border-color: #ef4444;
       }
 
       .upload-status {
@@ -1492,6 +1563,129 @@
         font-size: 11.5px;
         margin-top: 4px;
       }
+    
+      /* TOOLTIP CHUYÊN NGHIỆP CHO CÁC BIỂU ĐỒ */
+      .chart-tooltip {
+        position: fixed;
+        z-index: 999999;
+        pointer-events: none;
+        opacity: 0;
+        transform: translate(-50%, -100%);
+        transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+        background: rgba(15, 23, 42, 0.94);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(217, 119, 6, 0.45);
+        border-radius: 14px;
+        padding: 10px 14px;
+        color: #f8fafc;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
+        font-family: 'Be Vietnam Pro', sans-serif;
+        font-size: 12px;
+        line-height: 1.45;
+        min-width: 140px;
+        max-width: 280px;
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      .chart-tooltip.visible {
+        opacity: 1;
+      }
+
+      .chart-tooltip-header {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 700;
+        font-size: 13px;
+        color: #ffffff;
+        margin-bottom: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 5px;
+      }
+
+      .chart-tooltip-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: #cbd5e1;
+        margin-top: 3px;
+      }
+
+      .chart-tooltip-val {
+        font-weight: 700;
+        color: #f59e0b;
+      }
+
+      .chart-tooltip-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+        background: rgba(217, 119, 6, 0.2);
+        color: #fbbf24;
+      }
+
+      /* Hover Effects cho các thành phần biểu đồ */
+      .bar-col {
+        cursor: pointer !important;
+        padding: 4px 2px;
+        border-radius: 8px;
+        transition: background 0.15s ease, transform 0.15s ease;
+      }
+
+      .bar-col:hover {
+        background: rgba(217, 119, 6, 0.08) !important;
+        transform: translateY(-3px) !important;
+      }
+
+      .bar-col:hover .bar-fill {
+        filter: brightness(1.18);
+        box-shadow: 0 6px 16px rgba(229, 77, 66, 0.45);
+      }
+
+      .pie-slice {
+        cursor: pointer !important;
+        transition: stroke-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease !important;
+      }
+
+      .pie-slice:hover {
+        stroke-width: 7.2 !important;
+        filter: drop-shadow(0 0 5px rgba(217, 119, 6, 0.75)) !important;
+      }
+
+      .line-point-group {
+        cursor: pointer !important;
+      }
+
+      .line-point-group:hover .line-point-outer {
+        opacity: 1 !important;
+        r: 10 !important;
+      }
+
+      .line-point-group:hover .line-point-inner {
+        r: 5.8 !important;
+        stroke: #ffffff !important;
+        stroke-width: 2.5 !important;
+      }
+
+      .bars .day-col {
+        cursor: pointer !important;
+      }
+
+      .bars .day-col:hover {
+        background: rgba(16, 185, 129, 0.08) !important;
+      }
+
+      .bars .day-col:hover .day-track i {
+        filter: brightness(1.25);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+      }
+
     </style>
   </head>
   <body>
@@ -1633,11 +1827,6 @@
                 <div class="chart-head">
                   <div class="chart-title-wrap">
                     <h3>Biểu Đồ Cột</h3>
-                  </div>
-                  <div class="mini-tabs" id="barModeTabs">
-                    <button type="button" class="active" data-bmode="engage">
-                      Lượt tương tác
-                    </button>
                   </div>
                 </div>
                 <div class="chart-sub" id="barChartSub">
@@ -1841,9 +2030,6 @@
                   <div class="sec-title-group">
                     <h2>Lượt Check-in Mới Nhất</h2>
                   </div>
-                  <button type="button" id="exportReportBtn2" class="day-act-btn" style="font-size: 12px; padding: 5px 12px; cursor: pointer;">
-                    📥 Xuất Excel/CSV
-                  </button>
                 </div>
                 <ul id="recent"></ul>
                 <p class="empty" id="noCheck" hidden>
@@ -2074,9 +2260,9 @@
           tính)</label
         >
         <div class="upload-box">
-          <div class="upload-preview" id="imgPreviewBox">Ảnh</div>
+          <div class="upload-preview" id="imgPreviewBox">🖼️</div>
           <div class="upload-controls">
-            <div style="display: flex; gap: 8px; margin-bottom: 8px">
+            <div style="display: flex; gap: 8px; margin-bottom: 10px">
               <input
                 type="text"
                 name="image_url"
@@ -2087,31 +2273,27 @@
               <button
                 type="button"
                 id="btnClearImage"
-                style="
-                  padding: 7px 12px;
-                  font-size: 12px;
-                  border-radius: 10px;
-                  background: rgba(255, 255, 255, 0.08);
-                  border: 1px solid var(--gold-border);
-                  color: var(--gold-text);
-                  cursor: pointer;
-                  white-space: nowrap;
-                "
+                class="btn-clear-img"
+                title="Xóa ảnh hiện tại"
               >
-                Xóa ảnh
+                <span>🗑️</span> Xóa ảnh
               </button>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px">
+            <div class="file-upload-row">
               <input
                 type="file"
                 id="imageFile"
                 accept="image/*"
-                style="flex: 1"
+                style="display: none;"
               />
+              <label for="imageFile" class="btn-custom-upload" id="uploadLabelBtn">
+                <span style="font-size: 16px;">📤</span>
+                <span>Tải ảnh từ máy tính</span>
+              </label>
+              <span class="upload-file-name" id="uploadFileName">Chưa chọn tệp</span>
             </div>
             <small class="upload-status" id="uploadStatus"
-              >Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính
-              (JPG, PNG, WEBP)</small
+              >Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính (JPG, PNG, WEBP)</small
             >
           </div>
         </div>
@@ -2263,14 +2445,14 @@
           const shortName = (d.name || "")
             .replace(/^(Quán|Tiệm)\s+/i, "")
             .slice(0, 11);
-          return { id: d.id, name: d.name, shortName, val, unit };
+          return { id: d.id, name: d.name, shortName, val, favs, checks, unit };
         });
 
         const maxVal = Math.max(1, ...items.map((x) => x.val));
         box.innerHTML = items
           .map(
             (x) => `
-          <div class="bar-col" title="${esc(x.name)}: ${esc(x.unit)}">
+          <div class="bar-col" data-tt-type="bar" data-tt-title="${esc(x.name)}" data-tt-val="${esc(x.unit)}" data-tt-favs="${x.favs}" data-tt-checks="${x.checks}">
             <span class="bar-val">${esc(x.unit)}</span>
             <i class="bar-fill" style="height:${Math.max(8, Math.round((x.val / maxVal) * 84))}%"></i>
             <span class="bar-lbl">${esc(x.shortName)}</span>
@@ -2338,7 +2520,7 @@
           const pct = (seg.val / total) * 100;
           const color = PIE_COLORS[idx % PIE_COLORS.length];
           circles.push(
-            `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="${color}" stroke-width="5.5" stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="${offset}" style="transition: stroke-dasharray 0.35s ease"></circle>`,
+            `<circle class="pie-slice" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct.toFixed(1)}%" data-tt-mode="${pieMode}" cx="21" cy="21" r="15.915" fill="transparent" stroke="${color}" stroke-width="5.5" stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="${offset}" style="transition: stroke-dasharray 0.35s ease"></circle>`,
           );
           offset -= pct;
         });
@@ -2351,9 +2533,9 @@
             const unitTxt =
               pieMode === "cat"
                 ? `${seg.val} món (${pct}%)`
-                : `${seg.val}k (${pct}%)`;
+                : `${seg.val} lượt (${pct}%)`;
             return `
-            <div class="pie-item" style="cursor:pointer" data-filter-cat="${esc(seg.catId ?? "")}" title="Bấm để lọc theo nhóm này">
+            <div class="pie-item" style="cursor:pointer" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct}%" data-tt-mode="${pieMode}" data-filter-cat="${esc(seg.catId ?? "")}">
               <div class="pie-item-left">
                 <span class="pie-dot" style="background:${color}"></span>
                 <span class="pie-name">${esc(seg.label)}</span>
@@ -2440,8 +2622,12 @@
           ${coords
             .map(
               (c) => `
-            <circle cx="${c.x}" cy="${c.y}" r="4.2" fill="#d4152f" stroke="#e9c26b" stroke-width="2" />
-            <text x="${c.x}" y="${c.y - 8}" fill="#f5ead4" font-size="9.5" font-weight="700" text-anchor="middle">${esc(c.display)}</text>
+            <g class="line-point-group" data-tt-type="line" data-tt-title="${esc(c.name || c.label)}" data-tt-val="${esc(c.display)}" data-tt-time="${esc(c.label)}" data-tt-mode="${lineMode}">
+              <circle cx="${c.x}" cy="${c.y}" r="15" fill="transparent" />
+              <circle class="line-point-outer" cx="${c.x}" cy="${c.y}" r="7" fill="rgba(233, 194, 107, 0.25)" style="transition: all 0.2s ease; opacity: 0;" />
+              <circle class="line-point-inner" cx="${c.x}" cy="${c.y}" r="4.2" fill="#d4152f" stroke="#e9c26b" stroke-width="2" style="transition: all 0.2s ease;" />
+              <text x="${c.x}" y="${c.y - 8}" fill="#f5ead4" font-size="9.5" font-weight="700" text-anchor="middle">${esc(c.display)}</text>
+            </g>
           `,
             )
             .join("")}
@@ -2542,7 +2728,7 @@
             const pct =
               d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
             return `
-              <div class="day-col" title="Ngày ${label}: ${d.n} lượt check-in">
+              <div class="day-col" data-tt-type="daily" data-tt-date="${label}" data-tt-day="${esc(d.day)}" data-tt-count="${d.n}">
                 <b>${d.n}</b>
                 <div class="day-track">
                   <i style="height:${pct}%"></i>
@@ -2749,6 +2935,8 @@
         f.address.value = d?.address ?? "";
         f.image_url.value = d?.image_url ?? "";
         $("#imageFile").value = "";
+        const fnEl = $("#uploadFileName");
+        if (fnEl) fnEl.textContent = "Chưa chọn tệp";
         updateImgPreview(d?.image_url);
         f.is_active.checked = d ? d.is_active : true;
         $("#formErr").textContent = "";
@@ -2766,7 +2954,7 @@
             "✔ Đang dùng ảnh: " +
             (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
         } else {
-          previewBox.textContent = "Ảnh";
+          previewBox.textContent = "🖼️";
           statusEl.textContent =
             "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
         }
@@ -2811,7 +2999,12 @@
 
       $("#imageFile").onchange = async (e) => {
         const file = e.target.files?.[0];
-        if (!file) return;
+        const fnEl = $("#uploadFileName");
+        if (!file) {
+          if (fnEl) fnEl.textContent = "Chưa chọn tệp";
+          return;
+        }
+        if (fnEl) fnEl.textContent = file.name;
         $("#uploadStatus").textContent = "Đang nén và xử lý ảnh...";
         try {
           const compressedDataUrl = await compressImage(file, 800, 0.75);
@@ -3250,6 +3443,8 @@ xmlns="http://www.w3.org/TR/REC-html40">
       </td>
     </tr>
   </table>
+  <!-- FLOATING CHART TOOLTIP -->
+  <div id="chartTooltip" class="chart-tooltip"></div>
 </body>
 </html>`;
 
@@ -3380,9 +3575,16 @@ xmlns="http://www.w3.org/TR/REC-html40">
         loadDishes();
       };
 
+      let adminEventSource = null;
       function connectPresenceStream() {
+        if (!authToken) return;
         try {
-          const es = new EventSource("/api/presence/stream?role=admin");
+          if (adminEventSource) {
+            try { adminEventSource.close(); } catch {}
+            adminEventSource = null;
+          }
+          const es = new EventSource("/api/presence/stream?role=admin&token=" + encodeURIComponent(authToken));
+          adminEventSource = es;
           es.addEventListener("dishes_updated", () => {
             loadDishes();
           });
@@ -3398,7 +3600,8 @@ xmlns="http://www.w3.org/TR/REC-html40">
           };
           es.onerror = () => {
             es.close();
-            setTimeout(connectPresenceStream, 3000);
+            if (adminEventSource === es) adminEventSource = null;
+            if (authToken) setTimeout(connectPresenceStream, 4000);
           };
         } catch {}
       }
@@ -3462,6 +3665,10 @@ xmlns="http://www.w3.org/TR/REC-html40">
       }
 
       function doLogout(msg) {
+        if (adminEventSource) {
+          try { adminEventSource.close(); } catch {}
+          adminEventSource = null;
+        }
         localStorage.removeItem("hoian_admin_token");
         authToken = "";
         showLogin(msg);
@@ -3730,6 +3937,153 @@ xmlns="http://www.w3.org/TR/REC-html40">
           doLogout();
         }
       })();
+    
+      // UNIFIED CHART TOOLTIP ENGINE
+      const chartTooltip = $("#chartTooltip");
+
+      function formatTooltipHtml(el) {
+        const type = el.dataset.ttType;
+        if (type === "bar") {
+          const title = el.dataset.ttTitle || "Món ăn";
+          const favs = el.dataset.ttFavs || "0";
+          const checks = el.dataset.ttChecks || "0";
+          const total = el.dataset.ttVal || "0 lượt";
+          return `
+            <div class="chart-tooltip-header">
+              <span>📊</span>
+              <span>${esc(title)}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>❤️ Yêu thích:</span>
+              <span class="chart-tooltip-val">${esc(favs)} lượt</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>📍 Check-in:</span>
+              <span class="chart-tooltip-val">${esc(checks)} lượt</span>
+            </div>
+            <div class="chart-tooltip-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 5px; margin-top: 5px;">
+              <span>🔥 Tổng tương tác:</span>
+              <span class="chart-tooltip-badge">${esc(total)}</span>
+            </div>
+          `;
+        }
+        if (type === "pie") {
+          const title = el.dataset.ttTitle || "Nhóm";
+          const val = el.dataset.ttVal || "0";
+          const pct = el.dataset.ttPct || "0%";
+          const mode = el.dataset.ttMode;
+          const unit = mode === "cat" ? "món ăn" : "lượt tương tác";
+          return `
+            <div class="chart-tooltip-header">
+              <span>🍩</span>
+              <span>${esc(title)}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>Số lượng:</span>
+              <span class="chart-tooltip-val">${esc(val)} ${unit}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>Tỷ trọng:</span>
+              <span class="chart-tooltip-badge">${esc(pct)}</span>
+            </div>
+          `;
+        }
+        if (type === "line") {
+          const title = el.dataset.ttTitle || "Số liệu";
+          const val = el.dataset.ttVal || "0";
+          const time = el.dataset.ttTime || "";
+          const mode = el.dataset.ttMode;
+          if (mode === "online") {
+            return `
+              <div class="chart-tooltip-header">
+                <span style="color:#34d399">🟢</span>
+                <span>Thiết Bị Đang Online Live</span>
+              </div>
+              <div class="chart-tooltip-row">
+                <span>Thời điểm:</span>
+                <span style="color:#94a3b8">${esc(time)}</span>
+              </div>
+              <div class="chart-tooltip-row">
+                <span>Trực tiếp:</span>
+                <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(val)} thiết bị</span>
+              </div>
+            `;
+          }
+          return `
+            <div class="chart-tooltip-header">
+              <span>📈</span>
+              <span>${esc(title)}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>Tổng tương tác:</span>
+              <span class="chart-tooltip-badge">${esc(val)}</span>
+            </div>
+          `;
+        }
+        if (type === "daily") {
+          const date = el.dataset.ttDate || "";
+          const day = el.dataset.ttDay || "";
+          const count = el.dataset.ttCount || "0";
+          return `
+            <div class="chart-tooltip-header">
+              <span>📅</span>
+              <span>Ngày ${esc(date)}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>Mốc ngày:</span>
+              <span style="color:#94a3b8">${esc(day)}</span>
+            </div>
+            <div class="chart-tooltip-row">
+              <span>Số lượt check-in:</span>
+              <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(count)} lượt</span>
+            </div>
+          `;
+        }
+        return "";
+      }
+
+      function updateTooltipPos(e) {
+        if (!chartTooltip || !chartTooltip.classList.contains("visible")) return;
+        const pad = 16;
+        let x = e.clientX;
+        let y = e.clientY - 14;
+        const rect = chartTooltip.getBoundingClientRect();
+        if (x - rect.width / 2 < pad) x = rect.width / 2 + pad;
+        if (x + rect.width / 2 > window.innerWidth - pad) x = window.innerWidth - rect.width / 2 - pad;
+        if (y - rect.height < pad) {
+          y = e.clientY + 26;
+          chartTooltip.style.transform = "translate(-50%, 0)";
+        } else {
+          chartTooltip.style.transform = "translate(-50%, -100%)";
+        }
+        chartTooltip.style.left = x + "px";
+        chartTooltip.style.top = y + "px";
+      }
+
+      document.addEventListener("mouseover", (e) => {
+        const target = e.target.closest("[data-tt-type]");
+        if (!target) return;
+        const html = formatTooltipHtml(target);
+        if (html && chartTooltip) {
+          chartTooltip.innerHTML = html;
+          chartTooltip.classList.add("visible");
+          updateTooltipPos(e);
+        }
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (chartTooltip && chartTooltip.classList.contains("visible")) {
+          updateTooltipPos(e);
+        }
+      });
+
+      document.addEventListener("mouseout", (e) => {
+        const target = e.target.closest("[data-tt-type]");
+        if (target && chartTooltip) {
+          chartTooltip.classList.remove("visible");
+        }
+      });
+
     </script>
   </body>
 </html>
