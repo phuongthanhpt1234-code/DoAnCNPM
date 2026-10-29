@@ -1057,6 +1057,14 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         }
       })
       .catch(() => {});
+
+    api<any[]>(`/checkins?device_id=${encodeURIComponent(deviceId)}`)
+      .then((checks) => {
+        if (Array.isArray(checks)) {
+          setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
+        }
+      })
+      .catch(() => {});
   }, []);
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
@@ -1162,22 +1170,40 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     playSpeech(text, targetLang);
   };
 
-  const handleCheckInDish = (dish: Dish) => {
+  const handleCheckInDish = async (dish: Dish) => {
     const isAlreadyChecked = checkedDishIds.includes(dish.id);
+    const nextChecked = !isAlreadyChecked;
+    const deviceId = getClientDeviceId();
+
     setCheckedDishIds((prev) =>
-      prev.includes(dish.id)
+      isAlreadyChecked
         ? prev.filter((id) => id !== dish.id)
         : [...prev, dish.id],
     );
-    if (!isAlreadyChecked) {
-      api("/checkins", {
-        method: "POST",
-        body: JSON.stringify({
-          device_id: getClientDeviceId(),
-          dish_id: dish.id,
-          note: `Check-in món ${dish.name.vi}`,
-        }),
-      }).catch(() => {});
+
+    try {
+      if (nextChecked) {
+        await api("/checkins", {
+          method: "POST",
+          body: JSON.stringify({
+            device_id: deviceId,
+            dish_id: dish.id,
+            note: `Check-in món ${dish.name.vi}`,
+          }),
+        });
+      } else {
+        await api(
+          `/checkins?device_id=${encodeURIComponent(deviceId)}&dish_id=${dish.id}`,
+          { method: "DELETE" },
+        );
+      }
+    } catch (e) {
+      console.warn("Check-in/out error:", e);
+      setCheckedDishIds((prev) =>
+        isAlreadyChecked
+          ? [...prev, dish.id]
+          : prev.filter((id) => id !== dish.id),
+      );
     }
   };
 

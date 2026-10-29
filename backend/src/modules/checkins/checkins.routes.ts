@@ -14,6 +14,17 @@ const schema = z.object({
 
 r.get('/', ah(async (req, res) => {
   const limit = Math.min(Number(req.query.limit) || 20, 100);
+  const deviceId = req.query.device_id ? String(req.query.device_id).trim() : null;
+
+  if (deviceId) {
+    const { rows } = await pool.query(
+      `SELECT c.id, c.device_id, c.note, c.created_at, d.id AS dish_id, d.name AS dish_name
+       FROM check_ins c JOIN dishes d ON d.id = c.dish_id
+       WHERE c.device_id = $1 AND c.created_at::date = CURRENT_DATE
+       ORDER BY c.created_at DESC LIMIT $2`, [deviceId, limit]);
+    return res.json(rows);
+  }
+
   const { rows } = await pool.query(
     `SELECT c.id, c.device_id, c.note, c.created_at, d.id AS dish_id, d.name AS dish_name
      FROM check_ins c JOIN dishes d ON d.id = c.dish_id
@@ -30,6 +41,28 @@ r.post('/', ah(async (req, res) => {
 
   const dishName = checkDish.rows[0].name;
   const defaultNote = `Check-in món ${dishName}`;
+
+  // Chống spam: Kiểm tra xem thiết bị này đã check-in món này trong ngày chưa
+  const existing = b.day
+    ? await pool.query(
+        `SELECT id, device_id, dish_id, note, created_at
+         FROM check_ins
+         WHERE device_id = $1 AND dish_id = $2 AND created_at::date = $3::date
+         ORDER BY created_at DESC LIMIT 1`,
+        [b.device_id, b.dish_id, b.day],
+      )
+    : await pool.query(
+        `SELECT id, device_id, dish_id, note, created_at
+         FROM check_ins
+         WHERE device_id = $1 AND dish_id = $2 AND created_at::date = CURRENT_DATE
+         ORDER BY created_at DESC LIMIT 1`,
+        [b.device_id, b.dish_id],
+      );
+
+  if (existing.rowCount && existing.rowCount > 0) {
+    // Đã có bản ghi check-in trong ngày -> Trả về bản ghi hiện tại mà không tạo bản ghi mới trùng lặp
+    return res.status(200).json(existing.rows[0]);
+  }
 
   const { rows } = b.day
     ? await pool.query(
@@ -51,7 +84,7 @@ r.delete('/day/:day', ah(async (req, res) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) {
     return res.status(400).json({ message: 'Ngày không hợp lệ' });
   }
-  await pool.query(
+  const result = await pool.query(
     `DELETE FROM check_ins
      WHERE id = (
        SELECT id FROM check_ins
@@ -61,7 +94,53 @@ r.delete('/day/:day', ah(async (req, res) => {
      )`,
     [day],
   );
-  broadcastAdminRefresh();
+  if (result.rowCount && result.rowCount > 0) {
+    broadcastAdminRefresh();
+  }
+  res.status(204).end();
+}));
+
+r.delete('/:dishId', ah(async (req, res) => {
+  const dishId = Number(req.params.dishId);
+  const deviceId = String(req.query.device_id || req.body?.device_id || '').trim();
+  if (!deviceId || isNaN(dishId)) {
+    return res.status(400).json({ message: 'Thiếu device_id hoặc dishId không hợp lệ' });
+  }
+  const result = await pool.query(
+    `DELETE FROM check_ins
+     WHERE id IN (
+       SELECT id FROM check_ins
+       WHERE device_id = $1 AND dish_id = $2
+       ORDER BY created_at DESC
+       LIMIT 1
+     )`,
+    [deviceId, dishId],
+  );
+  if (result.rowCount && result.rowCount > 0) {
+    broadcastAdminRefresh();
+  }
+  res.status(204).end();
+}));
+
+r.delete('/', ah(async (req, res) => {
+  const deviceId = String(req.query.device_id || req.body?.device_id || '').trim();
+  const dishId = Number(req.query.dish_id || req.body?.dish_id);
+  if (!deviceId || !dishId || isNaN(dishId)) {
+    return res.status(400).json({ message: 'Thiếu device_id hoặc dish_id' });
+  }
+  const result = await pool.query(
+    `DELETE FROM check_ins
+     WHERE id IN (
+       SELECT id FROM check_ins
+       WHERE device_id = $1 AND dish_id = $2
+       ORDER BY created_at DESC
+       LIMIT 1
+     )`,
+    [deviceId, dishId],
+  );
+  if (result.rowCount && result.rowCount > 0) {
+    broadcastAdminRefresh();
+  }
   res.status(204).end();
 }));
 
