@@ -12,27 +12,27 @@
     />
     <style>
       :root {
-        --bg: #090505;
-        --header-bg: #140909;
-        --panel: #160c0c;
-        --panel-alt: #14110f;
-        --card-item: #1c1815;
-        --input-bg: #120a0a;
-        --ink: #f5ead4;
-        --ink-white: #ffffff;
-        --muted: #a89a82;
-        --desc: #d6c7b2;
-        --gold: #e9c26b;
-        --gold-border: rgba(233, 194, 107, 0.22);
-        --gold-border-strong: rgba(233, 194, 107, 0.45);
-        --dark-border: #302924;
-        --crimson: #d4152f;
-        --crimson-hover: #b81127;
+        --bg: #f4f6f9;
+        --header-bg: #ffffff;
+        --panel: #ffffff;
+        --panel-alt: #ffffff;
+        --card-item: #f8fafc;
+        --input-bg: #ffffff;
+        --ink: #1e293b;
+        --ink-white: #0f172a;
+        --muted: #64748b;
+        --desc: #475569;
+        --gold: #d97706;
+        --gold-border: #e2e8f0;
+        --gold-border-strong: #cbd5e1;
+        --dark-border: #e2e8f0;
+        --crimson: #e54d42;
+        --crimson-hover: #dc2626;
         --emerald: #10b981;
-        --emerald-bg: #0c291e;
-        --emerald-badge: #047857;
+        --emerald-bg: #ecfdf5;
+        --emerald-badge: #15803d;
         --amber: #f59e0b;
-        --danger: #f87171;
+        --danger: #ef4444;
       }
 
       * {
@@ -388,11 +388,11 @@
       .bar-fill {
         width: 100%;
         max-width: 38px;
-        background: linear-gradient(180deg, #e9c26b 0%, #d4152f 100%);
+        background: linear-gradient(180deg, #e8a838 0%, #e54d42 100%);
         border-radius: 8px 8px 3px 3px;
         min-height: 6px;
         transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 0 4px 12px rgba(212, 21, 47, 0.28);
+        box-shadow: 0 4px 12px rgba(229, 77, 66, 0.2);
       }
 
       .bar-lbl {
@@ -709,12 +709,12 @@
       }
 
       .stat-card.live-card {
-        border-color: rgba(16, 185, 129, 0.55);
-        background: linear-gradient(135deg, #0d221b, #160c0c);
+        border-color: var(--gold-border);
+        background: var(--panel);
       }
 
       .stat-card.live-card b {
-        color: #34d399;
+        color: #10b981;
       }
 
       .presence-box {
@@ -962,14 +962,14 @@
         width: 100%;
         height: 155px;
         object-fit: cover;
-        background: #1c1212;
+        background: #f1f5f9;
         display: block;
       }
 
       .dish-card-fallback {
         width: 100%;
         height: 155px;
-        background: linear-gradient(135deg, #1f0e0e, #120808);
+        background: #f1f5f9;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1086,7 +1086,7 @@
         border-radius: 12px;
         object-fit: cover;
         border: 1px solid var(--gold-border);
-        background: #1c1212;
+        background: #f1f5f9;
         flex-shrink: 0;
         display: flex;
         align-items: center;
@@ -1552,8 +1552,8 @@
             </div>
 
             <div class="topbar-actions">
-              <button type="button" id="refreshBtn">Làm mới số liệu</button>
-              <button type="button" id="exportReportBtn" class="gold-btn" style="padding: 9px 14px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+              <button type="button" id="refreshBtn" style="background:#ffffff; border:1px solid #cbd5e1; color:#334155; border-radius:20px; padding:8px 16px; font-weight:600; cursor:pointer;">Làm mới số liệu</button>
+              <button type="button" id="exportReportBtn" style="background:#e8a838; color:#ffffff; border:none; border-radius:20px; padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
                 📊 Xuất báo cáo lượt check-in & thống kê
               </button>
             </div>
@@ -2150,14 +2150,14 @@
 
         const total = segments.reduce((acc, s) => acc + s.val, 0);
         if (total === 0) {
-          svg.innerHTML = `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#302924" stroke-width="5"></circle>`;
+          svg.innerHTML = `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5"></circle>`;
           legend.innerHTML = `<small style="color:var(--muted)">Chưa có số liệu</small>`;
           return;
         }
 
         let offset = 25;
         const circles = [
-          `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#261c18" stroke-width="5.5"></circle>`,
+          `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5.5"></circle>`,
         ];
 
         segments.forEach((seg, idx) => {
@@ -2260,9 +2260,9 @@
               <stop offset="100%" stop-color="#d4152f" stop-opacity="0.02" />
             </linearGradient>
           </defs>
-          <line x1="${padX}" y1="${H - padBot}" x2="${W - padX}" y2="${H - padBot}" stroke="#302924" stroke-width="1" />
+          <line x1="${padX}" y1="${H - padBot}" x2="${W - padX}" y2="${H - padBot}" stroke="#e2e8f0" stroke-width="1" />
           <polygon points="${areaPoints}" fill="url(#lineGrad)" />
-          <polyline fill="none" stroke="#e9c26b" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />
+          <polyline fill="none" stroke="#e8a838" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />
           ${coords
             .map(
               (c) => `
