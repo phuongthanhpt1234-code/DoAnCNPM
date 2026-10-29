@@ -955,6 +955,9 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        min-height: 410px;
+        height: 100%;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
       }
 
       .dish-card.off {
@@ -1027,6 +1030,8 @@
         color: var(--desc);
         font-size: 12.5px;
         line-height: 1.45;
+        min-height: 38px;
+        margin-bottom: auto;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
@@ -1036,7 +1041,7 @@
       .dish-card-foot {
         display: flex;
         gap: 8px;
-        margin-top: 10px;
+        margin-top: auto;
         padding-top: 10px;
         border-top: 1px solid rgba(233, 194, 107, 0.12);
       }
@@ -1555,7 +1560,6 @@
             </div>
 
             <div class="topbar-actions">
-              <button type="button" id="refreshBtn" style="background:#ffffff; border:1px solid #cbd5e1; color:#334155; border-radius:20px; padding:8px 16px; font-weight:600; cursor:pointer;">Làm mới số liệu</button>
               <button type="button" id="exportReportBtn" style="background:#e8a838; color:#ffffff; border:none; border-radius:20px; padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
                 📊 Xuất báo cáo lượt check-in & thống kê
               </button>
@@ -2479,22 +2483,18 @@
             const catLabel = getCatLabel(d.category_id, d.category_name);
             return `
           <div class="dish-card ${d.is_active ? "" : "off"}">
-            <div>
-              ${
+            ${
                 d.image_url
                   ? `<img class="dish-card-img" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
                   : `<img class="dish-card-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
               }
-              <div class="dish-card-body">
-                <div class="dish-card-meta">
-                  <span class="dish-card-cat">${esc(catLabel)}</span>
-                </div>
-                <h3 class="dish-card-title">${esc(localName)}</h3>
-                <div class="dish-card-sub">${esc(d.address || "Phố cổ Hội An")}</div>
-                <p class="dish-card-desc">${esc(localDesc)}</p>
+            <div class="dish-card-body">
+              <div class="dish-card-meta">
+                <span class="dish-card-cat">${esc(catLabel)}</span>
               </div>
-            </div>
-            <div class="dish-card-body" style="padding-top: 0">
+              <h3 class="dish-card-title">${esc(localName)}</h3>
+              <div class="dish-card-sub">${esc(d.address || "Phố cổ Hội An")}</div>
+              <p class="dish-card-desc">${esc(localDesc)}</p>
               <div class="dish-card-foot">
                 <button data-edit="${d.id}">Sửa (5 ngôn ngữ)</button>
                 <button class="danger" data-del="${d.id}">Xoá</button>
@@ -2911,8 +2911,6 @@
           }
         }
       }
-
-      $("#refreshBtn").onclick = () => refresh();
       $("#exportReportBtn").onclick = exportReportToExcel;
       const exportBtn2 = $("#exportReportBtn2");
       if (exportBtn2) exportBtn2.onclick = exportReportToExcel;
