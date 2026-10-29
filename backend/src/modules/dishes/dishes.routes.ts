@@ -147,16 +147,23 @@ function splitIntoChunks(text: string, maxLen = 360): string[] {
   return chunks;
 }
 
+const TRANSLATION_CACHE = new Map<string, string>();
+
 async function translateSingleChunk(
   chunk: string,
   targetLang: Exclude<SupportedLang, 'vi'>,
 ): Promise<string> {
   const tl = LANG_TARGET_MAP[targetLang];
+  const cacheKey = `${targetLang}:${chunk}`;
+  if (TRANSLATION_CACHE.has(cacheKey)) {
+    return TRANSLATION_CACHE.get(cacheKey)!;
+  }
 
   // 1. Thử Google Translate GTX
   try {
     const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${tl}&dt=t&q=${encodeURIComponent(chunk)}`;
     const gRes = await fetch(gUrl, {
+      signal: AbortSignal.timeout(2500),
       headers: {
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
@@ -169,7 +176,10 @@ async function translateSingleChunk(
           .map((part: any) => part?.[0] || '')
           .join('')
           .trim();
-        if (translated) return translated;
+        if (translated) {
+          TRANSLATION_CACHE.set(cacheKey, translated);
+          return translated;
+        }
       }
     }
   } catch {
@@ -179,11 +189,13 @@ async function translateSingleChunk(
   // 2. Thử Google Translate Client Dict-Chrome-Ex
   try {
     const cUrl = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=vi&tl=${tl}&q=${encodeURIComponent(chunk)}`;
-    const cRes = await fetch(cUrl);
+    const cRes = await fetch(cUrl, { signal: AbortSignal.timeout(2500) });
     if (cRes.ok) {
       const data: any = await cRes.json();
       if (Array.isArray(data) && typeof data[0] === 'string' && data[0].trim()) {
-        return data[0].trim();
+        const translated = data[0].trim();
+        TRANSLATION_CACHE.set(cacheKey, translated);
+        return translated;
       }
     }
   } catch {
@@ -194,7 +206,7 @@ async function translateSingleChunk(
   try {
     const emailParam = `hoian_culinary_${Math.floor(Math.random() * 900000 + 100000)}@gmail.com`;
     const mUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=vi|${tl}&de=${emailParam}`;
-    const mRes = await fetch(mUrl);
+    const mRes = await fetch(mUrl, { signal: AbortSignal.timeout(2500) });
     if (mRes.ok) {
       const data: any = await mRes.json();
       const translated: string | undefined = data?.responseData?.translatedText?.trim();
@@ -203,6 +215,7 @@ async function translateSingleChunk(
         !translated.toUpperCase().includes('MYMEMORY WARNING') &&
         !translated.toUpperCase().includes('QUERY LENGTH LIMIT')
       ) {
+        TRANSLATION_CACHE.set(cacheKey, translated);
         return translated;
       }
     }
@@ -247,10 +260,9 @@ export async function autoTranslateFromVi(
     const trimmedPara = para.trim();
     if (!trimmedPara) continue;
     const chunks = splitIntoChunks(trimmedPara, 360);
-    const translatedChunks: string[] = [];
-    for (const c of chunks) {
-      translatedChunks.push(await translateSingleChunk(c, targetLang));
-    }
+    const translatedChunks = await Promise.all(
+      chunks.map((c) => translateSingleChunk(c, targetLang)),
+    );
     translatedParagraphs.push(translatedChunks.join(' '));
   }
 
@@ -422,43 +434,82 @@ async function upsertTranslations(
   };
 
   const otherLangs: Exclude<SupportedLang, 'vi'>[] = ['en', 'zh', 'ko', 'ja'];
+  const needsBackgroundTranslation: Exclude<SupportedLang, 'vi'>[] = [];
 
-  await Promise.all(
-    otherLangs.map(async (lang) => {
-      const providedName = translations?.[lang]?.name?.trim();
-      const providedDesc = translations?.[lang]?.description?.trim();
+  for (const lang of otherLangs) {
+    const providedName = translations?.[lang]?.name?.trim();
+    const providedDesc = translations?.[lang]?.description?.trim();
 
-      const needsAutoName = !providedName || providedName === baseViName;
-      const needsAutoDesc = baseViDesc && (!providedDesc || providedDesc === baseViDesc);
+    const hasCustomName = Boolean(providedName && providedName !== baseViName);
+    const hasCustomDesc = Boolean(providedDesc && providedDesc !== baseViDesc);
 
-      let finalName = providedName;
-      let finalDesc = providedDesc;
+    const presetName = preset?.name[lang];
+    const presetDesc = preset?.description[lang];
 
-      if (needsAutoName) {
-        finalName = preset?.name[lang] || (await autoTranslateFromVi(baseViName, lang)) || baseViName;
+    const finalName = hasCustomName ? providedName! : (presetName || baseViName);
+    const finalDesc = hasCustomDesc ? providedDesc! : (presetDesc || baseViDesc);
+
+    merged[lang] = {
+      name: finalName,
+      description: finalDesc,
+    };
+
+    // Nếu chưa có bản dịch tuỳ chỉnh và cũng không có preset chuẩn, đưa vào hàng đợi dịch ngầm
+    if (!hasCustomName && !presetName) {
+      needsBackgroundTranslation.push(lang);
+    } else if (!hasCustomDesc && !presetDesc && baseViDesc) {
+      if (!needsBackgroundTranslation.includes(lang)) {
+        needsBackgroundTranslation.push(lang);
       }
-      if (needsAutoDesc) {
-        finalDesc =
-          preset?.description[lang] ||
-          (baseViDesc ? await autoTranslateFromVi(baseViDesc, lang) : null) ||
-          baseViDesc;
-      }
+    }
+  }
 
-      merged[lang] = {
-        name: finalName || baseViName,
-        description: finalDesc ?? baseViDesc,
-      };
-    }),
-  );
+  // 1. Lưu ngay lập tức toàn bộ 5 ngôn ngữ vào database chỉ với 1 câu lệnh BATCH SQL duy nhất (<15ms)
+  const placeholders: string[] = [];
+  const params: any[] = [];
+  let pIdx = 1;
 
   for (const [lang, item] of Object.entries(merged)) {
-    await pool.query(
-      `INSERT INTO dish_translations (dish_id, lang, name, description)
-       VALUES ($1, $2, $3, $4)
-       ON CONFLICT (dish_id, lang)
-       DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description`,
-      [dishId, lang, item.name, item.description],
-    );
+    placeholders.push(`($${pIdx}, $${pIdx + 1}, $${pIdx + 2}, $${pIdx + 3})`);
+    params.push(dishId, lang, item.name, item.description);
+    pIdx += 4;
+  }
+
+  await pool.query(
+    `INSERT INTO dish_translations (dish_id, lang, name, description)
+     VALUES ${placeholders.join(', ')}
+     ON CONFLICT (dish_id, lang)
+     DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description`,
+    params,
+  );
+
+  // 2. Chạy dịch tự động ở background (bất đồng bộ) nếu cần mà không chặn phản hồi của người dùng
+  if (needsBackgroundTranslation.length > 0) {
+    setImmediate(async () => {
+      try {
+        let hasUpdated = false;
+        await Promise.all(
+          needsBackgroundTranslation.map(async (lang) => {
+            const autoName = await autoTranslateFromVi(baseViName, lang);
+            const autoDesc = baseViDesc ? await autoTranslateFromVi(baseViDesc, lang) : null;
+            if (autoName || autoDesc) {
+              await pool.query(
+                `UPDATE dish_translations
+                 SET name = COALESCE($1, name), description = COALESCE($2, description)
+                 WHERE dish_id = $3 AND lang = $4`,
+                [autoName || baseViName, autoDesc || baseViDesc, dishId, lang],
+              );
+              hasUpdated = true;
+            }
+          }),
+        );
+        if (hasUpdated) {
+          broadcastDishUpdate();
+        }
+      } catch (err) {
+        console.error('Lỗi khi dịch ngầm cho món ăn:', err);
+      }
+    });
   }
 }
 

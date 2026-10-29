@@ -2807,6 +2807,11 @@
       $("#form").onsubmit = async (e) => {
         e.preventDefault();
         const f = e.target;
+        const submitBtn = f.querySelector('button[type="submit"]');
+        const oldBtnText = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Đang lưu...";
+        $("#formErr").textContent = "";
         const nameVi = f.name_vi.value.trim();
         const descVi = f.desc_vi.value.trim() || null;
 
@@ -2839,6 +2844,9 @@
           await refresh();
         } catch (err) {
           $("#formErr").textContent = err.message;
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = oldBtnText;
         }
       };
 
