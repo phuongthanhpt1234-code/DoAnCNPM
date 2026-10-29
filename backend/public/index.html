@@ -1495,7 +1495,43 @@
     </style>
   </head>
   <body>
-    <div class="app-shell">
+    <!-- MÀN HÌNH ĐĂNG NHẬP ADMIN BẢO MẬT -->
+    <div id="loginOverlay" style="position: fixed; inset: 0; background: #fafbfc; display: flex; align-items: center; justify-content: center; z-index: 999999; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;">
+      <div style="width: 100%; max-width: 420px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 30px; padding: 42px 38px 38px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03); box-sizing: border-box;">
+        <div style="text-align: center; margin-bottom: 28px;">
+          <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0 0 8px; letter-spacing: -0.3px;">THEO DẤU VỊ HỘI</h2>
+          <p style="color: #64748b; font-size: 13px; margin: 0; font-weight: 400;">Khu Vực Quản Trị Viên Ẩm Thực Phố Cổ</p>
+        </div>
+
+        <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
+          <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px;">Tên đăng nhập</label>
+            <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhập tên đăng nhập..." style="width: 100%; padding: 12px 16px; background: #eef4fa; border: 1px solid #d8e2ec; border-radius: 12px; color: #0f172a; font-size: 14px; font-weight: 500; box-sizing: border-box; outline: none; transition: all 0.2s;" onfocus="this.style.background='#ffffff'; this.style.borderColor='#ea580c';" onblur="this.style.background='#eef4fa'; this.style.borderColor='#d8e2ec';" />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px;">Mật khẩu</label>
+            <div style="position: relative;">
+              <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhập mật khẩu..." style="width: 100%; padding: 12px 42px 12px 16px; background: #eef4fa; border: 1px solid #d8e2ec; border-radius: 12px; color: #0f172a; font-size: 14px; font-weight: 500; box-sizing: border-box; outline: none; transition: all 0.2s;" onfocus="this.style.background='#ffffff'; this.style.borderColor='#ea580c';" onblur="this.style.background='#eef4fa'; this.style.borderColor='#d8e2ec';" />
+              <button type="button" id="togglePasswordBtn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
+                <svg id="eyeIconSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div id="loginErr" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; padding: 11px 14px; border-radius: 12px; font-weight: 500; display: none;"></div>
+
+          <button type="submit" id="loginSubmitBtn" style="width: 100%; padding: 13px 16px; background: linear-gradient(90deg, #ea580c 0%, #dc2626 100%); color: #ffffff; border: none; border-radius: 12px; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 22px rgba(220, 38, 38, 0.35); margin-top: 4px;">
+            Đăng Nhập Quản Trị
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="app-shell" id="appShell" style="display: none;">
       <!-- SIDEBAR (THANH ĐIỀU HƯỚNG BÊN TRÁI) -->
       <aside class="sidebar">
         <div>
@@ -1536,6 +1572,13 @@
               </span>
               <span class="nav-badge" id="navCheckinCount">0</span>
             </button>
+
+            <button type="button" class="nav-btn" data-nav="account">
+              <span class="nav-btn-left">
+                <span>Quản Lý Tài Khoản</span>
+              </span>
+              <span class="nav-badge" id="navAccountBadge">1</span>
+            </button>
           </nav>
         </div>
 
@@ -1563,6 +1606,15 @@
               <button type="button" id="exportReportBtn" style="background:#e8a838; color:#ffffff; border:none; border-radius:20px; padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
                 📊 Xuất báo cáo lượt check-in & thống kê
               </button>
+              <div style="display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--gold-border);">
+                <span id="adminNameDisplay" style="font-size: 12.5px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 5px;">
+                  <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
+                  <span>Admin</span>
+                </span>
+                <button type="button" id="logoutBtn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; border-radius: 16px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                  Đăng xuất
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -1797,6 +1849,100 @@
                 <p class="empty" id="noCheck" hidden>
                   Chưa có lượt check-in nào.
                 </p>
+              </section>
+
+              <section class="alt-panel" id="secAccount" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
+                <div class="sec-head" style="margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                  <div class="sec-title-group">
+                    <span style="font-size: 20px;">👥</span>
+                    <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Danh Sách Tài Khoản Quản Trị</h2>
+                  </div>
+                  <button type="button" id="toggleAddUserBtn" style="background: linear-gradient(135deg, #d97706 0%, #b91c1c 100%); color: #ffffff; border: none; border-radius: 12px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(217,119,6,0.3);">
+                    <span>+</span> Thêm Tài Khoản Mới
+                  </button>
+                </div>
+
+                <!-- Form Thêm Tài Khoản Mới (Ẩn/Hiện linh hoạt) -->
+                <div id="addUserBox" style="display: none; background: var(--card-item); border: 1px solid var(--gold-border-strong); border-radius: 16px; padding: 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--ink);">➕ Thêm Tài Khoản Quản Trị Mới</h3>
+                    <button type="button" id="closeAddUserBtn" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; font-weight: 700;">✕</button>
+                  </div>
+                  <form id="addUserForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Tên đăng nhập *</label>
+                      <input type="text" id="newAdminUser" required minlength="3" placeholder="Ví dụ: admin_ketoan..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu khởi tạo *</label>
+                      <input type="password" id="newAdminPass" required minlength="4" placeholder="Tối thiểu 4 ký tự..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Họ và tên / Biệt danh</label>
+                      <input type="text" id="newAdminFullName" placeholder="Ví dụ: Nguyễn Văn A..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Phân quyền vai trò</label>
+                      <select id="newAdminRole" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;">
+                        <option value="admin">Quản Trị Viên (Admin)</option>
+                        <option value="editor">Biên Tập Viên Ẩm Thực</option>
+                      </select>
+                    </div>
+                    <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px;">
+                      <div id="addUserMsg" style="font-size: 12.5px; font-weight: 600; display: none; padding: 6px 12px; border-radius: 8px;"></div>
+                      <div style="display: flex; gap: 8px; margin-left: auto;">
+                        <button type="button" id="cancelAddUserBtn" style="padding: 9px 16px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">Huỷ</button>
+                        <button type="submit" id="submitAddUserBtn" style="padding: 9px 20px; background: #10b981; border: none; color: #ffffff; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">Lưu Tài Khoản</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+
+                <!-- Bảng danh sách tài khoản -->
+                <div class="tablewrap" style="margin-bottom: 26px; border: 1px solid var(--gold-border); border-radius: 14px; overflow: hidden;">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th style="width: 50px; text-align: center;">STT</th>
+                        <th>Tên Tài Khoản</th>
+                        <th>Họ Và Tên</th>
+                        <th>Vai Trò</th>
+                        <th>Ngày Tạo</th>
+                        <th style="text-align: right; width: 120px;">Thao Tác</th>
+                      </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                      <tr>
+                        <td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">Đang tải danh sách tài khoản...</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Đổi mật khẩu tài khoản đang đăng nhập -->
+                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px; margin-bottom: 20px;">
+                  <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 14px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
+                    <span>🔒</span> Đổi Mật Khẩu (Tài Khoản Đang Đăng Nhập)
+                  </h3>
+                  <form id="changePasswordForm" style="display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu hiện tại</label>
+                      <input type="password" id="currentPassInput" required placeholder="Nhập mật khẩu hiện tại..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu mới</label>
+                      <input type="password" id="newPassInput" required minlength="4" placeholder="Nhập mật khẩu mới..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Xác nhận mật khẩu mới</label>
+                      <input type="password" id="confirmPassInput" required minlength="4" placeholder="Nhập lại mật khẩu mới..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                    </div>
+                    <div id="changePassMsg" style="font-size: 12.5px; font-weight: 600; display: none; padding: 8px 12px; border-radius: 8px;"></div>
+                    <button type="submit" id="changePassSubmitBtn" style="width: fit-content; padding: 9px 20px; background: #e54d42; color: #fff; font-size: 13.5px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer;">
+                      Cập Nhật Mật Khẩu
+                    </button>
+                  </form>
+                </div>
               </section>
             </div>
           </div>
@@ -2045,21 +2191,32 @@
         "#f97316",
       ];
 
+      let authToken = localStorage.getItem("hoian_admin_token") || "";
+
       async function api(path, opts = {}) {
         const sep = path.includes("?") ? "&" : "?";
         const url =
           "/api" +
           path +
           (opts.method && opts.method !== "GET" ? "" : sep + "_t=" + Date.now());
+        const headers = {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          ...(opts.headers || {}),
+        };
+        if (authToken) {
+          headers["Authorization"] = "Bearer " + authToken;
+        }
         const r = await fetch(url, {
           cache: "no-store",
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache",
-          },
           ...opts,
+          headers,
         });
+        if (r.status === 401 && !path.startsWith("/auth/")) {
+          doLogout("Phiên đăng nhập quản trị đã hết hạn. Vui lòng đăng nhập lại.");
+          throw new Error("Yêu cầu đăng nhập tài khoản quản trị");
+        }
         if (!r.ok) {
           const e = await r.json().catch(() => ({}));
           throw new Error(e.message || "Lỗi " + r.status);
@@ -2748,6 +2905,10 @@
           "Lịch Sử Check-in & Yêu Thích",
           "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn được yêu thích",
         ],
+        account: [
+          "Quản Lý Tài Khoản Quản Trị",
+          "Danh sách tài khoản, thêm tài khoản quản trị mới và phân quyền hệ thống",
+        ],
       };
 
       function switchNavSection(nav) {
@@ -2767,13 +2928,18 @@
         const mainGrid = $("#mainGrid");
 
         colLeft.hidden = nav !== "dishes";
-        colRight.hidden = !(nav === "devices" || nav === "checkins");
+        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account");
         mainGrid.hidden = showOverview;
 
         $("#secDevices").hidden = nav !== "devices";
         $("#secDailyCheckin").hidden = nav !== "checkins";
         $("#secTopFav").hidden = nav !== "checkins";
         $("#secRecentCheckin").hidden = nav !== "checkins";
+        const secAccountEl = $("#secAccount");
+        if (secAccountEl) {
+          secAccountEl.hidden = nav !== "account";
+          if (nav === "account") loadAdminUsers();
+        }
 
         mainGrid.classList.toggle("single-col", true);
         refresh();
@@ -2794,7 +2960,7 @@
         const oldText = btn ? btn.innerHTML : "";
         if (btn) {
           btn.disabled = true;
-          btn.textContent = "⏳ Đang trích xuất dữ liệu...";
+          btn.textContent = "⏳ Đang tạo bảng báo cáo Excel...";
         }
 
         try {
@@ -2812,83 +2978,288 @@
             String(now.getHours()).padStart(2, "0") +
             String(now.getMinutes()).padStart(2, "0");
 
-          const escCsv = (val) => {
-            if (val === null || val === undefined) return '""';
-            const s = String(val).replace(/"/g, '""');
-            return `"${s}"`;
+          const escH = (val) => {
+            if (val === null || val === undefined) return "";
+            return String(val)
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+              .replace(/"/g, "&quot;");
           };
 
-          const rows = [];
-          rows.push(["BÁO CÁO TỔNG HỢP LƯỢT CHECK-IN & THỐNG KÊ ẨM THỰC HỘI AN"]);
-          rows.push([`Thời gian xuất báo cáo: ${timestampStr}`]);
-          rows.push([]);
+          const fmtNum = (v) => Number(v || 0).toLocaleString("vi-VN");
+          const fmtVnd = (v) => v ? Number(v).toLocaleString("vi-VN") + " VNĐ" : "0 VNĐ";
 
-          // 1. TỔNG QUAN HỆ THỐNG
-          rows.push(["1. SỐ LIỆU TỔNG QUAN HỆ THỐNG"]);
-          rows.push(["Chỉ số", "Giá trị"]);
           const t = statsData.totals || {};
-          rows.push(["Tổng số món ăn", t.dishes || 0]);
-          rows.push(["Tổng số danh mục ẩm thực", t.categories || 0]);
-          rows.push(["Tổng lượt check-in", t.check_ins || 0]);
-          rows.push(["Tổng lượt yêu thích món ăn", t.favorites || 0]);
-          rows.push(["Tổng thiết bị từng tương tác", t.devices || 0]);
-          rows.push(["Thiết bị đang trực tuyến", t.online_devices || 0]);
-          rows.push([]);
+          const daily = Array.isArray(statsData.daily) ? statsData.daily : [];
+          const dailySum = daily.reduce((acc, d) => acc + (d.n || 0), 0);
+          const topDishes = Array.isArray(statsData.top) ? statsData.top : [];
+          const checkins = Array.isArray(checkinsData) ? checkinsData : [];
 
-          // 2. CHECK-IN 7 NGÀY GẦN NHẤT
-          rows.push(["2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY QUA)"]);
-          rows.push(["Ngày", "Số lượt check-in"]);
-          if (Array.isArray(statsData.daily)) {
-            statsData.daily.forEach((d) => {
-              rows.push([d.day, d.n]);
-            });
-          }
-          rows.push([]);
+          // 1. Dòng thống kê theo ngày (7 ngày gần nhất)
+          let dailyRowsHtml = "";
+          daily.forEach((d, idx) => {
+            const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
+            dailyRowsHtml += `
+              <tr${isZebra}>
+                <td class="text-center">${idx + 1}</td>
+                <td class="text-left font-semibold">${escH(d.day)}</td>
+                <td class="text-right val-strong">${fmtNum(d.n)} lượt</td>
+              </tr>`;
+          });
 
-          // 3. TOP MÓN ĂN ĐƯỢC TƯƠNG TÁC CAO NHẤT
-          rows.push(["3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH & CHECK-IN"]);
-          rows.push(["Mã món", "Tên món ăn", "Lượt Yêu Thích", "Lượt Check-in"]);
-          if (Array.isArray(statsData.top)) {
-            statsData.top.forEach((item) => {
-              rows.push([
-                item.id,
-                item.name,
-                item.favorites || 0,
-                item.check_ins || 0,
-              ]);
-            });
-          }
-          rows.push([]);
+          // 2. Dòng xếp hạng món ăn
+          let topRowsHtml = "";
+          topDishes.forEach((item, idx) => {
+            const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
+            const totalInteraction = (item.favorites || 0) + (item.check_ins || 0);
+            topRowsHtml += `
+              <tr${isZebra}>
+                <td class="text-center font-bold" style="color: ${idx < 3 ? '#b91c1c' : '#475569'}">${idx + 1}</td>
+                <td class="text-center">${escH(item.id)}</td>
+                <td class="text-left font-semibold">${escH(item.name)}</td>
+                <td class="text-right">${fmtVnd(item.price_vnd)}</td>
+                <td class="text-center" style="color: #d97706; font-weight: bold;">${fmtNum(item.favorites)}</td>
+                <td class="text-center" style="color: #047857; font-weight: bold;">${fmtNum(item.check_ins)}</td>
+                <td class="text-right font-bold" style="color: #b91c1c;">${fmtNum(totalInteraction)}</td>
+              </tr>`;
+          });
 
-          // 4. DANH SÁCH CHI TIẾT CÁC LƯỢT CHECK-IN GẦN ĐÂY
-          rows.push(["4. DANH SÁCH CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)"]);
-          rows.push(["STT", "Thời gian Check-in", "Mã món", "Tên món ăn", "Mã thiết bị (Device ID)", "Ghi chú"]);
-          if (Array.isArray(checkinsData)) {
-            checkinsData.forEach((c, idx) => {
+          // 3. Dòng chi tiết check-in gần đây
+          let checkinRowsHtml = "";
+          if (checkins.length === 0) {
+            checkinRowsHtml = `<tr><td colspan="6" class="text-center" style="color:#64748b; font-style:italic;">Chưa có dữ liệu check-in thực tế nào được ghi nhận.</td></tr>`;
+          } else {
+            checkins.forEach((c, idx) => {
+              const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
               const timeStr = c.created_at ? new Date(c.created_at).toLocaleString("vi-VN") : "";
-              rows.push([
-                idx + 1,
-                timeStr,
-                c.dish_id,
-                c.dish_name || "",
-                c.device_id || "",
-                c.note || "",
-              ]);
+              checkinRowsHtml += `
+                <tr${isZebra}>
+                  <td class="text-center">${idx + 1}</td>
+                  <td class="text-center" style="color:#475569;">${escH(timeStr)}</td>
+                  <td class="text-center">${escH(c.dish_id)}</td>
+                  <td class="text-left font-semibold">${escH(c.dish_name || "Món ăn Hội An")}</td>
+                  <td class="text-left" style="font-family: Consolas, monospace; color:#0284c7;">${escH(c.device_id || "")}</td>
+                  <td class="text-left">${escH(c.note || "Đã check-in món ăn")}</td>
+                </tr>`;
             });
           }
 
-          // Build CSV with UTF-8 BOM for Microsoft Excel compatibility
-          const csvContent = rows
-            .map((r) => r.map(escCsv).join(","))
-            .join("\r\n");
+          // Build Styled Excel XML/HTML Workbook
+          const excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!--[if gte mso 9]>
+  <xml>
+    <x:ExcelWorkbook>
+      <x:ExcelWorksheets>
+        <x:ExcelWorksheet>
+          <x:Name>Báo Cáo Thống Kê</x:Name>
+          <x:WorksheetOptions>
+            <x:DisplayGridlines/>
+          </x:WorksheetOptions>
+        </x:ExcelWorksheet>
+      </x:ExcelWorksheets>
+    </x:ExcelWorkbook>
+  </xml>
+  <![endif]-->
+  <style>
+    body, table, td, th {
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 22px;
+    }
+    .banner-title {
+      background-color: #b91c1c;
+      color: #ffffff;
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      height: 44px;
+      vertical-align: middle;
+      border: 1px solid #991b1b;
+    }
+    .banner-sub {
+      background-color: #fef3c7;
+      color: #92400e;
+      font-size: 10.5pt;
+      font-style: italic;
+      text-align: center;
+      height: 28px;
+      vertical-align: middle;
+      border: 1px solid #fde68a;
+    }
+    .sec-title {
+      background-color: #1e293b;
+      color: #ffffff;
+      font-size: 12pt;
+      font-weight: bold;
+      padding: 9px 12px;
+      height: 32px;
+      vertical-align: middle;
+      border: 1px solid #0f172a;
+    }
+    th {
+      font-size: 10.5pt;
+      font-weight: bold;
+      padding: 9px 10px;
+      border: 1px solid #cbd5e1;
+      vertical-align: middle;
+    }
+    td {
+      font-size: 10pt;
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+    .th-kpi { background-color: #334155; color: #ffffff; }
+    .th-checkin { background-color: #d97706; color: #ffffff; }
+    .th-dishes { background-color: #b91c1c; color: #ffffff; }
+    .th-logs { background-color: #047857; color: #ffffff; }
+    .bg-zebra { background-color: #f8fafc; }
+    .bg-total { background-color: #fef3c7; font-weight: bold; border-top: 2px solid #d97706; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .text-left { text-align: left; }
+    .font-bold { font-weight: bold; }
+    .font-semibold { font-weight: 600; }
+    .val-strong { font-size: 10.5pt; font-weight: bold; color: #b91c1c; }
+    .footer-note {
+      font-size: 9pt;
+      color: #64748b;
+      font-style: italic;
+      text-align: center;
+      padding: 12px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- BANNER BÁO CÁO -->
+  <table>
+    <tr>
+      <td colspan="7" class="banner-title">HỆ THỐNG QUẢN TRỊ ẨM THỰC HỘI AN – THEO DẤU VỊ HỘI</td>
+    </tr>
+    <tr>
+      <td colspan="7" class="banner-sub">BÁO CÁO TỔNG HỢP LƯỢT CHECK-IN &amp; THỐNG KÊ CHI TIẾT (Xuất lúc: ${escH(timestampStr)})</td>
+    </tr>
+  </table>
 
-          const blob = new Blob(["\uFEFF" + csvContent], {
-            type: "text/csv;charset=utf-8;",
+  <!-- PHẦN 1: TỔNG QUAN HỆ THỐNG -->
+  <table>
+    <tr>
+      <td colspan="3" class="sec-title">1. SỐ LIỆU TỔNG QUAN HỆ THỐNG</td>
+    </tr>
+    <tr>
+      <th class="th-kpi text-center" style="width: 60px;">STT</th>
+      <th class="th-kpi text-left">Chỉ Số Hoạt Động Hệ Thống</th>
+      <th class="th-kpi text-right" style="width: 180px;">Số Liệu Thống Kê</th>
+    </tr>
+    <tr>
+      <td class="text-center">1</td>
+      <td>Tổng số món ăn ẩm thực Hội An</td>
+      <td class="text-right val-strong">${fmtNum(t.dishes)} món</td>
+    </tr>
+    <tr class="bg-zebra">
+      <td class="text-center">2</td>
+      <td>Tổng số danh mục ẩm thực</td>
+      <td class="text-right val-strong">${fmtNum(t.categories)} danh mục</td>
+    </tr>
+    <tr>
+      <td class="text-center">3</td>
+      <td>Tổng lượt check-in từ du khách</td>
+      <td class="text-right val-strong">${fmtNum(t.check_ins)} lượt</td>
+    </tr>
+    <tr class="bg-zebra">
+      <td class="text-center">4</td>
+      <td>Tổng lượt yêu thích món ăn</td>
+      <td class="text-right val-strong">${fmtNum(t.favorites)} lượt</td>
+    </tr>
+    <tr>
+      <td class="text-center">5</td>
+      <td>Tổng số thiết bị từng tương tác</td>
+      <td class="text-right val-strong">${fmtNum(t.devices)} thiết bị</td>
+    </tr>
+    <tr class="bg-zebra">
+      <td class="text-center">6</td>
+      <td>Thiết bị đang trực tuyến (Live Presence)</td>
+      <td class="text-right val-strong" style="color: #047857;">${fmtNum(t.online_devices || 0)} thiết bị</td>
+    </tr>
+  </table>
+
+  <!-- PHẦN 2: THỐNG KÊ 7 NGÀY -->
+  <table>
+    <tr>
+      <td colspan="3" class="sec-title">2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY GẦN NHẤT)</td>
+    </tr>
+    <tr>
+      <th class="th-checkin text-center" style="width: 60px;">STT</th>
+      <th class="th-checkin text-left">Ngày (Năm-Tháng-Ngày)</th>
+      <th class="th-checkin text-right" style="width: 180px;">Số Lượt Check-in</th>
+    </tr>
+    ${dailyRowsHtml}
+    <tr class="bg-total">
+      <td colspan="2" class="text-right font-bold">TỔNG CỘNG 7 NGÀY:</td>
+      <td class="text-right val-strong">${fmtNum(dailySum)} lượt</td>
+    </tr>
+  </table>
+
+  <!-- PHẦN 3: BẢNG XẾP HẠNG MÓN ĂN -->
+  <table>
+    <tr>
+      <td colspan="7" class="sec-title">3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH &amp; CHECK-IN NHIỀU NHẤT</td>
+    </tr>
+    <tr>
+      <th class="th-dishes text-center" style="width: 50px;">Hạng</th>
+      <th class="th-dishes text-center" style="width: 75px;">Mã Món</th>
+      <th class="th-dishes text-left">Tên Món Ăn Đặc Sản</th>
+      <th class="th-dishes text-right" style="width: 130px;">Giá Bán</th>
+      <th class="th-dishes text-center" style="width: 120px;">Lượt Yêu Thích</th>
+      <th class="th-dishes text-center" style="width: 120px;">Lượt Check-in</th>
+      <th class="th-dishes text-right" style="width: 130px;">Tổng Tương Tác</th>
+    </tr>
+    ${topRowsHtml}
+  </table>
+
+  <!-- PHẦN 4: CHI TIẾT CHECK-IN GẦN ĐÂY -->
+  <table>
+    <tr>
+      <td colspan="6" class="sec-title">4. NHẬT KÝ CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)</td>
+    </tr>
+    <tr>
+      <th class="th-logs text-center" style="width: 50px;">STT</th>
+      <th class="th-logs text-center" style="width: 160px;">Thời Gian Check-in</th>
+      <th class="th-logs text-center" style="width: 75px;">Mã Món</th>
+      <th class="th-logs text-left">Tên Món Ăn Check-in</th>
+      <th class="th-logs text-left" style="width: 200px;">Mã Thiết Bị (Device ID)</th>
+      <th class="th-logs text-left">Ghi Chú Chi Tiết</th>
+    </tr>
+    ${checkinRowsHtml}
+  </table>
+
+  <!-- GHI CHÚ CHÂN TRANG -->
+  <table>
+    <tr>
+      <td colspan="7" class="footer-note">
+        Báo cáo được trích xuất tự động từ Hệ Thống Quản Trị Ẩm Thực Hội An – Theo Dấu Vị Hội vào lúc ${escH(timestampStr)}.
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+
+          const blob = new Blob(["\uFEFF" + excelHtml], {
+            type: "application/vnd.ms-excel;charset=utf-8;",
           });
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.setAttribute("href", url);
-          link.setAttribute("download", `Bao_Cao_Checkin_HoiAn_${fileDate}.csv`);
+          link.setAttribute("download", `Bao_Cao_Checkin_HoiAn_${fileDate}.xls`);
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -2896,7 +3267,7 @@
 
           const msgEl = $("#msg");
           if (msgEl) {
-            msgEl.textContent = "✔ Đã xuất file báo cáo Excel/CSV thành công!";
+            msgEl.textContent = "✔ Đã xuất file báo cáo Excel định dạng bảng chuyên nghiệp thành công!";
             msgEl.style.color = "var(--gold-text)";
             setTimeout(() => {
               if (msgEl.textContent.includes("xuất file báo cáo")) msgEl.textContent = "";
@@ -3063,16 +3434,300 @@
 
       switchNavSection("overview");
 
-      (async () => {
+      function showDashboard(username) {
+        $("#loginOverlay").style.display = "none";
+        $("#appShell").style.display = "flex";
+        const finalUser = username || "admin";
+        currentLoggedInUsername = finalUser;
+        const adminText = $("#adminNameDisplay");
+        if (adminText) {
+          adminText.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;"></span> ${esc(finalUser)}`;
+        }
+        const accUserEl = $("#accountUsernameDisplay");
+        if (accUserEl) {
+          accUserEl.textContent = finalUser;
+        }
+      }
+
+      function showLogin(errMsg) {
+        $("#appShell").style.display = "none";
+        $("#loginOverlay").style.display = "flex";
+        const errEl = $("#loginErr");
+        if (errMsg) {
+          errEl.textContent = errMsg;
+          errEl.style.display = "block";
+        } else {
+          errEl.style.display = "none";
+        }
+      }
+
+      function doLogout(msg) {
+        localStorage.removeItem("hoian_admin_token");
+        authToken = "";
+        showLogin(msg);
+      }
+
+      $("#logoutBtn").onclick = () => {
+        if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi Bảng Quản Trị?")) {
+          doLogout();
+        }
+      };
+
+            let currentLoggedInUsername = "admin";
+
+      async function loadAdminUsers() {
         try {
-          await loadCats();
-          await refresh();
-          connectPresenceStream();
+          const res = await api("/auth/users");
+          if (res && Array.isArray(res.users)) {
+            const users = res.users;
+            const badgeEl = $("#navAccountBadge");
+            if (badgeEl) badgeEl.textContent = users.length;
+            renderAdminUsersTable(users);
+          }
+        } catch (e) {
+          console.error("Lỗi tải danh sách tài khoản:", e);
+        }
+      }
+
+      function renderAdminUsersTable(users) {
+        const tbody = $("#usersTableBody");
+        if (!tbody) return;
+        if (!users.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">Chưa có tài khoản nào.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = users.map((u, idx) => {
+          const isSelf = u.username.toLowerCase() === currentLoggedInUsername.toLowerCase();
+          const roleLabel = u.role === "super_admin" ? "Quản Trị Viên Cấp Cao" : (u.role === "editor" ? "Biên Tập Viên" : "Quản Trị Viên");
+          const roleBadgeColor = u.role === "super_admin" ? "badge-gold" : "badge-emerald";
+          const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString("vi-VN") : "Mặc định";
+
+          let actionHtml = "";
+          if (isSelf) {
+            actionHtml = '<span style="font-size: 11px; color: var(--muted); font-style: italic;">Đang dùng</span>';
+          } else if (u.role === "super_admin") {
+            actionHtml = '<span style="font-size: 11.5px; color: #d97706; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Tài khoản Quản Trị Viên Cấp Cao cố định, không thể xoá">🔒 Cố định</span>';
+          } else {
+            actionHtml = `
+              <button type="button" class="danger" onclick="deleteAdminUserAccount(${u.id}, '${esc(u.username)}', '${u.role}')" style="font-size: 12px; padding: 4px 10px; border-radius: 8px;">
+                Xoá
+              </button>
+            `;
+          }
+
+          return `
+            <tr>
+              <td style="text-align: center;">${idx + 1}</td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 28px; height: 28px; border-radius: 50%; background: #ea580c; color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">
+                    ${esc((u.username || "A").charAt(0).toUpperCase())}
+                  </span>
+                  <div>
+                    <b style="color: var(--ink); font-size: 13.5px;">${esc(u.username)}</b>
+                    ${isSelf ? '<span style="font-size: 10px; background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 1px 6px; margin-left: 5px; font-weight: 700;">Bạn</span>' : ''}
+                  </div>
+                </div>
+              </td>
+              <td>${esc(u.full_name || u.username)}</td>
+              <td><span class="${roleBadgeColor}" style="font-size: 11px;">${esc(roleLabel)}</span></td>
+              <td style="color: var(--muted); font-size: 12px;">${esc(dateStr)}</td>
+              <td style="text-align: right;">
+                ${actionHtml}
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      window.deleteAdminUserAccount = async (userId, username, role) => {
+        if (role === "super_admin") {
+          alert("Tài khoản 'Quản Trị Viên Cấp Cao' là tài khoản hệ thống cố định, không được phép xoá!");
+          return;
+        }
+        if (!confirm(`Bạn có chắc chắn muốn xoá tài khoản quản trị '${username}' không?`)) {
+          return;
+        }
+        try {
+          const res = await api("/auth/users/" + userId, { method: "DELETE" });
+          alert(res.message || "Đã xoá tài khoản thành công!");
+          await loadAdminUsers();
         } catch (err) {
-          $("#msg").textContent =
-            "Không kết nối được API: " +
-            err.message +
-            ". Kiểm tra backend và DATABASE_URL trong file .env.";
+          alert("Lỗi xoá tài khoản: " + err.message);
+        }
+      };
+
+      // Toggle form thêm tài khoản
+      const toggleAddUserBtn = $("#toggleAddUserBtn");
+      const addUserBox = $("#addUserBox");
+      const closeAddUserBtn = $("#closeAddUserBtn");
+      const cancelAddUserBtn = $("#cancelAddUserBtn");
+
+      if (toggleAddUserBtn && addUserBox) {
+        toggleAddUserBtn.onclick = () => {
+          addUserBox.style.display = addUserBox.style.display === "none" ? "block" : "none";
+          if (addUserBox.style.display === "block") $("#newAdminUser").focus();
+        };
+      }
+      if (closeAddUserBtn && addUserBox) {
+        closeAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
+      }
+      if (cancelAddUserBtn && addUserBox) {
+        cancelAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
+      }
+
+      // Xử lý submit tạo tài khoản mới
+      const addUserForm = $("#addUserForm");
+      if (addUserForm) {
+        addUserForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const username = $("#newAdminUser").value.trim();
+          const password = $("#newAdminPass").value.trim();
+          const full_name = $("#newAdminFullName").value.trim();
+          const role = $("#newAdminRole").value;
+          const msgEl = $("#addUserMsg");
+          const submitBtn = $("#submitAddUserBtn");
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Đang lưu...";
+          msgEl.style.display = "none";
+
+          try {
+            const res = await api("/auth/users", {
+              method: "POST",
+              body: JSON.stringify({ username, password, full_name, role }),
+            });
+            msgEl.style.display = "block";
+            msgEl.style.background = "#ecfdf5";
+            msgEl.style.color = "#047857";
+            msgEl.textContent = res.message || "Đã thêm tài khoản thành công!";
+            addUserForm.reset();
+            await loadAdminUsers();
+            setTimeout(() => {
+              if (addUserBox) addUserBox.style.display = "none";
+              msgEl.style.display = "none";
+            }, 1500);
+          } catch (err) {
+            msgEl.style.display = "block";
+            msgEl.style.background = "#fef2f2";
+            msgEl.style.color = "#dc2626";
+            msgEl.textContent = err.message;
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Lưu Tài Khoản";
+          }
+        };
+      }
+
+      const changePassForm = $("#changePasswordForm");
+      if (changePassForm) {
+        changePassForm.onsubmit = async (e) => {
+          e.preventDefault();
+          const currentPass = $("#currentPassInput").value;
+          const newPass = $("#newPassInput").value;
+          const confirmPass = $("#confirmPassInput").value;
+          const msgEl = $("#changePassMsg");
+          const btn = $("#changePassSubmitBtn");
+
+          if (newPass !== confirmPass) {
+            msgEl.style.display = "block";
+            msgEl.style.background = "#fef2f2";
+            msgEl.style.color = "#dc2626";
+            msgEl.textContent = "Mật khẩu xác nhận không trùng khớp!";
+            return;
+          }
+
+          btn.disabled = true;
+          btn.textContent = "Đang cập nhật...";
+          try {
+            const res = await api("/auth/change-password", {
+              method: "POST",
+              body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass }),
+            });
+            msgEl.style.display = "block";
+            msgEl.style.background = "#ecfdf5";
+            msgEl.style.color = "#047857";
+            msgEl.textContent = res.message || "Đổi mật khẩu thành công!";
+            changePassForm.reset();
+          } catch (err) {
+            msgEl.style.display = "block";
+            msgEl.style.background = "#fef2f2";
+            msgEl.style.color = "#dc2626";
+            msgEl.textContent = err.message;
+          } finally {
+            btn.disabled = false;
+            btn.textContent = "Cập Nhật Mật Khẩu";
+          }
+        };
+      }
+
+      $("#togglePasswordBtn").onclick = () => {
+        const input = $("#loginPassword");
+        const isPass = input.type === "password";
+        input.type = isPass ? "text" : "password";
+        const svg = $("#eyeIconSvg");
+        if (svg) {
+          svg.innerHTML = isPass
+            ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
+            : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+        }
+      };
+
+      $("#loginForm").onsubmit = async (e) => {
+        e.preventDefault();
+        const username = $("#loginUsername").value.trim();
+        const password = $("#loginPassword").value;
+        const submitBtn = $("#loginSubmitBtn");
+        const errEl = $("#loginErr");
+        errEl.style.display = "none";
+
+        submitBtn.disabled = true;
+        const oldText = submitBtn.textContent;
+        submitBtn.textContent = "Đang xác thực...";
+
+        try {
+          const res = await api("/auth/login", {
+            method: "POST",
+            body: JSON.stringify({ username, password }),
+          });
+          if (res && res.token) {
+            authToken = res.token;
+            localStorage.setItem("hoian_admin_token", authToken);
+            showDashboard(res.user?.username || username);
+            await loadCats();
+            await refresh();
+            loadAdminUsers();
+            connectPresenceStream();
+          } else {
+            throw new Error(res.message || "Đăng nhập thất bại");
+          }
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.style.display = "block";
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = oldText;
+        }
+      };
+
+      (async () => {
+        if (!authToken) {
+          showLogin();
+          return;
+        }
+        try {
+          const me = await api("/auth/me");
+          if (me && me.ok) {
+            showDashboard(me.user?.username);
+            await loadCats();
+            await refresh();
+            connectPresenceStream();
+          } else {
+            doLogout();
+          }
+        } catch (err) {
+          doLogout();
         }
       })();
     </script>

@@ -3,6 +3,8 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import { errorHandler } from "./middlewares/error";
+import { requireAdminAuth } from "./middlewares/auth";
+import auth from "./modules/auth/auth.routes";
 import categories from "./modules/categories/categories.routes";
 import checkins from "./modules/checkins/checkins.routes";
 import dishes from "./modules/dishes/dishes.routes";
@@ -46,7 +48,7 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-app.post("/api/upload", (req, res) => {
+app.post("/api/upload", requireAdminAuth, (req, res) => {
   const { filename, dataUrl } = req.body || {};
   if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
     return res
@@ -80,6 +82,7 @@ app.post("/api/upload", (req, res) => {
   });
 });
 
+app.use("/api/auth", auth);
 app.use("/api/categories", categories);
 app.use("/api/dishes", dishes);
 app.use("/api/favorites", favorites);

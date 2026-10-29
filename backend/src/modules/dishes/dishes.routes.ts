@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
+import { requireAdminAuth } from '../../middlewares/auth';
 import { broadcastDishUpdate } from '../presence/presence.routes';
 import { findHoiAnPreset } from './hoiAnPresets';
 
@@ -576,6 +577,7 @@ export async function syncDishTranslations() {
 // Endpoint cập nhật/đồng bộ lại bản dịch toàn hệ thống
 r.post(
   '/sync-translations',
+  requireAdminAuth,
   ah(async (_req, res) => {
     await syncDishTranslations();
     res.json({ success: true, message: 'Đã hoàn tất đồng bộ bản dịch đa ngôn ngữ' });
@@ -628,6 +630,7 @@ r.get(
 // Thêm món ăn mới (tự động dịch sang 5 ngôn ngữ nếu chỉ nhập Tiếng Việt)
 r.post(
   '/',
+  requireAdminAuth,
   ah(async (req, res) => {
     const b = dishSchema.parse(req.body);
     const { rows } = await pool.query(
@@ -659,6 +662,7 @@ r.post(
 // Cập nhật món ăn (tự động dịch sang 5 ngôn ngữ nếu chưa nhập bản dịch)
 r.put(
   '/:id',
+  requireAdminAuth,
   ah(async (req, res) => {
     const id = Number(req.params.id);
     const b = dishSchema.parse(req.body);
@@ -694,6 +698,7 @@ r.put(
 // Xoá món ăn
 r.delete(
   '/:id',
+  requireAdminAuth,
   ah(async (req, res) => {
     const { rowCount } = await pool.query('DELETE FROM dishes WHERE id = $1', [Number(req.params.id)]);
     if (!rowCount) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
@@ -705,6 +710,7 @@ r.delete(
 // Cập nhật riêng lẻ 1 bản dịch ngôn ngữ (vi | en | zh | ko | ja)
 r.put(
   '/:id/translations/:lang',
+  requireAdminAuth,
   ah(async (req, res) => {
     const lang = z.enum(SUPPORTED_LANGS).parse(req.params.lang);
     const b = transItemSchema.parse(req.body);
