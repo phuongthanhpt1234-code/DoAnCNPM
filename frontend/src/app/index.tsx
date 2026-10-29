@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   Image,
@@ -308,6 +308,7 @@ const PAGE_UI: Record<
     qrModalTitle: string;
     qrModalDesc: string;
     closeQrModalBtn: string;
+    spamCheckInWarning: string;
   }
 > = {
   vi: {
@@ -357,6 +358,7 @@ const PAGE_UI: Record<
     qrModalDesc:
       "Dùng Camera điện thoại hoặc Zalo quét mã QR dưới đây để mở ngay giao diện Mobile thuyết minh tự động",
     closeQrModalBtn: "Đóng cửa sổ QR",
+    spamCheckInWarning: "⚠️ Bạn đang thao tác quá nhanh! Vui lòng chờ 2 giây trước khi bấm lại.",
   },
   en: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -406,6 +408,7 @@ const PAGE_UI: Record<
     qrModalDesc:
       "Use your phone camera to scan the QR code below to open the automated mobile audio guide",
     closeQrModalBtn: "Close QR Window",
+    spamCheckInWarning: "⚠️ You're doing that too fast! Please wait 2 seconds before tapping again.",
   },
   zh: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -451,6 +454,7 @@ const PAGE_UI: Record<
     qrModalTitle: "使用手机扫描二维码",
     qrModalDesc: "使用手机相机扫描下方二维码，即可打开移动端多语言自动语音导览",
     closeQrModalBtn: "关闭二维码窗口",
+    spamCheckInWarning: "⚠️ 操作过于频繁！请等待 2 秒后再试。",
   },
   ko: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -499,6 +503,7 @@ const PAGE_UI: Record<
     qrModalDesc:
       "휴대폰 카메라로 아래 QR 코드를 스캔하면 모바일 자동 음성 가이드가 열립니다",
     closeQrModalBtn: "QR 창 닫기",
+    spamCheckInWarning: "⚠️ 작업이 너무 빠릅니다! 2초 후 다시 시도해 주세요.",
   },
   ja: {
     brandTitle: "THEO DẤU VỊ HỘI",
@@ -546,6 +551,7 @@ const PAGE_UI: Record<
     qrModalDesc:
       "スマートフォンのカメラで下のQRコードを読み取ると、モバイル音声ガイドが開きます",
     closeQrModalBtn: "QR画面を閉じる",
+    spamCheckInWarning: "⚠️ 操作が速すぎます！2秒ほどお待ちください。",
   },
 };
 
@@ -1046,6 +1052,18 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
+  const [toastMsg, setToastMsg] = useState<string>("");
+  const toastTimerRef = useRef<any>(null);
+  const lastCheckInActionRef = useRef<Record<number, number>>({});
+  const isCheckInBusyRef = useRef<Record<number, boolean>>({});
+
+  const showToast = useCallback((msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToastMsg(msg);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMsg("");
+    }, 2800);
+  }, []);
 
   useEffect(() => {
     const deviceId = getClientDeviceId();
@@ -1171,6 +1189,19 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   };
 
   const handleCheckInDish = async (dish: Dish) => {
+    const now = Date.now();
+    const lastTime = lastCheckInActionRef.current[dish.id] || 0;
+    const isBusy = isCheckInBusyRef.current[dish.id];
+
+    // Phát hiện spam: nếu bấm liên tục trong vòng 2 giây hoặc request trước đang xử lý
+    if (isBusy || (now - lastTime < 2000)) {
+      showToast(ui.spamCheckInWarning);
+      return;
+    }
+
+    lastCheckInActionRef.current[dish.id] = now;
+    isCheckInBusyRef.current[dish.id] = true;
+
     const isAlreadyChecked = checkedDishIds.includes(dish.id);
     const nextChecked = !isAlreadyChecked;
     const deviceId = getClientDeviceId();
@@ -1204,6 +1235,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           ? [...prev, dish.id]
           : prev.filter((id) => id !== dish.id),
       );
+    } finally {
+      isCheckInBusyRef.current[dish.id] = false;
     }
   };
 
@@ -1276,6 +1309,23 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   return (
     <View style={styles.container}>
+      {toastMsg ? (
+        <View style={styles.toastContainer}>
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={styles.toastCard}
+            onPress={() => setToastMsg("")}
+          >
+            <Ionicons
+              name="alert-circle"
+              size={22}
+              color="#DC2626"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.toastText}>{toastMsg}</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
       <View style={styles.header}>
         <View style={styles.brandRow}>
           <View>
@@ -1810,6 +1860,39 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#ffffff" },
+  toastContainer: {
+    position: "absolute",
+    top: Platform.OS === "web" ? 16 : 48,
+    left: 16,
+    right: 16,
+    zIndex: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  toastCard: {
+    backgroundColor: "#FEF2F2",
+    borderColor: "#F87171",
+    borderWidth: 1.5,
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 18,
+    flexDirection: "row",
+    alignItems: "center",
+    maxWidth: 540,
+    width: "100%",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    elevation: 10,
+  },
+  toastText: {
+    color: "#991B1B",
+    fontSize: 14,
+    fontWeight: "700",
+    flexShrink: 1,
+    lineHeight: 20,
+  },
   header: {
     paddingHorizontal: 16,
     paddingTop: Platform.OS === "web" ? 16 : 48,
