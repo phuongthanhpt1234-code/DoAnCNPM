@@ -1553,6 +1553,9 @@
 
             <div class="topbar-actions">
               <button type="button" id="refreshBtn">Làm mới số liệu</button>
+              <button type="button" id="exportReportBtn" class="gold-btn" style="padding: 9px 14px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                📊 Xuất báo cáo lượt check-in & thống kê
+              </button>
             </div>
           </div>
         </header>
@@ -1779,6 +1782,9 @@
                   <div class="sec-title-group">
                     <h2>Lượt Check-in Mới Nhất</h2>
                   </div>
+                  <button type="button" id="exportReportBtn2" class="day-act-btn" style="font-size: 12px; padding: 5px 12px; cursor: pointer;">
+                    📥 Xuất Excel/CSV
+                  </button>
                 </div>
                 <ul id="recent"></ul>
                 <p class="empty" id="noCheck" hidden>
@@ -2764,7 +2770,133 @@
       $("#viewCardBtn").onclick = () => setViewMode("card");
       $("#add").onclick = () => openForm(null);
       $("#cancel").onclick = () => $("#dlg").close();
+      async function exportReportToExcel() {
+        const btn = $("#exportReportBtn");
+        const oldText = btn ? btn.innerHTML : "";
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = "⏳ Đang trích xuất dữ liệu...";
+        }
+
+        try {
+          const [statsData, checkinsData, dishesData] = await Promise.all([
+            api("/stats"),
+            api("/checkins?limit=100"),
+            api("/dishes"),
+          ]);
+
+          const now = new Date();
+          const timestampStr = now.toLocaleString("vi-VN");
+          const fileDate =
+            now.toISOString().slice(0, 10).replace(/-/g, "") +
+            "_" +
+            String(now.getHours()).padStart(2, "0") +
+            String(now.getMinutes()).padStart(2, "0");
+
+          const escCsv = (val) => {
+            if (val === null || val === undefined) return '""';
+            const s = String(val).replace(/"/g, '""');
+            return `"${s}"`;
+          };
+
+          const rows = [];
+          rows.push(["BÁO CÁO TỔNG HỢP LƯỢT CHECK-IN & THỐNG KÊ ẨM THỰC HỘI AN"]);
+          rows.push([`Thời gian xuất báo cáo: ${timestampStr}`]);
+          rows.push([]);
+
+          // 1. TỔNG QUAN HỆ THỐNG
+          rows.push(["1. SỐ LIỆU TỔNG QUAN HỆ THỐNG"]);
+          rows.push(["Chỉ số", "Giá trị"]);
+          const t = statsData.totals || {};
+          rows.push(["Tổng số món ăn", t.dishes || 0]);
+          rows.push(["Tổng số danh mục ẩm thực", t.categories || 0]);
+          rows.push(["Tổng lượt check-in", t.check_ins || 0]);
+          rows.push(["Tổng lượt yêu thích món ăn", t.favorites || 0]);
+          rows.push(["Tổng thiết bị từng tương tác", t.devices || 0]);
+          rows.push(["Thiết bị đang trực tuyến", t.online_devices || 0]);
+          rows.push([]);
+
+          // 2. CHECK-IN 7 NGÀY GẦN NHẤT
+          rows.push(["2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY QUA)"]);
+          rows.push(["Ngày", "Số lượt check-in"]);
+          if (Array.isArray(statsData.daily)) {
+            statsData.daily.forEach((d) => {
+              rows.push([d.day, d.n]);
+            });
+          }
+          rows.push([]);
+
+          // 3. TOP MÓN ĂN ĐƯỢC TƯƠNG TÁC CAO NHẤT
+          rows.push(["3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH & CHECK-IN"]);
+          rows.push(["Mã món", "Tên món ăn", "Lượt Yêu Thích", "Lượt Check-in"]);
+          if (Array.isArray(statsData.top)) {
+            statsData.top.forEach((item) => {
+              rows.push([
+                item.id,
+                item.name,
+                item.favorites || 0,
+                item.check_ins || 0,
+              ]);
+            });
+          }
+          rows.push([]);
+
+          // 4. DANH SÁCH CHI TIẾT CÁC LƯỢT CHECK-IN GẦN ĐÂY
+          rows.push(["4. DANH SÁCH CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)"]);
+          rows.push(["STT", "Thời gian Check-in", "Mã món", "Tên món ăn", "Mã thiết bị (Device ID)", "Ghi chú"]);
+          if (Array.isArray(checkinsData)) {
+            checkinsData.forEach((c, idx) => {
+              const timeStr = c.created_at ? new Date(c.created_at).toLocaleString("vi-VN") : "";
+              rows.push([
+                idx + 1,
+                timeStr,
+                c.dish_id,
+                c.dish_name || "",
+                c.device_id || "",
+                c.note || "",
+              ]);
+            });
+          }
+
+          // Build CSV with UTF-8 BOM for Microsoft Excel compatibility
+          const csvContent = rows
+            .map((r) => r.map(escCsv).join(","))
+            .join("\r\n");
+
+          const blob = new Blob(["\uFEFF" + csvContent], {
+            type: "text/csv;charset=utf-8;",
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.setAttribute("href", url);
+          link.setAttribute("download", `Bao_Cao_Checkin_HoiAn_${fileDate}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+
+          const msgEl = $("#msg");
+          if (msgEl) {
+            msgEl.textContent = "✔ Đã xuất file báo cáo Excel/CSV thành công!";
+            msgEl.style.color = "var(--gold-text)";
+            setTimeout(() => {
+              if (msgEl.textContent.includes("xuất file báo cáo")) msgEl.textContent = "";
+            }, 5000);
+          }
+        } catch (err) {
+          alert("Lỗi xuất báo cáo: " + err.message);
+        } finally {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = oldText;
+          }
+        }
+      }
+
       $("#refreshBtn").onclick = () => refresh();
+      $("#exportReportBtn").onclick = exportReportToExcel;
+      const exportBtn2 = $("#exportReportBtn2");
+      if (exportBtn2) exportBtn2.onclick = exportReportToExcel;
 
       $("#catChips").onclick = (e) => {
         const btn = e.target.closest("[data-cat]");
