@@ -1252,24 +1252,10 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.brandRow}>
-          <View style={styles.brandLeft}>
-            <View style={styles.brandIconWrap}>
-              <Ionicons name="restaurant" size={18} color="#f59e0b" />
-            </View>
-            <View>
-              <Text style={styles.brandTitle}>{ui.brandTitle}</Text>
-              <Text style={styles.brandSub}>{ui.brandSub}</Text>
-            </View>
+          <View>
+            <Text style={styles.brandTitle}>{ui.brandTitle}</Text>
+            <Text style={styles.brandSub}>{ui.brandSub}</Text>
           </View>
-
-          <TouchableOpacity
-            style={styles.qrTriggerBtn}
-            onPress={() => setQrVisible(true)}
-            activeOpacity={0.8}
-          >
-            <Ionicons name="qr-code-outline" size={15} color="#f8fafc" />
-            <Text style={styles.qrTriggerText}>{ui.qrMobileBtn}</Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -1282,16 +1268,24 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               key={k}
               onPress={() => handleSelectLanguage(k)}
               style={[styles.langBtn, lang === k && styles.langBtnActive]}
-              activeOpacity={0.8}
             >
               <Text
-                style={[styles.langBtnText, lang === k && styles.langBtnTextActive]}
+                style={[styles.langBtnText, lang === k && { color: "#fff" }]}
               >
                 {k.toUpperCase()} {LANGS[k].label}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        <View style={styles.authRow}>
+          <TouchableOpacity
+            style={styles.qrTriggerBtn}
+            onPress={() => setQrVisible(true)}
+          >
+            <Text style={styles.qrTriggerText}>{ui.qrMobileBtn}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
@@ -1304,22 +1298,13 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         ListHeaderComponent={
           <View>
             <View style={styles.filterSection}>
-              <View style={styles.searchWrap}>
-                <Ionicons name="search" size={17} color="#94a3b8" style={styles.searchIcon} />
-                <TextInput
-                  value={search}
-                  onChangeText={setSearch}
-                  placeholder={ui.searchPlaceholder}
-                  placeholderTextColor="#64748b"
-                  style={styles.searchInput}
-                />
-                {search ? (
-                  <TouchableOpacity onPress={() => setSearch("")} style={styles.clearSearchBtn}>
-                    <Ionicons name="close-circle" size={16} color="#64748b" />
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-
+              <TextInput
+                value={search}
+                onChangeText={setSearch}
+                placeholder={ui.searchPlaceholder}
+                placeholderTextColor="#a89a82"
+                style={styles.searchInput}
+              />
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -1339,12 +1324,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       styles.catChip,
                       cat === key && styles.catChipActive,
                     ]}
-                    activeOpacity={0.8}
                   >
                     <Text
                       style={[
                         styles.catChipText,
-                        cat === key && styles.catChipTextActive,
+                        cat === key && { color: "#fff" },
                       ]}
                     >
                       {label}
@@ -1384,33 +1368,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 }
                 style={styles.cardImg}
               />
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={(e) => {
-                  e.stopPropagation?.();
-                  handleToggleFavorite(item);
-                }}
-                style={[
-                  styles.favoriteFloatingBtn,
-                  favoritedDishIds.includes(item.id) && styles.favoriteFloatingBtnActive,
-                ]}
-              >
-                <Ionicons
-                  name={favoritedDishIds.includes(item.id) ? "heart" : "heart-outline"}
-                  size={19}
-                  color={favoritedDishIds.includes(item.id) ? "#ef4444" : "#ffffff"}
-                />
-              </TouchableOpacity>
-
-              <View style={styles.floatingMetaBadge}>
-                <Text style={styles.floatingPriceText}>{item.price}</Text>
-                {item.rating ? (
-                  <View style={styles.floatingRatingWrap}>
-                    <Ionicons name="star" size={11} color="#fbbf24" />
-                    <Text style={styles.floatingRatingText}>{item.rating.toFixed(1)}</Text>
-                  </View>
-                ) : null}
-              </View>
             </View>
             <View style={styles.cardBody}>
               <View style={styles.cardTopContent}>
@@ -1429,9 +1386,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                     setSelectedDish(item);
                     speakText(item.desc[lang] || item.desc.vi);
                   }}
-                  activeOpacity={0.85}
                 >
-                  <Ionicons name="volume-high" size={15} color="#fff" style={{ marginRight: 6 }} />
                   <Text style={styles.listenBtnText}>{ui.listenBtn}</Text>
                 </TouchableOpacity>
 
@@ -1445,12 +1400,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       : styles.checkInActionBtnPending,
                   ]}
                 >
-                  <Ionicons
-                    name={checkedDishIds.includes(item.id) ? "checkmark-circle" : "checkmark-circle-outline"}
-                    size={15}
-                    color={checkedDishIds.includes(item.id) ? "#ffffff" : "#f59e0b"}
-                    style={{ marginRight: 5 }}
-                  />
                   <Text
                     style={[
                       styles.checkInActionText,
@@ -1463,6 +1412,24 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       ? ui.checkInDone
                       : ui.checkInNow}
                   </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={(e) => {
+                    e.stopPropagation?.();
+                    handleToggleFavorite(item);
+                  }}
+                  style={[
+                    styles.favoriteHeartBtn,
+                    favoritedDishIds.includes(item.id) && styles.favoriteHeartBtnActive,
+                  ]}
+                >
+                  <Ionicons
+                    name="heart"
+                    size={20}
+                    color={favoritedDishIds.includes(item.id) ? "#ef4444" : "#ffffff"}
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -1816,176 +1783,106 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0f1217" },
+  container: { flex: 1, backgroundColor: "#090505" },
   header: {
-    paddingHorizontal: 20,
-    paddingTop: Platform.OS === "web" ? 18 : 50,
-    paddingBottom: 14,
-    backgroundColor: "#161922",
+    paddingHorizontal: 16,
+    paddingTop: Platform.OS === "web" ? 16 : 48,
+    paddingBottom: 12,
+    backgroundColor: "#140909",
     borderBottomWidth: 1,
-    borderBottomColor: "rgba(255, 255, 255, 0.08)",
-    gap: 12,
-  },
-  brandRow: {
+    borderBottomColor: "#e9c26b33",
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "space-between",
+    gap: 10,
   },
-  brandLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  brandIconWrap: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: "rgba(245, 158, 11, 0.12)",
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.25)",
-    alignItems: "center",
-    justifyContent: "center",
-  },
+  brandRow: { flexDirection: "row", alignItems: "center", gap: 10 },
   brandTitle: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "800",
+    color: "#e9c26b",
+    fontSize: 20,
+    fontWeight: "bold",
     letterSpacing: 0.8,
   },
-  brandSub: {
-    color: "#94a3b8",
-    fontSize: 11,
-    fontWeight: "500",
-    marginTop: 2,
-  },
-  langBar: {
-    flexDirection: "row",
-    gap: 6,
-    paddingVertical: 2,
-  },
+  brandSub: { color: "#a89a82", fontSize: 11, marginTop: 2 },
+  langBar: { flexDirection: "row", gap: 6, paddingVertical: 4 },
   langBtn: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#e9c26b33",
   },
-  langBtnActive: {
-    backgroundColor: "#e0533c",
-    borderColor: "#e0533c",
-  },
-  langBtnText: {
-    color: "#94a3b8",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  langBtnTextActive: {
-    color: "#ffffff",
-    fontWeight: "700",
-  },
+  langBtnActive: { backgroundColor: "#d4152f", borderColor: "#e9c26b" },
+  langBtnText: { color: "#a89a82", fontSize: 12, fontWeight: "600" },
   qrTriggerBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.06)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
-    paddingHorizontal: 13,
-    paddingVertical: 7,
-    borderRadius: 8,
-    gap: 6,
+    backgroundColor: "#e9c26b",
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
-  qrTriggerText: {
-    color: "#f1f5f9",
-    fontWeight: "600",
-    fontSize: 12,
-  },
+  qrTriggerText: { color: "#090505", fontWeight: "bold", fontSize: 12 },
   authRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     alignItems: "center",
     gap: 8,
   },
   loginBtn: {
     paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 8,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
+    borderColor: "#e9c26b",
   },
-  loginBtnText: { color: "#f1f5f9", fontWeight: "600", fontSize: 12 },
+  loginBtnText: { color: "#e9c26b", fontWeight: "bold", fontSize: 12 },
   registerBtn: {
-    backgroundColor: "#e0533c",
+    backgroundColor: "#d4152f",
     paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 8,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
-  registerBtnText: { color: "#ffffff", fontWeight: "bold", fontSize: 12 },
+  registerBtnText: { color: "#fff", fontWeight: "bold", fontSize: 12 },
   userChip: {
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: "#1f2430",
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "#160c0c",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "#e9c26b33",
     maxWidth: 160,
   },
-  userChipText: { color: "#f8fafc", fontSize: 12, fontWeight: "600" },
+  userChipText: { color: "#f5ead4", fontSize: 12, fontWeight: "600" },
   filterSection: {
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    paddingBottom: 16,
-    gap: 12,
-  },
-  searchWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#161922",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    paddingHorizontal: 14,
-    height: 46,
-  },
-  searchIcon: {
-    marginRight: 8,
+    paddingHorizontal: 6,
+    paddingTop: 6,
+    paddingBottom: 12,
+    gap: 10,
   },
   searchInput: {
-    flex: 1,
-    color: "#f8fafc",
-    fontSize: 14,
+    backgroundColor: "#160c0c",
+    color: "#f5ead4",
+    paddingHorizontal: 16,
     paddingVertical: 10,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: "#e9c26b44",
+    fontSize: 14,
   },
-  clearSearchBtn: {
-    padding: 4,
-  },
-  catRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
+  catRow: { flexDirection: "row", gap: 8 },
   catChip: {
     paddingHorizontal: 14,
     paddingVertical: 8,
-    borderRadius: 8,
-    backgroundColor: "#161922",
+    borderRadius: 20,
+    backgroundColor: "#160c0c",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#e9c26b33",
   },
-  catChipActive: {
-    backgroundColor: "#e0533c",
-    borderColor: "#e0533c",
-  },
-  catChipText: {
-    color: "#94a3b8",
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  catChipTextActive: {
-    color: "#ffffff",
-    fontWeight: "700",
-  },
+  catChipActive: { backgroundColor: "#d4152f", borderColor: "#e9c26b" },
+  catChipText: { color: "#a89a82", fontSize: 13, fontWeight: "600" },
   assistantSection: {
     paddingHorizontal: 8,
-    paddingTop: 20,
+    paddingTop: 16,
     paddingBottom: 40,
   },
   assistantHeaderRow: {
@@ -2001,27 +1898,25 @@ const styles = StyleSheet.create({
   },
   assistantTitle: {
     color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 19,
+    fontWeight: "bold",
   },
   practicalBadge: {
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
-    borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.3)",
+    backgroundColor: "#047857",
     paddingHorizontal: 10,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 12,
   },
   practicalBadgeText: {
-    color: "#34d399",
-    fontSize: 11,
-    fontWeight: "700",
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "900",
     letterSpacing: 0.5,
   },
   assistantSub: {
-    color: "#94a3b8",
+    color: "#b8b0a8",
     fontSize: 13,
-    lineHeight: 20,
+    lineHeight: 19,
     marginBottom: 14,
   },
   assistantGrid: {
@@ -2033,11 +1928,11 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
   },
   panelBox: {
-    backgroundColor: "#161922",
-    borderRadius: 14,
+    backgroundColor: "#14110f",
+    borderRadius: 20,
     padding: 16,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#2e2621",
     justifyContent: "space-between",
   },
   slotTabsRow: {
@@ -2047,33 +1942,33 @@ const styles = StyleSheet.create({
   },
   slotTabBtn: {
     flex: 1,
-    backgroundColor: "#1f232d",
-    borderRadius: 10,
-    paddingVertical: 10,
+    backgroundColor: "#1e1a17",
+    borderRadius: 14,
+    paddingVertical: 11,
     paddingHorizontal: 6,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#332b25",
   },
   slotTabBtnActive: {
-    backgroundColor: "#e0533c",
-    borderColor: "#e0533c",
+    backgroundColor: "#7c2d2d",
+    borderColor: "#f87171",
   },
   slotTabTitle: {
-    color: "#e2e8f0",
+    color: "#e5e7eb",
     fontSize: 13,
-    fontWeight: "600",
-    marginBottom: 2,
+    fontWeight: "bold",
+    marginBottom: 3,
   },
   slotTabTitleActive: {
     color: "#ffffff",
   },
   slotTabTime: {
-    color: "#94a3b8",
+    color: "#a89a82",
     fontSize: 11,
   },
   slotTabTimeActive: {
-    color: "#fef08a",
+    color: "#fde68a",
     fontWeight: "600",
   },
   stopsList: {
@@ -2083,33 +1978,31 @@ const styles = StyleSheet.create({
   stopCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1a1e27",
-    borderRadius: 10,
-    paddingVertical: 11,
+    backgroundColor: "#1c1815",
+    borderRadius: 14,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: "#302924",
   },
   stopNumberBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
     marginRight: 12,
   },
   stopNumberBadgePending: {
-    backgroundColor: "rgba(245, 158, 11, 0.18)",
-    borderWidth: 1,
-    borderColor: "rgba(245, 158, 11, 0.4)",
+    backgroundColor: "#f59e0b",
   },
   stopNumberBadgeDone: {
     backgroundColor: "#10b981",
   },
   stopNumberText: {
-    color: "#f59e0b",
-    fontWeight: "700",
-    fontSize: 13,
+    color: "#120f0d",
+    fontWeight: "900",
+    fontSize: 14,
   },
   stopInfoCol: {
     flex: 1,
@@ -2118,24 +2011,48 @@ const styles = StyleSheet.create({
   stopDishTitle: {
     color: "#ffffff",
     fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 2,
+    fontWeight: "bold",
+    marginBottom: 3,
   },
   stopShopMeta: {
-    color: "#94a3b8",
+    color: "#b8b0a8",
     fontSize: 12,
+  },
+  checkInActionBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  checkInActionBtnPending: {
+    backgroundColor: "#14110f",
+    borderColor: "#b45309",
+  },
+  checkInActionBtnDone: {
+    backgroundColor: "#10b981",
+    borderColor: "#10b981",
+  },
+  checkInActionText: {
+    fontSize: 12,
+    fontWeight: "bold",
+  },
+  checkInActionTextPending: {
+    color: "#f59e0b",
+  },
+  checkInActionTextDone: {
+    color: "#ffffff",
   },
   walkRouteBtn: {
     backgroundColor: "#f59e0b",
-    paddingVertical: 13,
-    borderRadius: 10,
+    paddingVertical: 14,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },
   walkRouteBtnText: {
-    color: "#090505",
+    color: "#120f0d",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
   dietaryHeaderRow: {
     flexDirection: "row",
@@ -2145,32 +2062,32 @@ const styles = StyleSheet.create({
   dietaryPanelTitle: {
     color: "#ffffff",
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "bold",
     flex: 1,
   },
   dietaryPanelSub: {
-    color: "#94a3b8",
+    color: "#b8b0a8",
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 12,
   },
   dietaryOptionsList: {
-    gap: 9,
+    gap: 10,
     marginBottom: 14,
   },
   dietaryItemRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#1a1e27",
-    borderRadius: 10,
-    paddingVertical: 11,
-    paddingHorizontal: 12,
+    backgroundColor: "#1c1815",
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.06)",
+    borderColor: "#302924",
   },
   dietaryItemRowSelected: {
-    backgroundColor: "rgba(16, 185, 129, 0.1)",
+    backgroundColor: "#0c291e",
     borderColor: "#10b981",
   },
   dietaryItemLeft: {
@@ -2180,19 +2097,19 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   dietaryLabel: {
-    color: "#cbd5e1",
+    color: "#e5e7eb",
     fontSize: 14,
-    fontWeight: "500",
+    fontWeight: "600",
   },
   dietaryLabelSelected: {
     color: "#34d399",
-    fontWeight: "600",
+    fontWeight: "bold",
   },
   dietaryRadioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.12)",
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: "#4b5563",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -2200,61 +2117,65 @@ const styles = StyleSheet.create({
     backgroundColor: "#10b981",
   },
   dietaryCheckMark: {
-    color: "#ffffff",
-    fontSize: 12,
+    color: "#090505",
+    fontSize: 13,
     fontWeight: "900",
   },
   customNoteInputWrap: {
-    backgroundColor: "#1a1e27",
-    borderRadius: 10,
+    backgroundColor: "#181412",
+    borderRadius: 14,
     padding: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#10b981",
     gap: 6,
   },
   customNoteInput: {
-    backgroundColor: "#14171f",
+    backgroundColor: "#120f0d",
     color: "#ffffff",
     paddingHorizontal: 12,
-    paddingVertical: 9,
-    borderRadius: 8,
+    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#302924",
     fontSize: 13,
   },
   customNotePreviewText: {
-    color: "#94a3b8",
+    color: "#b8b0a8",
     fontSize: 12,
     marginTop: 2,
   },
   openTasteCardBtn: {
     backgroundColor: "#059669",
-    paddingVertical: 13,
-    borderRadius: 10,
+    paddingVertical: 14,
+    borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
   },
   openTasteCardBtnText: {
     color: "#ffffff",
     fontSize: 14,
-    fontWeight: "700",
+    fontWeight: "900",
   },
-  listContent: { padding: 12, paddingBottom: 40 },
+  listContent: { padding: 10, paddingBottom: 40 },
   card: {
     flex: 1,
     margin: 8,
-    backgroundColor: "#161922",
-    borderRadius: 14,
+    backgroundColor: "#160c0c",
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
+    borderColor: "#e9c26b33",
     overflow: "hidden",
     justifyContent: "space-between",
   },
   cardImgWrap: {
     width: "100%",
-    height: 190,
-    backgroundColor: "#1e222b",
+    height: 180,
+    backgroundColor: "#1f1111",
+    alignItems: "center",
+    justifyContent: "center",
     position: "relative",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e9c26b22",
   },
   cardImgFallbackEmoji: {
     fontSize: 44,
@@ -2267,135 +2188,64 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
   },
-  favoriteFloatingBtn: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "rgba(15, 18, 23, 0.65)",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
-    zIndex: 10,
-  },
-  favoriteFloatingBtnActive: {
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
-    borderColor: "#ef4444",
-  },
-  floatingMetaBadge: {
-    position: "absolute",
-    bottom: 10,
-    left: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    backgroundColor: "rgba(15, 18, 23, 0.78)",
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 7,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    zIndex: 10,
-  },
-  floatingPriceText: {
-    color: "#fbbf24",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  floatingRatingWrap: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 3,
-    borderLeftWidth: 1,
-    borderLeftColor: "rgba(255, 255, 255, 0.2)",
-    paddingLeft: 6,
-  },
-  floatingRatingText: {
-    color: "#f8fafc",
-    fontSize: 11,
-    fontWeight: "600",
-  },
   cardBody: {
     flex: 1,
-    padding: 14,
+    padding: 16,
     justifyContent: "space-between",
     gap: 10,
   },
   cardTopContent: {
-    gap: 5,
+    gap: 6,
   },
   cardMeta: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-  cardPrice: { color: "#fbbf24", fontSize: 13, fontWeight: "bold" },
-  cardRating: { color: "#fbbf24", fontSize: 13, fontWeight: "bold" },
-  cardTitle: { color: "#ffffff", fontSize: 16, fontWeight: "700", lineHeight: 22 },
-  cardSub: { color: "#94a3b8", fontSize: 12 },
+  cardPrice: { color: "#e9c26b", fontSize: 13, fontWeight: "bold" },
+  cardRating: { color: "#e9c26b", fontSize: 13, fontWeight: "bold" },
+  cardTitle: { color: "#f5ead4", fontSize: 19, fontWeight: "bold" },
+  cardSub: { color: "#a89a82", fontSize: 12 },
   cardDesc: {
-    color: "#94a3b8",
+    color: "#d6c7b2",
     fontSize: 13,
     lineHeight: 19,
     minHeight: 57,
   },
-  cardActions: {
-    flexDirection: "row",
-    gap: 8,
-    marginTop: 4,
-    alignItems: "center",
-  },
+  cardActions: { flexDirection: "row", gap: 8, marginTop: 4, alignItems: "center" },
   listenBtn: {
-    flex: 1.1,
-    flexDirection: "row",
+    flex: 1,
+    backgroundColor: "#d4152f",
+    paddingVertical: 10,
+    borderRadius: 20,
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#e0533c",
-    paddingVertical: 9,
-    borderRadius: 9,
   },
-  listenBtnText: { color: "#ffffff", fontWeight: "600", fontSize: 13 },
-  checkInActionBtn: {
-    flex: 0.9,
-    flexDirection: "row",
+  listenBtnText: { color: "#fff", fontWeight: "bold", fontSize: 13 },
+  favoriteHeartBtn: {
+    width: 40,
+    height: 38,
+    borderRadius: 19,
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 8,
-    borderRadius: 9,
+    backgroundColor: "#201616",
     borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.22)",
   },
-  checkInActionBtnPending: {
-    backgroundColor: "rgba(245, 158, 11, 0.08)",
-    borderColor: "rgba(245, 158, 11, 0.35)",
-  },
-  checkInActionBtnDone: {
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
-    borderColor: "rgba(16, 185, 129, 0.4)",
-  },
-  checkInActionText: {
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  checkInActionTextPending: {
-    color: "#f59e0b",
-  },
-  checkInActionTextDone: {
-    color: "#34d399",
+  favoriteHeartBtnActive: {
+    backgroundColor: "rgba(239, 68, 68, 0.2)",
+    borderColor: "#ef4444",
   },
   qrMiniBtn: {
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.15)",
+    borderColor: "#e9c26b66",
   },
-  qrMiniText: { color: "#f8fafc", fontWeight: "600", fontSize: 12 },
+  qrMiniText: { color: "#e9c26b", fontWeight: "bold", fontSize: 12 },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.78)",
+    backgroundColor: "rgba(0,0,0,0.82)",
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
@@ -2403,75 +2253,73 @@ const styles = StyleSheet.create({
   modalBox: {
     width: "100%",
     maxWidth: 480,
-    backgroundColor: "#161922",
-    borderRadius: 18,
+    backgroundColor: "#160c0c",
+    borderRadius: 24,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
+    borderColor: "#e9c26b",
     overflow: "hidden",
   },
   modalImg: { width: "100%", height: 210 },
   modalContent: { padding: 20, gap: 10 },
-  modalTitle: { color: "#ffffff", fontSize: 22, fontWeight: "800" },
-  modalSub: { color: "#94a3b8", fontSize: 13 },
-  modalDesc: { color: "#cbd5e1", fontSize: 14, lineHeight: 22 },
+  modalTitle: { color: "#e9c26b", fontSize: 24, fontWeight: "bold" },
+  modalSub: { color: "#a89a82", fontSize: 13 },
+  modalDesc: { color: "#f5ead4", fontSize: 15, lineHeight: 23 },
   modalBtnRow: { gap: 8, marginTop: 8 },
   primaryBtn: {
-    backgroundColor: "#e0533c",
+    backgroundColor: "#d4152f",
     paddingVertical: 12,
-    borderRadius: 10,
+    borderRadius: 24,
     alignItems: "center",
   },
-  primaryBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+  primaryBtnText: { color: "#fff", fontWeight: "bold", fontSize: 14 },
   secondaryBtn: {
-    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    backgroundColor: "#e9c26b22",
     paddingVertical: 11,
-    borderRadius: 10,
+    borderRadius: 24,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.12)",
+    borderColor: "#e9c26b",
   },
-  secondaryBtnText: { color: "#f1f5f9", fontWeight: "600", fontSize: 13 },
+  secondaryBtnText: { color: "#e9c26b", fontWeight: "bold", fontSize: 13 },
   closeBtn: {
     marginTop: 6,
     paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
+    borderRadius: 20,
+    backgroundColor: "#ffffff15",
     alignItems: "center",
   },
-  closeBtnText: { color: "#e2e8f0", fontWeight: "600", fontSize: 13 },
+  closeBtnText: { color: "#f5ead4", fontWeight: "600", fontSize: 13 },
   tasteModalBox: {
     width: "100%",
     maxWidth: 460,
-    backgroundColor: "#161922",
-    borderRadius: 18,
-    borderWidth: 1.5,
+    backgroundColor: "#14110f",
+    borderRadius: 24,
+    borderWidth: 2,
     borderColor: "#10b981",
     padding: 22,
   },
   tasteModalBadge: {
     alignSelf: "flex-start",
-    backgroundColor: "rgba(16, 185, 129, 0.15)",
-    borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.3)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 6,
+    backgroundColor: "#065f46",
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 10,
     marginBottom: 10,
   },
   tasteModalBadgeText: {
     color: "#34d399",
     fontSize: 11,
-    fontWeight: "700",
+    fontWeight: "900",
     letterSpacing: 0.5,
   },
   tasteModalHeading: {
     color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "800",
+    fontSize: 22,
+    fontWeight: "bold",
     marginBottom: 4,
   },
   tasteModalSub: {
-    color: "#94a3b8",
+    color: "#b8b0a8",
     fontSize: 13,
     marginBottom: 14,
   },
@@ -2482,25 +2330,25 @@ const styles = StyleSheet.create({
   tasteLargeItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(16, 185, 129, 0.08)",
-    borderWidth: 1,
-    borderColor: "rgba(16, 185, 129, 0.25)",
-    borderRadius: 10,
-    padding: 13,
+    backgroundColor: "#0c291e",
+    borderWidth: 1.5,
+    borderColor: "#10b981",
+    borderRadius: 14,
+    padding: 14,
   },
   tasteLargeItemText: {
     color: "#34d399",
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 17,
+    fontWeight: "bold",
   },
   qrModalTitle: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "800",
+    color: "#e9c26b",
+    fontSize: 22,
+    fontWeight: "bold",
     textAlign: "center",
   },
   qrModalDesc: {
-    color: "#94a3b8",
+    color: "#a89a82",
     fontSize: 13,
     textAlign: "center",
     marginVertical: 8,
@@ -2509,17 +2357,17 @@ const styles = StyleSheet.create({
   qrFrame: {
     backgroundColor: "#fff",
     padding: 14,
-    borderRadius: 14,
+    borderRadius: 20,
     marginVertical: 10,
   },
   urlInput: {
     width: "100%",
-    backgroundColor: "#14171f",
-    color: "#f8fafc",
+    backgroundColor: "#090505",
+    color: "#e9c26b",
     padding: 10,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+    borderColor: "#e9c26b55",
     fontSize: 12,
     marginVertical: 6,
   },
