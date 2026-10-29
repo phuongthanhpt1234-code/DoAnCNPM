@@ -16,6 +16,17 @@ app.use(cors({ origin: process.env.CORS_ORIGIN || "*" }));
 app.use(express.json({ limit: "20mb" }));
 app.use(express.text({ type: "text/plain" }));
 
+// Vô hiệu hoá cache hoàn toàn cho trang quản trị HTML và tất cả API để luôn hiển thị dữ liệu mới nhất
+app.use((req, res, next) => {
+  if (!req.path.startsWith("/uploads")) {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.setHeader("Surrogate-Control", "no-store");
+  }
+  next();
+});
+
 // Ghi log mọi request trước khi đi vào các route API
 app.use((req, _res, next) => {
   console.log(new Date().toLocaleTimeString(), req.method, req.url);

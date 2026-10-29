@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>THEO DẤU VỊ HỘI – Bảng Quản Trị Đa Ngôn Ngữ</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -2039,8 +2042,18 @@
       ];
 
       async function api(path, opts = {}) {
-        const r = await fetch("/api" + path, {
-          headers: { "Content-Type": "application/json" },
+        const sep = path.includes("?") ? "&" : "?";
+        const url =
+          "/api" +
+          path +
+          (opts.method && opts.method !== "GET" ? "" : sep + "_t=" + Date.now());
+        const r = await fetch(url, {
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+          },
           ...opts,
         });
         if (!r.ok) {
@@ -2500,7 +2513,12 @@
         if ($("#q").value) p.set("q", $("#q").value);
         if ($("#cat").value) p.set("category_id", $("#cat").value);
         p.set("lang", "vi");
-        dishes = await api("/dishes?" + p);
+        try {
+          const res = await api("/dishes?" + p);
+          if (Array.isArray(res)) dishes = res;
+        } catch (e) {
+          console.error("Lỗi tải món:", e);
+        }
         renderDishes();
       }
 
@@ -2758,6 +2776,7 @@
         $("#secRecentCheckin").hidden = nav !== "checkins";
 
         mainGrid.classList.toggle("single-col", true);
+        refresh();
       }
 
       $("#sidebarNav").onclick = (e) => {
@@ -3015,11 +3034,34 @@
         } catch {}
       }
 
+      let isRefreshing = false;
       async function refresh() {
-        $("#msg").textContent = "";
-        await Promise.all([loadDishes(), loadStats()]);
-        renderCatChips();
+        if (isRefreshing) return;
+        isRefreshing = true;
+        try {
+          $("#msg").textContent = "";
+          await Promise.all([loadDishes(), loadStats()]);
+          renderCatChips();
+        } catch (e) {
+          console.error("Lỗi làm mới dữ liệu:", e);
+        } finally {
+          isRefreshing = false;
+        }
       }
+
+      // Tự động làm mới ngay khi người dùng mở lại tab hoặc quay lại trang
+      window.addEventListener("pageshow", () => refresh());
+      window.addEventListener("focus", () => refresh());
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") refresh();
+      });
+
+      // Tự động cập nhật ngầm định kỳ mỗi 8 giây khi đang xem trang
+      setInterval(() => {
+        if (document.visibilityState === "visible") {
+          refresh();
+        }
+      }, 8000);
 
       switchNavSection("overview");
 
