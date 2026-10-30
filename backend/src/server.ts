@@ -3,7 +3,7 @@ import app from './app';
 import { runMigrations } from './migrate';
 import { ensureDefaultAdminUser } from './middlewares/auth';
 import { ensureQrCodesTable } from './modules/qrcodes/qrcodes.routes';
-import { syncDishTranslations } from './modules/dishes/dishes.routes';
+import { syncDishTranslations, ensureAllDishesSynced } from './modules/dishes/dishes.routes';
 
 const port = Number(process.env.PORT) || 4000;
 
@@ -15,6 +15,7 @@ async function bootstrap() {
       await runMigrations();
       await ensureDefaultAdminUser();
       await ensureQrCodesTable();
+      await ensureAllDishesSynced();
       console.log('✅ Cơ sở dữ liệu đã sẵn sàng!');
       await syncDishTranslations();
     } catch (err) {
