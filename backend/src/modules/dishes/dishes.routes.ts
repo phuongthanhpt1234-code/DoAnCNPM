@@ -484,7 +484,9 @@ async function upsertTranslations(
 }
 
 
-const EXISTING_UPDATES = [
+
+// Danh sách 9 món ăn di sản tiêu biểu nhất của Hội An
+const HERITAGE_9_DISHES = [
   {
     id: 18,
     presetId: '17',
@@ -530,39 +532,49 @@ const EXISTING_UPDATES = [
     price: 40000,
     emoji: '🍜',
   },
+  {
+    id: 34,
+    presetId: '3',
+    name: 'Bánh Xèo Tôm Đất Xứ Quảng',
+    address: 'Quán Giếng Bá Lễ - 45/51 Trần Hưng Đạo',
+    catId: 5,
+    price: 40000,
+    emoji: '🥞',
+  },
+  {
+    id: 35,
+    presetId: '4',
+    name: 'Bánh Vạc Bông Hồng Trắng',
+    address: 'Bông Hồng Trắng - 533 Hai Bà Trưng',
+    catId: 5,
+    price: 50000,
+    emoji: '🥟',
+  },
+  {
+    id: 40,
+    presetId: '9',
+    name: 'Chè Bắp Non Cẩm Nam',
+    address: 'Chè Cẩm Nam - Phố Cổ Hội An',
+    catId: 17,
+    price: 15000,
+    emoji: '🍧',
+  },
+  {
+    id: 47,
+    presetId: '15',
+    name: 'Bánh Đập Hến Trộn Cẩm Nam',
+    address: 'Quán Bà Già - Thôn 1, Cẩm Nam',
+    catId: 5,
+    price: 25000,
+    emoji: '🍘',
+  },
 ];
-
-const PRESET_CAT_MAP: Record<string, { catId: number; price: number; emoji: string }> = {
-  '1': { catId: 4, price: 45000, emoji: '🍗' },
-  '2': { catId: 4, price: 30000, emoji: '🥖' },
-  '5': { catId: 4, price: 35000, emoji: '🍜' },
-  '6': { catId: 4, price: 40000, emoji: '🍜' },
-  '7': { catId: 4, price: 35000, emoji: '🍲' },
-  '8': { catId: 4, price: 40000, emoji: '🥟' },
-  '12': { catId: 4, price: 30000, emoji: '🥗' },
-  '22': { catId: 4, price: 30000, emoji: '🍜' },
-  '3': { catId: 5, price: 40000, emoji: '🥞' },
-  '4': { catId: 5, price: 50000, emoji: '🥟' },
-  '13': { catId: 5, price: 45000, emoji: '🥟' },
-  '14': { catId: 5, price: 35000, emoji: '🍢' },
-  '15': { catId: 5, price: 25000, emoji: '🍘' },
-  '16': { catId: 5, price: 25000, emoji: '🥣' },
-  '21': { catId: 5, price: 25000, emoji: '🥮' },
-  '24': { catId: 5, price: 35000, emoji: '🥮' },
-  '9': { catId: 17, price: 15000, emoji: '🍧' },
-  '10': { catId: 17, price: 15000, emoji: '🥣' },
-  '11': { catId: 17, price: 15000, emoji: '🍮' },
-  '17': { catId: 17, price: 15000, emoji: '🪷' },
-  '18': { catId: 17, price: 25000, emoji: '☕' },
-  '19': { catId: 17, price: 25000, emoji: '🥥' },
-  '20': { catId: 17, price: 20000, emoji: '🍵' },
-  '23': { catId: 17, price: 20000, emoji: '🍨' },
-  '25': { catId: 17, price: 20000, emoji: '🫖' },
-};
 
 export async function ensureAllDishesSynced() {
   try {
-    for (const item of EXISTING_UPDATES) {
+    const keepIds: number[] = [];
+
+    for (const item of HERITAGE_9_DISHES) {
       const preset = (HOI_AN_DISHES_PRESETS as unknown as any[]).find((p) => p.id === item.presetId);
       const story = preset?.translations?.vi?.story || '';
       const img = preset?.image || '';
@@ -570,14 +582,35 @@ export async function ensureAllDishesSynced() {
       const lng = preset?.lng || 108.327;
       const rating = preset ? Number(preset.rating) : 4.8;
 
-      await pool.query(
-        `UPDATE dishes
-         SET name = $1, description = $2, address = $3, category_id = $4, price_vnd = $5,
-             image_url = COALESCE(NULLIF(image_url, ''), $6), emoji = $7, rating = $8, lat = $9, lng = $10, is_active = true
-         WHERE id = $11`,
-        [item.name, story, item.address, item.catId, item.price, img, item.emoji, rating, lat, lng, item.id],
-      );
+      // Upsert món theo ID hoặc Tên
+      const check = await pool.query(`SELECT id FROM dishes WHERE id = $1 OR LOWER(name) = LOWER($2)`, [item.id, item.name]);
+      let finalId = item.id;
 
+      if (check.rows.length > 0) {
+        finalId = check.rows[0].id;
+        await pool.query(
+          `UPDATE dishes
+           SET name = $1, description = $2, address = $3, category_id = $4, price_vnd = $5,
+               image_url = COALESCE(NULLIF(image_url, ''), $6), emoji = $7, rating = $8, lat = $9, lng = $10, is_active = true
+           WHERE id = $11`,
+          [item.name, story, item.address, item.catId, item.price, img, item.emoji, rating, lat, lng, finalId],
+        );
+      } else {
+        const ins = await pool.query(
+          `INSERT INTO dishes (id, category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true)
+           ON CONFLICT (id) DO UPDATE
+           SET name = EXCLUDED.name, description = EXCLUDED.description, address = EXCLUDED.address, category_id = EXCLUDED.category_id,
+               price_vnd = EXCLUDED.price_vnd, image_url = EXCLUDED.image_url, emoji = EXCLUDED.emoji, rating = EXCLUDED.rating,
+               lat = EXCLUDED.lat, lng = EXCLUDED.lng, is_active = true
+           RETURNING id`,
+          [item.id, item.catId, item.name, story, item.address, item.price, img, item.emoji, rating, lat, lng],
+        );
+        finalId = ins.rows[0].id;
+      }
+      keepIds.push(finalId);
+
+      // Lưu 5 bản dịch
       if (preset?.translations) {
         for (const lang of ['vi', 'en', 'zh', 'ko', 'ja'] as const) {
           const t = preset.translations[lang];
@@ -587,66 +620,25 @@ export async function ensureAllDishesSynced() {
                VALUES ($1, $2, $3, $4)
                ON CONFLICT (dish_id, lang)
                DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description`,
-              [item.id, lang, t.name, t.story || ''],
+              [finalId, lang, t.name, t.story || ''],
             );
           }
         }
       }
     }
 
-    const handledPresetIds = new Set(EXISTING_UPDATES.map((u) => u.presetId));
-
-    for (const preset of HOI_AN_DISHES_PRESETS as unknown as any[]) {
-      if (handledPresetIds.has(preset.id)) continue;
-      const viName = preset.translations?.vi?.name;
-      if (!viName) continue;
-
-      const meta = PRESET_CAT_MAP[preset.id] || { catId: 4, price: 35000, emoji: '🍜' };
-      const address = (preset.shopVi || 'Hội An') + ' - Phố cổ Hội An';
-      const story = preset.translations?.vi?.story || '';
-      const rating = preset.rating ? Number(preset.rating) : 4.8;
-      const lat = preset.lat || 15.877;
-      const lng = preset.lng || 108.327;
-
-      const check = await pool.query(`SELECT id FROM dishes WHERE LOWER(name) = LOWER($1)`, [viName]);
-      let dishId: number;
-      if (check.rows.length > 0) {
-        dishId = check.rows[0].id;
-        await pool.query(
-          `UPDATE dishes
-           SET description = $1, address = $2, category_id = $3, price_vnd = $4,
-               image_url = COALESCE(NULLIF(image_url, ''), $5), emoji = $6, rating = $7, lat = $8, lng = $9, is_active = true
-           WHERE id = $10`,
-          [story, address, meta.catId, meta.price, preset.image, meta.emoji, rating, lat, lng, dishId],
-        );
-      } else {
-        const ins = await pool.query(
-          `INSERT INTO dishes (category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, true)
-           RETURNING id`,
-          [meta.catId, viName, story, address, meta.price, preset.image, meta.emoji, rating, lat, lng],
-        );
-        dishId = ins.rows[0].id;
-      }
-
-      if (preset.translations) {
-        for (const lang of ['vi', 'en', 'zh', 'ko', 'ja'] as const) {
-          const t = preset.translations[lang];
-          if (t) {
-            await pool.query(
-              `INSERT INTO dish_translations (dish_id, lang, name, description)
-               VALUES ($1, $2, $3, $4)
-               ON CONFLICT (dish_id, lang)
-               DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description`,
-              [dishId, lang, t.name, t.story || ''],
-            );
-          }
-        }
-      }
+    // Gỡ bỏ các món dư thừa ngoài 9 món di sản
+    if (keepIds.length > 0) {
+      await pool.query(`DELETE FROM favorites WHERE dish_id NOT IN (${keepIds.join(',')})`);
+      await pool.query(`DELETE FROM check_ins WHERE dish_id NOT IN (${keepIds.join(',')})`);
+      await pool.query(`DELETE FROM dish_translations WHERE dish_id NOT IN (${keepIds.join(',')})`);
+      await pool.query(`UPDATE qr_codes SET target_id = NULL WHERE target_id NOT IN (${keepIds.join(',')})`);
+      await pool.query(`DELETE FROM dishes WHERE id NOT IN (${keepIds.join(',')})`);
     }
-    console.log('✅ Đã đồng bộ đầy đủ 25 món ăn chuẩn Hội An!');
+
+    console.log('✅ Đã chuẩn hóa cơ sở dữ liệu chính xác 9 món ăn di sản Hội An!');
   } catch (err) {
-    console.error('⚠️ Lỗi khi đồng bộ món ăn chuẩn Hội An:', err);
+    console.error('⚠️ Lỗi khi chuẩn hóa 9 món di sản:', err);
   }
 }
 
