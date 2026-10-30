@@ -11,6 +11,7 @@ import dishes from "./modules/dishes/dishes.routes";
 import favorites from "./modules/favorites/favorites.routes";
 import presence from "./modules/presence/presence.routes";
 import stats from "./modules/stats/stats.routes";
+import qrcodes from "./modules/qrcodes/qrcodes.routes";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -89,6 +90,7 @@ app.use("/api/favorites", favorites);
 app.use("/api/checkins", checkins);
 app.use("/api/presence", presence);
 app.use("/api/stats", stats);
+app.use("/api/qrcodes", qrcodes);
 
 // Dashboard quản trị: mở trực tiếp http://localhost:4000 hoặc /admin kèm màn hình Đăng Nhập bảo mật
 const publicDir = path.join(__dirname, "..", "public");

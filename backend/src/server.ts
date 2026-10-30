@@ -2,6 +2,7 @@ import 'dotenv/config';
 import app from './app';
 import { runMigrations } from './migrate';
 import { ensureDefaultAdminUser } from './middlewares/auth';
+import { ensureQrCodesTable } from './modules/qrcodes/qrcodes.routes';
 import { syncDishTranslations } from './modules/dishes/dishes.routes';
 
 const port = Number(process.env.PORT) || 4000;
@@ -13,6 +14,7 @@ async function bootstrap() {
       console.log('🔄 Đang đồng bộ cấu trúc cơ sở dữ liệu (Neon / Postgres)...');
       await runMigrations();
       await ensureDefaultAdminUser();
+      await ensureQrCodesTable();
       console.log('✅ Cơ sở dữ liệu đã sẵn sàng!');
       await syncDishTranslations();
     } catch (err) {
