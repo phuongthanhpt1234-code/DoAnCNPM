@@ -1001,7 +1001,27 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           });
 
         setApiDishes(converted);
+
+        let targetParam = params.dish;
+        if (!targetParam && Platform.OS === "web" && typeof window !== "undefined") {
+          const sM = window.location.search.match(/[?&]dish=([^&]+)/);
+          if (sM) targetParam = decodeURIComponent(sM[1]);
+          const pM = window.location.pathname.match(/\/dish\/([^/?#]+)/);
+          if (pM) targetParam = decodeURIComponent(pM[1]);
+        }
+
+        let initialDish: Dish | null = null;
+        if (targetParam) {
+          const normP = String(targetParam).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").trim();
+          initialDish = converted.find((d) => 
+            String(d.id) === String(targetParam) ||
+            d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").includes(normP) ||
+            normP.includes(d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d"))
+          ) || null;
+        }
+
         setSelectedDish((prev) => {
+          if (initialDish) return initialDish;
           if (!prev) return null;
           const updated = converted.find((d) => d.id === prev.id);
           return updated || prev;

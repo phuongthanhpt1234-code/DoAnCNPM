@@ -4332,8 +4332,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
         const dishObj = dishes.find((d) => String(d.id) === String(dishId)) || dishes[0];
         const lang = langSel ? langSel.value : "vi";
 
-        const base = "https://doancnpm-beta.vercel.app/dish/" + dishId;
-        const fullUrl = lang === "vi" ? base : `${base}?lang=${lang}`;
+        const fullUrl = `https://doancnpm-beta.vercel.app/?dish=${dishId}&lang=${lang}`;
 
         if (linkInput) linkInput.value = fullUrl;
         if (titleEl && dishObj) titleEl.textContent = dishObj.localized_name || dishObj.name;
@@ -4401,6 +4400,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
         const el = $("#" + id);
         if (el) {
           el.onchange = updateDishQr;
+          el.oninput = updateDishQr;
         }
       });
 
