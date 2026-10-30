@@ -1773,6 +1773,13 @@
               </span>
               <span class="nav-badge" id="navAccountBadge">1</span>
             </button>
+
+            <button type="button" class="nav-btn" data-nav="qrcode">
+              <span class="nav-btn-left">
+                <span>Quản Lý Mã QR</span>
+              </span>
+              <span class="nav-badge" style="background: rgba(233,194,107,0.2); color: var(--gold); border-color: var(--gold-border);">QR</span>
+            </button>
           </nav>
         </div>
 
@@ -2130,6 +2137,172 @@
         </form>
                 </div>
               </section>
+              <!-- QUẢN LÝ MÃ QR -->
+              <section class="alt-panel" id="secQr" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
+                <div class="sec-head" style="margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                  <div class="sec-title-group" style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 22px;">📱</span>
+                    <div>
+                      <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Quản Lý & Tạo Mã QR Code Ẩm Thực</h2>
+                      <p style="margin: 3px 0 0; font-size: 12px; color: var(--muted);">Tạo mã QR cho toàn bộ ứng dụng hoặc mã QR riêng cho từng món ăn, hỗ trợ tải ảnh và in thẻ để bàn</p>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <button type="button" id="qrPrintAllBtn" style="padding: 8px 16px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                      <span>🖨️</span> In Thẻ / Mã QR
+                    </button>
+                  </div>
+                </div>
+
+                <!-- 2 TABS CON: QR ỨNG DỤNG vs QR TỪNG MÓN ĂN -->
+                <div style="display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--gold-border); padding-bottom: 12px;">
+                  <button type="button" id="qrTabAppBtn" class="filter-chip active" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
+                    🌐 Mã QR Toàn Ứng Dụng
+                  </button>
+                  <button type="button" id="qrTabDishesBtn" class="filter-chip" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
+                    🍜 Mã QR Riêng Từng Món Ăn
+                  </button>
+                </div>
+
+                <!-- NỘI DUNG 1: QR TOÀN ỨNG DỤNG -->
+                <div id="qrAppBox" style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
+                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
+                    <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
+                      <span>⚙️</span> Cấu Hình Liên Kết QR Ứng Dụng
+                    </h3>
+
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                      <div>
+                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">URL Đích (Đường dẫn du khách quét vào)</label>
+                        <input type="text" id="qrAppUrlInput" value="https://doancnpm-beta.vercel.app" style="width: 100%; padding: 11px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
+                        <div style="display: flex; gap: 8px; margin-top: 8px;">
+                          <button type="button" id="qrSetVercelBtn" style="padding: 4px 10px; background: rgba(233,194,107,0.12); border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11.5px; color: var(--ink); cursor: pointer;">Vercel App</button>
+                          <button type="button" id="qrSetBackendBtn" style="padding: 4px 10px; background: rgba(233,194,107,0.12); border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11.5px; color: var(--ink); cursor: pointer;">Backend Server</button>
+                        </div>
+                      </div>
+
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Ngôn ngữ mặc định</label>
+                          <select id="qrAppLangSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
+                            <option value="vi">Tiếng Việt (vi)</option>
+                            <option value="en">English (en)</option>
+                            <option value="zh">中文 (zh)</option>
+                            <option value="ko">한국어 (ko)</option>
+                            <option value="ja">日本語 (ja)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Màu sắc mã QR</label>
+                          <select id="qrAppColorSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
+                            <option value="0f172a">Đen Cổ Điển (#0f172a)</option>
+                            <option value="d4152f">Đỏ Hội An (#d4152f)</option>
+                            <option value="e5a83b">Vàng Phố Cổ (#e5a83b)</option>
+                            <option value="10b981">Xanh Ngọc (#10b981)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Kích thước xuất ảnh</label>
+                        <select id="qrAppSizeSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
+                          <option value="300x300">300 x 300 px (Tiêu chuẩn hiển thị & in nhỏ)</option>
+                          <option value="600x600" selected>600 x 600 px (Sắc nét cho ấn phẩm / Standee)</option>
+                          <option value="1000x1000">1000 x 1000 px (Chất lượng cao Poster lớn)</option>
+                        </select>
+                      </div>
+
+                      <div style="display: flex; gap: 10px; margin-top: 6px;">
+                        <button type="button" id="qrAppDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #ea580c, #dc2626); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                          <span>📥</span> Tải Ảnh QR (PNG)
+                        </button>
+                        <button type="button" id="qrAppCopyBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                          Sao chép Link
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Thẻ xem trước in ấn App -->
+                  <div style="background: #ffffff; border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06);" id="qrCardPreview">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
+                    <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">THEO DẤU VỊ HỘI</h4>
+                    <div style="display: inline-block; padding: 12px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-bottom: 14px;">
+                      <img id="qrAppImgPreview" src="" alt="Mã QR" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
+                    </div>
+                    <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
+                    <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
+                      <span>🎧</span> 5 Ngôn Ngữ: VI • EN • ZH • KO • JA
+                    </div>
+                  </div>
+                </div>
+
+                <!-- NỘI DUNG 2: QR TỪNG MÓN ĂN -->
+                <div id="qrDishesBox" hidden style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
+                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
+                    <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
+                      <span>🍜</span> Chọn Món Ăn Cần Tạo Mã QR
+                    </h3>
+
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                      <div>
+                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Món ăn</label>
+                        <select id="qrDishSelect" style="width: 100%; padding: 11px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; outline: none; font-weight: 600;">
+                          <option value="">Đang tải danh sách món ăn...</option>
+                        </select>
+                      </div>
+
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div>
+                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Ngôn ngữ khi quét</label>
+                          <select id="qrDishLangSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
+                            <option value="vi">Tiếng Việt (vi)</option>
+                            <option value="en">English (en)</option>
+                            <option value="zh">中文 (zh)</option>
+                            <option value="ko">한국어 (ko)</option>
+                            <option value="ja">日本語 (ja)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Màu sắc thẻ</label>
+                          <select id="qrDishColorSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
+                            <option value="d4152f">Đỏ Hội An (#d4152f)</option>
+                            <option value="0f172a">Đen Cổ Điển (#0f172a)</option>
+                            <option value="e5a83b">Vàng Phố Cổ (#e5a83b)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Link chi tiết món ăn tạo ra</label>
+                        <input type="text" id="qrDishLinkInput" readonly style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: rgba(0,0,0,0.03); color: var(--muted); font-size: 12px; box-sizing: border-box;" />
+                      </div>
+
+                      <div style="display: flex; gap: 10px; margin-top: 6px;">
+                        <button type="button" id="qrDishDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                          <span>📥</span> Tải Thẻ Bàn Món Ăn (PNG)
+                        </button>
+                        <button type="button" id="qrDishPrintBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                          <span>🖨️</span> In Thẻ
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Thẻ để bàn mẫu in cho món ăn -->
+                  <div style="background: #ffffff; border: 2px solid #e9c26b; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 12px 35px rgba(233,194,107,0.15);" id="qrDishCardPreview">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Món Ngon Phố Cổ Hội An</div>
+                    <h4 id="qrDishCardTitle" style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 4px;">Mì Quảng 92</h4>
+                    <p id="qrDishCardPrice" style="font-size: 13.5px; color: #ea580c; font-weight: 700; margin: 0 0 14px;">45.000 VNĐ</p>
+                    <div style="display: inline-block; padding: 12px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-bottom: 14px;">
+                      <img id="qrDishImgPreview" src="" alt="Mã QR Món Ăn" style="width: 190px; height: 190px; display: block; border-radius: 8px;" />
+                    </div>
+                    <p style="font-size: 12px; color: #334155; margin: 0 0 4px; font-weight: 600;">Quét mã để nghe thuyết minh AI & gọi món</p>
+                    <div style="font-size: 11px; color: #64748b;">Hỗ trợ 5 ngôn ngữ du khách</div>
+                  </div>
+                </div>
+              </section>
+
             </div>
           </div>
         </div>
@@ -3105,6 +3278,10 @@
           "Quản Lý Tài Khoản Quản Trị",
           "Danh sách tài khoản, thêm tài khoản quản trị mới và phân quyền hệ thống",
         ],
+        qrcode: [
+          "Quản Lý & Xuất Mã QR Thông Minh",
+          "Tạo, tùy biến màu sắc, tải ảnh và in thẻ bàn mã QR cho từng món ăn & ứng dụng",
+        ],
       };
 
       function switchNavSection(nav) {
@@ -3124,7 +3301,7 @@
         const mainGrid = $("#mainGrid");
 
         colLeft.hidden = nav !== "dishes";
-        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account");
+        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account" || nav === "qrcode");
         mainGrid.hidden = showOverview;
 
         $("#secDevices").hidden = nav !== "devices";
@@ -3135,6 +3312,11 @@
         if (secAccountEl) {
           secAccountEl.hidden = nav !== "account";
           if (nav === "account") loadAdminUsers();
+        }
+        const secQrEl = $("#secQr");
+        if (secQrEl) {
+          secQrEl.hidden = nav !== "qrcode";
+          if (nav === "qrcode") renderQrManager();
         }
 
         mainGrid.classList.toggle("single-col", true);
@@ -4096,6 +4278,223 @@ xmlns="http://www.w3.org/TR/REC-html40">
           chartTooltip.classList.remove("visible");
         }
       });
+
+    
+      // ==========================================
+      // QUẢN LÝ MÃ QR CODE (QR MANAGER)
+      // ==========================================
+      function renderQrManager() {
+        const sel = $("#qrDishSelect");
+        if (sel && dishes.length > 0 && sel.options.length <= 1) {
+          sel.innerHTML = dishes
+            .map((d) => `<option value="${d.id}">${esc(d.name)} (${getCatLabel(d.category_id, d.category_slug)})</option>`)
+            .join("");
+        }
+        updateAppQr();
+        updateDishQr();
+      }
+
+      function updateAppQr() {
+        const urlInput = $("#qrAppUrlInput");
+        const langSel = $("#qrAppLangSelect");
+        const colorSel = $("#qrAppColorSelect");
+        const sizeSel = $("#qrAppSizeSelect");
+        const img = $("#qrAppImgPreview");
+        if (!urlInput || !img) return;
+
+        let base = urlInput.value.trim() || "https://doancnpm-beta.vercel.app";
+        const lang = langSel ? langSel.value : "vi";
+        const sep = base.includes("?") ? "&" : "?";
+        const fullUrl = lang === "vi" ? base : `${base}${sep}lang=${lang}`;
+        const color = (colorSel ? colorSel.value : "0f172a").replace("#", "");
+        const size = sizeSel ? sizeSel.value : "600x600";
+
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&color=${color}&data=${encodeURIComponent(fullUrl)}`;
+      }
+
+      function updateDishQr() {
+        const dishSel = $("#qrDishSelect");
+        const langSel = $("#qrDishLangSelect");
+        const colorSel = $("#qrDishColorSelect");
+        const img = $("#qrDishImgPreview");
+        const linkInput = $("#qrDishLinkInput");
+        const titleEl = $("#qrDishCardTitle");
+        const priceEl = $("#qrDishCardPrice");
+        if (!dishSel || !img) return;
+
+        const dishId = dishSel.value || (dishes[0]?.id ?? 18);
+        const dishObj = dishes.find((d) => String(d.id) === String(dishId)) || dishes[0];
+        const lang = langSel ? langSel.value : "vi";
+
+        const base = "https://doancnpm-beta.vercel.app/dish/" + dishId;
+        const fullUrl = lang === "vi" ? base : `${base}?lang=${lang}`;
+
+        if (linkInput) linkInput.value = fullUrl;
+        if (titleEl && dishObj) titleEl.textContent = dishObj.localized_name || dishObj.name;
+        if (priceEl && dishObj) {
+          priceEl.textContent = dishObj.price_vnd ? Number(dishObj.price_vnd).toLocaleString("vi-VN") + " VNĐ" : "Giá liên hệ";
+        }
+
+        const color = (colorSel ? colorSel.value : "d4152f").replace("#", "");
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&color=${color}&data=${encodeURIComponent(fullUrl)}`;
+      }
+
+      const qrTabApp = $("#qrTabAppBtn");
+      if (qrTabApp) {
+        qrTabApp.onclick = () => {
+          qrTabApp.classList.add("active");
+          const dTab = $("#qrTabDishesBtn");
+          if (dTab) dTab.classList.remove("active");
+          const appBox = $("#qrAppBox");
+          if (appBox) appBox.hidden = false;
+          const dishBox = $("#qrDishesBox");
+          if (dishBox) dishBox.hidden = true;
+          updateAppQr();
+        };
+      }
+
+      const qrTabDishes = $("#qrTabDishesBtn");
+      if (qrTabDishes) {
+        qrTabDishes.onclick = () => {
+          qrTabDishes.classList.add("active");
+          const aTab = $("#qrTabAppBtn");
+          if (aTab) aTab.classList.remove("active");
+          const appBox = $("#qrAppBox");
+          if (appBox) appBox.hidden = true;
+          const dishBox = $("#qrDishesBox");
+          if (dishBox) dishBox.hidden = false;
+          updateDishQr();
+        };
+      }
+
+      ["qrAppUrlInput", "qrAppLangSelect", "qrAppColorSelect", "qrAppSizeSelect"].forEach((id) => {
+        const el = $("#" + id);
+        if (el) {
+          el.oninput = updateAppQr;
+          el.onchange = updateAppQr;
+        }
+      });
+
+      const setVercelBtn = $("#qrSetVercelBtn");
+      if (setVercelBtn) {
+        setVercelBtn.onclick = () => {
+          const u = $("#qrAppUrlInput");
+          if (u) u.value = "https://doancnpm-beta.vercel.app";
+          updateAppQr();
+        };
+      }
+
+      const setBackendBtn = $("#qrSetBackendBtn");
+      if (setBackendBtn) {
+        setBackendBtn.onclick = () => {
+          const u = $("#qrAppUrlInput");
+          if (u) u.value = "https://doancnpm-backend.onrender.com";
+          updateAppQr();
+        };
+      }
+
+      ["qrDishSelect", "qrDishLangSelect", "qrDishColorSelect"].forEach((id) => {
+        const el = $("#" + id);
+        if (el) {
+          el.onchange = updateDishQr;
+        }
+      });
+
+      const qrAppDlBtn = $("#qrAppDownloadBtn");
+      if (qrAppDlBtn) {
+        qrAppDlBtn.onclick = async () => {
+          const img = $("#qrAppImgPreview");
+          if (!img || !img.src) return;
+          qrAppDlBtn.textContent = "Đang tải ảnh...";
+          try {
+            const resp = await fetch(img.src);
+            const blob = await resp.blob();
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "TheoDauViHoi_App_QRCode.png";
+            a.click();
+          } catch {
+            window.open(img.src, "_blank");
+          } finally {
+            qrAppDlBtn.innerHTML = `<span>📥</span> Tải Ảnh QR (PNG)`;
+          }
+        };
+      }
+
+      const qrAppCpBtn = $("#qrAppCopyBtn");
+      if (qrAppCpBtn) {
+        qrAppCpBtn.onclick = () => {
+          const input = $("#qrAppUrlInput");
+          if (!input) return;
+          navigator.clipboard?.writeText(input.value);
+          const oldText = qrAppCpBtn.textContent;
+          qrAppCpBtn.textContent = "✓ Đã sao chép!";
+          setTimeout(() => (qrAppCpBtn.textContent = oldText), 2000);
+        };
+      }
+
+      const qrDishDlBtn = $("#qrDishDownloadBtn");
+      if (qrDishDlBtn) {
+        qrDishDlBtn.onclick = async () => {
+          const img = $("#qrDishImgPreview");
+          if (!img || !img.src) return;
+          qrDishDlBtn.textContent = "Đang tải ảnh...";
+          try {
+            const resp = await fetch(img.src);
+            const blob = await resp.blob();
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            const dishSel = $("#qrDishSelect");
+            const dishName = dishSel ? dishSel.options[dishSel.selectedIndex]?.text || "Dish" : "Dish";
+            a.download = `QRCode_${dishName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+            a.click();
+          } catch {
+            window.open(img.src, "_blank");
+          } finally {
+            qrDishDlBtn.innerHTML = `<span>📥</span> Tải Thẻ Bàn Món Ăn (PNG)`;
+          }
+        };
+      }
+
+      function handlePrintCard(elemId) {
+        const el = document.getElementById(elemId);
+        if (!el) return;
+        const w = window.open("", "_blank", "width=600,height=700");
+        w.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8" />
+            <title>In Thẻ QR Ẩm Thực Hội An</title>
+            <style>
+              body { font-family: 'Be Vietnam Pro', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; }
+              .card { max-width: 320px; border: 2px solid #e9c26b; border-radius: 16px; padding: 24px; text-align: center; }
+              @media print { body { -webkit-print-color-adjust: exact; } }
+            </style>
+          </head>
+          <body>
+            <div class="card">${el.innerHTML}</div>
+            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
+          </body>
+          </html>
+        `);
+        w.document.close();
+      }
+
+      const printAllBtn = $("#qrPrintAllBtn");
+      if (printAllBtn) {
+        printAllBtn.onclick = () => {
+          const isApp = !$("#qrAppBox")?.hidden;
+          handlePrintCard(isApp ? "qrCardPreview" : "qrDishCardPreview");
+        };
+      }
+
+      const qrDishPrintBtn = $("#qrDishPrintBtn");
+      if (qrDishPrintBtn) {
+        qrDishPrintBtn.onclick = () => {
+          handlePrintCard("qrDishCardPreview");
+        };
+      }
 
     </script>
   </body>
