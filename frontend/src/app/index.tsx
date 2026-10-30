@@ -38,11 +38,15 @@ function DishCardImage({
   fallbackUri: string;
   style: any;
 }) {
-  const [currentUri, setCurrentUri] = useState<string>(() => uri || fallbackUri);
+  const [hasError, setHasError] = useState(false);
+  const [lastUri, setLastUri] = useState(uri);
 
-  useEffect(() => {
-    setCurrentUri(uri || fallbackUri);
-  }, [uri, fallbackUri]);
+  if (uri !== lastUri) {
+    setLastUri(uri);
+    setHasError(false);
+  }
+
+  const currentUri = !hasError && uri ? uri : fallbackUri;
 
   return (
     <Image
@@ -51,9 +55,7 @@ function DishCardImage({
       style={style}
       resizeMode="cover"
       onError={() => {
-        if (currentUri !== fallbackUri) {
-          setCurrentUri(fallbackUri);
-        }
+        if (!hasError) setHasError(true);
       }}
     />
   );
@@ -804,6 +806,34 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const params = useLocalSearchParams<{ lang?: string; dish?: string }>();
 
+  const [languageSelection, setLanguageSelection] = useState<{
+    route: string | undefined;
+    value: LangKey;
+  }>(() => ({ route: params.lang, value: (params.lang as LangKey) || "vi" }));
+  const lang: LangKey = languageSelection.route === params.lang
+    ? languageSelection.value
+    : params.lang && PAGE_UI[params.lang] ? params.lang as LangKey : "vi";
+  const setLang = useCallback((value: LangKey) => {
+    setLanguageSelection({ route: params.lang, value });
+  }, [params.lang]);
+  const [cat, setCat] = useState<string>("all");
+  const [search, setSearch] = useState<string>("");
+  const [selectedDish, setSelectedDish] = useState<Dish | null>(
+    params.dish
+      ? DISHES.find((d) => d.id === Number(params.dish)) || null
+      : null,
+  );
+  const [qrVisible, setQrVisible] = useState<boolean>(false);
+  const [customUrl, setCustomUrl] = useState<string>(
+    Platform.OS === "web" && typeof window !== "undefined"
+      ? window.location.origin
+      : "https://hoian-food-map.vercel.app",
+  );
+
+  const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
+  const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
+  const [toastMsg, setToastMsg] = useState<string>("");
+
   const [apiDishes, setApiDishes] = useState<Dish[]>(DISHES);
   const [apiLoading, setApiLoading] = useState(true);
   const [apiError, setApiError] = useState("");
@@ -1026,33 +1056,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     };
   }, []);
 
-  const [languageSelection, setLanguageSelection] = useState<{
-    route: string | undefined;
-    value: LangKey;
-  }>(() => ({ route: params.lang, value: (params.lang as LangKey) || "vi" }));
-  const lang: LangKey = languageSelection.route === params.lang
-    ? languageSelection.value
-    : params.lang && PAGE_UI[params.lang] ? params.lang as LangKey : "vi";
-  const setLang = useCallback((value: LangKey) => {
-    setLanguageSelection({ route: params.lang, value });
-  }, [params.lang]);
-  const [cat, setCat] = useState<string>("all");
-  const [search, setSearch] = useState<string>("");
-  const [selectedDish, setSelectedDish] = useState<Dish | null>(
-    params.dish
-      ? DISHES.find((d) => d.id === Number(params.dish)) || null
-      : null,
-  );
-  const [qrVisible, setQrVisible] = useState<boolean>(false);
-  const [customUrl, setCustomUrl] = useState<string>(
-    Platform.OS === "web" && typeof window !== "undefined"
-      ? window.location.origin
-      : "https://hoian-food-map.vercel.app",
-  );
-
-  const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
-  const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
-  const [toastMsg, setToastMsg] = useState<string>("");
+// states moved to top
   const toastTimerRef = useRef<any>(null);
   const lastCheckInActionRef = useRef<Record<number, number>>({});
   const isCheckInBusyRef = useRef<Record<number, boolean>>({});

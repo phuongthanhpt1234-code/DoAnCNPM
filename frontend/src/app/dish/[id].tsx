@@ -49,15 +49,16 @@ export default function DishDetailScreen() {
   }, [lang]);
 
   useEffect(() => {
+    let cancelled = false;
     if (!id) {
-      setError("Không tìm thấy mã món ăn");
-      setLoading(false);
+      Promise.resolve().then(() => {
+        if (!cancelled) {
+          setError("Không tìm thấy mã món ăn");
+          setLoading(false);
+        }
+      });
       return;
     }
-
-    let cancelled = false;
-    setLoading(true);
-    setError("");
 
     api<ApiDish>(`/dishes/${id}`)
       .then((row) => {

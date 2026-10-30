@@ -36,6 +36,12 @@ export async function ensureDefaultAdminUser() {
         full_name TEXT,
         created_at TIMESTAMPTZ NOT NULL DEFAULT now()
       );
+
+      -- Đảm bảo bảng favorites hỗ trợ device_id không cần đăng nhập
+      ALTER TABLE favorites DROP CONSTRAINT IF EXISTS favorites_pkey;
+      ALTER TABLE favorites ADD COLUMN IF NOT EXISTS device_id VARCHAR(100);
+      ALTER TABLE favorites ALTER COLUMN user_id DROP NOT NULL;
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_favorites_device_dish ON favorites (device_id, dish_id);
     `);
 
     const defaultUser = process.env.ADMIN_USERNAME || "admin";
