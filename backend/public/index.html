@@ -2289,16 +2289,17 @@
                     </div>
                   </div>
 
-                  <!-- Thẻ để bàn mẫu in cho món ăn -->
-                  <div style="background: #ffffff; border: 2px solid #e9c26b; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 12px 35px rgba(233,194,107,0.15);" id="qrDishCardPreview">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Món Ngon Phố Cổ Hội An</div>
-                    <h4 id="qrDishCardTitle" style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 4px;">Mì Quảng 92</h4>
-                    <p id="qrDishCardPrice" style="font-size: 13.5px; color: #ea580c; font-weight: 700; margin: 0 0 14px;">45.000 VNĐ</p>
+                  <!-- Thẻ để bàn mẫu in cho món ăn (Không ghi giá) -->
+                  <div style="border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff;" id="qrDishCardPreview">
+                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
+                    <h4 id="qrDishCardTitle" style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">Món Ngon Hội An</h4>
                     <div style="display: inline-block; padding: 12px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-bottom: 14px;">
-                      <img id="qrDishImgPreview" src="" alt="Mã QR Món Ăn" style="width: 190px; height: 190px; display: block; border-radius: 8px;" />
+                      <img id="qrDishImgPreview" src="" alt="Mã QR Món Ăn" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
                     </div>
-                    <p style="font-size: 12px; color: #334155; margin: 0 0 4px; font-weight: 600;">Quét mã để nghe thuyết minh AI & gọi món</p>
-                    <div style="font-size: 11px; color: #64748b;">Hỗ trợ 5 ngôn ngữ du khách</div>
+                    <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
+                    <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
+                      <span>🎧</span> 5 Ngôn Ngữ: VI • EN • ZH • KO • JA
+                    </div>
                   </div>
                 </div>
               </section>
@@ -4325,8 +4326,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
         const img = $("#qrDishImgPreview");
         const linkInput = $("#qrDishLinkInput");
         const titleEl = $("#qrDishCardTitle");
-        const priceEl = $("#qrDishCardPrice");
-        if (!dishSel || !img) return;
+                if (!dishSel || !img) return;
 
         const dishId = dishSel.value || (dishes[0]?.id ?? 18);
         const dishObj = dishes.find((d) => String(d.id) === String(dishId)) || dishes[0];
@@ -4337,9 +4337,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
         if (linkInput) linkInput.value = fullUrl;
         if (titleEl && dishObj) titleEl.textContent = dishObj.localized_name || dishObj.name;
-        if (priceEl && dishObj) {
-          priceEl.textContent = dishObj.price_vnd ? Number(dishObj.price_vnd).toLocaleString("vi-VN") + " VNĐ" : "Giá liên hệ";
-        }
+        
 
         const color = (colorSel ? colorSel.value : "d4152f").replace("#", "");
         img.src = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&color=${color}&data=${encodeURIComponent(fullUrl)}`;
