@@ -13,7 +13,125 @@
       href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <style>
+
+      /* BẢN ĐỒ VÀ ĐỊNH VỊ GPS THEO PHONG CÁCH GOOGLE MAPS */
+      #leafletMap {
+        height: 480px;
+        width: 100%;
+        border-radius: 16px;
+        border: 1px solid var(--gold-border);
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        z-index: 1;
+      }
+      .quick-dist-btn {
+        transition: all 0.2s ease;
+      }
+      .quick-dist-btn:hover {
+        background: #f1f5f9 !important;
+        border-color: #94a3b8 !important;
+      }
+      .quick-dist-btn.active {
+        background: #d97706 !important;
+        color: #ffffff !important;
+        border-color: #b45309 !important;
+      }
+      /* Nút chọn chế độ Google Maps */
+      .gmap-mode-tab {
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 20px;
+        border: 1px solid #dadce0;
+        background: #ffffff;
+        color: #3c4043;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .gmap-mode-tab:hover {
+        background: #f1f3f4;
+      }
+      .gmap-mode-tab.active {
+        background: #e8f0fe;
+        color: #1a73e8;
+        border-color: #1a73e8;
+        box-shadow: 0 1px 3px rgba(26,115,232,0.25);
+      }
+      /* Nút chuyển đổi loại bản đồ (Bản đồ / Vệ tinh / Địa hình) */
+      .gmap-type-btn {
+        padding: 5px 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: #3c4043;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .gmap-type-btn:hover {
+        background: #f1f3f4;
+      }
+      .gmap-type-btn.active {
+        background: #1a73e8;
+        color: #ffffff;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      }
+      /* Nút điều khiển nhanh trên bản đồ */
+      .gmap-ctrl-btn {
+        background: #ffffff;
+        color: #3c4043;
+        border: 1px solid #dadce0;
+        padding: 6px 10px;
+        font-size: 11.5px;
+        font-weight: 700;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 2px 6px rgba(60,64,67,0.2);
+        transition: all 0.18s ease;
+      }
+      .gmap-ctrl-btn:hover {
+        background: #f8f9fa;
+        color: #1a73e8;
+        box-shadow: 0 3px 8px rgba(60,64,67,0.3);
+      }
+      @keyframes gmapPulse {
+        0% { transform: scale(0.6); opacity: 1; }
+        100% { transform: scale(1.6); opacity: 0; }
+      }
+      .map-stat-card {
+        background: var(--card-item);
+        border: 1px solid var(--gold-border);
+        border-radius: 14px;
+        padding: 12px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .map-stat-card .label {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+      }
+      .map-stat-card .val {
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .map-stat-card .desc {
+        font-size: 11.5px;
+        color: var(--muted);
+      }
+
       :root {
         --bg: #f4f6f9;
         --header-bg: #ffffff;
@@ -1780,6 +1898,14 @@
               </span>
               <span class="nav-badge" style="background: rgba(233,194,107,0.2); color: var(--gold); border-color: var(--gold-border);">QR</span>
             </button>
+
+            <button type="button" class="nav-btn" data-nav="map">
+              <span class="nav-btn-left">
+                <span>Bản đồ và GPS</span>
+              </span>
+              <span class="nav-badge" id="navMapBadge" style="background: rgba(16,185,129,0.15); color: #059669; border-color: #a7f3d0;">GPS</span>
+            </button>
+
           </nav>
         </div>
 
@@ -2304,6 +2430,210 @@
                 </div>
               </section>
 
+              <!-- BẢN ĐỒ VÀ GPS -->
+              <section class="alt-panel" id="secMap" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 18px; padding: 20px;">
+                <!-- HEADER GỌN GÀNG -->
+                <div class="sec-head" style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 20px;">🗺️</span>
+                    <div>
+                      <h2 style="font-size: 16.5px; margin: 0; color: var(--ink); font-weight: 700;">Bản Đồ Ẩm Thực & Định Vị GPS</h2>
+                      <p style="margin: 2px 0 0; font-size: 11.5px; color: var(--muted);">Chọn vị trí hiện tại hoặc nhập địa chỉ để tra cứu toàn bộ món ăn trong phạm vi khoảng cách</p>
+                    </div>
+                  </div>
+                  <div id="mapRadiusCounter" style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #047857;">
+                    <span>✨</span> <span id="mapCounterText">Đang tìm món ăn...</span>
+                  </div>
+                </div>
+
+                <!-- KHU VỰC ĐIỀU HƯỚNG: NƠI XUẤT PHÁT, NƠI ĐẾN & KHOẢNG CÁCH (m hoặc km) -->
+                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; align-items: flex-end;">
+                    
+                    <!-- Ô 1: Nơi xuất phát (Vị trí hiện tại hoặc nhập địa chỉ) -->
+                    <div>
+                      <label for="mapOriginInput" style="display: block; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px;">
+                        📍 Nơi xuất phát:
+                      </label>
+                      <div style="display: flex; gap: 6px; align-items: center;">
+                        <input
+                          type="text"
+                          id="mapOriginInput"
+                          placeholder="Nhập địa chỉ (VD: 150 Trần Phú, Hội An)..."
+                          value="Chùa Cầu Hội An"
+                          list="mapOriginDatalist"
+                          style="flex: 1; min-width: 140px; padding: 8px 10px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13px; font-weight: 600; outline: none;"
+                        />
+                        <button
+                          type="button"
+                          id="mapOriginGpsBtn"
+                          title="Lấy vị trí GPS hiện tại của tôi"
+                          style="padding: 8px 12px; background: #10b981; color: #ffffff; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(16,185,129,0.25);"
+                        >
+                          <span>📍</span> Vị trí hiện tại
+                        </button>
+                      </div>
+                      <datalist id="mapOriginDatalist">
+                        <option value="Chùa Cầu Hội An"></option>
+                        <option value="Chợ Hội An"></option>
+                        <option value="Bến thuyền Bạch Đằng"></option>
+                        <option value="Bãi biển An Bàng"></option>
+                        <option value="Làng rau Trà Quế"></option>
+                      </datalist>
+                    </div>
+
+                    <!-- Ô 2: Nơi đến (Món ăn / Điểm đến) -->
+                    <div>
+                      <label for="mapDestinationSelect" style="display: block; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px;">
+                        🏁 Nơi đến (Món ăn / Quán ăn):
+                      </label>
+                      <select id="mapDestinationSelect" style="width: 100%; padding: 8.5px 12px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13px; font-weight: 600; outline: none; cursor: pointer;">
+                        <option value="">-- Đang nạp danh sách món ăn... --</option>
+                      </select>
+                    </div>
+
+                    <!-- Ô 3: Khoảng cách (cho nhập m hoặc km, không được âm) -->
+                    <div>
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <label for="mapDistanceInput" style="font-size: 12px; font-weight: 700; color: var(--ink);">
+                          📏 Khoảng cách tìm kiếm (m hoặc km):
+                        </label>
+                        <span style="font-size: 10.5px; color: #10b981; font-weight: 700; background: #ecfdf5; padding: 1px 6px; border-radius: 6px; border: 1px solid #a7f3d0;">≥ 0</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 5px;">
+                        <input
+                          type="number"
+                          id="mapDistanceInput"
+                          name="mapDistance"
+                          min="0"
+                          step="any"
+                          value="500"
+                          placeholder="500"
+                          style="width: 75px; padding: 7.5px 8px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13.5px; font-weight: 700; text-align: center; outline: none;"
+                        />
+                        <select id="mapDistanceUnit" style="padding: 7.5px 6px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer;">
+                          <option value="m" selected>m</option>
+                          <option value="km">km</option>
+                        </select>
+                        <div style="display: flex; gap: 3px; margin-left: 2px;">
+                          <button type="button" class="quick-dist-btn" data-dist="100" data-unit="m" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">100m</button>
+                          <button type="button" class="quick-dist-btn active" data-dist="500" data-unit="m" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid #d97706; background: #d97706; color: #ffffff; cursor: pointer;">500m</button>
+                          <button type="button" class="quick-dist-btn" data-dist="1" data-unit="km" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">1km</button>
+                          <button type="button" class="quick-dist-btn" data-dist="2" data-unit="km" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">2km</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div id="mapDistanceError" style="display: none; margin-top: 6px; color: #dc2626; font-size: 11px; font-weight: 600;">
+                    ⚠️ Khoảng cách không được âm! Đã tự động chuyển về 0.
+                  </div>
+                </div>
+
+                <!-- THANH ĐIỀU HƯỚNG & TRẠNG THÁI CHỈ ĐƯỜNG KIỂU GOOGLE MAPS -->
+                <div id="mapStatusBanner" style="background: #ffffff; border: 1.5px solid #dadce0; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; box-shadow: 0 1px 4px rgba(60,64,67,0.12);">
+                  
+                  <!-- Tuyến đường xuất phát -> đích -->
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                      <span style="color: #1a73e8; font-size: 15px;">📍</span>
+                      <b>Từ:</b> <span id="mapOriginDisplay" style="color: #1a73e8; font-weight: 700;">Chùa Cầu Hội An</span>
+                    </span>
+                    <span style="color: #9aa0a6;">➔</span>
+                    <span style="display: inline-flex; align-items: center; gap: 4px;">
+                      <span style="color: #ea4335; font-size: 15px;">🏁</span>
+                      <b>Đến:</b> <span id="mapDestDisplay" style="color: #ea4335; font-weight: 700;">--</span>
+                    </span>
+                  </div>
+
+                  <!-- Chế độ di chuyển (Đi bộ / Xe máy / Ô tô) -->
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" class="gmap-mode-tab active" data-mode="walking" title="Đi bộ (~4.5 km/h)">🚶 Đi bộ</button>
+                    <button type="button" class="gmap-mode-tab" data-mode="two_wheeler" title="Xe máy (~25 km/h)">🛵 Xe máy</button>
+                    <button type="button" class="gmap-mode-tab" data-mode="driving" title="Ô tô (~30 km/h)">🚗 Ô tô</button>
+                  </div>
+
+                  <!-- Thời gian di chuyển & Khoảng cách & Nút Google Maps -->
+                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                      <span id="gmapTravelTimeText" style="font-weight: 800; color: #188038; font-size: 13.5px;">--</span>
+                      <span style="color: #5f6368; font-size: 12px;">(<span id="mapRealDistDisplay">-- m</span>)</span>
+                    </div>
+                    <span id="mapStatusDisplay" style="font-weight: 700; font-size: 12px;">--</span>
+                    <a
+                      id="gmapExternalLink"
+                      href="https://www.google.com/maps"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Mở ứng dụng hoặc trang Google Maps để dẫn đường trực tiếp"
+                      style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: #1a73e8; color: #ffffff; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 6px rgba(26,115,232,0.3); transition: background 0.15s ease;"
+                    >
+                      <span>↗️</span> Chỉ đường trên Google Maps
+                    </a>
+                  </div>
+                </div>
+
+                <!-- BẢN ĐỒ TRỰC QUAN VỚI BẢNG ĐIỀU KHIỂN GOOGLE MAPS -->
+                <div style="position: relative; margin-bottom: 14px;">
+                  <!-- Bảng chuyển chế độ bản đồ Google Maps (Bản đồ / Vệ tinh / Địa hình) -->
+                  <div style="position: absolute; top: 12px; left: 12px; z-index: 500; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(60,64,67,0.25); padding: 4px; display: flex; gap: 4px; border: 1px solid #dadce0;">
+                    <button type="button" class="gmap-type-btn active" data-type="m" title="Bản đồ đường phố Google Maps">🗺️ Bản đồ</button>
+                    <button type="button" class="gmap-type-btn" data-type="y" title="Ảnh vệ tinh độ nét cao kèm tên đường">🛰️ Vệ tinh</button>
+                    <button type="button" class="gmap-type-btn" data-type="p" title="Bản đồ địa hình Google Maps">⛰️ Địa hình</button>
+                  </div>
+
+                  <!-- Các phím chức năng nhanh góc trên bên phải -->
+                  <div style="position: absolute; top: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 6px;">
+                    <button type="button" id="gmapFlyUserBtn" class="gmap-ctrl-btn" title="Phóng to đến vị trí hiện tại của tôi">
+                      <span>🎯</span> Vị trí của tôi
+                    </button>
+                    <button type="button" id="gmapFlyHoiAnBtn" class="gmap-ctrl-btn" title="Trở về trung tâm phố cổ Hội An">
+                      <span>🏮</span> Phố cổ Hội An
+                    </button>
+                  </div>
+
+                  <!-- Khung bản đồ Leaflet -->
+                  <div id="leafletMap" style="height: 460px; width: 100%; border-radius: 14px; border: 1px solid #dadce0; z-index: 1;"></div>
+                  <div id="mapFallbackContainer" style="display: none; height: 460px; width: 100%; border-radius: 14px; overflow: hidden; border: 1px solid #dadce0;">
+                    <iframe id="mapFallbackFrame" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
+                  </div>
+                </div>
+
+                <!-- DANH SÁCH TOÀN BỘ MÓN ĂN TRONG PHẠM VI KHOẢNG CÁCH -->
+                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 12px; padding: 12px 14px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px;">
+                      <span>📋</span> <span id="mapTableTitle">Toàn bộ món ăn trong phạm vi khoảng cách đã nhập:</span>
+                    </div>
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer;">
+                      <input type="checkbox" id="mapFilterWithinRadius" checked style="cursor: pointer;" />
+                      <span>Chỉ hiển thị món trong phạm vi khoảng cách</span>
+                    </label>
+                  </div>
+
+                  <div class="tablewrap" style="border: 1px solid var(--gold-border); border-radius: 8px; overflow: hidden; background: #ffffff; max-height: 260px; overflow-y: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                      <thead>
+                        <tr style="background: #f8fafc; border-bottom: 1px solid var(--gold-border);">
+                          <th style="padding: 7px 10px; text-align: left;">Món Ăn</th>
+                          <th style="padding: 7px 10px; text-align: left;">Địa Chỉ Quán</th>
+                          <th style="padding: 7px 10px; text-align: center;">Khoảng Cách</th>
+                          <th style="padding: 7px 10px; text-align: center;">Trạng Thái</th>
+                          <th style="padding: 7px 10px; text-align: center; width: 90px;">Chọn Đến</th>
+                        </tr>
+                      </thead>
+                      <tbody id="mapDishesTableBody">
+                        <tr>
+                          <td colspan="5" style="text-align: center; color: var(--muted); padding: 12px;">Đang nạp danh sách món ăn...</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+
+
             </div>
           </div>
         </div>
@@ -2484,6 +2814,7 @@
       </form>
     </dialog>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script>
       const LANG_KEYS = ["vi", "en", "zh", "ko", "ja"];
       const LANG_LABELS = {
@@ -2549,10 +2880,14 @@
 
       let authToken = localStorage.getItem("hoian_admin_token") || "";
 
+      const API_BASE = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "4000"))
+        ? "http://localhost:4000/api"
+        : "/api";
+
       async function api(path, opts = {}) {
         const sep = path.includes("?") ? "&" : "?";
         const url =
-          "/api" +
+          API_BASE +
           path +
           (opts.method && opts.method !== "GET" ? "" : sep + "_t=" + Date.now());
         const headers = {
@@ -3284,6 +3619,10 @@
           "Quản Lý & Xuất Mã QR Thông Minh",
           "Tạo, tùy biến màu sắc, tải ảnh và in thẻ bàn mã QR cho từng món ăn & ứng dụng",
         ],
+        map: [
+          "Bản Đồ và Định Vị GPS",
+          "Tra cứu vị trí quán ăn, kiểm tra khoảng cách từ chỗ món ăn tới chỗ mình và định vị GPS",
+        ],
       };
 
       function switchNavSection(nav) {
@@ -3303,7 +3642,7 @@
         const mainGrid = $("#mainGrid");
 
         colLeft.hidden = nav !== "dishes";
-        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account" || nav === "qrcode");
+        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account" || nav === "qrcode" || nav === "map");
         mainGrid.hidden = showOverview;
 
         $("#secDevices").hidden = nav !== "devices";
@@ -3319,6 +3658,11 @@
         if (secQrEl) {
           secQrEl.hidden = nav !== "qrcode";
           if (nav === "qrcode") renderQrManager();
+        }
+        const secMapEl = $("#secMap");
+        if (secMapEl) {
+          secMapEl.hidden = nav !== "map";
+          if (nav === "map") renderMapSection();
         }
 
         mainGrid.classList.toggle("single-col", true);
@@ -3770,7 +4114,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
             try { adminEventSource.close(); } catch {}
             adminEventSource = null;
           }
-          const es = new EventSource("/api/presence/stream?role=admin&token=" + encodeURIComponent(authToken));
+          const es = new EventSource(API_BASE + "/presence/stream?role=admin&token=" + encodeURIComponent(authToken));
           adminEventSource = es;
           es.addEventListener("dishes_updated", () => {
             loadDishes();
@@ -4107,7 +4451,12 @@ xmlns="http://www.w3.org/TR/REC-html40">
             throw new Error(res.message || "Đăng nhập thất bại");
           }
         } catch (err) {
-          errEl.textContent = err.message;
+          const msg = String(err.message || "");
+          if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+            errEl.innerHTML = `<strong>⚠️ Không thể kết nối tới server (port 4000).</strong><br>Vui lòng mở web qua: <a href="http://localhost:4000" target="_blank" style="color: #ea580c; text-decoration: underline; font-weight: 700;">http://localhost:4000</a>`;
+          } else {
+            errEl.textContent = msg || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản!";
+          }
           errEl.style.display = "block";
         } finally {
           submitBtn.disabled = false;
@@ -4498,6 +4847,791 @@ xmlns="http://www.w3.org/TR/REC-html40">
         qrDishPrintBtn.onclick = () => {
           handlePrintCard("qrDishCardPreview");
         };
+      }
+
+    
+
+      // ==========================================
+      // CHỨC NĂNG BẢN ĐỒ VÀ GPS: PHONG CÁCH GOOGLE MAPS
+      // ==========================================
+      let mapLeafletInstance = null;
+      let mapOriginMarker = null;
+      let mapDestMarker = null;
+      let mapRadiusCircle = null;
+      let mapRouteLine = null;
+      let mapNearbyMarkersLayer = null;
+
+      // Google Maps Tile Layers & Trạng thái bản đồ
+      let currentMapLayerType = "m"; // 'm' = Roadmap, 'y' = Satellite Hybrid, 'p' = Terrain
+      let activeTileLayer = null;
+      let currentTravelMode = "walking"; // 'walking' | 'two_wheeler' | 'driving'
+
+      // Toạ độ nơi xuất phát (mặc định Chùa Cầu)
+      let mapOriginCoords = {
+        lat: 15.8770,
+        lng: 108.3270,
+        label: "Chùa Cầu Hội An",
+      };
+
+      // Toạ độ nơi đến (mặc định Cao Lầu Bá Lễ Hội An)
+      let mapDestCoords = {
+        lat: 15.87858,
+        lng: 108.32986,
+        label: "Quán Cao lầu Bá Lễ",
+        address: "49/3 Trần Hưng Đạo, Phường Minh An, Hội An",
+      };
+
+      // Công thức Haversine tính khoảng cách theo mét
+      function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+        if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
+        const R = 6371e3;
+        const rad = Math.PI / 180;
+        const dLat = (lat2 - lat1) * rad;
+        const dLon = (lon2 - lon1) * rad;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return Math.round(R * c);
+      }
+
+      // Lấy khoảng cách nhập vào (quy đổi ra mét), ĐẢM BẢO KHÔNG ĐƯỢC ÂM
+      function getMapEnteredDistanceMeters() {
+        const input = $("#mapDistanceInput");
+        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
+        let raw = input ? parseFloat(input.value) : 0;
+
+        // BẢO ĐẢM KHÔNG ÂM
+        if (isNaN(raw) || raw < 0) {
+          raw = 0;
+          if (input) input.value = 0;
+        }
+
+        const meters = unit === "km" ? Math.round(raw * 1000) : Math.round(raw);
+        return Math.max(0, meters);
+      }
+
+      // Định vị địa chỉ người dùng gõ
+      async function geocodeAddress(query) {
+        if (!query || !query.trim()) return null;
+        const q = query.trim().toLowerCase();
+
+        // 1. Tìm trong danh sách món ăn & quán ăn
+        const foundDish = dishes.find(
+          (d) =>
+            (d.name && d.name.toLowerCase().includes(q)) ||
+            (d.translations?.vi?.name && d.translations.vi.name.toLowerCase().includes(q)) ||
+            (d.address && d.address.toLowerCase().includes(q)) ||
+            (d.shopVi && d.shopVi.toLowerCase().includes(q))
+        );
+        if (foundDish && foundDish.lat && foundDish.lng) {
+          return {
+            lat: Number(foundDish.lat),
+            lng: Number(foundDish.lng),
+            label: foundDish.translations?.vi?.name || foundDish.name,
+          };
+        }
+
+        // 2. Tìm trong danh sách địa danh Hội An quen thuộc
+        const landmarks = [
+          { name: "chùa cầu", lat: 15.8770, lng: 108.3270, label: "Chùa Cầu Hội An" },
+          { name: "chợ hội an", lat: 15.8777, lng: 108.3323, label: "Chợ Hội An" },
+          { name: "bến thuyền", lat: 15.8755, lng: 108.3285, label: "Bến thuyền Bạch Đằng" },
+          { name: "bạch đằng", lat: 15.8755, lng: 108.3285, label: "Đường Bạch Đằng, Hội An" },
+          { name: "trần phú", lat: 15.87785, lng: 108.33035, label: "Đường Trần Phú, Hội An" },
+          { name: "phan châu trinh", lat: 15.87955, lng: 108.33262, label: "Đường Phan Châu Trinh, Hội An" },
+          { name: "trần hưng đạo", lat: 15.87858, lng: 108.32986, label: "Đường Trần Hưng Đạo, Hội An" },
+          { name: "cẩm nam", lat: 15.87335, lng: 108.33685, label: "Cẩm Nam, Hội An" },
+          { name: "an bàng", lat: 15.9125, lng: 108.3370, label: "Bãi biển An Bàng" },
+          { name: "trà quế", lat: 15.9015, lng: 108.3385, label: "Làng rau Trà Quế" },
+          { name: "cửa đại", lat: 15.8950, lng: 108.3650, label: "Cửa Đại, Hội An" },
+        ];
+        const foundLm = landmarks.find((lm) => q.includes(lm.name));
+        if (foundLm) {
+          return { lat: foundLm.lat, lng: foundLm.lng, label: foundLm.label };
+        }
+
+        // 3. Nếu chưa khớp, thử tìm kiếm qua OpenStreetMap Nominatim
+        try {
+          const resp = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Hoi An, Vietnam')}&limit=1`
+          );
+          const data = await resp.json();
+          if (Array.isArray(data) && data.length > 0) {
+            return {
+              lat: Number(data[0].lat),
+              lng: Number(data[0].lon),
+              label: query,
+            };
+          }
+        } catch {}
+
+        return null;
+      }
+
+      // Khởi tạo các sự kiện cho ô nhập khoảng cách, vị trí và chế độ di chuyển Google Maps
+      function initMapDistanceInputListeners() {
+        const input = $("#mapDistanceInput");
+        const unitSelect = $("#mapDistanceUnit");
+        const errorEl = $("#mapDistanceError");
+        if (!input || input.dataset.initialized === "true") return;
+        input.dataset.initialized = "true";
+
+        // Chặn phím dấu trừ (-) ngay từ bàn phím
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "-" || e.key === "Subtract") {
+            e.preventDefault();
+            if (errorEl) {
+              errorEl.style.display = "block";
+              errorEl.textContent = "⚠️ Khoảng cách không được âm! Vui lòng chỉ nhập số lớn hơn hoặc bằng 0.";
+            }
+            input.style.borderColor = "#ef4444";
+          }
+        });
+
+        // Xử lý sự kiện nhập khoảng cách
+        const validateNonNegative = () => {
+          let val = parseFloat(input.value);
+          if (val < 0 || (input.value && input.value.trim().startsWith("-"))) {
+            if (errorEl) {
+              errorEl.style.display = "block";
+              errorEl.textContent = "⚠️ Khoảng cách không được âm! Đã tự động chuyển về 0.";
+            }
+            input.style.borderColor = "#ef4444";
+            input.value = 0;
+          } else {
+            if (errorEl) errorEl.style.display = "none";
+            input.style.borderColor = "var(--gold-border)";
+          }
+          updateMapCalculations();
+        };
+
+        input.addEventListener("input", validateNonNegative);
+        input.addEventListener("change", validateNonNegative);
+
+        if (unitSelect) {
+          unitSelect.addEventListener("change", () => {
+            updateMapCalculations();
+          });
+        }
+
+        // Bắt sự kiện các nút chọn nhanh khoảng cách (m hoặc km)
+        $$(".quick-dist-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const dist = btn.dataset.dist;
+            const unit = btn.dataset.unit || "m";
+            if (input) input.value = dist;
+            if (unitSelect) unitSelect.value = unit;
+            if (errorEl) errorEl.style.display = "none";
+            input.style.borderColor = "var(--gold-border)";
+            $$(".quick-dist-btn").forEach((b) => b.classList.toggle("active", b === btn));
+            updateMapCalculations();
+          });
+        });
+
+        // Nút Vị Trí Hiện Tại
+        const gpsBtn = $("#mapOriginGpsBtn");
+        if (gpsBtn) {
+          gpsBtn.onclick = () => {
+            if (!navigator.geolocation) {
+              alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
+              return;
+            }
+            gpsBtn.disabled = true;
+            gpsBtn.innerHTML = "<span>⏳</span> Đang định vị...";
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                mapOriginCoords.lat = Number(pos.coords.latitude.toFixed(6));
+                mapOriginCoords.lng = Number(pos.coords.longitude.toFixed(6));
+                mapOriginCoords.label = "Vị trí hiện tại của tôi (GPS)";
+                const originInput = $("#mapOriginInput");
+                if (originInput) originInput.value = "📍 Vị trí hiện tại của tôi (GPS)";
+                gpsBtn.disabled = false;
+                gpsBtn.innerHTML = "<span>📍</span> Vị trí hiện tại";
+                updateMapCalculations();
+                if (mapLeafletInstance) {
+                  mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 16, { duration: 1.2 });
+                }
+              },
+              (err) => {
+                gpsBtn.disabled = false;
+                gpsBtn.innerHTML = "<span>📍</span> Vị trí hiện tại";
+                alert("Không thể lấy GPS (" + err.message + "). Đang dùng toạ độ Hội An.");
+              },
+              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+            );
+          };
+        }
+
+        // Nhập địa chỉ xuất phát tự do
+        const originInput = $("#mapOriginInput");
+        if (originInput) {
+          originInput.addEventListener("change", async () => {
+            const val = originInput.value.trim();
+            if (!val || val.includes("Vị trí hiện tại")) return;
+            const res = await geocodeAddress(val);
+            if (res) {
+              mapOriginCoords.lat = res.lat;
+              mapOriginCoords.lng = res.lng;
+              mapOriginCoords.label = res.label;
+              updateMapCalculations();
+            }
+          });
+          originInput.addEventListener("keydown", async (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              originInput.blur();
+            }
+          });
+        }
+
+        // Đổi nơi đến
+        const destSelect = $("#mapDestinationSelect");
+        if (destSelect) {
+          destSelect.onchange = () => {
+            const val = destSelect.value;
+            const found = dishes.find((d) => String(d.id) === String(val)) || dishes[0];
+            if (found) {
+              mapDestCoords.lat = Number(found.lat) || 15.87858;
+              mapDestCoords.lng = Number(found.lng) || 108.32986;
+              mapDestCoords.label = found.translations?.vi?.name || found.name;
+              mapDestCoords.address = found.address || found.shopVi || "Hội An";
+              updateMapCalculations();
+            }
+          };
+        }
+
+        // Lọc trong phạm vi
+        const filterCheck = $("#mapFilterWithinRadius");
+        if (filterCheck) {
+          filterCheck.onchange = () => {
+            renderDishesDistanceTable();
+          };
+        }
+
+        // Bắt sự kiện chọn Chế độ di chuyển (Đi bộ / Xe máy / Ô tô) kiểu Google Maps
+        $$(".gmap-mode-tab").forEach((tab) => {
+          tab.onclick = () => {
+            currentTravelMode = tab.dataset.mode || "walking";
+            $$(".gmap-mode-tab").forEach((t) => t.classList.toggle("active", t === tab));
+            updateMapCalculations();
+          };
+        });
+
+        // Bắt sự kiện chọn Loại bản đồ Google Maps (Bản đồ / Vệ tinh / Địa hình)
+        $$(".gmap-type-btn").forEach((btn) => {
+          btn.onclick = () => {
+            const type = btn.dataset.type || "m";
+            currentMapLayerType = type;
+            $$(".gmap-type-btn").forEach((b) => b.classList.toggle("active", b === btn));
+            if (mapLeafletInstance) {
+              if (activeTileLayer) mapLeafletInstance.removeLayer(activeTileLayer);
+              activeTileLayer = createGoogleMapsTileLayer(type);
+              activeTileLayer.addTo(mapLeafletInstance);
+            }
+          };
+        });
+
+        // Nút bay nhanh về Vị trí của tôi
+        const flyUserBtn = $("#gmapFlyUserBtn");
+        if (flyUserBtn) {
+          flyUserBtn.onclick = () => {
+            if (mapLeafletInstance) {
+              mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 17, { duration: 1.2 });
+              if (mapOriginMarker) mapOriginMarker.openPopup();
+            }
+          };
+        }
+
+        // Nút bay nhanh về Phố Cổ Hội An
+        const flyHoiAnBtn = $("#gmapFlyHoiAnBtn");
+        if (flyHoiAnBtn) {
+          flyHoiAnBtn.onclick = () => {
+            if (mapLeafletInstance) {
+              mapLeafletInstance.flyTo([15.8778, 108.3285], 16, { duration: 1.2 });
+            }
+          };
+        }
+      }
+
+      // Hàm tạo TileLayer Google Maps chuẩn
+      function createGoogleMapsTileLayer(type) {
+        // 'm' = Roadmap, 'y' = Satellite Hybrid, 'p' = Terrain
+        const lyrs = type === "y" ? "y" : type === "p" ? "p" : "m";
+        return L.tileLayer(`https://mt1.google.com/vt/lyrs=${lyrs}&x={x}&y={y}&z={z}`, {
+          maxZoom: 21,
+          attribution: "&copy; Google Maps",
+        });
+      }
+
+      // Khởi tạo hoặc cập nhật bản đồ Leaflet theo phong cách Google Maps
+      function initOrUpdateLeafletMap(radiusMeters, dishesInRange) {
+        const mapContainer = $("#leafletMap");
+        const fallbackContainer = $("#mapFallbackContainer");
+        const fallbackFrame = $("#mapFallbackFrame");
+
+        if (typeof L === "undefined") {
+          if (mapContainer) mapContainer.style.display = "none";
+          if (fallbackContainer && fallbackFrame) {
+            fallbackContainer.style.display = "block";
+            fallbackFrame.src = `https://maps.google.com/maps?saddr=${mapOriginCoords.lat},${mapOriginCoords.lng}&daddr=${mapDestCoords.lat},${mapDestCoords.lng}&dirflg=w&output=embed`;
+          }
+          return;
+        }
+
+        if (fallbackContainer) fallbackContainer.style.display = "none";
+        if (mapContainer) mapContainer.style.display = "block";
+
+        if (!mapLeafletInstance) {
+          mapLeafletInstance = L.map("leafletMap", {
+            center: [mapOriginCoords.lat, mapOriginCoords.lng],
+            zoom: 16,
+            zoomControl: true,
+          });
+
+          // Khởi tạo layer Google Maps đầu tiên
+          activeTileLayer = createGoogleMapsTileLayer(currentMapLayerType).addTo(mapLeafletInstance);
+
+          // Nhấp lên bản đồ để thay đổi điểm xuất phát
+          mapLeafletInstance.on("click", (e) => {
+            mapOriginCoords.lat = Number(e.latlng.lat.toFixed(6));
+            mapOriginCoords.lng = Number(e.latlng.lng.toFixed(6));
+            mapOriginCoords.label = `Vị trí ghim (${mapOriginCoords.lat.toFixed(4)}, ${mapOriginCoords.lng.toFixed(4)})`;
+            const originInput = $("#mapOriginInput");
+            if (originInput) originInput.value = mapOriginCoords.label;
+            updateMapCalculations();
+          });
+        }
+
+        setTimeout(() => {
+          if (mapLeafletInstance) mapLeafletInstance.invalidateSize();
+        }, 150);
+
+        // Marker Nơi Xuất Phát (Điểm xanh dương Google Maps phát xung nhấp nháy, kéo thả được)
+        const originIcon = L.divIcon({
+          className: "gmap-origin-pin",
+          html: `
+            <div style="position:relative; width:34px; height:34px; display:flex; align-items:center; justify-content:center;">
+              <div style="position:absolute; width:32px; height:32px; border-radius:50%; background:rgba(26,115,232,0.3); animation:gmapPulse 2s infinite ease-out;"></div>
+              <div style="width:18px; height:18px; border-radius:50%; background:#1a73e8; border:3px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.4); z-index:2; cursor:move;" title="Nơi xuất phát (Kéo để đổi vị trí)"></div>
+            </div>
+          `,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17],
+          popupAnchor: [0, -18],
+        });
+
+        if (mapOriginMarker) {
+          mapOriginMarker.setLatLng([mapOriginCoords.lat, mapOriginCoords.lng]);
+        } else {
+          mapOriginMarker = L.marker([mapOriginCoords.lat, mapOriginCoords.lng], {
+            icon: originIcon,
+            draggable: true,
+            title: "Nơi xuất phát (Kéo thả để đổi toạ độ)",
+          }).addTo(mapLeafletInstance);
+
+          mapOriginMarker.on("dragend", (event) => {
+            const pos = event.target.getLatLng();
+            mapOriginCoords.lat = Number(pos.lat.toFixed(6));
+            mapOriginCoords.lng = Number(pos.lng.toFixed(6));
+            mapOriginCoords.label = `Toạ độ (${mapOriginCoords.lat.toFixed(4)}, ${mapOriginCoords.lng.toFixed(4)})`;
+            const originInput = $("#mapOriginInput");
+            if (originInput) originInput.value = mapOriginCoords.label;
+            updateMapCalculations();
+          });
+        }
+        mapOriginMarker.bindPopup(`
+          <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:180px;">
+            <div style="font-size:11px; font-weight:700; color:#1a73e8; margin-bottom:2px;">📍 ĐIỂM XUẤT PHÁT</div>
+            <div style="font-size:13px; font-weight:700; color:#202124;">${esc(mapOriginCoords.label)}</div>
+            <div style="font-size:11px; color:#5f6368; margin-top:4px;">Kéo thả chấm xanh để thay đổi vị trí của bạn</div>
+          </div>
+        `);
+
+        // Vòng tròn bán kính khoảng cách tìm kiếm bao quanh NƠI XUẤT PHÁT
+        if (mapRadiusCircle) {
+          mapRadiusCircle.setLatLng([mapOriginCoords.lat, mapOriginCoords.lng]);
+          mapRadiusCircle.setRadius(radiusMeters);
+        } else {
+          mapRadiusCircle = L.circle([mapOriginCoords.lat, mapOriginCoords.lng], {
+            radius: radiusMeters,
+            color: "#1a73e8",
+            fillColor: "#1a73e8",
+            fillOpacity: 0.12,
+            weight: 2,
+            dashArray: "5, 6",
+          }).addTo(mapLeafletInstance);
+        }
+
+        // Marker Nơi Đến Đang Chọn (Icon giọt nước đỏ đặc trưng của Google Maps)
+        const destIcon = L.divIcon({
+          className: "gmap-dest-pin",
+          html: `
+            <div style="filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4)); cursor:pointer;">
+              <svg width="34" height="42" viewBox="0 0 24 32" fill="none">
+                <path d="M12 0C5.372 0 0 5.372 0 12c0 8.8 12 20 12 20s12-11.2 12-20c0-6.628-5.372-12-12-12z" fill="#EA4335"/>
+                <path d="M12 0C5.372 0 0 5.372 0 12c0 8.8 12 20 12 20s12-11.2 12-20c0-6.628-5.372-12-12-12z" stroke="#B31412" stroke-width="0.8"/>
+                <circle cx="12" cy="11.5" r="4.5" fill="#FFFFFF"/>
+                <circle cx="12" cy="11.5" r="2" fill="#B31412"/>
+              </svg>
+            </div>
+          `,
+          iconSize: [34, 42],
+          iconAnchor: [17, 42],
+          popupAnchor: [0, -40],
+        });
+
+        if (mapDestMarker) {
+          mapDestMarker.setLatLng([mapDestCoords.lat, mapDestCoords.lng]);
+        } else {
+          mapDestMarker = L.marker([mapDestCoords.lat, mapDestCoords.lng], { icon: destIcon }).addTo(mapLeafletInstance);
+        }
+
+        const realDistMeters = calculateHaversineDistance(
+          mapOriginCoords.lat,
+          mapOriginCoords.lng,
+          mapDestCoords.lat,
+          mapDestCoords.lng
+        );
+        const distFormatted = realDistMeters >= 1000 ? (realDistMeters / 1000).toFixed(2) + " km" : realDistMeters + " m";
+        const walkMin = Math.max(1, Math.round(realDistMeters / 75));
+        const gmapDestUrl = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${mapDestCoords.lat},${mapDestCoords.lng}&travelmode=walking`;
+
+        mapDestMarker.bindPopup(`
+          <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:11px; font-weight:700; color:#ea4335; background:#fef2f2; padding:2px 6px; border-radius:4px;">🏁 Nơi đến</span>
+              <span style="font-size:11.5px; font-weight:700; color:#e37400;">⭐ 4.8</span>
+            </div>
+            <div style="font-size:14px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(mapDestCoords.label)}</div>
+            <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(mapDestCoords.address || 'Hội An')}</div>
+            <div style="font-size:12px; font-weight:700; color:#188038; margin-bottom:8px;">🚶 ~${walkMin} phút (${distFormatted})</div>
+            <a href="${gmapDestUrl}" target="_blank" rel="noopener noreferrer" style="display:block; text-align:center; padding:6px 10px; background:#1a73e8; color:#ffffff; border-radius:6px; font-size:11.5px; font-weight:700; text-decoration:none;">
+              ↗️ Mở Google Maps
+            </a>
+          </div>
+        `);
+
+        // Tuyến đường màu xanh Google Maps nối giữa Nơi xuất phát và Nơi đến
+        if (mapRouteLine) {
+          mapRouteLine.setLatLngs([
+            [mapOriginCoords.lat, mapOriginCoords.lng],
+            [mapDestCoords.lat, mapDestCoords.lng],
+          ]);
+        } else {
+          mapRouteLine = L.polyline(
+            [
+              [mapOriginCoords.lat, mapOriginCoords.lng],
+              [mapDestCoords.lat, mapDestCoords.lng],
+            ],
+            { color: "#1a73e8", weight: 4.5, opacity: 0.85 }
+          ).addTo(mapLeafletInstance);
+        }
+
+        // HIỂN THỊ TOÀN BỘ CÁC MÓN ĂN TRONG PHẠM VI KHOẢNG CÁCH TRÊN BẢN ĐỒ
+        if (!mapNearbyMarkersLayer) {
+          mapNearbyMarkersLayer = L.layerGroup().addTo(mapLeafletInstance);
+        } else {
+          mapNearbyMarkersLayer.clearLayers();
+        }
+
+        const selectedDestId = $("#mapDestinationSelect")?.value;
+
+        if (Array.isArray(dishesInRange)) {
+          dishesInRange.forEach((dish) => {
+            const dLat = Number(dish.lat);
+            const dLng = Number(dish.lng);
+            if (!dLat || !dLng) return;
+
+            // Bỏ qua nếu trùng với điểm đến chính (đã có cờ đỏ)
+            if (String(dish.id) === String(selectedDestId)) return;
+
+            const nearbyIcon = L.divIcon({
+              className: "gmap-food-pin",
+              html: `
+                <div style="filter:drop-shadow(0 2px 5px rgba(0,0,0,0.3)); cursor:pointer; background:#e37400; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; border:2px solid #ffffff;">🍲</div>
+              `,
+              iconSize: [30, 30],
+              iconAnchor: [15, 30],
+              popupAnchor: [0, -28],
+            });
+
+            const marker = L.marker([dLat, dLng], { icon: nearbyIcon });
+            const dishName = dish.translations?.vi?.name || dish.name;
+            const distTxt = dish.computedDist >= 1000 ? (dish.computedDist / 1000).toFixed(2) + ' km' : dish.computedDist + ' m';
+            const dishWalkMin = Math.max(1, Math.round(dish.computedDist / 75));
+            const dishGmapUrl = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${dLat},${dLng}&travelmode=walking`;
+
+            marker.bindPopup(`
+              <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                  <span style="font-size:11px; font-weight:700; color:#d97706; background:#fef3c7; padding:2px 6px; border-radius:4px;">Ẩm thực Hội An</span>
+                  <span style="font-size:11.5px; font-weight:700; color:#e37400;">⭐ 4.8</span>
+                </div>
+                <div style="font-size:13.5px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(dishName)}</div>
+                <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(dish.address || dish.shopVi || 'Hội An')}</div>
+                <div style="font-size:12px; font-weight:700; color:#188038; margin-bottom:8px;">🚶 ~${dishWalkMin} phút (${distTxt})</div>
+                <div style="display:flex; gap:6px;">
+                  <button onclick="selectMapDestination('${dish.id}')" style="flex:1; padding:6px 8px; background:#ea4335; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🏁 Chọn đến</button>
+                  <a href="${dishGmapUrl}" target="_blank" rel="noopener noreferrer" style="padding:6px 8px; background:#f1f3f4; color:#1a73e8; border:1px solid #dadce0; border-radius:6px; font-size:11px; font-weight:700; text-decoration:none; display:flex; align-items:center;">↗️ Google Maps</a>
+                </div>
+              </div>
+            `);
+            mapNearbyMarkersLayer.addLayer(marker);
+          });
+        }
+
+        // Căn chỉnh khung nhìn vừa vòng tròn phạm vi khoảng cách
+        try {
+          const circleBounds = mapRadiusCircle.getBounds();
+          mapLeafletInstance.fitBounds(circleBounds.pad(0.15));
+        } catch {}
+      }
+
+      // Hàm chọn điểm đến từ popup bản đồ
+      window.selectMapDestination = function(dishId) {
+        const destSelect = $("#mapDestinationSelect");
+        if (destSelect) {
+          destSelect.value = dishId;
+          const found = dishes.find((d) => String(d.id) === String(dishId));
+          if (found) {
+            mapDestCoords.lat = Number(found.lat) || 15.87858;
+            mapDestCoords.lng = Number(found.lng) || 108.32986;
+            mapDestCoords.label = found.translations?.vi?.name || found.name;
+            mapDestCoords.address = found.address || found.shopVi || "Hội An";
+          }
+          updateMapCalculations();
+        }
+      };
+
+      // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
+      function updateMapCalculations() {
+        const originDisplayEl = $("#mapOriginDisplay");
+        if (originDisplayEl) originDisplayEl.textContent = mapOriginCoords.label || "Điểm xuất phát";
+
+        const destDisplayEl = $("#mapDestDisplay");
+        if (destDisplayEl) destDisplayEl.textContent = mapDestCoords.label || "Điểm đến";
+
+        // Lấy khoảng cách nhập vào (quy đổi ra mét, luôn ≥ 0)
+        const enteredDistMeters = getMapEnteredDistanceMeters();
+        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
+        const enteredDisplayTxt = unit === "km"
+          ? (enteredDistMeters / 1000).toFixed(1) + " km"
+          : enteredDistMeters + " m";
+
+        // Tính khoảng cách thực tế giữa nơi xuất phát và nơi đến
+        const realDistMeters = calculateHaversineDistance(
+          mapOriginCoords.lat,
+          mapOriginCoords.lng,
+          mapDestCoords.lat,
+          mapDestCoords.lng
+        );
+        const realDisplayEl = $("#mapRealDistDisplay");
+        if (realDisplayEl) {
+          realDisplayEl.textContent = realDistMeters >= 1000
+            ? (realDistMeters / 1000).toFixed(2) + " km"
+            : realDistMeters + " m";
+        }
+
+        // Tính thời gian di chuyển theo chế độ Google Maps:
+        // Đi bộ: 75m / phút (~4.5 km/h)
+        // Xe máy: 416m / phút (~25 km/h)
+        // Ô tô: 500m / phút (~30 km/h)
+        let travelTimeText = "";
+        let gmapTravelModeParam = "walking";
+        if (currentTravelMode === "two_wheeler") {
+          const motoMin = Math.max(1, Math.round(realDistMeters / 416));
+          travelTimeText = `🛵 ~${motoMin} phút`;
+          gmapTravelModeParam = "two_wheeler";
+        } else if (currentTravelMode === "driving") {
+          const carMin = Math.max(1, Math.round(realDistMeters / 500));
+          travelTimeText = `🚗 ~${carMin} phút`;
+          gmapTravelModeParam = "driving";
+        } else {
+          const walkMin = Math.max(1, Math.round(realDistMeters / 75));
+          travelTimeText = `🚶 ~${walkMin} phút`;
+          gmapTravelModeParam = "walking";
+        }
+
+        const travelTimeEl = $("#gmapTravelTimeText");
+        if (travelTimeEl) travelTimeEl.textContent = travelTimeText;
+
+        // Cập nhật đường link mở Google Maps trực tiếp
+        const extLinkEl = $("#gmapExternalLink");
+        if (extLinkEl) {
+          extLinkEl.href = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${mapDestCoords.lat},${mapDestCoords.lng}&travelmode=${gmapTravelModeParam}`;
+        }
+
+        // Cập nhật trạng thái điểm đến so với khoảng cách đã nhập
+        const statusDisplayEl = $("#mapStatusDisplay");
+        const isInsideEnteredRadius = realDistMeters <= enteredDistMeters;
+
+        if (statusDisplayEl) {
+          if (isInsideEnteredRadius) {
+            statusDisplayEl.innerHTML = `<span style="color:#059669; background:#ecfdf5; border:1px solid #a7f3d0; padding:3px 8px; border-radius:8px; font-weight:700;">✅ Trong ${enteredDisplayTxt}</span>`;
+          } else {
+            const diffMeters = realDistMeters - enteredDistMeters;
+            const diffTxt = diffMeters >= 1000 ? (diffMeters / 1000).toFixed(2) + ' km' : diffMeters + ' m';
+            statusDisplayEl.innerHTML = `<span style="color:#dc2626; background:#fef2f2; border:1px solid #fecaca; padding:3px 8px; border-radius:8px; font-weight:700;">📍 Vượt +${diffTxt}</span>`;
+          }
+        }
+
+        // Tính toán toàn bộ các món ăn nằm trong phạm vi khoảng cách
+        const mappedDishes = dishes.map((d) => {
+          const dLat = Number(d.lat) || 15.8782;
+          const dLng = Number(d.lng) || 108.3265;
+          const dist = calculateHaversineDistance(mapOriginCoords.lat, mapOriginCoords.lng, dLat, dLng);
+          return {
+            ...d,
+            computedDist: dist,
+            isWithin: dist <= enteredDistMeters,
+          };
+        });
+
+        const dishesInRange = mappedDishes.filter((d) => d.isWithin);
+
+        // Cập nhật số lượng món ăn trong phạm vi
+        const counterEl = $("#mapCounterText");
+        if (counterEl) {
+          counterEl.textContent = `Tìm thấy ${dishesInRange.length} món ăn trong phạm vi ${enteredDisplayTxt}`;
+        }
+
+        const tableTitleEl = $("#mapTableTitle");
+        if (tableTitleEl) {
+          tableTitleEl.textContent = `Toàn bộ món ăn trong phạm vi ${enteredDisplayTxt} (${dishesInRange.length} món):`;
+        }
+
+        // Cập nhật bản đồ Leaflet (hiển thị toàn bộ các món trong phạm vi)
+        initOrUpdateLeafletMap(enteredDistMeters, dishesInRange);
+
+        // Cập nhật bảng món ăn
+        renderDishesDistanceTable(mappedDishes, enteredDistMeters);
+      }
+
+      // Bảng hiển thị toàn bộ món ăn trong phạm vi khoảng cách đã nhập
+      function renderDishesDistanceTable(precomputedList, enteredDistMeters) {
+        const tbody = $("#mapDishesTableBody");
+        if (!tbody) return;
+
+        if (!dishes || dishes.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 12px;">Chưa có món ăn nào trong hệ thống.</td></tr>`;
+          return;
+        }
+
+        const limitMeters = enteredDistMeters !== undefined ? enteredDistMeters : getMapEnteredDistanceMeters();
+        const onlyWithin = $("#mapFilterWithinRadius") ? $("#mapFilterWithinRadius").checked : true;
+        const selectedDestId = $("#mapDestinationSelect")?.value;
+
+        const list = precomputedList || dishes.map((d) => {
+          const dLat = Number(d.lat) || 15.8782;
+          const dLng = Number(d.lng) || 108.3265;
+          const dist = calculateHaversineDistance(mapOriginCoords.lat, mapOriginCoords.lng, dLat, dLng);
+          return {
+            ...d,
+            computedDist: dist,
+            isWithin: dist <= limitMeters,
+          };
+        });
+
+        list.sort((a, b) => a.computedDist - b.computedDist);
+        const filtered = onlyWithin ? list.filter((d) => d.isWithin) : list;
+
+        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
+        const enteredDisplayTxt = unit === "km"
+          ? (limitMeters / 1000).toFixed(1) + " km"
+          : limitMeters + " m";
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 16px;">
+            Không có món ăn nào trong phạm vi ${enteredDisplayTxt}.<br>
+            <span style="font-size: 11px; color: #d97706;">Gợi ý: Thử tăng khoảng cách lên (ví dụ: 1km hoặc 2km) hoặc bỏ dấu tick để xem toàn bộ.</span>
+          </td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = filtered
+          .map((d) => {
+            const isSelected = String(d.id) === String(selectedDestId);
+            const distLabel = d.computedDist >= 1000
+              ? (d.computedDist / 1000).toFixed(2) + " km"
+              : d.computedDist + " m";
+            const statusBadge = d.isWithin
+              ? `<span style="color:#059669; font-weight:700; background:#ecfdf5; padding:2px 6px; border-radius:6px; border:1px solid #a7f3d0;">✓ Trong ${enteredDisplayTxt}</span>`
+              : `<span style="color:var(--muted);">Cách ${distLabel}</span>`;
+
+            return `
+              <tr style="${isSelected ? 'background: #fffbeb;' : ''} border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 7px 10px; font-weight: 700; color: var(--ink);">${esc(d.translations?.vi?.name || d.name)}</td>
+                <td style="padding: 7px 10px; color: var(--desc); font-size: 11.5px;">${esc(d.address || d.shopVi || "Phố cổ Hội An")}</td>
+                <td style="padding: 7px 10px; text-align: center; font-weight: 700; color: #2563eb;">${distLabel}</td>
+                <td style="padding: 7px 10px; text-align: center;">${statusBadge}</td>
+                <td style="padding: 7px 10px; text-align: center;">
+                  <button type="button" class="table-view-dish-map-btn" data-dish-id="${d.id}" style="padding: 3px 8px; background: ${isSelected ? '#dc2626' : '#ffffff'}; color: ${isSelected ? '#ffffff' : 'var(--ink)'}; border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                    ${isSelected ? 'Đang chọn' : 'Chọn đến'}
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join("");
+
+        $$(".table-view-dish-map-btn").forEach((btn) => {
+          btn.onclick = () => {
+            const did = btn.dataset.dishId;
+            selectMapDestination(did);
+          };
+        });
+      }
+
+      // Render tab Bản đồ và GPS
+      function renderMapSection() {
+        initMapDistanceInputListeners();
+
+        // Nạp danh sách món ăn vào Nơi Đến
+        const destSelect = $("#mapDestinationSelect");
+        if (destSelect) {
+          const currentVal = destSelect.value;
+          destSelect.innerHTML = dishes
+            .map((d) => {
+              const name = d.translations?.vi?.name || d.name;
+              const addr = d.address || d.shopVi || "Phố cổ Hội An";
+              return `<option value="${d.id}" ${String(d.id) === String(currentVal) ? 'selected' : ''}>${esc(name)} (${esc(addr)})</option>`;
+            })
+            .join("");
+
+          if (dishes.length > 0) {
+            const activeDest = dishes.find((d) => String(d.id) === String(destSelect.value)) || dishes[0];
+            mapDestCoords.lat = Number(activeDest.lat) || 15.87858;
+            mapDestCoords.lng = Number(activeDest.lng) || 108.32986;
+            mapDestCoords.label = activeDest.translations?.vi?.name || activeDest.name;
+            mapDestCoords.address = activeDest.address || activeDest.shopVi || "Hội An";
+          }
+        }
+
+        // Nạp danh sách gợi ý địa chỉ vào Datalist
+        const datalist = $("#mapOriginDatalist");
+        if (datalist && dishes.length > 0) {
+          const landmarkOpts = `
+            <option value="Chùa Cầu Hội An"></option>
+            <option value="Chợ Hội An"></option>
+            <option value="Bến thuyền Bạch Đằng"></option>
+            <option value="Bãi biển An Bàng"></option>
+            <option value="Làng rau Trà Quế"></option>
+          `;
+          const dishAddressOpts = dishes
+            .filter((d) => d.address)
+            .map((d) => `<option value="${esc(d.address)}">${esc(d.translations?.vi?.name || d.name)}</option>`)
+            .join("");
+          datalist.innerHTML = landmarkOpts + dishAddressOpts;
+        }
+
+        const mapBadge = $("#navMapBadge");
+        if (mapBadge) {
+          mapBadge.textContent = dishes.length ? `${dishes.length} GPS` : "GPS";
+        }
+
+        updateMapCalculations();
       }
 
     </script>

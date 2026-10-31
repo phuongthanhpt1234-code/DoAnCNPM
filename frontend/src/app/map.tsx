@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, Dimensions, Linking, Platform, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Linking, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as LocalesData from '../locales';
 import { api, getClientDeviceId, getDishes } from '../services/api';
 import { playSpeech, stopSpeech } from '../services/speech';
@@ -349,7 +349,8 @@ export default function MapScreen() {
         ? parseFloat(params.lng as string)
         : (foundDish?.lng || 108.3265);
 
-  const initDist = params.initialDistance ? parseInt(params.initialDistance as string, 10) : 10;
+  const initDist = params.initialDistance ? Math.max(0, parseInt(params.initialDistance as string, 10)) : 10;
+  const [customDistance, setCustomDistance] = useState<number>(initDist);
   const [isSimulatedNear, setIsSimulatedNear] = useState<boolean>(initDist <= 20);
   const [userCoords] = useState({
     lat: isMultiStopMode && parsedRouteStops.length > 0 ? parsedRouteStops[0].lat : (initDist <= 20 ? foodLat - 0.00008 : 15.8780),
@@ -398,8 +399,17 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
     }
   }, [isSpeaking, waveAnim]);
 
-  const distanceMeters = isSimulatedNear ? (initDist <= 20 ? initDist : 10) : 220;
+  const distanceMeters = customDistance;
   const isInside20m = distanceMeters <= 20;
+
+  const handleDistanceChange = (valStr: string) => {
+    // Loại bỏ hoàn toàn dấu âm (-) và các ký tự không phải số, đảm bảo ô nhập không được âm
+    const cleanStr = valStr.replace(/[^0-9]/g, '');
+    const num = parseInt(cleanStr, 10);
+    const safeVal = isNaN(num) ? 0 : Math.max(0, num);
+    setCustomDistance(safeVal);
+    setIsSimulatedNear(safeVal <= 20);
+  };
   const uiLabels = UI_LABELS[voiceLang] || UI_LABELS.vi;
 
   const getDisplayContent = (lang: LangCode) => {
@@ -582,12 +592,31 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
 
           <TouchableOpacity 
             style={[styles.simBtn, { backgroundColor: isInside20m ? theme.green : theme.accent }]} 
-            onPress={() => setIsSimulatedNear(!isSimulatedNear)}
+            onPress={() => {
+              const nextVal = isInside20m ? 220 : 10;
+              setCustomDistance(nextVal);
+              setIsSimulatedNear(!isInside20m);
+            }}
           >
             <Text style={{ color: '#FFFFFF', fontSize: 11, fontWeight: 'bold' }}>
               {isInside20m ? uiLabels.switchRemoteBtn : uiLabels.switchNearBtn}
             </Text>
           </TouchableOpacity>
+        </View>
+
+        <View style={styles.distInputRow}>
+          <Text style={[styles.distInputLabel, { color: theme.textMain }]}>
+            Khoảng cách tới chỗ mình:
+          </Text>
+          <TextInput
+            style={[styles.distInput, { backgroundColor: theme.subBox, color: theme.textMain, borderColor: theme.border }]}
+            value={String(distanceMeters)}
+            onChangeText={handleDistanceChange}
+            keyboardType="numeric"
+            placeholder="0"
+            placeholderTextColor={theme.textSub}
+          />
+          <Text style={[styles.distInputUnit, { color: theme.accent }]}>mét (≥ 0)</Text>
         </View>
 
         <View style={styles.modeTabsRow}>
@@ -749,6 +778,10 @@ const styles = StyleSheet.create({
   topBarRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
   backBtn: { padding: 7, borderRadius: 10 },
   simBtn: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  distInputRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, paddingHorizontal: 4 },
+  distInputLabel: { fontSize: 11, fontWeight: 'bold', marginRight: 6 },
+  distInput: { width: 68, height: 28, borderWidth: 1, borderRadius: 6, paddingHorizontal: 6, fontSize: 12, fontWeight: 'bold', textAlign: 'center' },
+  distInputUnit: { fontSize: 11, fontWeight: 'bold', marginLeft: 6 },
   modeTabsRow: { flexDirection: 'row', gap: 6 },
   modeTab: { flex: 1, alignItems: 'center', paddingVertical: 6, borderRadius: 8 },
   mapBase: { flex: 1, width: '100%', paddingBottom: height * 0.50 },
