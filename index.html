@@ -2894,6 +2894,95 @@
     flex-wrap: wrap;
   }
 }
+
+#secMap .gm-directions-inputs {
+  position: relative;
+  flex: 1 1 420px;
+  min-width: 0;
+  padding: 14px;
+  background: #fffdf8;
+  border: 1px solid #eadbcd;
+  border-radius: 14px;
+}
+
+#secMap .gm-direction-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  position: relative;
+  z-index: 1;
+}
+
+#secMap .gm-direction-row + .gm-direction-row {
+  margin-top: 12px;
+}
+
+#secMap .gm-origin-dot,
+#secMap .gm-destination-dot {
+  display: block;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  background: #fffdf8;
+}
+
+#secMap .gm-origin-dot {
+  border: 3px solid #2563eb;
+  border-radius: 50%;
+}
+
+#secMap .gm-destination-dot {
+  border: 3px solid #a52629;
+  border-radius: 4px;
+}
+
+#secMap .gm-direction-connector {
+  height: 14px;
+  margin: 3px 0 3px 6px;
+  border-left: 2px dotted #b9afa7;
+}
+
+#secMap .gm-direction-field {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid #e5d9ce;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+#secMap .gm-direction-field:focus-within {
+  border-color: #b58a42;
+  box-shadow: 0 0 0 2px rgba(223, 179, 72, 0.15);
+}
+
+#secMap .gm-direction-field label {
+  display: block;
+  margin-bottom: 4px;
+  color: #927c70;
+  font-size: 11px;
+}
+
+#secMap .gm-direction-field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #482a2d;
+  font: inherit;
+  font-size: 14px;
+}
+
+#secMap #gmDirectionsStatus {
+  margin: 10px 0 0 27px;
+  color: #927c70;
+  font-size: 11px;
+  line-height: 1.5;
+}
 </style>
   </head>
   <body>
@@ -3214,9 +3303,7 @@
                     <div style="text-align: right">
                       <span class="presence-meta">Trạng thái kết nối</span>
                       <br />
-                      <b style="color: #34d399; font-size: 13px"
-                        >● Đang đồng bộ thời gian thực</b
-                      >
+                      
                     </div>
                   </div>
                 </div>
@@ -3558,53 +3645,87 @@
     </div>
 
     <div class="qm-filters">
-      <div class="qm-field">
-        <label for="mapOriginInput">
-          Vị trí xuất phát
-        </label>
+  <!-- Hai ô xuất phát và điểm đến -->
+  <div class="gm-directions-inputs">
+    <div class="gm-direction-row">
+      <span class="gm-origin-dot" aria-hidden="true"></span>
+
+      <div class="gm-direction-field">
+        <label for="mapOriginInput">Điểm xuất phát</label>
 
         <input
           id="mapOriginInput"
           type="text"
-          value="Chùa Cầu Hội An"
           list="mapOriginDatalist"
-          placeholder="Nhập địa chỉ hoặc chọn trên bản đồ"
+          placeholder="Vị trí hiện tại hoặc nhập địa chỉ…"
+          autocomplete="off"
         />
 
         <datalist id="mapOriginDatalist"></datalist>
       </div>
-
-      <button
-        type="button"
-        id="mapOriginGpsBtn"
-        class="qm-secondary"
-      >
-        ◎ Lấy vị trí thiết bị
-      </button>
-
-      <div class="qm-divider"></div>
-
-      <div class="qm-field qm-radius">
-        <label for="mapDistanceInput">
-          Bán kính tìm kiếm
-        </label>
-
-        <select id="mapDistanceInput">
-          <option value="500">Trong vòng 500 m</option>
-          <option value="1000">Trong vòng 1 km</option>
-          <option value="2000">Trong vòng 2 km</option>
-        </select>
-      </div>
-
-      <button
-        type="button"
-        class="qm-primary"
-        onclick="updateMapCalculations()"
-      >
-        Quét quanh đây <span aria-hidden="true">↗</span>
-      </button>
     </div>
+
+    <div
+      class="gm-direction-connector"
+      aria-hidden="true"
+    ></div>
+
+    <div class="gm-direction-row">
+      <span class="gm-destination-dot" aria-hidden="true"></span>
+
+      <div class="gm-direction-field">
+        <label for="mapDestinationInput">Nơi muốn đến</label>
+
+        <input
+          id="mapDestinationInput"
+          type="text"
+          list="mapDestinationSuggestions"
+          placeholder="Nhập tên quán hoặc chọn quán trên bản đồ…"
+          autocomplete="off"
+        />
+
+        <datalist id="mapDestinationSuggestions"></datalist>
+      </div>
+    </div>
+
+    <p id="gmDirectionsStatus" role="status">
+      Nhập điểm xuất phát hoặc lấy GPS, rồi chọn quán muốn đến.
+    </p>
   </div>
+
+  <!-- Lấy vị trí thiết bị -->
+  <button
+    type="button"
+    id="mapOriginGpsBtn"
+    class="qm-secondary"
+  >
+    ◎ Lấy vị trí GPS
+  </button>
+
+  <div class="qm-divider"></div>
+
+  <!-- Bán kính radar -->
+  <div class="qm-field qm-radius">
+    <label for="mapDistanceInput">
+      Bán kính tìm kiếm
+    </label>
+
+    <select id="mapDistanceInput">
+      <option value="500" selected>Trong vòng 500 m</option>
+      <option value="1000">Trong vòng 1 km</option>
+      <option value="2000">Trong vòng 2 km</option>
+    </select>
+  </div>
+
+  <button
+    type="button"
+    class="qm-primary"
+    onclick="updateMapCalculations()"
+  >
+    Quét quanh đây <span aria-hidden="true">↗</span>
+  </button>
+</div>
+</div>
 
   <div class="qm-workspace">
     <!-- BẢN ĐỒ BÊN TRÁI -->
@@ -6586,6 +6707,7 @@ async function loadRoadRoute() {
             input.style.borderColor = "var(--gold-border)";
           }
           updateMapCalculations();
+          gmInitDirectionsInputs();
         };
 
         input.addEventListener("input", validateNonNegative);
@@ -6979,6 +7101,7 @@ loadRoadRoute();
 
       // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
       function updateMapCalculations() {
+        gmSyncDestinationInput();
         const originDisplayEl = $("#mapOriginDisplay");
         if (originDisplayEl) originDisplayEl.textContent = mapOriginCoords.label || "Điểm xuất phát";
 
@@ -7337,6 +7460,7 @@ function amUpdateDetails() {
 
   document.getElementById("amEdit").disabled =
     !d || state.editing;
+
   document.getElementById("amPin").disabled = !state.editing;
   document.getElementById("amGps").disabled = !state.editing;
   document.getElementById("amCancel").disabled = !state.editing;
@@ -7651,6 +7775,202 @@ function renderAdminLocationManager() {
   amRenderList();
   amUpdateDetails();
   requestAnimationFrame(() => state.map.invalidateSize());
+}
+
+let gmInitialGpsRequested = false;
+let gmOriginRequest = 0;
+
+function gmDirectionsStatus(message) {
+  const element = document.getElementById("gmDirectionsStatus");
+  if (element) element.textContent = message;
+}
+
+function gmDestinationLabel(d) {
+  const name = d.translations?.vi?.name || d.name || "Chưa đặt tên";
+  return d.address ? `${name} · ${d.address}` : name;
+}
+
+function gmSyncDestinationInput() {
+  const input = document.getElementById("mapDestinationInput");
+  if (!input || document.activeElement === input) return;
+
+  const id = document.getElementById("mapDestinationSelect")?.value;
+  const selected = dishes.find((d) => String(d.id) === String(id));
+
+  input.value = selected
+    ? gmDestinationLabel(selected)
+    : mapDestCoords.label || "";
+}
+
+function gmInitDirectionsInputs() {
+  const originInput = document.getElementById("mapOriginInput");
+  const destinationInput =
+    document.getElementById("mapDestinationInput");
+
+  const suggestions =
+    document.getElementById("mapDestinationSuggestions");
+
+  const gpsButton = document.getElementById("mapOriginGpsBtn");
+
+  if (!originInput || !destinationInput || !suggestions) return;
+
+  const validPlaces = dishes.filter((d) => {
+    return (
+      d.lat !== null && d.lat !== undefined &&
+      String(d.lat).trim() !== "" &&
+      d.lng !== null && d.lng !== undefined &&
+      String(d.lng).trim() !== "" &&
+      Number.isFinite(Number(d.lat)) &&
+      Number.isFinite(Number(d.lng)) &&
+      Math.abs(Number(d.lat)) <= 90 &&
+      Math.abs(Number(d.lng)) <= 180
+    );
+  });
+
+  suggestions.replaceChildren();
+
+  validPlaces.forEach((d) => {
+    const option = document.createElement("option");
+    option.value = gmDestinationLabel(d);
+    suggestions.append(option);
+  });
+
+  destinationInput.oninput = () => {
+    gmDirectionsStatus(
+      "Điểm đến mới chưa áp dụng. Chọn một quán trong gợi ý."
+    );
+  };
+
+  destinationInput.onchange = () => {
+    const text = destinationInput.value.trim().toLocaleLowerCase("vi");
+
+    const matches = validPlaces.filter((d) => {
+      const fullLabel = gmDestinationLabel(d).toLocaleLowerCase("vi");
+      const name = (d.translations?.vi?.name || d.name || "")
+        .toLocaleLowerCase("vi");
+
+      return fullLabel === text || name === text;
+    });
+
+    if (matches.length !== 1) {
+      gmDirectionsStatus(
+        matches.length > 1
+          ? "Có nhiều quán trùng tên. Chọn gợi ý có địa chỉ đầy đủ."
+          : "Chọn một quán đã cập nhật trong danh sách gợi ý. Điểm đến cũ được giữ nguyên."
+      );
+      return;
+    }
+
+    const selected = matches[0];
+
+    // Dùng hàm chọn quán hiện có của dự án.
+    selectMapDestination(selected.id);
+
+    destinationInput.value = gmDestinationLabel(selected);
+    gmDirectionsStatus("Đã cập nhật điểm đến.");
+  };
+
+  destinationInput.onkeydown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      destinationInput.blur();
+    }
+  };
+
+  // Nhập địa chỉ mới sẽ vô hiệu hóa kết quả GPS đang chờ.
+  originInput.oninput = () => {
+    gmOriginRequest++;
+
+    gmDirectionsStatus(
+      "Địa chỉ xuất phát mới chưa áp dụng. Nhấn Enter để tìm."
+    );
+  };
+
+  if (gpsButton) {
+    gpsButton.onclick = () => {
+      if (!navigator.geolocation) {
+        gmDirectionsStatus(
+          "Trình duyệt không hỗ trợ GPS. Vui lòng nhập địa chỉ xuất phát."
+        );
+        return;
+      }
+
+      const request = ++gmOriginRequest;
+      gpsButton.disabled = true;
+      gpsButton.textContent = "Đang lấy GPS…";
+      gmDirectionsStatus("Đang xác định vị trí thiết bị…");
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          gpsButton.disabled = false;
+          gpsButton.textContent = "Lấy lại vị trí GPS";
+
+          if (request !== gmOriginRequest) return;
+
+          const { latitude, longitude, accuracy } = position.coords;
+
+          mapOriginCoords = {
+            lat: latitude,
+            lng: longitude,
+            label: "Vị trí hiện tại (GPS)",
+          };
+
+          originInput.value = mapOriginCoords.label;
+
+          // Nếu đã thêm chức năng hai POI, thoát chế độ đó.
+          if (typeof poiPairActive !== "undefined") {
+            poiPairActive = false;
+            poiPreviousState = null;
+          }
+
+          roadRouteCache = null;
+          updateMapCalculations();
+
+          if (mapRadiusCircle) {
+            mapRadiusCircle.setStyle({
+              opacity: 1,
+              fillOpacity: 0.12,
+            });
+          }
+
+          const accuracyText = Number.isFinite(accuracy)
+            ? ` Độ chính xác khoảng ±${Math.round(accuracy)} m.`
+            : "";
+
+          gmDirectionsStatus(
+            "Đã dùng vị trí GPS làm điểm xuất phát." + accuracyText
+          );
+        },
+        () => {
+          gpsButton.disabled = false;
+          gpsButton.textContent = "Thử lấy lại GPS";
+
+          if (request !== gmOriginRequest) return;
+
+          // Hiển thị đúng điểm đang dùng, không gắn nhãn GPS sai.
+          originInput.value = mapOriginCoords.label || "";
+
+          gmDirectionsStatus(
+            "Không lấy được GPS. Điểm xuất phát hiện tại được giữ nguyên; " +
+            "bạn có thể nhập địa chỉ khác."
+          );
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        }
+      );
+    };
+  }
+
+  gmSyncDestinationInput();
+
+  // Tự đề nghị lấy GPS một lần khi mở bản đồ.
+  if (!gmInitialGpsRequested && gpsButton) {
+    gmInitialGpsRequested = true;
+    gpsButton.click();
+  }
 }
     </script>
   </body>
