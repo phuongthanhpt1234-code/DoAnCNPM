@@ -3610,27 +3610,6 @@
               <!-- BẢN ĐỒ VÀ GPS -->
 <section class="alt-panel" id="secMap" hidden>
 
-  <div class="am-view-tabs" role="group" aria-label="Chức năng bản đồ">
-  <button
-    type="button"
-    id="mapRadarTab"
-    class="active"
-    aria-pressed="true"
-    onclick="switchAdminMapView('radar')"
-  >
-    Radar và chỉ đường
-  </button>
-
-  <button
-    type="button"
-    id="mapManageTab"
-    aria-pressed="false"
-    onclick="switchAdminMapView('manage')"
-  >
-    Quản lý vị trí quán
-  </button>
-</div>
-
 <div id="mapRadarView">
   <div class="qm-toolbar">
     <div class="qm-toolbar-title">
@@ -3877,123 +3856,6 @@
 
 </div><!-- Đóng mapRadarView -->
 
-<div id="mapManageView" hidden>
-  <!-- DÁN NỘI DUNG GIAO DIỆN QUẢN LÝ VÀO ĐÂY -->
-   <div class="am-header">
-  <div>
-    <span class="am-eyebrow">QUẢN TRỊ NỘI DUNG</span>
-    <h2>Quản lý vị trí quán</h2>
-    <p>Kiểm tra địa chỉ và cập nhật tọa độ các quán đã lưu.</p>
-  </div>
-
-  <button type="button" id="amShowAll">
-    Hiện các quán trên bản đồ
-  </button>
-</div>
-
-<div class="am-stats">
-  <div>
-    <span>Tổng địa điểm</span>
-    <strong id="amTotal">0</strong>
-  </div>
-
-  <div>
-    <span>Có tọa độ</span>
-    <strong id="amLocated">0</strong>
-  </div>
-
-  <div>
-    <span>Chưa có tọa độ</span>
-    <strong id="amMissing">0</strong>
-  </div>
-</div>
-
-<div class="am-toolbar">
-  <input
-    id="amSearch"
-    type="search"
-    placeholder="Tìm tên quán hoặc địa chỉ đã lưu…"
-    aria-label="Tìm địa điểm đã lưu"
-  >
-
-  <select id="amFilter" aria-label="Trạng thái tọa độ">
-    <option value="all">Tất cả địa điểm</option>
-    <option value="located">Đã có tọa độ</option>
-    <option value="missing">Chưa có tọa độ</option>
-  </select>
-</div>
-
-<div class="am-workspace">
-  <div class="am-map-panel">
-    <div class="am-map-heading">
-      <strong>Bản đồ địa điểm</strong>
-      <span>Đỏ: đã lưu · Ghim xanh: vị trí đang sửa</span>
-    </div>
-
-    <div
-      id="adminLocationMap"
-      aria-label="Bản đồ quản lý vị trí quán"
-    ></div>
-
-    <p id="amMessage" class="am-message" role="status">
-      Chọn một quán để xem hoặc chỉnh sửa vị trí.
-    </p>
-
-    <div class="am-editor">
-      <span class="am-eyebrow">ĐỊA ĐIỂM ĐANG CHỌN</span>
-
-      <h3 id="amName">Chưa chọn địa điểm</h3>
-      <p id="amAddress">—</p>
-
-      <div class="am-coordinates">
-        <div>
-          <span>Vĩ độ</span>
-          <strong id="amLat">—</strong>
-        </div>
-
-        <div>
-          <span>Kinh độ</span>
-          <strong id="amLng">—</strong>
-        </div>
-      </div>
-
-      <p id="amSource">Nguồn vị trí: —</p>
-
-      <div class="am-actions">
-        <button type="button" id="amEdit" disabled>
-          Sửa vị trí
-        </button>
-
-        <button type="button" id="amPin" disabled>
-          Ghim trên bản đồ
-        </button>
-
-        <button type="button" id="amGps" disabled>
-          Lấy GPS hiện tại
-        </button>
-
-        <button type="button" id="amApply" disabled>
-          Tiếp tục lưu
-        </button>
-
-        <button type="button" id="amCancel" disabled>
-          Hủy
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <aside class="am-sidebar">
-    <div class="am-list-heading">
-      <h3>Địa điểm đã cập nhật</h3>
-      <span id="amCount">0 địa điểm</span>
-    </div>
-
-    <div id="amList"></div>
-  </aside>
-</div>
-</div>
-
 </section>
 
 
@@ -4169,6 +4031,17 @@
           <input type="checkbox" name="is_active" checked />
           Hiển thị món ăn này trên trang chủ
         </label>
+        <div style="margin:16px 0;">
+  <button type="button" id="dishMapOpen">Chọn tọa độ trên bản đồ</button>
+  <div id="dishMapPanel" hidden style="margin-top:12px;border:1px solid #eadbcd;border-radius:10px;overflow:hidden;">
+    <div id="dishMapCanvas" style="height:300px;width:100%;"></div>
+    <p id="dishMapStatus" role="status" style="margin:0;padding:12px;font-size:13px;color:#927c70;">Bấm trên bản đồ hoặc kéo ghim đến vị trí quán.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px;">
+      <button type="button" id="dishMapCancel">Hủy chọn</button>
+      <button type="button" id="dishMapApply">Dùng tọa độ này</button>
+    </div>
+  </div>
+</div>
         <p id="formErr" style="color: var(--danger); margin: 8px 0 0"></p>
         <div class="foot">
           <button type="button" id="cancel">Đóng</button>
@@ -5025,7 +4898,7 @@
         const secMapEl = $("#secMap");
         if (secMapEl) {
           secMapEl.hidden = nav !== "map";
-if (nav === "map") switchAdminMapView(adminMapView);        }
+if (nav === "map") renderMapSection();        }
 
         mainGrid.classList.toggle("single-col", true);
         refresh();
@@ -5454,12 +5327,7 @@ $("#dlg").close();
 await refresh();
 
 if (!document.getElementById("secMap").hidden) {
-  amRemoveDraft();
-  switchAdminMapView(adminMapView);
-
-  if (adminMapView === "manage") {
-    amMessage("Đã lưu thông tin và cập nhật vị trí trên bản đồ.");
-  }
+  renderMapSection();
 }
         } catch (err) {
           $("#formErr").textContent = err.message;
@@ -7405,378 +7273,6 @@ if (travelTimeElement) {
       }
 updateQmRoutePreview();
 
-const adminLocations = {
-  map: null,
-  layer: null,
-  draftMarker: null,
-  selected: null,
-  draft: null,
-  editing: false,
-  picking: false,
-  version: 0,
-};
-
-function amValidPoint(d) {
-  return (
-    d &&
-    d.lat !== null && d.lat !== undefined && d.lat !== "" &&
-    d.lng !== null && d.lng !== undefined && d.lng !== "" &&
-    Number.isFinite(Number(d.lat)) &&
-    Number.isFinite(Number(d.lng)) &&
-    Math.abs(Number(d.lat)) <= 90 &&
-    Math.abs(Number(d.lng)) <= 180
-  );
-}
-
-function amName(d) {
-  return d.translations?.vi?.name || d.name || "Chưa đặt tên";
-}
-
-function amMessage(text) {
-  document.getElementById("amMessage").textContent = text;
-}
-
-function amUpdateDetails() {
-  const state = adminLocations;
-  const d = state.selected;
-  const point = state.draft || d;
-  const valid = amValidPoint(point);
-
-  document.getElementById("amName").textContent =
-    d ? amName(d) : "Chưa chọn địa điểm";
-
-  document.getElementById("amAddress").textContent =
-    d?.address || "Chưa có địa chỉ";
-
-  document.getElementById("amLat").textContent =
-    valid ? Number(point.lat).toFixed(6) : "—";
-
-  document.getElementById("amLng").textContent =
-    valid ? Number(point.lng).toFixed(6) : "—";
-
-  document.getElementById("amSource").textContent =
-    "Nguồn vị trí: " +
-    (state.draft?.source || (valid ? "Đã lưu" : "Chưa có tọa độ"));
-
-  document.getElementById("amEdit").disabled =
-    !d || state.editing;
-
-  document.getElementById("amPin").disabled = !state.editing;
-  document.getElementById("amGps").disabled = !state.editing;
-  document.getElementById("amCancel").disabled = !state.editing;
-
-  document.getElementById("amApply").disabled =
-    !state.editing || !amValidPoint(state.draft);
-
-  document.getElementById("amPin").textContent =
-    state.picking ? "Đang chọn: bấm lên bản đồ" : "Ghim trên bản đồ";
-}
-
-function amRemoveDraft() {
-  const state = adminLocations;
-
-  if (state.draftMarker) {
-    state.map.removeLayer(state.draftMarker);
-  }
-
-  state.draftMarker = null;
-  state.draft = null;
-  state.editing = false;
-  state.picking = false;
-  state.version++;
-
-  if (state.map) {
-    state.map.getContainer().style.cursor = "";
-  }
-}
-
-function amSetDraft(lat, lng, source) {
-  const state = adminLocations;
-  if (!state.editing) return;
-
-  state.draft = { lat: Number(lat), lng: Number(lng), source };
-  state.picking = false;
-  state.map.getContainer().style.cursor = "";
-
-  const point = [state.draft.lat, state.draft.lng];
-
-  if (state.draftMarker) {
-    state.draftMarker.setLatLng(point);
-  } else {
-    state.draftMarker = L.marker(point, {
-      draggable: true,
-      title: "Vị trí đang chỉnh sửa",
-    }).addTo(state.map);
-
-    state.draftMarker.on("dragend", (event) => {
-      const p = event.target.getLatLng();
-      amSetDraft(p.lat, p.lng, "Ghim thủ công");
-    });
-  }
-
-  amUpdateDetails();
-  amMessage("Vị trí mới chưa lưu. Chọn “Tiếp tục lưu” để kiểm tra và lưu.");
-}
-
-function amSelectPlace(d) {
-  const state = adminLocations;
-
-  if (
-    state.draft &&
-    !confirm("Bỏ vị trí đang chỉnh sửa để chọn quán khác?")
-  ) return;
-
-  amRemoveDraft();
-  state.selected = d;
-
-  if (amValidPoint(d)) {
-    state.map.setView([Number(d.lat), Number(d.lng)], 17);
-    amMessage("Đang hiển thị vị trí đã lưu của quán.");
-  } else {
-    amMessage("Quán chưa có tọa độ. Bấm “Sửa vị trí” để bổ sung.");
-  }
-
-  amUpdateDetails();
-  amRenderList();
-}
-
-function amRenderList() {
-  const state = adminLocations;
-  const query = document.getElementById("amSearch").value
-    .trim().toLocaleLowerCase("vi");
-
-  const filter = document.getElementById("amFilter").value;
-  const list = document.getElementById("amList");
-
-  list.replaceChildren();
-  state.layer.clearLayers();
-
-  const results = dishes.filter((d) => {
-    const text = `${amName(d)} ${d.address || ""}`
-      .toLocaleLowerCase("vi");
-
-    return text.includes(query) &&
-      (filter === "all" ||
-       (filter === "located" && amValidPoint(d)) ||
-       (filter === "missing" && !amValidPoint(d)));
-  });
-
-  document.getElementById("amCount").textContent =
-    `${results.length} địa điểm`;
-
-  results.forEach((d) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "am-place";
-
-    button.classList.toggle(
-      "active",
-      String(state.selected?.id) === String(d.id)
-    );
-
-    const name = document.createElement("strong");
-    name.textContent = amName(d);
-
-    const address = document.createElement("span");
-    address.textContent = d.address || "Chưa có địa chỉ";
-
-    const status = document.createElement("small");
-    status.textContent = amValidPoint(d)
-      ? "Đã có tọa độ"
-      : "Chưa có tọa độ";
-
-    button.append(name, address, status);
-    button.onclick = () => amSelectPlace(d);
-    list.append(button);
-
-    if (amValidPoint(d)) {
-      const marker = L.circleMarker(
-        [Number(d.lat), Number(d.lng)],
-        {
-          radius: String(state.selected?.id) === String(d.id) ? 11 : 8,
-          color: "#ffffff",
-          weight: 2,
-          fillColor: "#a52629",
-          fillOpacity: 1,
-        }
-      ).addTo(state.layer);
-
-      const tooltip = document.createElement("span");
-      tooltip.textContent = amName(d);
-      marker.bindTooltip(tooltip);
-      marker.on("click", () => amSelectPlace(d));
-    }
-  });
-
-  if (!results.length) {
-    list.textContent = "Không có địa điểm phù hợp.";
-  }
-}
-
-let adminMapView = "radar";
-
-function switchAdminMapView(view) {
-  adminMapView = view === "manage" ? "manage" : "radar";
-
-  const isManage = adminMapView === "manage";
-
-  document.getElementById("mapRadarView").hidden = isManage;
-  document.getElementById("mapManageView").hidden = !isManage;
-
-  const radarTab = document.getElementById("mapRadarTab");
-  const manageTab = document.getElementById("mapManageTab");
-
-  radarTab.classList.toggle("active", !isManage);
-  manageTab.classList.toggle("active", isManage);
-
-  radarTab.setAttribute("aria-pressed", String(!isManage));
-  manageTab.setAttribute("aria-pressed", String(isManage));
-
-  if (isManage) {
-    renderAdminLocationManager();
-  } else {
-    renderMapSection();
-
-    requestAnimationFrame(() => {
-      if (mapLeafletInstance) {
-        mapLeafletInstance.invalidateSize();
-      }
-    });
-  }
-}
- 
-
-function renderAdminLocationManager() {
-  const state = adminLocations;
-
-  if (typeof L === "undefined") {
-    amMessage("Không tải được thư viện bản đồ. Kiểm tra kết nối mạng.");
-    return;
-  }
-
-  if (!state.map) {
-    state.map = L.map("adminLocationMap").setView(
-      [15.877, 108.327],
-      14
-    );
-
-    // Dùng lớp bản đồ đã có trong dự án.
-    createGoogleMapsTileLayer("m").addTo(state.map);
-    state.layer = L.featureGroup().addTo(state.map);
-
-    state.map.on("click", (event) => {
-      if (!state.editing || !state.picking) return;
-
-      state.version++;
-      amSetDraft(
-        event.latlng.lat,
-        event.latlng.lng,
-        "Ghim thủ công"
-      );
-    });
-
-    document.getElementById("amSearch").oninput = amRenderList;
-    document.getElementById("amFilter").onchange = amRenderList;
-
-    document.getElementById("amShowAll").onclick = () => {
-      const bounds = state.layer.getBounds();
-
-      if (bounds.isValid()) {
-        state.map.fitBounds(bounds, { padding: [35, 35], maxZoom: 16 });
-      } else {
-        amMessage("Danh sách hiện tại chưa có địa điểm có tọa độ.");
-      }
-    };
-
-    document.getElementById("amEdit").onclick = () => {
-      state.editing = true;
-      amUpdateDetails();
-      amMessage("Chọn “Ghim trên bản đồ” hoặc “Lấy GPS hiện tại”.");
-    };
-
-    document.getElementById("amPin").onclick = () => {
-      state.version++;
-      state.picking = !state.picking;
-      state.map.getContainer().style.cursor =
-        state.picking ? "crosshair" : "";
-
-      amUpdateDetails();
-      amMessage(
-        state.picking
-          ? "Bấm một điểm trên bản đồ để đặt vị trí mới của quán."
-          : "Đã tắt chế độ ghim."
-      );
-    };
-
-    document.getElementById("amGps").onclick = () => {
-      if (!navigator.geolocation) {
-        amMessage("Trình duyệt không hỗ trợ định vị.");
-        return;
-      }
-
-      const version = ++state.version;
-      amMessage("Đang lấy vị trí thiết bị…");
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          if (version !== state.version || !state.editing) return;
-
-          const { latitude, longitude, accuracy } = position.coords;
-          const source = Number.isFinite(accuracy)
-            ? `GPS thiết bị · độ chính xác khoảng ±${Math.round(accuracy)} m`
-            : "GPS thiết bị";
-
-          amSetDraft(latitude, longitude, source);
-          state.map.setView([latitude, longitude], 17);
-
-          amMessage(
-            "Đây là vị trí thiết bị. Chỉ lưu cho quán nếu bạn đang đứng tại quán."
-          );
-        },
-        () => {
-          if (version !== state.version) return;
-          amMessage("Không lấy được GPS. Vị trí đang chỉnh được giữ nguyên.");
-        },
-        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-      );
-    };
-
-    document.getElementById("amCancel").onclick = () => {
-      amRemoveDraft();
-      amUpdateDetails();
-      amMessage("Đã hủy chỉnh sửa. Vị trí đã lưu không thay đổi.");
-    };
-
-    document.getElementById("amApply").onclick = () => {
-      if (!state.selected || !amValidPoint(state.draft)) return;
-
-      // Dùng form và API lưu sẵn có của dự án.
-      openForm(state.selected);
-
-      const form = document.getElementById("form");
-      form.elements.namedItem("lat").value = state.draft.lat.toFixed(6);
-      form.elements.namedItem("lng").value = state.draft.lng.toFixed(6);
-    };
-  }
-
-  document.getElementById("amTotal").textContent = dishes.length;
-
-  const located = dishes.filter(amValidPoint).length;
-  document.getElementById("amLocated").textContent = located;
-  document.getElementById("amMissing").textContent =
-    dishes.length - located;
-
-  if (state.selected) {
-    state.selected = dishes.find(
-      (d) => String(d.id) === String(state.selected.id)
-    ) || null;
-  }
-
-  amRenderList();
-  amUpdateDetails();
-  requestAnimationFrame(() => state.map.invalidateSize());
-}
-
 let gmInitialGpsRequested = false;
 let gmOriginRequest = 0;
 
@@ -7972,6 +7468,86 @@ function gmInitDirectionsInputs() {
     gpsButton.click();
   }
 }
-    </script>
+    
+// Chọn tọa độ trong form món ăn. Chỉ ghi vào form khi xác nhận.
+const dishMapPicker = { map: null, marker: null, point: null };
+
+function dishMapValid(lat, lng) {
+  return lat !== null && lat !== undefined && String(lat).trim() !== "" &&
+    lng !== null && lng !== undefined && String(lng).trim() !== "" &&
+    Number.isFinite(Number(lat)) && Number.isFinite(Number(lng)) &&
+    Math.abs(Number(lat)) <= 90 && Math.abs(Number(lng)) <= 180;
+}
+
+function dishMapSetPoint(lat, lng) {
+  if (!dishMapValid(lat, lng)) return;
+  const state = dishMapPicker;
+  state.point = { lat: Number(lat), lng: Number(lng) };
+  const position = [state.point.lat, state.point.lng];
+  if (state.marker) {
+    state.marker.setLatLng(position);
+  } else {
+    state.marker = L.marker(position, {
+      draggable: true, title: "Vị trí quán đang chọn",
+    }).addTo(state.map);
+    state.marker.on("dragend", (event) => {
+      const point = event.target.getLatLng();
+      dishMapSetPoint(point.lat, point.lng);
+    });
+  }
+  document.getElementById("dishMapApply").disabled = false;
+  document.getElementById("dishMapStatus").textContent =
+    `Vĩ độ: ${state.point.lat.toFixed(6)} · Kinh độ: ${state.point.lng.toFixed(6)}. Chưa lưu thay đổi.`;
+}
+
+function dishMapClose() {
+  document.getElementById("dishMapPanel").hidden = true;
+}
+
+document.getElementById("dishMapOpen").onclick = () => {
+  if (typeof L === "undefined") {
+    alert("Không tải được bản đồ. Vui lòng kiểm tra kết nối mạng.");
+    return;
+  }
+  const state = dishMapPicker;
+  const form = document.getElementById("form");
+  const lat = form.elements.namedItem("lat").value;
+  const lng = form.elements.namedItem("lng").value;
+  const valid = dishMapValid(lat, lng);
+  document.getElementById("dishMapPanel").hidden = false;
+  if (!state.map) {
+    state.map = L.map("dishMapCanvas");
+    createGoogleMapsTileLayer("m").addTo(state.map);
+    state.map.on("click", (event) => {
+      dishMapSetPoint(event.latlng.lat, event.latlng.lng);
+    });
+  }
+  if (state.marker) {
+    state.map.removeLayer(state.marker);
+    state.marker = null;
+  }
+  state.point = null;
+  document.getElementById("dishMapApply").disabled = true;
+  state.map.setView(valid ? [Number(lat), Number(lng)] : [15.877, 108.327], valid ? 17 : 14);
+  if (valid) {
+    dishMapSetPoint(lat, lng);
+  } else {
+    document.getElementById("dishMapStatus").textContent = "Bấm trên bản đồ để chọn vị trí quán.";
+  }
+  requestAnimationFrame(() => state.map.invalidateSize());
+};
+
+document.getElementById("dishMapCancel").onclick = dishMapClose;
+document.getElementById("dishMapApply").onclick = () => {
+  const point = dishMapPicker.point;
+  if (!point || !dishMapValid(point.lat, point.lng)) return;
+  const form = document.getElementById("form");
+  form.elements.namedItem("lat").value = point.lat.toFixed(6);
+  form.elements.namedItem("lng").value = point.lng.toFixed(6);
+  dishMapClose();
+  document.getElementById("formErr").textContent = "Đã điền tọa độ. Bấm Lưu món ăn để lưu thay đổi.";
+};
+document.getElementById("dlg").addEventListener("close", dishMapClose);
+</script>
   </body>
 </html>
