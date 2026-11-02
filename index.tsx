@@ -825,10 +825,8 @@ export default function HomeScreen() {
   );
   const [qrVisible, setQrVisible] = useState<boolean>(false);
   const [customUrl, setCustomUrl] = useState<string>(
-    Platform.OS === "web" && typeof window !== "undefined"
-      ? window.location.origin
-      : "https://hoian-food-map.vercel.app",
-  );
+  "http://192.168.1.210:8081"
+);
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
