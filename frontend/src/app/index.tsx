@@ -1000,7 +1000,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             };
           });
 
-        setApiDishes(converted);
+        const finalDishes = converted.length > 0 ? converted : DISHES;
+        setApiDishes(finalDishes);
 
         let targetParam = params.dish;
         if (!targetParam && Platform.OS === "web" && typeof window !== "undefined") {
@@ -1013,7 +1014,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         let initialDish: Dish | null = null;
         if (targetParam) {
           const normP = String(targetParam).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").trim();
-          initialDish = converted.find((d) => 
+          initialDish = finalDishes.find((d) => 
             String(d.id) === String(targetParam) ||
             d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").includes(normP) ||
             normP.includes(d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d"))
@@ -1023,14 +1024,17 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         setSelectedDish((prev) => {
           if (initialDish) return initialDish;
           if (!prev) return null;
-          const updated = converted.find((d) => d.id === prev.id);
+          const updated = finalDishes.find((d) => d.id === prev.id);
           return updated || prev;
         });
-        console.log("API OK:", converted.length, "món");
+        console.log("API OK:", finalDishes.length, "món");
         setApiError("");
       } catch (err) {
         console.log("API LỖI:", err);
         if (!cancelled) {
+          if (DISHES.length > 0) {
+            setApiDishes(DISHES);
+          }
           setApiError(
             err instanceof Error ? err.message : "Không tải được món ăn",
           );
