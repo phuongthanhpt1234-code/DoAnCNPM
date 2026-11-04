@@ -3668,17 +3668,21 @@
       <span class="gm-destination-dot" aria-hidden="true"></span>
 
       <div class="gm-direction-field">
-        <label for="mapDestinationInput">Nơi muốn đến</label>
+        <label for="mapDestinationSelect">Nơi muốn đến</label>
 
-        <input
-          id="mapDestinationInput"
-          type="text"
-          list="mapDestinationSuggestions"
-          placeholder="Nhập tên quán hoặc chọn quán trên bản đồ…"
-          autocomplete="off"
-        />
-
-        <datalist id="mapDestinationSuggestions"></datalist>
+        <select
+          id="mapDestinationSelect"
+          style="cursor: pointer; width: 100%; border: 0; outline: 0; background: transparent; color: #482a2d; font: inherit; font-size: 14px;"
+        >
+          <option value="4" selected>Quán Cao lầu Bá Le (49/3 Trần Hưng Đạo, Hội An)</option>
+          <option value="6">Bánh Mì Phượng (2B Phan Châu Trinh, Hội An)</option>
+          <option value="7">Bánh Bèo Bà Bảy (2 Hoàng Văn Thụ, Old Town, Hội An, Đà Nẵng, Việt Nam)</option>
+          <option value="8">Bánh đập Ni Bà Già (34 Nguyễn Tri Phương, Hội An, Đà Nẵng, Việt Nam)</option>
+          <option value="9">Bánh Ướt Ban Mê Giang Vương (86/23 Vũ Huy Tấn, Gia Định, Hồ Chí Minh 72317, Việt Nam)</option>
+          <option value="11">Trà mót (150 Trần Phú, Old Town, Hội An, Đà Nẵng 550000, Việt Nam)</option>
+        </select>
+        <input id="mapDestinationInput" type="hidden" />
+        <datalist id="mapDestinationSuggestions" hidden></datalist>
       </div>
     </div>
 
@@ -3846,7 +3850,7 @@
       <option value="m" selected>m</option>
     </select>
 
-    <select id="mapDestinationSelect"></select>
+    
 
     <input
       id="mapFilterWithinRadius"
@@ -7803,23 +7807,43 @@ if (travelTimeElement) {
 
         // Nạp danh sách món ăn vào Nơi Đến
         const destSelect = $("#mapDestinationSelect");
-        if (destSelect) {
+        if (destSelect && dishes && dishes.length > 0) {
           const currentVal = destSelect.value;
           destSelect.innerHTML = dishes
             .map((d) => {
               const name = d.translations?.vi?.name || d.name;
               const addr = d.address || d.shopVi || "Phố cổ Hội An";
-              return `<option value="${d.id}" ${String(d.id) === String(currentVal) ? 'selected' : ''}>${esc(name)} (${esc(addr)})</option>`;
+              return `<option value="${d.id}">${esc(name)} (${esc(addr)})</option>`;
             })
             .join("");
 
-          if (dishes.length > 0) {
-            const activeDest = dishes.find((d) => String(d.id) === String(destSelect.value)) || dishes[0];
+          if (currentVal && Array.from(destSelect.options).some(o => o.value === String(currentVal))) {
+            destSelect.value = String(currentVal);
+          } else {
+            destSelect.value = String(dishes[0].id);
+          }
+
+          const activeDest = dishes.find((d) => String(d.id) === String(destSelect.value)) || dishes[0];
+          if (activeDest) {
             mapDestCoords.lat = Number(activeDest.lat) || 15.87858;
             mapDestCoords.lng = Number(activeDest.lng) || 108.32986;
             mapDestCoords.label = activeDest.translations?.vi?.name || activeDest.name;
             mapDestCoords.address = activeDest.address || activeDest.shopVi || "Hội An";
           }
+
+          destSelect.onchange = () => {
+            const found = dishes.find((d) => String(d.id) === String(destSelect.value));
+            if (found) {
+              mapDestCoords.lat = Number(found.lat) || 15.87858;
+              mapDestCoords.lng = Number(found.lng) || 108.32986;
+              mapDestCoords.label = found.translations?.vi?.name || found.name;
+              mapDestCoords.address = found.address || found.shopVi || "Hội An";
+              updateMapCalculations();
+              if (mapLeafletInstance) {
+                mapLeafletInstance.flyTo([mapDestCoords.lat, mapDestCoords.lng], 16, { duration: 1.2 });
+              }
+            }
+          };
         }
 
         // Nạp danh sách gợi ý địa chỉ vào Điểm xuất phát (select)
