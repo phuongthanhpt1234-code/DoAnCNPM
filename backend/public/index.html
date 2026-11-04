@@ -3636,6 +3636,7 @@
           id="mapOriginInput"
           type="text"
           list="mapOriginDatalist"
+          value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam"
           placeholder="Vị trí hiện tại hoặc nhập địa chỉ…"
           autocomplete="off"
         />
@@ -6458,9 +6459,9 @@ async function loadRoadRoute() {
 
       // Toạ độ nơi xuất phát (mặc định Chùa Cầu)
       let mapOriginCoords = {
-        lat: 15.8770,
-        lng: 108.3270,
-        label: "Chùa Cầu Hội An",
+        lat: 15.877146,
+        lng: 108.326073,
+        label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam",
       };
 
       // Toạ độ nơi đến (mặc định Cao Lầu Bá Lễ Hội An)
@@ -6525,6 +6526,9 @@ async function loadRoadRoute() {
 
         // 2. Tìm trong danh sách địa danh Hội An quen thuộc
         const landmarks = [
+          { name: "nguyễn thị minh khai", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
+          { name: "minh khai", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
+          { name: "564010", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
           { name: "chùa cầu", lat: 15.8770, lng: 108.3270, label: "Chùa Cầu Hội An" },
           { name: "chợ hội an", lat: 15.8777, lng: 108.3323, label: "Chợ Hội An" },
           { name: "bến thuyền", lat: 15.8755, lng: 108.3285, label: "Bến thuyền Bạch Đằng" },
@@ -6660,7 +6664,12 @@ async function loadRoadRoute() {
         if (originInput) {
           originInput.addEventListener("change", async () => {
             const val = originInput.value.trim();
-            if (!val || val.includes("Vị trí hiện tại")) return;
+            if (!val) return;
+            if (val.includes("Vị trí hiện tại") || val.includes("GPS")) {
+              const gpsBtn = document.getElementById("mapOriginGpsBtn");
+              if (gpsBtn) gpsBtn.click();
+              return;
+            }
             const res = await geocodeAddress(val);
             if (res) {
               mapOriginCoords.lat = res.lat;
@@ -7271,6 +7280,8 @@ if (travelTimeElement) {
         const datalist = $("#mapOriginDatalist");
         if (datalist && dishes.length > 0) {
           const landmarkOpts = `
+            <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam">Điểm xuất phát mặc định (Nguyễn Thị Minh Khai)</option>
+            <option value="Vị trí hiện tại (GPS)">Vị trí hiện tại của bạn (Định vị GPS)</option>
             <option value="Chùa Cầu Hội An"></option>
             <option value="Chợ Hội An"></option>
             <option value="Bến thuyền Bạch Đằng"></option>
@@ -7483,9 +7494,9 @@ function gmInitDirectionsInputs() {
   gmSyncDestinationInput();
 
   // Tự đề nghị lấy GPS một lần khi mở bản đồ.
-  if (!gmInitialGpsRequested && gpsButton) {
+  // Giữ điểm xuất phát mặc định là Nguyễn Thị Minh Khai, người dùng có thể bấm nút lấy GPS khi cần
+  if (!gmInitialGpsRequested) {
     gmInitialGpsRequested = true;
-    gpsButton.click();
   }
 }
     
