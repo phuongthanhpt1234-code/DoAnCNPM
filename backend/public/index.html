@@ -4145,7 +4145,6 @@
             <label for="mapFilterSort">Sắp xếp</label>
             <select id="mapFilterSort" onchange="updateMapCalculations()">
               <option value="distance" selected>↗ Gần nhất</option>
-              <option value="rating">⭐ Đánh giá cao nhất</option>
               <option value="name">A → Z Tên quán</option>
             </select>
           </div>
@@ -7739,10 +7738,7 @@ async function loadRoadRoute() {
 
         mapDestMarker.bindPopup(`
           <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-              <span style="font-size:11px; font-weight:700; color:#ea4335; background:#fef2f2; padding:2px 6px; border-radius:4px;">🏁 Nơi đến</span>
-              <span style="font-size:11.5px; font-weight:700; color:#e37400;">⭐ 4.8</span>
-            </div>
+            
             <div style="font-size:14px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(mapDestCoords.label)}</div>
             <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(mapDestCoords.address || 'Hội An')}</div>
             <div style="font-size:12px; font-weight:700; color:#188038; margin-bottom:8px;">🚶 ~${walkMin} phút (${distFormatted})</div>
@@ -7791,10 +7787,7 @@ loadRoadRoute();
 
             marker.bindPopup(`
               <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-                  <span style="font-size:11px; font-weight:700; color:#d97706; background:#fef3c7; padding:2px 6px; border-radius:4px;">Ẩm thực Hội An</span>
-                  <span style="font-size:11.5px; font-weight:700; color:#e37400;">⭐ 4.8</span>
-                </div>
+                
                 <img src="${getDishImageUrl(dish)}" style="width:100%;height:95px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;" onerror="this.style.display='none'" />
                 <div style="font-size:13.5px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(dishName)}</div>
                 <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(dish.address || dish.shopVi || 'Hội An')}</div>
@@ -8363,8 +8356,7 @@ loadRoadRoute();
         // Áp dụng sắp xếp
         if (sortFilter === "distance") {
           results.sort((a, b) => a.computedDist - b.computedDist);
-        } else if (sortFilter === "rating") {
-          results.sort((a, b) => b.meta.rating - a.meta.rating);
+        
         } else if (sortFilter === "name") {
           results.sort((a, b) => {
             const nameA = a.translations?.vi?.name || a.name || "";
@@ -8426,23 +8418,14 @@ loadRoadRoute();
           heading.style.flex = "1";
           heading.style.minWidth = "0";
 
-          const catLine = document.createElement("div");
-          catLine.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:4px;";
-
           const category = document.createElement("span");
           category.className = "qm-category";
           category.textContent = dish.category_name || "Món chính";
 
-          const ratingBadge = document.createElement("span");
-          ratingBadge.className = "qm-rating-badge";
-          ratingBadge.textContent = "⭐ " + dish.meta.rating;
-
-          catLine.append(category, ratingBadge);
-
           const title = document.createElement("h4");
           title.textContent = name;
 
-          heading.append(catLine, title);
+          heading.append(category, title);
           top.append(icon, heading);
 
           // Hàng thông tin ngữ cảnh: Trạng thái mở cửa + Mức giá
