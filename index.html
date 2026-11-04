@@ -3232,7 +3232,6 @@
             <p>Hệ Thống Quản Trị Ẩm Thực Hội An</p>
           </div>
 
-          <div class="sidebar-label">Danh mục quản trị</div>
           <nav
             class="nav-list"
             id="sidebarNav"
@@ -3248,21 +3247,21 @@
               <span class="nav-btn-left">
                 <span>Quản Lý Món Ăn</span>
               </span>
-              <span class="nav-badge" id="navDishCount">0</span>
+              <span class="nav-badge" id="navDishCount">6</span>
             </button>
 
             <button type="button" class="nav-btn" data-nav="devices">
               <span class="nav-btn-left">
                 <span>Thiết Bị Truy Cập</span>
               </span>
-              <span class="nav-badge live" id="navOnlineCount">0</span>
+              <span class="nav-badge live" id="navOnlineCount">1</span>
             </button>
 
             <button type="button" class="nav-btn" data-nav="checkins">
               <span class="nav-btn-left">
                 <span>Check-in & Yêu Thích</span>
               </span>
-              <span class="nav-badge" id="navCheckinCount">0</span>
+              <span class="nav-badge" id="navCheckinCount">102</span>
             </button>
 
             <button type="button" class="nav-btn" data-nav="account">
@@ -3278,14 +3277,6 @@
               </span>
               <span class="nav-badge" style="background: rgba(233,194,107,0.2); color: var(--gold); border-color: var(--gold-border);">QR</span>
             </button>
-
-            <button type="button" class="nav-btn" data-nav="map">
-              <span class="nav-btn-left">
-                <span>Bản đồ và GPS</span>
-              </span>
-              <span class="nav-badge" id="navMapBadge" style="background: rgba(16,185,129,0.15); color: #059669; border-color: #a7f3d0;">GPS</span>
-            </button>
-
           </nav>
         </div>
 
@@ -3808,265 +3799,7 @@
                 </div>
               </section>
 
-              <!-- BẢN ĐỒ VÀ GPS -->
-<section class="alt-panel" id="secMap" hidden>
-
-<div id="mapRadarView">
-  <div class="qm-toolbar">
-    <div class="qm-toolbar-title">
-      <div class="qm-title">
-        <span class="qm-title-icon" aria-hidden="true">⌖</span>
-        <h2>Tìm quán và chỉ đường</h2>
-      </div>
-
-      <span class="qm-status">
-        Vị trí tìm kiếm · Hội An
-      </span>
-    </div>
-
-    <div class="qm-filters">
-  <!-- Hai ô xuất phát và điểm đến -->
-  <div class="gm-directions-inputs">
-    <div class="gm-direction-row">
-      <span class="gm-origin-dot" aria-hidden="true"></span>
-
-      <div class="gm-direction-field">
-        <label for="mapOriginInput">Điểm xuất phát</label>
-
-        <select
-          id="mapOriginInput"
-          style="cursor: pointer; width: 100%; border: 0; outline: 0; background: transparent; color: #482a2d; font: inherit; font-size: 14px;"
-        >
-          <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" selected>Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam</option>
-          <option value="Chọn vị trí hiện tại">📍 Chọn vị trí hiện tại (Định vị GPS)</option>
-          <option value="Chùa Cầu Hội An">Chùa Cầu Hội An</option>
-          <option value="Chợ Hội An">Chợ Hội An</option>
-          <option value="Bến thuyền Bạch Đằng">Bến thuyền Bạch Đằng</option>
-          <option value="Bãi biển An Bàng">Bãi biển An Bàng</option>
-          <option value="Làng rau Trà Quế">Làng rau Trà Quế</option>
-          <option value="__custom__">✏️ Nhập địa chỉ khác...</option>
-        </select>
-      </div>
-    </div>
-
-    <div
-      class="gm-direction-connector"
-      aria-hidden="true"
-    ></div>
-
-    <div class="gm-direction-row">
-      <span class="gm-destination-dot" aria-hidden="true"></span>
-
-      <div class="gm-direction-field">
-        <label for="mapDestinationSelect">Nơi muốn đến</label>
-
-        <select
-          id="mapDestinationSelect"
-          style="cursor: pointer; width: 100%; border: 0; outline: 0; background: transparent; color: #482a2d; font: inherit; font-size: 14px;"
-        >
-          <option value="4" selected>Quán Cao lầu Bá Le (25 Trần Hưng Đạo, Hội An, Đà Nẵng, Việt Nam)</option>
-          <option value="6">Bánh Mì Phượng (2B Phan Châu Trinh, Hội An)</option>
-          <option value="7">Bánh Bèo Bà Bảy (2 Hoàng Văn Thụ, Old Town, Hội An, Đà Nẵng, Việt Nam)</option>
-          <option value="8">Bánh đập Ni Bà Già (34 Nguyễn Tri Phương, Hội An, Đà Nẵng, Việt Nam)</option>
-          <option value="9">Bánh Ướt Ban Mê Giang Vương (86/23 Vũ Huy Tấn, Gia Định, Hồ Chí Minh 72317, Việt Nam)</option>
-          <option value="11">Trà mót (150 Trần Phú, Old Town, Hội An, Đà Nẵng 550000, Việt Nam)</option>
-        </select>
-        <input id="mapDestinationInput" type="hidden" />
-        <datalist id="mapDestinationSuggestions" hidden></datalist>
-      </div>
-    </div>
-
-    <p id="gmDirectionsStatus" role="status">
-      Nhập điểm xuất phát hoặc lấy GPS, rồi chọn quán muốn đến.
-    </p>
-  </div>
-
-  <!-- Bán kính radar -->
-  <div class="qm-field qm-radius">
-    <label for="mapDistanceInput">
-      Bán kính tìm kiếm
-    </label>
-
-    <select id="mapDistanceInput" onchange="updateMapCalculations()">
-      <option value="500" selected>Trong vòng 500 m</option>
-      <option value="1000">Trong vòng 1 km</option>
-      <option value="2000">Trong vòng 2 km</option>
-    </select>
-  </div>
-
-  <button
-    type="button"
-    class="qm-primary"
-    onclick="handleScanNearbyDishes()"
-  >
-    Quét quanh đây <span aria-hidden="true">↗</span>
-  </button>
-</div>
-</div>
-
-  <div class="qm-workspace">
-    <!-- BẢN ĐỒ BÊN TRÁI -->
-    <div class="qm-map-panel">
-      <div class="qm-map-head">
-        <h3>Bản đồ khu vực</h3>
-
-        <div class="qm-legend">
-          <span>
-            <i class="qm-blue"></i>Điểm xuất phát
-          </span>
-
-          <span>
-            <i></i>Địa điểm đã cập nhật
-          </span>
-        </div>
-      </div>
-
-      <div class="qm-map">
-        <div id="leafletMap"></div>
-
-        <div id="mapFallbackContainer">
-          <iframe
-            id="mapFallbackFrame"
-            title="Bản đồ dự phòng"
-            loading="lazy"
-          ></iframe>
-        </div>
-
-        <div class="qm-map-label">
-          ⌖ <span id="mapOriginDisplay">
-            Chùa Cầu Hội An
-          </span>
-        </div>
-
-        <div class="qm-route-wrap">
-  <section class="qm-route qm-route-v2">
-    <div class="qm-route-heading">
-      <span class="qm-route-icon" aria-hidden="true">↱</span>
-
-      <div class="qm-route-content">
-        <small>ĐỊA ĐIỂM ĐANG CHỌN</small>
-        <h3 id="mapDestDisplay">Chưa chọn địa điểm</h3>
-      </div>
-    </div>
-
-    <div class="qm-transport" aria-label="Chọn phương tiện minh họa">
-      <button type="button" data-preview-mode="walking">
-        Đi bộ
-      </button>
-
-      <button type="button" data-preview-mode="bicycling">
-        Xe đạp
-      </button>
-
-      <button
-        type="button"
-        class="active"
-        data-preview-mode="two_wheeler"
-      >
-        Xe máy
-      </button>
-
-      <button type="button" data-preview-mode="driving">
-        Ô tô
-      </button>
-    </div>
-
-    <div class="qm-route-summary">
-      <div class="qm-route-metrics">
-        <div>
-          <span>Thời gian minh họa</span>
-          <strong id="qmPreviewTime">—</strong>
-        </div>
-
-        <div class="qm-metric-divider"></div>
-
-        <div>
-          <span>Đường thẳng (Haversine)</span>
-          <strong id="mapHaversineDistDisplay">—</strong>
-        </div>
-
-        <div class="qm-metric-divider"></div>
-
-        <div>
-          <span>Đường thực tế (OSRM)</span>
-          <strong id="mapRealDistDisplay">—</strong>
-        </div>
-      </div>
-
-      <a
-        id="gmapExternalLink"
-        href="https://www.google.com/maps"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Mở bản đồ ↗
-      </a>
-    </div>
-
-    <p id="qmPreviewNote" class="qm-preview-note">
-      Chọn địa điểm để xem tuyến đường.
-    </p>
-
-    <p id="roadRouteMessage" class="qm-road-message" role="status"></p>
-  </section>
-</div>
-      </div>
-
-      <div class="qm-map-foot">
-        <span>ⓘ Bán kính tính theo đường thẳng</span>
-
-        <button type="button" id="gmapFlyUserBtn">
-          Về tâm tìm kiếm
-        </button>
-      </div>
-    </div>
-
-    <!-- DANH SÁCH BÊN PHẢI -->
-    <aside>
-      <div class="qm-aside-head">
-        <h3>Địa điểm gần bạn</h3>
-
-        <span id="mapCounterText">
-          Đang tải dữ liệu…
-        </span>
-      </div>
-
-      <!-- Không có các nút lọc danh mục -->
-      
-
-      <!-- KHỐI LỘ TRÌNH NHIỀU ĐIỂM (TSP FOOD TOUR) -->
-      <div id="mapFoodTourPanel" class="qm-tour-panel"></div>
-
-      <div id="mapDishesTableBody" class="qm-cards"></div>
-
-      <p class="qm-note">
-        ⓘ Chỉ hiển thị dữ liệu do nhóm cập nhật.
-        Chọn một địa điểm để xem vị trí hoặc mở Google Maps.
-      </p>
-    </aside>
-  </div>
-
-  <!-- Giữ các thành phần mà JavaScript hiện tại đang sử dụng -->
-  <div hidden>
-    <select id="mapDistanceUnit">
-      <option value="m" selected>m</option>
-    </select>
-
-    
-
-    <input
-      id="mapFilterWithinRadius"
-      type="checkbox"
-      checked
-    />
-
-      <span id="mapTableTitle"></span>
-    <div id="mapDistanceError"></div>
-  </div>
-
-</div><!-- Đóng mapRadarView -->
-
-</section>
+              
 
 
             </div>
@@ -4192,6 +3925,18 @@
               step="any"
               value="108.327"
           /></label>
+        </div>
+        <div style="margin: 2px 0 14px;">
+          <button
+            type="button"
+            id="dishMapOpen"
+            style="width: 100%; padding: 10px 14px; background: #fff8eb; border: 1.5px dashed #d97706; border-radius: 9px; color: #b45309; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;"
+            onmouseover="this.style.background='#fef3c7'"
+            onmouseout="this.style.background='#fff8eb'"
+          >
+            <span style="font-size: 16px;">📌</span>
+            <span>Ghim tọa độ quán ăn trên bản đồ (Coordinate Picker)</span>
+          </button>
         </div>
 
         <label
@@ -5459,32 +5204,28 @@
 
       const NAV_META = {
         overview: [
-          "Tổng Quan Hệ Thống",
-          "Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ thời gian thực",
+          "Tổng Quan Chung",
+          "Theo dõi số liệu món ăn, thiết bị truy cập, lượt check-in và biểu đồ thời gian thực",
         ],
         dishes: [
-          "Quản Lý Món Ăn Hội An",
-          "Thêm, chỉnh sửa, xoá món ăn và quản lý nội dung thuyết minh 5 ngôn ngữ",
+          "Quản Lý Món Ăn",
+          "Quản lý thực đơn, giá cả, giờ mở cửa và tọa độ vị trí món ăn",
         ],
         devices: [
-          "Thiết Bị Đang Truy Cập (Live)",
-          "Giám sát trực tiếp các thiết bị đang mở ứng dụng theo thời gian thực",
+          "Thiết Bị Truy Cập",
+          "Danh sách các thiết bị người dùng đang trực tuyến và truy cập hệ thống",
         ],
         checkins: [
-          "Lịch Sử Check-in & Yêu Thích",
-          "Thống kê lượt check-in 7 ngày gần nhất và xếp hạng món ăn được yêu thích",
+          "Check-in & Yêu Thích",
+          "Thống kê lịch sử check-in và số lượt yêu thích món ăn của du khách",
         ],
         account: [
-          "Quản Lý Tài Khoản Quản Trị",
-          "Danh sách tài khoản, thêm tài khoản quản trị mới và phân quyền hệ thống",
+          "Quản Lý Tài Khoản",
+          "Thông tin tài khoản quản trị viên và quyền hạn sử dụng",
         ],
         qrcode: [
-          "Quản Lý & Xuất Mã QR Thông Minh",
-          "Tạo, tùy biến màu sắc, tải ảnh và in thẻ bàn mã QR cho từng món ăn & ứng dụng",
-        ],
-        map: [
-          "Bản Đồ và Định Vị GPS",
-          "Tra cứu vị trí quán ăn, kiểm tra khoảng cách từ chỗ món ăn tới chỗ mình và định vị GPS",
+          "Quản Lý Mã QR",
+          "Tạo mã QR thông minh cho từng món ăn & ứng dụng, in thẻ bàn",
         ],
       };
 

@@ -853,6 +853,7 @@ export default function HomeScreen() {
     }
   }, [lang]);
   const [qrVisible, setQrVisible] = useState<boolean>(false);
+  const [customerMapVisible, setCustomerMapVisible] = useState<boolean>(false);
   const [customUrl, setCustomUrl] = useState<string>(
     Platform.OS === "web" && typeof window !== "undefined"
       ? window.location.origin
@@ -1418,6 +1419,12 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
         <View style={styles.authRow}>
           <TouchableOpacity
+            style={styles.mapTriggerBtn}
+            onPress={() => setCustomerMapVisible(true)}
+          >
+            <Text style={styles.mapTriggerText}>Bản Đồ & GPS</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.qrTriggerBtn}
             onPress={() => setQrVisible(true)}
           >
@@ -1818,6 +1825,20 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                   )}
 
                   <TouchableOpacity
+                    style={[styles.secondaryBtn, { backgroundColor: "#fff7ed", borderColor: "#fed7aa" }]}
+                    onPress={() => {
+                      handleCloseDishModal();
+                      setCustomerMapVisible(true);
+                    }}
+                  >
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                      <Text style={[styles.secondaryBtnText, { color: "#c2410c", fontWeight: "700" }]}>
+                        Mở Bản Đồ & GPS Hội An
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
                     style={styles.secondaryBtn}
                     onPress={() =>
                       Linking.openURL(
@@ -1997,6 +2018,77 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           </View>
         </View>
       </Modal>
+
+      {/* MODAL PHÂN HỆ KHÁCH HÀNG: BẢN ĐỒ & GPS HỘI AN */}
+      <Modal
+        visible={customerMapVisible}
+        transparent={false}
+        animationType="slide"
+        onRequestClose={() => setCustomerMapVisible(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: "#fdfbf7" }}>
+          {/* Modal Header */}
+          <View style={styles.customerMapHeader}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <View style={styles.customerMapIconBox}>
+                <Text style={{ fontSize: 13, fontWeight: "800", color: "#8b1d24" }}>MAP</Text>
+              </View>
+              <View>
+                <Text style={styles.customerMapTitle}>
+                  THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS
+                </Text>
+                <Text style={styles.customerMapSubtitle}>
+                  Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP
+                </Text>
+              </View>
+            </View>
+
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              
+              <TouchableOpacity
+                style={styles.customerMapCloseBtn}
+                onPress={() => setCustomerMapVisible(false)}
+              >
+                <Text style={styles.customerMapCloseBtnText}>✕ Đóng</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* Modal Body: Embedded Interactive Customer Map */}
+          <View style={{ flex: 1 }}>
+            {Platform.OS === "web" ? (
+              // @ts-ignore
+              <iframe
+                src="http://localhost:4000/customer-map.html?embed=true"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  border: "none",
+                  backgroundColor: "#fdfbf7",
+                }}
+                allow="geolocation"
+                title="Bản Đồ GPS Ẩm Thực Hội An"
+              />
+            ) : (
+              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
+                <Text style={{ fontSize: 18, fontWeight: "bold", color: "#8b1d24", marginBottom: 8 }}>
+                  Bản Đồ Ẩm Thực Du Khách Hội An
+                </Text>
+                <Text style={{ fontSize: 13, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
+                  Trải nghiệm khám phá quán ăn với radar GPS, định tuyến OSRM và Food Tour tối ưu TSP.
+                </Text>
+                <TouchableOpacity
+                  style={styles.qrTriggerBtn}
+                  onPress={() => Linking.openURL("http://localhost:4000/customer-map.html")}
+                >
+                  <Text style={styles.qrTriggerText}>Mở Bản Đồ Trên Trình Duyệt</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -2641,5 +2733,83 @@ const styles = StyleSheet.create({
     borderColor: "#d1d5db",
     fontSize: 12,
     marginVertical: 6,
+  },
+
+  mapTriggerBtn: {
+    backgroundColor: "#fff7ed",
+    paddingHorizontal: 13,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#fed7aa",
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  mapTriggerText: {
+    color: "#9a3412",
+    fontWeight: "700",
+    fontSize: 13,
+  },
+  customerMapHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3e8d2",
+  },
+  customerMapIconBox: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: "#fef2f2",
+    borderWidth: 1,
+    borderColor: "#fee2e2",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  customerMapTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#8b1d24",
+    letterSpacing: 0.3,
+  },
+  customerMapSubtitle: {
+    fontSize: 11,
+    color: "#78350f",
+    marginTop: 2,
+    fontWeight: "500",
+  },
+  customerMapNewTabBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#fffbeb",
+    borderWidth: 1,
+    borderColor: "#fde68a",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  customerMapNewTabBtnText: {
+    color: "#92400e",
+    fontWeight: "700",
+    fontSize: 12,
+  },
+  customerMapCloseBtn: {
+    backgroundColor: "#fee2e2",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fca5a5",
+  },
+  customerMapCloseBtnText: {
+    color: "#991b1b",
+    fontWeight: "700",
+    fontSize: 12,
   },
 });
