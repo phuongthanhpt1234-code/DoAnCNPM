@@ -2425,6 +2425,282 @@
     line-height: 1.9;
   }
 
+  
+  /* Context Filter Box */
+  #secMap .qm-context-filter-box {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px solid #f0dfb1;
+    border-radius: 11px;
+    background: #fffdf8;
+    box-shadow: 0 2px 6px rgba(138, 32, 40, 0.04);
+  }
+
+  #secMap .qm-filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 7px;
+  }
+  #secMap .qm-filter-row:last-child {
+    margin-bottom: 0;
+  }
+
+  #secMap .qm-filter-col {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #secMap .qm-filter-col label {
+    display: block;
+    margin-bottom: 3px;
+    color: #8c6a51;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  #secMap .qm-filter-col select {
+    width: 100%;
+    padding: 6px 7px;
+    border: 1px solid #e7d5bd;
+    border-radius: 7px;
+    background: #ffffff;
+    color: var(--qm-ink);
+    font-size: 11px;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+  }
+
+  #secMap .qm-filter-col select:focus {
+    border-color: #bb5c4d;
+    box-shadow: 0 0 0 2px rgba(187, 92, 77, 0.12);
+  }
+
+  /* Food Tour Panel (TSP Multi-stop Route) */
+  #secMap .qm-tour-panel {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border: 1.5px solid #d97706;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #fffcf5 0%, #fff7eb 100%);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
+  }
+
+  #secMap .qm-tour-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  #secMap .qm-tour-head h4 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #secMap .qm-tour-badge {
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: #fef3c7;
+    color: #b45309;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid #fde68a;
+  }
+
+  #secMap .qm-tour-empty {
+    font-size: 11px;
+    color: #78716c;
+    line-height: 1.5;
+    margin: 4px 0 0;
+  }
+
+  #secMap .qm-tour-steps {
+    list-style: none;
+    margin: 8px 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #secMap .qm-tour-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #44403c;
+    background: #ffffff;
+    padding: 6px 9px;
+    border-radius: 7px;
+    border: 1px solid #fed7aa;
+  }
+
+  #secMap .qm-tour-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ea580c;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  #secMap .qm-tour-step-name {
+    flex: 1;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #secMap .qm-tour-step-dist {
+    font-size: 10px;
+    color: #9a3412;
+    font-weight: 600;
+  }
+
+  #secMap .qm-tour-step-del {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    line-height: 1;
+  }
+  #secMap .qm-tour-step-del:hover {
+    color: #ef4444;
+  }
+
+  #secMap .qm-tour-metrics {
+    margin: 8px 0 10px;
+    padding: 7px 9px;
+    border-radius: 7px;
+    background: #fef3c7;
+    border: 1px solid #fde68a;
+    font-size: 11px;
+    color: #78350f;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+  }
+
+  #secMap .qm-tour-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  #secMap .qm-tour-btn-open {
+    flex: 1;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    color: #ffffff !important;
+    font-size: 11px;
+    font-weight: 700;
+    border: none;
+    border-radius: 7px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(194, 65, 12, 0.25);
+  }
+
+  #secMap .qm-tour-btn-open:hover {
+    background: linear-gradient(135deg, #c2410c, #9a3412);
+  }
+
+  #secMap .qm-tour-btn-clear {
+    padding: 8px 10px;
+    background: #ffffff;
+    color: #78716c;
+    border: 1px solid #d6d3d1;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  #secMap .qm-tour-btn-clear:hover {
+    background: #f5f5f4;
+    color: #dc2626;
+  }
+
+  /* Dish card metadata and tour button */
+  #secMap .qm-card-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 6px 0 6px;
+  }
+
+  #secMap .qm-open-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #ecfdf5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+  }
+
+  #secMap .qm-closed-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+
+  #secMap .qm-price-badge {
+    font-size: 9.5px;
+    color: #4b5563;
+    background: #f3f4f6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+    font-weight: 500;
+  }
+
+  #secMap .qm-btn-tour-add {
+    padding: 8px 10px;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid #fed7aa;
+    background: #fff7ed;
+    color: #c2410c;
+    transition: all 0.15s ease;
+  }
+
+  #secMap .qm-btn-tour-add:hover {
+    background: #ffedd5;
+  }
+
+  #secMap .qm-btn-tour-add.in-tour {
+    background: #ea580c;
+    color: #ffffff;
+    border-color: #c2410c;
+  }
+
   @media (max-width: 1050px) {
     #secMap {
       padding: 20px;
@@ -3835,6 +4111,50 @@
       </div>
 
       <!-- Không có các nút lọc danh mục -->
+      <!-- BỘ LỌC NÂNG CAO THEO NGỮ CẢNH -->
+      <div class="qm-context-filter-box">
+        <div class="qm-filter-row">
+          <div class="qm-filter-col">
+            <label for="mapFilterStatus">Trạng thái mở cửa</label>
+            <select id="mapFilterStatus" onchange="updateMapCalculations()">
+              <option value="all" selected>Tất cả trạng thái</option>
+              <option value="open">🟢 Đang mở cửa</option>
+              <option value="closed">🔴 Đã đóng cửa</option>
+            </select>
+          </div>
+          <div class="qm-filter-col">
+            <label for="mapFilterCategory">Danh mục</label>
+            <select id="mapFilterCategory" onchange="updateMapCalculations()">
+              <option value="all" selected>Tất cả danh mục</option>
+              <option value="main">Món chính</option>
+              <option value="drink">Chè & Đồ uống</option>
+            </select>
+          </div>
+        </div>
+        <div class="qm-filter-row">
+          <div class="qm-filter-col">
+            <label for="mapFilterPrice">Mức giá</label>
+            <select id="mapFilterPrice" onchange="updateMapCalculations()">
+              <option value="all" selected>Tất cả mức giá</option>
+              <option value="budget">&lt; 30.000đ (Bình dân)</option>
+              <option value="mid">30.000đ - 50.000đ</option>
+              <option value="high">&gt; 50.000đ</option>
+            </select>
+          </div>
+          <div class="qm-filter-col">
+            <label for="mapFilterSort">Sắp xếp</label>
+            <select id="mapFilterSort" onchange="updateMapCalculations()">
+              <option value="distance" selected>↗ Gần nhất</option>
+              <option value="rating">⭐ Đánh giá cao nhất</option>
+              <option value="name">A → Z Tên quán</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- KHỐI LỘ TRÌNH NHIỀU ĐIỂM (TSP FOOD TOUR) -->
+      <div id="mapFoodTourPanel" class="qm-tour-panel"></div>
+
       <div id="mapDishesTableBody" class="qm-cards"></div>
 
       <p class="qm-note">
@@ -7483,6 +7803,7 @@ loadRoadRoute();
 </div>
                 <div style="display:flex; gap:6px;">
                   <button onclick="selectMapDestination('${dish.id}')" style="flex:1; padding:6px 8px; background:#ea4335; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🏁 Chọn đến</button>
+                  <button onclick="toggleFoodTourDish(${dish.id})" style="padding:6px 8px; background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🚩 + Tour</button>
                   <a href="${dishGmapUrl}" target="_blank" rel="noopener noreferrer" style="padding:6px 8px; background:#f1f3f4; color:#1a73e8; border:1px solid #dadce0; border-radius:6px; font-size:11px; font-weight:700; text-decoration:none; display:flex; align-items:center;">↗️ Google Maps</a>
                 </div>
               </div>
@@ -7537,6 +7858,343 @@ loadRoadRoute();
         }
       }
 
+
+
+      // Metadata for Hoi An food tour and contextual filtering
+      const HOI_AN_DISH_META = {
+        4: {
+          hours: "07:00 - 21:30",
+          openHour: 7, openMinute: 0,
+          closeHour: 21, closeMinute: 30,
+          priceMin: 30000, priceMax: 50000,
+          priceText: "30.000đ - 50.000đ",
+          priceLevel: "mid",
+          rating: 4.8
+        },
+        6: {
+          hours: "06:30 - 21:30",
+          openHour: 6, openMinute: 30,
+          closeHour: 21, closeMinute: 30,
+          priceMin: 25000, priceMax: 40000,
+          priceText: "25.000đ - 40.000đ",
+          priceLevel: "mid",
+          rating: 4.7
+        },
+        7: {
+          hours: "13:30 - 19:30",
+          openHour: 13, openMinute: 30,
+          closeHour: 19, closeMinute: 30,
+          priceMin: 15000, priceMax: 30000,
+          priceText: "15.000đ - 30.000đ",
+          priceLevel: "budget",
+          rating: 4.6
+        },
+        8: {
+          hours: "07:00 - 22:00",
+          openHour: 7, openMinute: 0,
+          closeHour: 22, closeMinute: 0,
+          priceMin: 20000, priceMax: 50000,
+          priceText: "20.000đ - 50.000đ",
+          priceLevel: "mid",
+          rating: 4.5
+        },
+        9: {
+          hours: "09:30 - 22:00",
+          openHour: 9, openMinute: 30,
+          closeHour: 22, closeMinute: 0,
+          priceMin: 35000, priceMax: 65000,
+          priceText: "35.000đ - 65.000đ",
+          priceLevel: "high",
+          rating: 4.6
+        },
+        11: {
+          hours: "08:00 - 22:00",
+          openHour: 8, openMinute: 0,
+          closeHour: 22, closeMinute: 0,
+          priceMin: 15000, priceMax: 25000,
+          priceText: "15.000đ - 25.000đ",
+          priceLevel: "budget",
+          rating: 4.9
+        }
+      };
+
+      function getDishMeta(dish) {
+        if (dish && HOI_AN_DISH_META[dish.id]) return HOI_AN_DISH_META[dish.id];
+        return {
+          hours: (dish && dish.hours) || "07:00 - 21:30",
+          openHour: 7, openMinute: 0,
+          closeHour: 21, closeMinute: 30,
+          priceMin: 25000, priceMax: 45000,
+          priceText: "25.000đ - 45.000đ",
+          priceLevel: "mid",
+          rating: 4.7
+        };
+      }
+
+      function checkDishOpenStatus(dish) {
+        const meta = getDishMeta(dish);
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        const openMinutes = meta.openHour * 60 + meta.openMinute;
+        const closeMinutes = meta.closeHour * 60 + meta.closeMinute;
+        const isOpen = currentMinutes >= openMinutes && currentMinutes <= closeMinutes;
+        return {
+          isOpen,
+          hoursText: meta.hours,
+          priceText: meta.priceText,
+          priceLevel: meta.priceLevel,
+          rating: meta.rating,
+          openHourStr: String(meta.openHour).padStart(2, '0') + ':' + String(meta.openMinute).padStart(2, '0')
+        };
+      }
+
+      // FOOD TOUR MULTI-STOP ROUTE (TSP) STATE & LOGIC
+      let foodTourSelectedIds = [];
+      let mapFoodTourLayer = null;
+
+      function toggleFoodTourDish(dishId) {
+        const numId = Number(dishId);
+        const idx = foodTourSelectedIds.indexOf(numId);
+        if (idx >= 0) {
+          foodTourSelectedIds.splice(idx, 1);
+        } else {
+          if (foodTourSelectedIds.length >= 6) {
+            alert("Bạn đã chọn tối đa 6 địa điểm cho một Tour ẩm thực!");
+            return;
+          }
+          foodTourSelectedIds.push(numId);
+        }
+        renderFoodTourPanel();
+        renderDishesDistanceTable();
+      }
+      window.toggleFoodTourDish = toggleFoodTourDish;
+
+      function removeDishFromTour(dishId) {
+        const numId = Number(dishId);
+        const idx = foodTourSelectedIds.indexOf(numId);
+        if (idx >= 0) {
+          foodTourSelectedIds.splice(idx, 1);
+          renderFoodTourPanel();
+          renderDishesDistanceTable();
+        }
+      }
+      window.removeDishFromTour = removeDishFromTour;
+
+      function clearFoodTour() {
+        foodTourSelectedIds = [];
+        if (mapFoodTourLayer && mapLeafletInstance) {
+          mapFoodTourLayer.clearLayers();
+        }
+        renderFoodTourPanel();
+        renderDishesDistanceTable();
+      }
+      window.clearFoodTour = clearFoodTour;
+
+      // TSP Solver: Tìm thứ tự di chuyển có tổng quãng đường ngắn nhất từ origin
+      function solveOptimalTspRoute(origin, selectedDishes) {
+        if (!selectedDishes || selectedDishes.length === 0) return null;
+        if (selectedDishes.length === 1) {
+          const d0 = selectedDishes[0];
+          const dist = calculateHaversineDistance(origin.lat, origin.lng, Number(d0.lat), Number(d0.lng));
+          return {
+            orderedStops: [d0],
+            totalDistance: dist,
+            legDistances: [dist]
+          };
+        }
+
+        function getPermutations(arr) {
+          if (arr.length <= 1) return [arr];
+          const result = [];
+          for (let i = 0; i < arr.length; i++) {
+            const current = arr[i];
+            const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
+            const remainingPerms = getPermutations(remaining);
+            for (const p of remainingPerms) {
+              result.push([current, ...p]);
+            }
+          }
+          return result;
+        }
+
+        const perms = getPermutations(selectedDishes);
+        let bestRoute = null;
+        let minTotalDist = Infinity;
+        let bestLegDistances = [];
+
+        for (const perm of perms) {
+          let currentTotal = 0;
+          const legDistances = [];
+
+          const d0 = calculateHaversineDistance(origin.lat, origin.lng, Number(perm[0].lat), Number(perm[0].lng));
+          currentTotal += d0;
+          legDistances.push(d0);
+
+          for (let i = 0; i < perm.length - 1; i++) {
+            const legDist = calculateHaversineDistance(
+              Number(perm[i].lat), Number(perm[i].lng),
+              Number(perm[i + 1].lat), Number(perm[i + 1].lng)
+            );
+            currentTotal += legDist;
+            legDistances.push(legDist);
+          }
+
+          if (currentTotal < minTotalDist) {
+            minTotalDist = currentTotal;
+            bestRoute = perm;
+            bestLegDistances = legDistances;
+          }
+        }
+
+        return {
+          orderedStops: bestRoute,
+          totalDistance: minTotalDist,
+          legDistances: bestLegDistances
+        };
+      }
+
+      function getGoogleMapsTourUrl(origin, orderedStops) {
+        if (!orderedStops || orderedStops.length === 0) return 'https://www.google.com/maps';
+        const lastStop = orderedStops[orderedStops.length - 1];
+        const waypoints = orderedStops.slice(0, -1).map(s => s.lat + ',' + s.lng).join('|');
+        let url = 'https://www.google.com/maps/dir/?api=1&origin=' + origin.lat + ',' + origin.lng + '&destination=' + lastStop.lat + ',' + lastStop.lng + '&travelmode=walking';
+        if (waypoints) {
+          url += '&waypoints=' + encodeURIComponent(waypoints);
+        }
+        return url;
+      }
+
+      function renderFoodTourPanel() {
+        const panel = document.getElementById("mapFoodTourPanel");
+        if (!panel) return;
+
+        const count = foodTourSelectedIds.length;
+
+        if (count === 0) {
+          if (mapFoodTourLayer && mapLeafletInstance) {
+            mapFoodTourLayer.clearLayers();
+          }
+          panel.innerHTML = `
+            <div class="qm-tour-head">
+              <h4>🚩 Lộ trình nhiều điểm (Food Tour TSP)</h4>
+              <span class="qm-tour-badge">Chưa chọn quán</span>
+            </div>
+            <p class="qm-tour-empty">
+              💡 Bấm nút <strong>[+ Tour]</strong> trên 2 - 4 quán bất kỳ bên dưới.
+              Hệ thống sẽ tự động tìm thứ tự di chuyển <strong>ngắn nhất (thuật toán TSP)</strong> và vẽ lộ trình trên bản đồ.
+            </p>
+          `;
+          return;
+        }
+
+        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
+        const selectedDishes = sourceDishes.filter(d => foodTourSelectedIds.includes(Number(d.id)));
+        const tspResult = solveOptimalTspRoute(mapOriginCoords, selectedDishes);
+        if (!tspResult) return;
+
+        const { orderedStops, totalDistance, legDistances } = tspResult;
+        const walkMin = Math.max(1, Math.round(totalDistance / 75));
+        const distTxt = totalDistance >= 1000 ? (totalDistance / 1000).toFixed(2) + " km" : totalDistance + " m";
+        const gmapUrl = getGoogleMapsTourUrl(mapOriginCoords, orderedStops);
+
+        let stepsHtml = `
+          <li class="qm-tour-step" style="background:#f8fafc; border-color:#e2e8f0;">
+            <span class="qm-tour-step-num" style="background:#0284c7;">📍</span>
+            <span class="qm-tour-step-name">${esc(mapOriginCoords.label || "Vị trí xuất phát")}</span>
+            <span class="qm-tour-step-dist" style="color:#0284c7;">Khởi hành</span>
+          </li>
+        `;
+
+        orderedStops.forEach((stop, idx) => {
+          const sName = stop.translations?.vi?.name || stop.name;
+          const legDist = legDistances[idx];
+          const legTxt = legDist >= 1000 ? (legDist / 1000).toFixed(2) + " km" : legDist + " m";
+          stepsHtml += `
+            <li class="qm-tour-step">
+              <span class="qm-tour-step-num">${idx + 1}</span>
+              <span class="qm-tour-step-name" title="${esc(sName)}">${esc(sName)}</span>
+              <span class="qm-tour-step-dist">+${legTxt}</span>
+              <button type="button" class="qm-tour-step-del" onclick="removeDishFromTour(${stop.id})" title="Bỏ quán này khỏi tour">✕</button>
+            </li>
+          `;
+        });
+
+        panel.innerHTML = `
+          <div class="qm-tour-head">
+            <h4>🚩 Lộ trình nhiều điểm (Tối ưu TSP)</h4>
+            <span class="qm-tour-badge">${count} quán đã chọn</span>
+          </div>
+          <ul class="qm-tour-steps">
+            ${stepsHtml}
+          </ul>
+          <div class="qm-tour-metrics">
+            <span>🚶 Tổng đường đi: <strong>${distTxt}</strong></span>
+            <span>⏱️ ~<strong>${walkMin} phút</strong> đi bộ</span>
+          </div>
+          <div class="qm-tour-actions">
+            <a href="${gmapUrl}" target="_blank" rel="noopener noreferrer" class="qm-tour-btn-open">
+              🗺️ Mở Tour trên Google Maps ↗
+            </a>
+            <button type="button" class="qm-tour-btn-clear" onclick="clearFoodTour()" title="Xóa toàn bộ lộ trình tour">
+              ✕ Xóa Tour
+            </button>
+          </div>
+        `;
+
+        // Vẽ Tour trên bản đồ Leaflet
+        if (mapLeafletInstance) {
+          if (!mapFoodTourLayer) {
+            mapFoodTourLayer = L.layerGroup().addTo(mapLeafletInstance);
+          } else {
+            mapFoodTourLayer.clearLayers();
+          }
+
+          const routeLatLngs = [
+            [mapOriginCoords.lat, mapOriginCoords.lng],
+            ...orderedStops.map(s => [Number(s.lat), Number(s.lng)])
+          ];
+
+          // Polyline đường nối lộ trình Food Tour
+          const tourPolyline = L.polyline(routeLatLngs, {
+            color: '#ea580c',
+            weight: 4,
+            dashArray: '8, 8',
+            opacity: 0.95
+          }).addTo(mapFoodTourLayer);
+
+          // Marker đánh số thứ tự ①, ②, ③
+          orderedStops.forEach((s, idx) => {
+            const numIcon = L.divIcon({
+              className: 'gmap-tour-pin',
+              html: `
+                <div style="background:#ea580c; color:#ffffff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; border:2.5px solid #ffffff; box-shadow:0 3px 8px rgba(0,0,0,0.35); cursor:pointer;">
+                  ${idx + 1}
+                </div>
+              `,
+              iconSize: [28, 28],
+              iconAnchor: [14, 14],
+              popupAnchor: [0, -14]
+            });
+
+            const sName = s.translations?.vi?.name || s.name;
+            const marker = L.marker([Number(s.lat), Number(s.lng)], { icon: numIcon }).addTo(mapFoodTourLayer);
+            marker.bindPopup(`
+              <div style="min-width:180px; font-family:inherit;">
+                <div style="font-size:11px; font-weight:700; color:#ea580c; margin-bottom:2px;">Điểm dừng #${idx + 1} trong Tour</div>
+                <div style="font-size:13px; font-weight:700; color:#1c1917;">${esc(sName)}</div>
+                <div style="font-size:11px; color:#57534e; margin:3px 0 6px;">📍 ${esc(s.address || 'Hội An')}</div>
+                <button onclick="removeDishFromTour(${s.id})" style="padding:4px 8px; font-size:11px; color:#dc2626; background:#fee2e2; border:none; border-radius:4px; cursor:pointer;">Bỏ khỏi Tour</button>
+              </div>
+            `);
+          });
+
+          if (orderedStops.length > 0) {
+            mapLeafletInstance.fitBounds(tourPolyline.getBounds(), { padding: [40, 40], maxZoom: 17 });
+          }
+        }
+      }
+
+
       // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
       function updateMapCalculations() {
         gmSyncDestinationInput();
@@ -7560,15 +8218,11 @@ loadRoadRoute();
           mapDestCoords.lat,
           mapDestCoords.lng
         );
-      // Quãng đường và link chỉ đường do loadRoadRoute cập nhật.
-// Không lấy đường thẳng chia tốc độ để tính số phút.
-const travelTimeElement = document.getElementById(
-  "gmapTravelTimeText"
-);
 
-if (travelTimeElement) {
-  travelTimeElement.textContent = "";
-}
+        const travelTimeElement = document.getElementById("gmapTravelTimeText");
+        if (travelTimeElement) {
+          travelTimeElement.textContent = "";
+        }
 
         // Cập nhật trạng thái điểm đến so với khoảng cách đã nhập
         const statusDisplayEl = $("#mapStatusDisplay");
@@ -7597,7 +8251,21 @@ if (travelTimeElement) {
           };
         });
 
-        const dishesInRange = mappedDishes.filter((d) => d.isWithin);
+        // Áp dụng bộ lọc ngữ cảnh cho markers trên bản đồ
+        const statusFilter = document.getElementById("mapFilterStatus")?.value || "all";
+        const catFilter = document.getElementById("mapFilterCategory")?.value || "all";
+        const priceFilter = document.getElementById("mapFilterPrice")?.value || "all";
+
+        let dishesInRange = mappedDishes.filter((d) => d.isWithin);
+        if (statusFilter === "open") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).isOpen);
+        else if (statusFilter === "closed") dishesInRange = dishesInRange.filter(d => !checkDishOpenStatus(d).isOpen);
+
+        if (catFilter === "main") dishesInRange = dishesInRange.filter(d => d.category_slug === "main" || (d.category_name && d.category_name.includes("chính")));
+        else if (catFilter === "drink") dishesInRange = dishesInRange.filter(d => d.category_slug === "drink" || (d.category_name && (d.category_name.includes("Chè") || d.category_name.includes("uống"))));
+
+        if (priceFilter === "budget") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "budget");
+        else if (priceFilter === "mid") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "mid");
+        else if (priceFilter === "high") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "high");
 
         // Cập nhật số lượng món ăn trong phạm vi
         const counterEl = $("#mapCounterText");
@@ -7615,192 +8283,228 @@ if (travelTimeElement) {
 
         // Cập nhật bảng món ăn
         renderDishesDistanceTable(mappedDishes, enteredDistMeters);
+
+        // Cập nhật Food Tour panel
+        renderFoodTourPanel();
       }
 
-      // Bảng hiển thị toàn bộ món ăn trong phạm vi khoảng cách đã nhập
-     function renderDishesDistanceTable(
-  precomputedList,
-  enteredDistMeters
-) {
-  const container = document.getElementById(
-    "mapDishesTableBody"
-  );
+      // Bảng hiển thị toàn bộ món ăn kết hợp bộ lọc nâng cao theo ngữ cảnh
+      function renderDishesDistanceTable(precomputedList, enteredDistMeters) {
+        const container = document.getElementById("mapDishesTableBody");
+        if (!container) return;
 
-  if (!container) return;
+        container.replaceChildren();
 
-  container.replaceChildren();
+        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
+        if (!sourceDishes || sourceDishes.length === 0) {
+          container.textContent = "Chưa có địa điểm nào được cập nhật.";
+          return;
+        }
 
-  if (!dishes || dishes.length === 0) {
-    container.textContent =
-      "Chưa có địa điểm nào được cập nhật.";
-    return;
-  }
+        const limitMeters = enteredDistMeters !== undefined ? enteredDistMeters : getMapEnteredDistanceMeters();
+        const selectedId = document.getElementById("mapDestinationSelect")?.value;
 
-  const limitMeters =
-    enteredDistMeters !== undefined
-      ? enteredDistMeters
-      : getMapEnteredDistanceMeters();
+        function validCoordinates(dish) {
+          if (dish.lat == null || dish.lng == null || String(dish.lat).trim() === "" || String(dish.lng).trim() === "") {
+            return false;
+          }
+          const lat = Number(dish.lat);
+          const lng = Number(dish.lng);
+          return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+        }
 
-  const selectedId = document.getElementById(
-    "mapDestinationSelect"
-  )?.value;
+        // Đọc các giá trị bộ lọc
+        const statusFilter = document.getElementById("mapFilterStatus")?.value || "all";
+        const catFilter = document.getElementById("mapFilterCategory")?.value || "all";
+        const priceFilter = document.getElementById("mapFilterPrice")?.value || "all";
+        const sortFilter = document.getElementById("mapFilterSort")?.value || "distance";
 
-  function validCoordinates(dish) {
-    if (
-      dish.lat == null ||
-      dish.lng == null ||
-      String(dish.lat).trim() === "" ||
-      String(dish.lng).trim() === ""
-    ) {
-      return false;
-    }
+        let results = sourceDishes
+          .filter(dish => dish.is_active !== false && dish.is_active !== 0 && validCoordinates(dish))
+          .map(dish => {
+            const dist = calculateHaversineDistance(
+              mapOriginCoords.lat,
+              mapOriginCoords.lng,
+              Number(dish.lat),
+              Number(dish.lng)
+            );
+            const meta = checkDishOpenStatus(dish);
+            return {
+              ...dish,
+              computedDist: dist,
+              meta
+            };
+          })
+          .filter(dish => dish.computedDist <= limitMeters);
 
-    const lat = Number(dish.lat);
-    const lng = Number(dish.lng);
+        // Áp dụng bộ lọc trạng thái mở cửa
+        if (statusFilter === "open") {
+          results = results.filter(d => d.meta.isOpen);
+        } else if (statusFilter === "closed") {
+          results = results.filter(d => !d.meta.isOpen);
+        }
 
-    return (
-      Number.isFinite(lat) &&
-      Number.isFinite(lng) &&
-      lat >= -90 &&
-      lat <= 90 &&
-      lng >= -180 &&
-      lng <= 180
-    );
-  }
+        // Áp dụng bộ lọc danh mục
+        if (catFilter === "main") {
+          results = results.filter(d => d.category_slug === "main" || (d.category_name && d.category_name.includes("chính")));
+        } else if (catFilter === "drink") {
+          results = results.filter(d => d.category_slug === "drink" || (d.category_name && (d.category_name.includes("Chè") || d.category_name.includes("uống"))));
+        }
 
-  // Tính lại từ tọa độ để không dùng tọa độ thay thế.
-  const results = dishes
-    .filter(
-      (dish) =>
-        dish.is_active !== false &&
-        dish.is_active !== 0 &&
-        validCoordinates(dish)
-    )
-    .map((dish) => ({
-      ...dish,
+        // Áp dụng bộ lọc mức giá
+        if (priceFilter === "budget") {
+          results = results.filter(d => d.meta.priceLevel === "budget");
+        } else if (priceFilter === "mid") {
+          results = results.filter(d => d.meta.priceLevel === "mid");
+        } else if (priceFilter === "high") {
+          results = results.filter(d => d.meta.priceLevel === "high");
+        }
 
-      computedDist: calculateHaversineDistance(
-        mapOriginCoords.lat,
-        mapOriginCoords.lng,
-        Number(dish.lat),
-        Number(dish.lng)
-      ),
-    }))
-    .filter(
-      (dish) => dish.computedDist <= limitMeters
-    )
-    .sort(
-      (a, b) => a.computedDist - b.computedDist
-    );
+        // Áp dụng sắp xếp
+        if (sortFilter === "distance") {
+          results.sort((a, b) => a.computedDist - b.computedDist);
+        } else if (sortFilter === "rating") {
+          results.sort((a, b) => b.meta.rating - a.meta.rating);
+        } else if (sortFilter === "name") {
+          results.sort((a, b) => {
+            const nameA = a.translations?.vi?.name || a.name || "";
+            const nameB = b.translations?.vi?.name || b.name || "";
+            return nameA.localeCompare(nameB, "vi");
+          });
+        }
 
-  const counter = document.getElementById(
-    "mapCounterText"
-  );
+        const counter = document.getElementById("mapCounterText");
+        const radiusText = limitMeters >= 1000 ? limitMeters / 1000 + " km" : limitMeters + " m";
 
-  const radiusText =
-    limitMeters >= 1000
-      ? limitMeters / 1000 + " km"
-      : limitMeters + " m";
+        if (counter) {
+          let filterSummary = "";
+          if (statusFilter === "open") filterSummary += " · Đang mở cửa";
+          if (catFilter !== "all") filterSummary += " · Đã lọc danh mục";
+          if (priceFilter !== "all") filterSummary += " · Đã lọc giá";
+          counter.textContent = `${results.length} kết quả trong bán kính ${radiusText}${filterSummary}`;
+        }
 
-  if (counter) {
-    counter.textContent =
-      `${results.length} kết quả trong bán kính ${radiusText}`;
-  }
+        if (results.length === 0) {
+          const emptyMsg = document.createElement("div");
+          emptyMsg.style.cssText = "padding:16px; color:#78716c; font-size:12px; background:#fffdf8; border:1px solid #f0dfbb; border-radius:10px; line-height:1.6;";
+          emptyMsg.innerHTML = `Chưa có địa điểm nào phù hợp trong bán kính <strong>${radiusText}</strong> với bộ lọc hiện tại.<br>👉 Bạn thử mở rộng bán kính hoặc chọn <em>"Tất cả trạng thái"</em>.`;
+          container.append(emptyMsg);
+          return;
+        }
 
-  if (results.length === 0) {
-    container.textContent =
-      `Chưa có địa điểm đã cập nhật trong bán kính ${radiusText}. ` +
-      "Bạn thử mở rộng phạm vi tìm kiếm.";
-    return;
-  }
+        for (const dish of results) {
+          const isSelected = String(dish.id) === String(selectedId);
+          const tourIndex = foodTourSelectedIds.indexOf(Number(dish.id));
+          const isInTour = tourIndex >= 0;
 
-  for (const dish of results) {
-    const isSelected =
-      String(dish.id) === String(selectedId);
+          const name = dish.translations?.vi?.name || dish.name || "Chưa có tên";
+          const address = dish.address || dish.shopVi || "Chưa cập nhật địa chỉ";
+          const distanceText = dish.computedDist >= 1000
+            ? (dish.computedDist / 1000).toFixed(2) + " km"
+            : Math.round(dish.computedDist) + " m";
 
-    const name =
-      dish.translations?.vi?.name ||
-      dish.name ||
-      "Chưa có tên";
+          const card = document.createElement("article");
+          card.className = "qm-card" + (isSelected ? " active" : "");
 
-    const address =
-      dish.address ||
-      dish.shopVi ||
-      "Chưa cập nhật địa chỉ";
+          const top = document.createElement("div");
+          top.className = "qm-card-top";
 
-    const distanceText =
-      dish.computedDist >= 1000
-        ? (dish.computedDist / 1000).toFixed(2) + " km"
-        : Math.round(dish.computedDist) + " m";
+          const icon = document.createElement("div");
+          icon.className = "qm-art";
+          icon.setAttribute("aria-hidden", "true");
+          const img = document.createElement("img");
+          img.src = getDishImageUrl(dish);
+          img.alt = name;
+          img.loading = "lazy";
+          img.onerror = function() {
+            this.onerror = null;
+            this.src = "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+          };
+          icon.appendChild(img);
 
-    const card = document.createElement("article");
+          const heading = document.createElement("div");
+          heading.style.flex = "1";
+          heading.style.minWidth = "0";
 
-    card.className =
-      "qm-card" + (isSelected ? " active" : "");
+          const catLine = document.createElement("div");
+          catLine.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:4px;";
 
-    const top = document.createElement("div");
-    top.className = "qm-card-top";
+          const category = document.createElement("span");
+          category.className = "qm-category";
+          category.textContent = dish.category_name || "Món chính";
 
-    const icon = document.createElement("div");
-    icon.className = "qm-art";
-    icon.setAttribute("aria-hidden", "true");
-    const img = document.createElement("img");
-    img.src = getDishImageUrl(dish);
-    img.alt = name;
-    img.loading = "lazy";
-    img.onerror = function() {
-      this.onerror = null;
-      this.src = "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-    };
-    icon.appendChild(img);
+          const ratingBadge = document.createElement("span");
+          ratingBadge.className = "qm-rating-badge";
+          ratingBadge.textContent = "⭐ " + dish.meta.rating;
 
-    const heading = document.createElement("div");
+          catLine.append(category, ratingBadge);
 
-    const category = document.createElement("span");
-    category.className = "qm-category";
-    category.textContent =
-      dish.category_name || "Địa điểm được giới thiệu";
+          const title = document.createElement("h4");
+          title.textContent = name;
 
-    const title = document.createElement("h4");
-    title.textContent = name;
+          heading.append(catLine, title);
+          top.append(icon, heading);
 
-    heading.append(category, title);
-    top.append(icon, heading);
+          // Hàng thông tin ngữ cảnh: Trạng thái mở cửa + Mức giá
+          const metaLine = document.createElement("div");
+          metaLine.className = "qm-card-meta";
 
-    const addressElement = document.createElement("p");
-    addressElement.className = "qm-address";
-    addressElement.textContent = "⌖ " + address;
+          const statusBadge = document.createElement("span");
+          if (dish.meta.isOpen) {
+            statusBadge.className = "qm-open-badge";
+            statusBadge.textContent = "🟢 Mở cửa (" + dish.meta.hoursText + ")";
+          } else {
+            statusBadge.className = "qm-closed-badge";
+            statusBadge.textContent = "🔴 Đóng cửa (" + dish.meta.hoursText + ")";
+          }
 
-    const bottom = document.createElement("div");
-    bottom.className = "qm-card-bottom";
+          const priceBadge = document.createElement("span");
+          priceBadge.className = "qm-price-badge";
+          priceBadge.textContent = "🏷️ " + dish.meta.priceText;
 
-    const distance = document.createElement("span");
-    distance.className = "qm-distance";
-    distance.textContent =
-      "↗ " + distanceText + " · đường thẳng";
+          metaLine.append(statusBadge, priceBadge);
 
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "qm-choose";
+          const addressElement = document.createElement("p");
+          addressElement.className = "qm-address";
+          addressElement.textContent = "⌖ " + address;
 
-    button.setAttribute(
-      "aria-pressed",
-      String(isSelected)
-    );
+          const bottom = document.createElement("div");
+          bottom.className = "qm-card-bottom";
 
-    button.textContent = isSelected
-      ? "✓ Đang chọn"
-      : "Chọn địa điểm ↗";
+          const distance = document.createElement("span");
+          distance.className = "qm-distance";
+          distance.textContent = "↗ " + distanceText;
 
-    button.onclick = () => {
-      selectMapDestination(dish.id);
-    };
+          const actionWrap = document.createElement("div");
+          actionWrap.style.cssText = "display:flex; align-items:center; gap:6px;";
 
-    bottom.append(distance, button);
-    card.append(top, addressElement, bottom);
-    container.append(card);
-  }
-}
+          // Nút thêm/bớt khỏi Food Tour nhiều điểm
+          const tourBtn = document.createElement("button");
+          tourBtn.type = "button";
+          tourBtn.className = "qm-btn-tour-add" + (isInTour ? " in-tour" : "");
+          tourBtn.textContent = isInTour ? ("✓ Tour (#" + (tourIndex + 1) + ")") : "+ Tour";
+          tourBtn.title = isInTour ? "Bấm để bỏ khỏi Tour" : "Thêm quán này vào lộ trình Food Tour";
+          tourBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleFoodTourDish(dish.id);
+          };
+
+          // Nút chọn điểm đến đơn lẻ
+          const chooseBtn = document.createElement("button");
+          chooseBtn.type = "button";
+          chooseBtn.className = "qm-choose";
+          chooseBtn.setAttribute("aria-pressed", String(isSelected));
+          chooseBtn.textContent = isSelected ? "✓ Đang chọn" : "Chọn địa điểm ↗";
+          chooseBtn.onclick = () => {
+            selectMapDestination(dish.id);
+          };
+
+          actionWrap.append(tourBtn, chooseBtn);
+          bottom.append(distance, actionWrap);
+          card.append(top, metaLine, addressElement, bottom);
+          container.append(card);
+        }
+      }
       // Render tab Bản đồ và GPS
       function renderMapSection() {
         initMapDistanceInputListeners();
