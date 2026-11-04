@@ -1201,13 +1201,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     return apiDishes.filter((d) => {
       const matchCat = cat === "all" || d.cat === cat;
       const q = search.toLowerCase();
-      const matchSearch = (
-        (d.name[lang] || "") +
-        d.name.vi +
-        (d.desc[lang] || "")
-      )
-        .toLowerCase()
-        .includes(q);
+      const nameStr = (d.name?.[lang] || "") + (d.name?.vi || "");
+      const descStr = (d.desc?.[lang] || "") + (d.desc?.vi || "");
+      const matchSearch = (nameStr + descStr).toLowerCase().includes(q);
       return matchCat && matchSearch;
     });
   }, [apiDishes, cat, search, lang]);

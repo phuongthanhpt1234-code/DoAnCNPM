@@ -201,9 +201,24 @@ export function notifyPresenceLangChange(lang: LangKey) {
 }
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
-  const candidates = Array.from(
-    new Set([API_URL, RENDER_API_URL, "http://localhost:4000"]),
-  );
+  const list: string[] = [];
+  if (Platform.OS === "web" && typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      /^192\.168\./.test(host) ||
+      /^10\./.test(host) ||
+      /^172\./.test(host)
+    ) {
+      list.push(`http://${host}:4000`);
+    }
+  }
+  list.push("http://localhost:4000");
+  if (API_URL) list.push(API_URL);
+  list.push(RENDER_API_URL);
+
+  const candidates = Array.from(new Set(list.filter(Boolean)));
 
   let lastError: unknown = null;
   for (const baseUrl of candidates) {
