@@ -299,6 +299,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: string;
     openTasteCardBtn: string;
     playVoiceModalBtn: string;
+    stopVoiceModalBtn: string;
     directionsModalBtn: string;
     closeBtn: string;
     tasteModalBadge: string;
@@ -348,6 +349,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: "Nội dung phát Tiếng Việt cho chủ quán:",
     openTasteCardBtn: "Mở Thẻ Đưa Chủ Quán Xem & Phát Giọng Đọc AI",
     playVoiceModalBtn: "Phát Giọng Đọc",
+    stopVoiceModalBtn: "Dừng Phát Giọng Đọc",
     directionsModalBtn: "Chỉ đường Google Maps",
     closeBtn: "Đóng",
     tasteModalBadge: "THẺ GIAO TIẾP CHỦ QUÁN HỘI AN",
@@ -397,6 +399,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: "Vietnamese voice for Chef:",
     openTasteCardBtn: "Open Chef Card & Play AI Voice",
     playVoiceModalBtn: "Play Voice Narration",
+    stopVoiceModalBtn: "Stop Voice Narration",
     directionsModalBtn: "Google Maps Directions",
     closeBtn: "Close",
     tasteModalBadge: "COMMUNICATION CARD FOR HOI AN CHEF",
@@ -445,6 +448,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: "已翻译为越南语供厨师收听：",
     openTasteCardBtn: "打开店主沟通卡并播放语音",
     playVoiceModalBtn: "播放语音讲解",
+    stopVoiceModalBtn: "停止语音讲解",
     directionsModalBtn: "谷歌地图导航",
     closeBtn: "关闭",
     tasteModalBadge: "会安餐厅店主沟通卡",
@@ -493,6 +497,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: "요리사용 베트남어 번역:",
     openTasteCardBtn: "주방장 제시용 카드 열기 & 음성 재생",
     playVoiceModalBtn: "음성 해설 재생",
+    stopVoiceModalBtn: "음성 해설 중지",
     directionsModalBtn: "구글 지도 길찾기",
     closeBtn: "닫기",
     tasteModalBadge: "호이안 식당 주인 소통 카드",
@@ -541,6 +546,7 @@ const PAGE_UI: Record<
     customNoteTranslatedPrefix: "料理人向けベトナム語翻訳：",
     openTasteCardBtn: "カードを表示してベトナム語音声を再生",
     playVoiceModalBtn: "音声ガイドを再生",
+    stopVoiceModalBtn: "音声ガイドを停止",
     directionsModalBtn: "Googleマップで案内",
     closeBtn: "閉じる",
     tasteModalBadge: "ホイアン店主向け伝達カード",
@@ -823,6 +829,29 @@ export default function HomeScreen() {
       ? DISHES.find((d) => d.id === Number(params.dish)) || null
       : null,
   );
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
+
+  const handleStopSpeech = useCallback(() => {
+    stopSpeech();
+    setIsSpeaking(false);
+  }, []);
+
+  const handleCloseDishModal = useCallback(() => {
+    handleStopSpeech();
+    setSelectedDish(null);
+  }, [handleStopSpeech]);
+
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isSpeaking) {
+      handleStopSpeech();
+    }
+  }, [lang]);
   const [qrVisible, setQrVisible] = useState<boolean>(false);
   const [customUrl, setCustomUrl] = useState<string>(
     Platform.OS === "web" && typeof window !== "undefined"
@@ -1209,10 +1238,17 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     });
   }, [apiDishes, cat, search, lang]);
 
-  const speakText = (text: string, customSpeechCode?: string) => {
-    const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
-    playSpeech(text, targetLang);
-  };
+  const speakText = useCallback(
+    (text: string, customSpeechCode?: string) => {
+      if (!text || !text.trim()) return;
+      const targetLang = customSpeechCode || LANGS[lang]?.speechCode || "vi-VN";
+      setIsSpeaking(true);
+      playSpeech(text, targetLang, 1.0, (speaking) => {
+        setIsSpeaking(speaking);
+      });
+    },
+    [lang],
+  );
 
   const handleCheckInDish = async (dish: Dish) => {
     const now = Date.now();
@@ -1682,10 +1718,19 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         visible={!!selectedDish && !qrVisible}
         transparent
         animationType="slide"
+        onRequestClose={handleCloseDishModal}
       >
-        <View style={styles.modalOverlay}>
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={handleCloseDishModal}
+        >
           {selectedDish && (
-            <View style={styles.modalBox}>
+            <TouchableOpacity
+              activeOpacity={1}
+              style={styles.modalBox}
+              onPress={(e) => e.stopPropagation?.()}
+            >
               <DishCardImage
                 uri={selectedDish.img}
                 fallbackUri={
@@ -1704,13 +1749,73 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
                 <View style={styles.modalBtnRow}>
                   <TouchableOpacity
-                    style={styles.primaryBtn}
-                    onPress={() => speakText(selectedDish.desc[lang])}
+                    style={[
+                      styles.primaryBtn,
+                      isSpeaking && { backgroundColor: "#d97706" },
+                    ]}
+                    onPress={() => {
+                      if (isSpeaking) {
+                        handleStopSpeech();
+                      } else {
+                        speakText(selectedDish.desc[lang] || selectedDish.desc.vi);
+                      }
+                    }}
+                    activeOpacity={0.85}
                   >
-                    <Text style={styles.primaryBtnText}>
-                      {ui.playVoiceModalBtn} ({LANGS[lang].label})
-                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 6,
+                      }}
+                    >
+                      <Ionicons
+                        name={isSpeaking ? "stop-circle" : "volume-high"}
+                        size={18}
+                        color="#ffffff"
+                      />
+                      <Text style={styles.primaryBtnText}>
+                        {isSpeaking
+                          ? `${ui.stopVoiceModalBtn} (${LANGS[lang].label})`
+                          : `${ui.playVoiceModalBtn} (${LANGS[lang].label})`}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
+
+                  {isSpeaking && (
+                    <TouchableOpacity
+                      style={[
+                        styles.secondaryBtn,
+                        { backgroundColor: "#fee2e2", borderColor: "#fca5a5" },
+                      ]}
+                      onPress={handleStopSpeech}
+                      activeOpacity={0.85}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 6,
+                        }}
+                      >
+                        <Ionicons
+                          name="stop-circle-outline"
+                          size={18}
+                          color="#b91c1c"
+                        />
+                        <Text
+                          style={[
+                            styles.secondaryBtnText,
+                            { color: "#b91c1c" },
+                          ]}
+                        >
+                          {ui.stopVoiceModalBtn}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
 
                   <TouchableOpacity
                     style={styles.secondaryBtn}
@@ -1752,14 +1857,14 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
                 <TouchableOpacity
                   style={styles.closeBtn}
-                  onPress={() => setSelectedDish(null)}
+                  onPress={handleCloseDishModal}
                 >
                   <Text style={styles.closeBtnText}>{ui.closeBtn}</Text>
                 </TouchableOpacity>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
-        </View>
+        </TouchableOpacity>
       </Modal>
 
       <Modal visible={tasteCardVisible} transparent animationType="fade">
@@ -1830,17 +1935,29 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             </View>
 
             <TouchableOpacity
-              style={styles.openTasteCardBtn}
-              onPress={() => speakText(buildChefVoiceMessage(), "vi-VN")}
+              style={[
+                styles.openTasteCardBtn,
+                isSpeaking && { backgroundColor: "#d97706" },
+              ]}
+              onPress={() => {
+                if (isSpeaking) {
+                  handleStopSpeech();
+                } else {
+                  speakText(buildChefVoiceMessage(), "vi-VN");
+                }
+              }}
             >
               <Text style={styles.openTasteCardBtnText}>
-                {ui.replayChefVoiceBtn}
+                {isSpeaking ? `⏹ ${ui.stopVoiceModalBtn}` : ui.replayChefVoiceBtn}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               style={[styles.closeBtn, { width: "100%", marginTop: 10 }]}
-              onPress={() => setTasteCardVisible(false)}
+              onPress={() => {
+                handleStopSpeech();
+                setTasteCardVisible(false);
+              }}
             >
               <Text style={styles.closeBtnText}>{ui.closeTasteCardBtn}</Text>
             </TouchableOpacity>
