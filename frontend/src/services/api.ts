@@ -3,21 +3,29 @@ import { AppState, Platform } from "react-native";
 import { LangKey } from "../data/dishesData";
 
 // Tự động nhận diện backend URL linh hoạt cho cả Local, Render và Vercel
-const getFallbackUrl = () => {
+const resolveApiUrl = () => {
   if (Platform.OS === "web" && typeof window !== "undefined") {
     const host = window.location.hostname;
-    // Nếu đang chạy local (localhost hoặc IP mạng LAN như 192.168.x.x)
-    if (host === "localhost" || host === "127.0.0.1" || /^192\.168\./.test(host) || /^10\./.test(host)) {
+    // Nếu đang chạy web local (localhost hoặc IP mạng LAN), luôn ưu tiên gọi port 4000 cùng host
+    // để không bị lỗi khi đổi Wi-Fi làm IP trong .env bị cũ
+    if (
+      host === "localhost" ||
+      host === "127.0.0.1" ||
+      /^192\.168\./.test(host) ||
+      /^10\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[0-1])\./.test(host)
+    ) {
       return `http://${host}:4000`;
     }
+  }
+  if (process.env.EXPO_PUBLIC_API_URL) {
+    return process.env.EXPO_PUBLIC_API_URL;
   }
   // Mặc định gọi đến Backend triển khai trên Render
   return "https://doancnpm-backend.onrender.com";
 };
 
-export const API_URL = (
-  process.env.EXPO_PUBLIC_API_URL ?? getFallbackUrl()
-).replace(/\/+$/, "");
+export const API_URL = resolveApiUrl().replace(/\/+$/, "");
 
 const SESSION_TAB_ID = `tab_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 let cachedDeviceId: string | null = null;
