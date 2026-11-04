@@ -5877,7 +5877,8 @@ if (!document.getElementById("secMap").hidden) {
       function renderQrManager() {
         const sel = $("#qrDishSelect");
         if (sel && dishes.length > 0) {
-          sel.innerHTML = dishes
+          const currentVal = sel.value;
+          const optionsHtml = dishes
             .map((d) => {
               const dishName = d.localized_name || d.name;
               const shopInfo = d.address ? " - " + d.address.split(" - ")[0] : "";
@@ -5885,6 +5886,12 @@ if (!document.getElementById("secMap").hidden) {
               return `<option value="${d.id}">${esc(dishName)}${esc(shopInfo)} (${catLabel})</option>`;
             })
             .join("");
+          if (sel.innerHTML !== optionsHtml) {
+            sel.innerHTML = optionsHtml;
+          }
+          if (currentVal && dishes.some((d) => String(d.id) === String(currentVal))) {
+            sel.value = currentVal;
+          }
         }
         updateAppQr();
         updateDishQr();
