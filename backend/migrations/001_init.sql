@@ -78,3 +78,5 @@ CREATE TABLE IF NOT EXISTS check_ins (
 CREATE INDEX IF NOT EXISTS idx_checkins_created ON check_ins (created_at);
 CREATE INDEX IF NOT EXISTS idx_dishes_category ON dishes (category_id);
 CREATE INDEX IF NOT EXISTS idx_dish_translations_dish_lang ON dish_translations (dish_id, lang);
+
+
