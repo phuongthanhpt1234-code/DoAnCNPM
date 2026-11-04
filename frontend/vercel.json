@@ -6,6 +6,10 @@
   "framework": null,
   "rewrites": [
     {
+      "source": "/customer-map.html",
+      "destination": "/customer-map.html"
+    },
+    {
       "source": "/:path*",
       "destination": "/index.html"
     }

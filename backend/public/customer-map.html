@@ -1268,7 +1268,10 @@
     // --- 9. POPULATE SELECT OPTIONS & FETCH DISHES ---
     async function loadDishesData() {
       try {
-        const res = await fetch('/api/dishes');
+        const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:4000'
+          : 'https://doancnpm-backend.onrender.com';
+        const res = await fetch(`${apiBase}/api/dishes`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {

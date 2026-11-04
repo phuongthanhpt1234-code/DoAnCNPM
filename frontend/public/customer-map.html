@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Khám Phá & Chỉ Đường GPS Ẩm Thực Hội An - Theo Dấu Vị Hội</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    :root {
+      --primary: #8b1d24;
+      --primary-hover: #73171d;
+      --primary-light: #fdf2f2;
+      --secondary: #b45309;
+      --accent: #d97706;
+      --bg: #fdfbf7;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-sub: #6b7280;
+      --border: #f3e8d2;
+      --border-dark: #e5d5b5;
+      --shadow: 0 4px 16px rgba(139, 29, 36, 0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .top-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      font-size: 26px;
+      background: #fef2f2;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      border: 1px solid #fee2e2;
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .gps-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .gps-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulseGps 1.8s infinite;
+    }
+    @keyframes pulseGps {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* MAIN CONTAINER */
+    .app-body {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* CONTROLS CARD */
+    .controls-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      overflow: hidden;
+    }
+
+    .route-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .form-group-origin {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    .form-group-dest {
+      flex: 1.3 1 240px;
+      min-width: 0;
+    }
+    .form-group-radius {
+      flex: 0 0 125px;
+      min-width: 0;
+    }
+    .form-group-actions {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+    @media (max-width: 860px) {
+      .form-group-origin,
+      .form-group-dest {
+        flex: 1 1 100%;
+      }
+      .form-group-radius {
+        flex: 1 1 calc(50% - 6px);
+      }
+      .form-group-actions {
+        flex: 1 1 calc(50% - 6px);
+        margin-left: 0;
+      }
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .form-control {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border-dark);
+      background: #fffcf8;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(139, 29, 36, 0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    .btn-secondary:hover {
+      background: #fde68a;
+    }
+    .btn-gps {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .btn-gps:hover {
+      background: #d1fae5;
+    }
+    .btn-gmaps {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .btn-gmaps:hover {
+      background: #dbeafe;
+    }
+
+    /* KHỐI LỘ TRÌNH FOOD TOUR TSP ĐẸP MẮT & DỄ NHÌN */
+    .tsp-tour-box {
+      margin-top: 14px;
+      background: #fffcf8;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: none;
+      box-shadow: 0 2px 10px rgba(180, 83, 9, 0.06);
+    }
+    .tsp-tour-box.active {
+      display: block;
+    }
+    .tsp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #fed7aa;
+    }
+    .tsp-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #9a3412;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tsp-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: #ffedd5;
+      color: #c2410c;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #fdba74;
+    }
+    .tsp-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-tsp-clear {
+      background: #f3f4f6;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+      padding: 5px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-tsp-clear:hover {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .btn-tsp-open {
+      background: #8b1d24;
+      color: #ffffff;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .btn-tsp-open:hover {
+      background: #73171d;
+    }
+    .tsp-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .tsp-chip {
+      background: #ffffff;
+      border: 1px solid #f97316;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #431407;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .tsp-chip-num {
+      background: #ea580c;
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tsp-chip-del {
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 1px 4px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .tsp-chip-del:hover {
+      color: #dc2626;
+      background: #fee2e2;
+    }
+    .tsp-summary {
+      font-size: 12.5px;
+      color: #78350f;
+      font-weight: 500;
+      background: #fff7ed;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border-left: 3px solid #f97316;
+      line-height: 1.5;
+    }
+
+    /* WORKSPACE: MAP + NEARBY DISHES */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 370px;
+      gap: 16px;
+      flex: 1;
+      min-height: 580px;
+    }
+    @media (max-width: 992px) {
+      .workspace-grid { grid-template-columns: 1fr; }
+    }
+
+    .map-wrapper {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+      min-height: 580px;
+      display: flex;
+      flex-direction: column;
+    }
+    #customerLeafletMap {
+      flex: 1;
+      width: 100%;
+      min-height: 580px;
+      z-index: 1;
+    }
+
+    /* ĐỊNH DẠNG GHIM MÓN ĂN RÕ RÀNG & DỄ NHÌN */
+    .dish-marker-pin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 3px 6px rgba(139, 29, 36, 0.35));
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    .dish-marker-pin:hover {
+      transform: scale(1.15) translateY(-2px);
+    }
+    .dish-marker-bubble {
+      width: 24px;
+      height: 24px;
+      background: #b91c1c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2.5px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+    .dish-marker-bubble::after {
+      content: '';
+      width: 7px;
+      height: 7px;
+      background: #ffffff;
+      border-radius: 50%;
+    }
+    .dish-marker-tip {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 7px solid #8b1d24;
+      margin-top: -1px;
+    }
+    .dish-marker-label {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border: 1px solid #fcd34d !important;
+      border-radius: 6px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+      color: #78350f !important;
+      font-family: inherit !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      padding: 2px 7px !important;
+      white-space: nowrap !important;
+    }
+    .dish-marker-label::before {
+      border-bottom-color: #fcd34d !important;
+    }
+
+    /* ĐỊNH DẠNG VỊ TRÍ DU KHÁCH */
+    .user-marker-pin {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .user-marker-core {
+      width: 16px;
+      height: 16px;
+      background: #2563eb;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.6);
+      z-index: 2;
+    }
+    .user-marker-pulse {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(37, 99, 235, 0.25);
+      animation: userPulse 2s infinite ease-out;
+      z-index: 1;
+    }
+    @keyframes userPulse {
+      0% { transform: scale(0.6); opacity: 1; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+/* SIDE DISHES LIST */
+    .dishes-panel {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      max-height: 650px;
+    }
+    .dishes-panel-head {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      background: #fffcf8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dishes-panel-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dishes-count-badge {
+      font-size: 12px;
+      font-weight: 600;
+      background: #fef2f2;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #fee2e2;
+    }
+    .dishes-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .dish-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      gap: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .dish-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
+      transform: translateY(-1px);
+    }
+    .dish-img {
+      width: 68px;
+      height: 68px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f3f4f6;
+      flex-shrink: 0;
+    }
+    .dish-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .dish-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+    .dish-addr {
+      font-size: 12px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .dish-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dish-btn-sm {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+      cursor: pointer;
+      color: var(--text-main);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .dish-btn-sm:hover {
+      background: #f3f4f6;
+    }
+    .dish-btn-sm.active {
+      background: #fef3c7;
+      border-color: #fde68a;
+      color: #92400e;
+    }
+    .dish-dist {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-left: auto;
+    }
+
+    /* ẨN HEADER TRÙNG LẶP KHI ĐƯỢC NHÚNG TRONG MODAL IFRAME */
+    html.is-embedded .top-header,
+    body.is-embedded .top-header {
+      display: none !important;
+    }
+    body.is-embedded .app-body {
+      padding-top: 10px;
+    }
+
+    /* LEAFLET POPUP STYLING (CLEAN: NO 4.8 RATING, NO BADGE, EXACT ADDRESS) */
+    .leaflet-popup-content-wrapper {
+      border-radius: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      padding: 0;
+      overflow: hidden;
+    }
+    .leaflet-popup-content {
+      margin: 0;
+      line-height: 1.4;
+      font-family: inherit;
+    }
+    .popup-box {
+      width: 250px;
+    }
+    .popup-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+      background: #f3f4f6;
+    }
+    .popup-body {
+      padding: 12px;
+    }
+    .popup-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .popup-addr {
+      font-size: 12px;
+      color: #4b5563;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .popup-dist {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .popup-btns {
+      display: flex;
+      gap: 6px;
+    }
+    .popup-btn {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      text-decoration: none;
+    }
+    .popup-btn-route {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .popup-btn-tour {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    .popup-btn-gmap {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+  </style>
+  <script>
+    if (window.self !== window.top || window.location.search.includes('embed=true')) {
+      document.documentElement.classList.add('is-embedded');
+    }
+  </script>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="top-header">
+    <div class="brand-wrap">
+      <div class="brand-icon">🏮</div>
+      <div>
+        <h1 class="brand-title">THEO DẤU VỊ HỘI</h1>
+        <p class="brand-subtitle">Khám Phá & Chỉ Đường GPS Quán Ăn Hội An</p>
+      </div>
+    </div>
+    <div class="gps-badge">
+      <span class="gps-dot"></span>
+      <span id="gpsLiveStatus">GPS: Phố cổ Hội An</span>
+    </div>
+  </header>
+
+  <main class="app-body">
+    <!-- CONTROLS CARD -->
+    <section class="controls-card">
+      <div class="route-grid">
+        <!-- Điểm xuất phát -->
+        <div class="form-group form-group-origin">
+          <label class="form-label" for="cOriginSelect">
+            Điểm xuất phát
+          </label>
+          <select id="cOriginSelect" class="form-control">
+            <option value="gps" selected>Vị trí hiện tại của tôi</option>
+            <option value="15.8778,108.3275">Nguyễn Thị Minh Khai, Hội An</option>
+            <option value="15.8773,108.3259">Chùa Cầu Hội An</option>
+            <option value="15.8788,108.3325">Chợ Hội An (Trần Phú)</option>
+            <option value="15.8762,108.3294">Bến thuyền Bạch Đằng</option>
+            <option value="15.9083,108.3364">Bãi biển An Bàng</option>
+          </select>
+        </div>
+
+        <!-- Quán muốn đến -->
+        <div class="form-group form-group-dest">
+          <label class="form-label" for="cDestSelect">
+            Chọn quán muốn đến
+          </label>
+          <select id="cDestSelect" class="form-control">
+            <option value="">-- Chọn quán ăn trên bản đồ --</option>
+          </select>
+        </div>
+
+        <!-- Bán kính Radar -->
+        <div class="form-group form-group-radius">
+          <label class="form-label" for="cRadiusSelect">
+            Bán kính tìm kiếm
+          </label>
+          <select id="cRadiusSelect" class="form-control">
+            <option value="500">Trong 500m</option>
+            <option value="1000" selected>Trong 1.0 km</option>
+            <option value="2000">Trong 2.0 km</option>
+            <option value="5000">Trong 5.0 km</option>
+          </select>
+        </div>
+
+        <!-- Nút hành động -->
+        <div class="form-group-actions">
+          <button id="btnRadarScan" class="btn btn-primary" title="Quét tìm quán ăn xung quanh">
+            Quét tìm quán
+          </button>
+          <button id="btnGetGps" class="btn btn-gps" title="Lấy GPS tức thời">
+            Vị trí của tôi
+          </button>
+          <a id="btnOpenGoogleMaps" class="btn btn-gmaps" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" title="Mở trực tiếp trên ứng dụng Google Maps">
+            Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- FOOD TOUR TSP (MULTI-STOP OPTIMAL ROUTE) -->
+      <div id="tspTourBox" class="tsp-tour-box">
+        <div class="tsp-header">
+          <div class="tsp-title">
+            <span>Lộ trình Food Tour tối ưu (TSP)</span>
+            <span id="tspStopsCount" class="tsp-badge">0 quán</span>
+          </div>
+          <div class="tsp-actions">
+            <button id="btnClearTour" class="btn-tsp-clear" type="button">
+              Xóa tour
+            </button>
+            <a id="btnOpenGmapsTour" class="btn-tsp-open" href="#" target="_blank">
+              Mở Food Tour Google Maps
+            </a>
+          </div>
+        </div>
+        <div id="tspChipsList" class="tsp-chips"></div>
+        <div id="tspSummaryText" class="tsp-summary">
+          Hệ thống tự động sắp xếp thứ tự các quán ngắn nhất để bạn đi bộ thuận tiện nhất.
+        </div>
+      </div>
+    </section>
+
+    <!-- MAP & DISHES LIST WORKSPACE -->
+    <div class="workspace-grid">
+      <!-- LEAFLET MAP -->
+      <div class="map-wrapper">
+        <div id="customerLeafletMap"></div>
+      </div>
+
+      <!-- NEARBY DISHES LIST -->
+      <aside class="dishes-panel">
+        <div class="dishes-panel-head">
+          <h3 class="dishes-panel-title">
+            Quán ăn quanh đây
+          </h3>
+          <span id="dishesCountBadge" class="dishes-count-badge">0 quán</span>
+        </div>
+        <div id="nearbyDishesList" class="dishes-list">
+          <div style="text-align:center; padding:30px; color:#9ca3af; font-size:13px;">
+            Đang tải danh sách quán ăn Hội An...
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- LEAFLET JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // DEFAULT DISHES IN HOI AN
+    const DEFAULT_DISHES = [
+      { id: 1, name: "Cao lầu Bá Lễ", address: "49/3 Trần Hưng Đạo, Hội An", lat: 15.8794, lng: 108.3312, image: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400" },
+      { id: 2, name: "Cơm gà Bà Buội", address: "22 Phan Chu Trinh, Hội An", lat: 15.8778, lng: 108.3295, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400" },
+      { id: 3, name: "Bánh mì Phượng", address: "2B Phan Chu Trinh, Hội An", lat: 15.8785, lng: 108.3332, image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400" },
+      { id: 4, name: "Mì Quảng Ông Hai", address: "6A Trương Minh Lượng, Hội An", lat: 15.8821, lng: 108.3361, image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400" },
+      { id: 5, name: "Bánh đập Ni Bà Già", address: "34 Nguyễn Tri Phương, Hội An", lat: 15.8752, lng: 108.3418, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" },
+      { id: 6, name: "Nước Mót Hội An", address: "150 Trần Phú, Hội An", lat: 15.8771, lng: 108.3289, image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400" }
+    ];
+
+    let allDishes = [];
+    let mapInstance = null;
+    let userCoords = { lat: 15.8778, lng: 108.3275 }; // Default Hoi An Ancient Town
+    let userMarker = null;
+    let radiusCircle = null;
+    let dishMarkers = [];
+    let selectedDestDish = null;
+    let routePolyline = null;
+    let foodTourDishes = []; // Selected 3-4 dishes for TSP
+    let tourPolylines = [];
+
+    // --- 1. HAVERSINE FORMULA ---
+    function calcHaversine(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // meters
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c);
+    }
+
+    function formatDistance(meters) {
+      if (!meters || isNaN(meters)) return "--";
+      if (meters < 1000) return meters + " m";
+      return (meters / 1000).toFixed(2) + " km";
+    }
+
+    // --- 2. INITIALIZE LEAFLET MAP (GOOGLE MAPS ROADMAP & SATELLITE CHUẨN ĐẸP) ---
+    function initMap() {
+      mapInstance = L.map('customerLeafletMap', {
+        zoomControl: true,
+        scrollWheelZoom: true
+      }).setView([userCoords.lat, userCoords.lng], 16);
+
+      // Bản đồ Google Maps đường phố (rõ nét đường phố Hội An)
+      const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        attribution: '© Google Maps | Hội An'
+      });
+
+      // Bản đồ Google Maps vệ tinh
+      const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        attribution: '© Google Maps Vệ Tinh'
+      });
+
+      // Mặc định hiển thị Google Maps đường phố
+      googleRoadmap.addTo(mapInstance);
+
+      // Trình chuyển đổi lớp bản đồ trực quan
+      L.control.layers({
+        "🗺️ Bản đồ đường phố": googleRoadmap,
+        "🛰️ Ảnh vệ tinh": googleSatellite
+      }, null, { position: 'topright' }).addTo(mapInstance);
+
+      updateUserMarker(userCoords.lat, userCoords.lng, 'Vị trí của bạn');
+    }
+
+    // --- 3. USER MARKER & RADAR PULSE ---
+    function updateUserMarker(lat, lng, label) {
+      userCoords = { lat, lng };
+      if (!mapInstance) return;
+
+      if (userMarker) {
+        userMarker.setLatLng([lat, lng]);
+      } else {
+        const userIcon = L.divIcon({
+          className: 'custom-user-marker',
+          html: '<div class="user-marker-pin"><div class="user-marker-pulse"></div><div class="user-marker-core"></div></div>',
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        });
+        userMarker = L.marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 }).addTo(mapInstance);
+      }
+      userMarker.bindTooltip(label || 'Vị trí của bạn', { permanent: false, direction: 'top' });
+
+      // Update radar circle
+      const radiusMeters = parseInt(document.getElementById('cRadiusSelect').value) || 1000;
+      if (radiusCircle) {
+        radiusCircle.setLatLng([lat, lng]);
+        radiusCircle.setRadius(radiusMeters);
+      } else {
+        radiusCircle = L.circle([lat, lng], {
+          radius: radiusMeters,
+          color: '#8b1d24',
+          weight: 1.5,
+          fillColor: '#8b1d24',
+          fillOpacity: 0.08,
+          dashArray: '4, 4'
+        }).addTo(mapInstance);
+      }
+    }
+
+    // --- 4. GPS INSTANT LOCATOR ---
+    function getInstantGps() {
+      const statusEl = document.getElementById('gpsLiveStatus');
+      if (!navigator.geolocation) {
+        alert('Trình duyệt không hỗ trợ Geolocation GPS.');
+        return;
+      }
+      statusEl.textContent = 'Đang định vị GPS...';
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          updateUserMarker(lat, lng, 'Vị trí GPS của bạn');
+          mapInstance.setView([lat, lng], 16);
+          statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
+          runRadarScan();
+        },
+        (err) => {
+          console.warn('GPS error, using Hoi An center:', err);
+          statusEl.textContent = 'GPS: Phố cổ Hội An (Mặc định)';
+          updateUserMarker(15.8778, 108.3275, 'Phố cổ Hội An');
+          runRadarScan();
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 }
+      );
+    }
+
+    // --- 5. RENDER DISHES ON MAP & LIST ---
+    function renderDishes(dishesToRender) {
+      // Clear old dish markers
+      dishMarkers.forEach(m => mapInstance.removeLayer(m));
+      dishMarkers = [];
+
+      const listContainer = document.getElementById('nearbyDishesList');
+      const badge = document.getElementById('dishesCountBadge');
+      badge.textContent = dishesToRender.length + ' quán';
+
+      if (dishesToRender.length === 0) {
+        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#9ca3af; font-size:13px;">Không tìm thấy quán nào trong bán kính đã chọn.</div>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+
+      dishesToRender.forEach(d => {
+        const dist = calcHaversine(userCoords.lat, userCoords.lng, d.lat, d.lng);
+        d._dist = dist;
+
+        // Leaflet Marker (Clean popup: NO ⭐ 4.8, NO meta badges)
+        const dishIcon = L.divIcon({
+          className: 'custom-dish-marker',
+          html: '<div class="dish-marker-pin"><div class="dish-marker-bubble"></div><div class="dish-marker-tip"></div></div>',
+          iconSize: [32, 38],
+          iconAnchor: [16, 38],
+          popupAnchor: [0, -36]
+        });
+
+        const marker = L.marker([d.lat, d.lng], { icon: dishIcon }).addTo(mapInstance);
+        
+        // Hiện nhãn tên món ăn ngay dưới điểm ghim giúp dễ nhìn, dễ chọn
+        marker.bindTooltip(d.name, {
+          permanent: true,
+          direction: 'bottom',
+          className: 'dish-marker-label',
+          offset: [0, 4]
+        });
+        
+        // Popup content cleanly styled
+        const popupHtml = `
+          <div class="popup-box">
+            <img class="popup-img" src="${d.image || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'}" alt="${d.name}" />
+            <div class="popup-body">
+              <h4 class="popup-title">${d.name}</h4>
+              <p class="popup-addr">${d.address || 'Hội An, Quảng Nam'}</p>
+              <p class="popup-dist">Khoảng cách: ${formatDistance(dist)}</p>
+              <div class="popup-btns">
+                <button class="popup-btn popup-btn-route" onclick="selectDestinationById(${d.id})">Chỉ đường</button>
+                <button class="popup-btn popup-btn-tour" onclick="toggleTourDishById(${d.id})">+ Tour</button>
+                <a class="popup-btn popup-btn-gmap" href="https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=walking" target="_blank">Google Maps</a>
+              </div>
+            </div>
+          </div>
+        `;
+        marker.bindPopup(popupHtml, { maxWidth: 260 });
+        dishMarkers.push(marker);
+
+        // Sidebar Card
+        const inTour = foodTourDishes.some(td => td.id === d.id);
+        const card = document.createElement('div');
+        card.className = 'dish-card';
+        card.innerHTML = `
+          <img class="dish-img" src="${d.image || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'}" alt="${d.name}" />
+          <div class="dish-info">
+            <h4 class="dish-title">${d.name}</h4>
+            <p class="dish-addr">${d.address || 'Hội An'}</p>
+            <div class="dish-actions">
+              <button class="dish-btn-sm" onclick="selectDestinationById(${d.id}); event.stopPropagation();">
+                Chỉ đường
+              </button>
+              <button class="dish-btn-sm ${inTour ? 'active' : ''}" onclick="toggleTourDishById(${d.id}); event.stopPropagation();">
+                ${inTour ? '✓ Đã chọn' : '+ Tour'}
+              </button>
+              <span class="dish-dist">${formatDistance(dist)}</span>
+            </div>
+          </div>
+        `;
+        card.onclick = () => {
+          mapInstance.setView([d.lat, d.lng], 16);
+          marker.openPopup();
+        };
+        listContainer.appendChild(card);
+      });
+    }
+
+    // --- 6. RADAR SCANNER ---
+    function runRadarScan() {
+      const radiusMeters = parseInt(document.getElementById('cRadiusSelect').value) || 1000;
+      updateUserMarker(userCoords.lat, userCoords.lng, 'Vị trí của bạn');
+
+      // Filter dishes within radius
+      const filtered = allDishes.filter(d => {
+        if (!d.lat || !d.lng) return false;
+        const dist = calcHaversine(userCoords.lat, userCoords.lng, d.lat, d.lng);
+        return dist <= radiusMeters;
+      });
+
+      // Sort by distance
+      filtered.sort((a, b) => {
+        const da = calcHaversine(userCoords.lat, userCoords.lng, a.lat, a.lng);
+        const db = calcHaversine(userCoords.lat, userCoords.lng, b.lat, b.lng);
+        return da - db;
+      });
+
+      renderDishes(filtered);
+
+      // Fit map bounds to show radar circle
+      if (radiusCircle) {
+        mapInstance.fitBounds(radiusCircle.getBounds(), { padding: [30, 30] });
+      }
+    }
+
+    // --- 7. OSRM STREET ROUTING & GOOGLE MAPS LINK ---
+    async function selectDestinationById(dishId) {
+      const dish = allDishes.find(d => d.id === dishId);
+      if (!dish) return;
+      selectedDestDish = dish;
+
+      // Update select element
+      document.getElementById('cDestSelect').value = dish.id;
+
+      // Calculate distance
+      const haversineMeters = calcHaversine(userCoords.lat, userCoords.lng, dish.lat, dish.lng);
+
+      // Update Google Maps external button
+      const gmapsBtn = document.getElementById('btnOpenGoogleMaps');
+      if (gmapsBtn) {
+        gmapsBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lng}&destination=${dish.lat},${dish.lng}&travelmode=walking`;
+      }
+
+      try {
+        const url = `https://router.project-osrm.org/route/v1/walking/${userCoords.lng},${userCoords.lat};${dish.lng},${dish.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          const osrmDistance = Math.round(route.distance);
+          
+
+          // Calculate winding diff %
+          const diffPct = Math.round(((osrmDistance - haversineMeters) / (haversineMeters || 1)) * 100);
+          if (diffPct > 0) {
+            windingBox.style.display = 'inline-flex';
+            windingVal.textContent = '+' + diffPct + '% quanh co hẻm';
+          } else {
+            windingBox.style.display = 'none';
+          }
+
+          // Draw polyline on map
+          if (routePolyline) mapInstance.removeLayer(routePolyline);
+          const coords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+          // Đường viền trắng nổi bật
+          routePolyline = L.polyline(coords, {
+            color: '#2563eb',
+            weight: 6,
+            opacity: 0.92,
+            lineJoin: 'round',
+            lineCap: 'round'
+          }).addTo(mapInstance);
+
+          mapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+        } else {
+          
+          drawStraightLine(userCoords, dish);
+        }
+      } catch (err) {
+        console.warn('OSRM route fetch failed, fallback to straight line:', err);
+        
+        drawStraightLine(userCoords, dish);
+      }
+    }
+
+    function drawStraightLine(p1, p2) {
+      if (routePolyline) mapInstance.removeLayer(routePolyline);
+      routePolyline = L.polyline([[p1.lat, p1.lng], [p2.lat, p2.lng]], {
+        color: '#dc2626',
+        dashArray: '6, 6',
+        weight: 3
+      }).addTo(mapInstance);
+      mapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
+    }
+
+    // --- 8. MULTI-STOP TSP (TRAVELLING SALESPERSON PROBLEM) ---
+    function toggleTourDishById(dishId) {
+      const idx = foodTourDishes.findIndex(d => d.id === dishId);
+      if (idx !== -1) {
+        foodTourDishes.splice(idx, 1);
+      } else {
+        if (foodTourDishes.length >= 4) {
+          alert('Chỉ có thể chọn tối đa 4 quán cho một lộ trình Food Tour.');
+          return;
+        }
+        const dish = allDishes.find(d => d.id === dishId);
+        if (dish) foodTourDishes.push(dish);
+      }
+      updateTourUiAndSolveTsp();
+      runRadarScan(); // Refresh sidebar buttons state
+    }
+
+    function clearTour() {
+      foodTourDishes = [];
+      updateTourUiAndSolveTsp();
+      runRadarScan();
+    }
+
+    // Generate all permutations for TSP
+    function getPermutations(arr) {
+      if (arr.length <= 1) return [arr];
+      const result = [];
+      for (let i = 0; i < arr.length; i++) {
+        const current = arr[i];
+        const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
+        const subPerms = getPermutations(remaining);
+        for (const p of subPerms) {
+          result.push([current, ...p]);
+        }
+      }
+      return result;
+    }
+
+    // Solve TSP: Find shortest tour starting at userCoords through all selected stops
+    function solveOptimalTspRoute() {
+      if (foodTourDishes.length <= 1) return foodTourDishes;
+      const perms = getPermutations(foodTourDishes);
+      let bestPerm = null;
+      let minTotalDist = Infinity;
+
+      perms.forEach(perm => {
+        let total = 0;
+        let prev = userCoords;
+        for (const stop of perm) {
+          total += calcHaversine(prev.lat, prev.lng, stop.lat, stop.lng);
+          prev = stop;
+        }
+        if (total < minTotalDist) {
+          minTotalDist = total;
+          bestPerm = perm;
+        }
+      });
+
+      return bestPerm || foodTourDishes;
+    }
+
+    function updateTourUiAndSolveTsp() {
+      const tourBox = document.getElementById('tspTourBox');
+      const countEl = document.getElementById('tspStopsCount');
+      const chipsEl = document.getElementById('tspChipsList');
+      const gmapsTourBtn = document.getElementById('btnOpenGmapsTour');
+
+      // Clear existing tour lines
+      tourPolylines.forEach(pl => mapInstance.removeLayer(pl));
+      tourPolylines = [];
+
+      if (foodTourDishes.length === 0) {
+        tourBox.classList.remove('active');
+        return;
+      }
+
+      tourBox.classList.add('active');
+      const optimalStops = solveOptimalTspRoute();
+      countEl.textContent = `${optimalStops.length} quán - Tối ưu TSP`;
+
+      chipsEl.innerHTML = '';
+      let totalTourDist = 0;
+      let prev = userCoords;
+
+      optimalStops.forEach((stop, index) => {
+        const segDist = calcHaversine(prev.lat, prev.lng, stop.lat, stop.lng);
+        totalTourDist += segDist;
+        prev = stop;
+
+        const chip = document.createElement('div');
+        chip.className = 'tsp-chip';
+        chip.innerHTML = `
+          <span class="tsp-chip-num">Trạm ${index + 1}</span>
+          <span>${stop.name}</span>
+          <span class="tsp-chip-del" onclick="toggleTourDishById(${stop.id})" title="Bỏ quán này">✕</span>
+        `;
+        chipsEl.appendChild(chip);
+      });
+
+      document.getElementById('tspSummaryText').textContent =
+        `Tổng quãng đường Food Tour: ${formatDistance(totalTourDist)} (Bắt đầu từ vị trí của bạn qua ${optimalStops.length} trạm theo thứ tự ngắn nhất).`;
+
+      // Build Google Maps multi-stop URL
+      if (optimalStops.length > 0) {
+        const originStr = `${userCoords.lat},${userCoords.lng}`;
+        const destStr = `${optimalStops[optimalStops.length - 1].lat},${optimalStops[optimalStops.length - 1].lng}`;
+        let waypointsStr = '';
+        if (optimalStops.length > 1) {
+          waypointsStr = optimalStops.slice(0, optimalStops.length - 1).map(s => `${s.lat},${s.lng}`).join('|');
+        }
+        gmapsTourBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${originStr}&destination=${destStr}${waypointsStr ? '&waypoints=' + waypointsStr : ''}&travelmode=walking`;
+      }
+
+      // Draw tour polylines
+      const tourPoints = [[userCoords.lat, userCoords.lng], ...optimalStops.map(s => [s.lat, s.lng])];
+      const pl = L.polyline(tourPoints, {
+        color: '#d97706',
+        weight: 4,
+        dashArray: '8, 6',
+        opacity: 0.9
+      }).addTo(mapInstance);
+      tourPolylines.push(pl);
+      mapInstance.fitBounds(pl.getBounds(), { padding: [40, 40] });
+    }
+
+    // --- 9. POPULATE SELECT OPTIONS & FETCH DISHES ---
+    async function loadDishesData() {
+      try {
+        const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:4000'
+          : 'https://doancnpm-backend.onrender.com';
+        const res = await fetch(`${apiBase}/api/dishes`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            allDishes = data.map(d => ({
+              id: d.id,
+              name: d.name,
+              address: d.address || 'Hội An',
+              lat: Number(d.lat) || 15.8778,
+              lng: Number(d.lng) || 108.3275,
+              image: d.image || d.image_url || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn('API /api/dishes unreachable, fallback to default dishes:', e);
+      }
+
+      if (!allDishes || allDishes.length === 0) {
+        allDishes = DEFAULT_DISHES;
+      }
+
+      // Populate destination select
+      const destSelect = document.getElementById('cDestSelect');
+      destSelect.innerHTML = '<option value="">-- Chọn quán ăn trên bản đồ --</option>';
+      allDishes.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `${d.name} (${d.address || 'Hội An'})`;
+        destSelect.appendChild(opt);
+      });
+
+      runRadarScan();
+    }
+
+    // --- 10. EVENT LISTENERS ---
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      loadDishesData();
+
+      document.getElementById('btnRadarScan').onclick = runRadarScan;
+      document.getElementById('cRadiusSelect').onchange = runRadarScan;
+      document.getElementById('btnGetGps').onclick = getInstantGps;
+      document.getElementById('btnClearTour').onclick = clearTour;
+
+      document.getElementById('cDestSelect').onchange = (e) => {
+        const id = parseInt(e.target.value);
+        if (id) selectDestinationById(id);
+      };
+
+      document.getElementById('cOriginSelect').onchange = (e) => {
+        const val = e.target.value;
+        if (val === 'gps') {
+          getInstantGps();
+        } else {
+          const parts = val.split(',').map(s => parseFloat(s.trim()));
+          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            updateUserMarker(parts[0], parts[1], 'Điểm xuất phát');
+            runRadarScan();
+            if (selectedDestDish) selectDestinationById(selectedDestDish.id);
+          }
+        }
+      };
+    });
+  </script>
+</body>
+</html>
