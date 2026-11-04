@@ -3981,7 +3981,14 @@
         <div class="qm-metric-divider"></div>
 
         <div>
-          <span>Quãng đường ô tô tham khảo</span>
+          <span>Đường thẳng (Haversine)</span>
+          <strong id="mapHaversineDistDisplay">—</strong>
+        </div>
+
+        <div class="qm-metric-divider"></div>
+
+        <div>
+          <span>Đường thực tế (OSRM)</span>
           <strong id="mapRealDistDisplay">—</strong>
         </div>
       </div>
@@ -6845,57 +6852,51 @@ function renderRoadRoute(routeData) {
 
   clearRoadRouteLine();
 
-  // GeoJSON dùng [kinh độ, vĩ độ].
-  // Leaflet dùng [vĩ độ, kinh độ].
-  const points = routeData.geometry.coordinates.map(
-    ([lng, lat]) => [lat, lng]
-  );
+  // GeoJSON OSRM dùng [kinh độ, vĩ độ] -> Leaflet dùng [vĩ độ, kinh độ]
+  const points = routeData.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
 
   mapRouteLine = L.polyline(points, {
     color: "#2563eb",
     weight: 5,
-    opacity: 0.9,
+    opacity: 0.92,
     lineCap: "round",
     lineJoin: "round",
   }).addTo(mapLeafletInstance);
 
-  const distanceText =
-    routeData.distance >= 1000
-      ? (routeData.distance / 1000).toFixed(2) + " km"
-      : Math.round(routeData.distance) + " m";
+  const osrmMeters = routeData.distance;
+  const osrmDistText = osrmMeters >= 1000
+    ? (osrmMeters / 1000).toFixed(2) + " km"
+    : Math.round(osrmMeters) + " m";
 
-  const distanceElement = document.getElementById(
-    "mapRealDistDisplay"
+  const haversineMeters = calculateHaversineDistance(
+    mapOriginCoords.lat,
+    mapOriginCoords.lng,
+    mapDestCoords.lat,
+    mapDestCoords.lng
   );
+  const haversineText = haversineMeters >= 1000
+    ? (haversineMeters / 1000).toFixed(2) + " km"
+    : Math.round(haversineMeters) + " m";
 
-  if (distanceElement) {
-    distanceElement.textContent = distanceText;
-  }
+  const diffPct = haversineMeters > 0
+    ? Math.max(0, Math.round(((osrmMeters - haversineMeters) / haversineMeters) * 100))
+    : 0;
+
+  const realDistEl = document.getElementById("mapRealDistDisplay");
+  if (realDistEl) realDistEl.textContent = osrmDistText;
+
+  const haversineDistEl = document.getElementById("mapHaversineDistDisplay");
+  if (haversineDistEl) haversineDistEl.textContent = haversineText;
 
   showRoadRouteMessage(
-    "Quãng đường theo ô tô: " +
-    distanceText +
-    ". Tuyến tham khảo, không có giao thông trực tiếp."
+    `🛣️ Tuyến đường OSRM thực tế: ${osrmDistText} (${diffPct > 0 ? '+' + diffPct + '% quanh co' : 'tương đương'} so với đường chim bay ${haversineText}).`
   );
 
-  if (mapDestMarker) {
-    mapDestMarker.bindPopup(`
-  <div style="min-width:190px;line-height:1.7;">
-    <strong>${esc(mapDestCoords.label || "Địa điểm")}</strong>
-    <p>${esc(mapDestCoords.address || "")}</p>
-    <p>Chọn địa điểm để xem quãng đường theo đường phố.</p>
-  </div>
-`);
-  }
-
-  mapLeafletInstance.fitBounds(
-    mapRouteLine.getBounds(),
-    {
-      paddingTopLeft: [35, 45],
-      paddingBottomRight: [35, 330],
-      maxZoom: 17,
-    }
-  );
+  mapLeafletInstance.fitBounds(mapRouteLine.getBounds(), {
+    paddingTopLeft: [35, 45],
+    paddingBottomRight: [35, 330],
+    maxZoom: 17,
+  });
 }
 
 async function loadRoadRoute() {
@@ -7027,17 +7028,7 @@ async function loadRoadRoute() {
       throw new Error("Không tìm thấy tuyến đường");
     }
 
-    // Tránh hiển thị tuyến tới một đường quá xa
-    // tọa độ thật của điểm xuất phát hoặc quán.
-    const tooFarFromRoad = (data.waypoints || []).some(
-      (point) => point.distance > 100
-    );
-
-    if (tooFarFromRoad) {
-      throw new Error(
-        "Điểm xuất phát hoặc quán cách đường ô tô hơn 100 m"
-      );
-    }
+    // Hội An có nhiều phố đi bộ/hẻm nhỏ, không loại bỏ tuyến OSRM
 
     roadRouteCache = {
       key,
@@ -7051,14 +7042,26 @@ async function loadRoadRoute() {
     roadRouteCache = null;
     clearRoadRouteLine();
 
+    const haversineMeters = calculateHaversineDistance(
+      mapOriginCoords.lat,
+      mapOriginCoords.lng,
+      mapDestCoords.lat,
+      mapDestCoords.lng
+    );
+    const haversineText = haversineMeters >= 1000
+      ? (haversineMeters / 1000).toFixed(2) + " km"
+      : Math.round(haversineMeters) + " m";
+
+    const haversineDistEl = document.getElementById("mapHaversineDistDisplay");
+    if (haversineDistEl) haversineDistEl.textContent = haversineText;
+
     if (distanceElement) {
-      distanceElement.textContent = "Chưa có tuyến";
+      distanceElement.textContent = haversineText + " (chim bay)";
     }
 
     showRoadRouteMessage(
-      "Chưa lấy được tuyến đường. " +
-      "Kiểm tra tọa độ, thử chọn lại quán hoặc mở Google Maps. " +
-      "Không vẽ đường thẳng thay thế."
+      "Khoảng cách chim bay: " + haversineText +
+      ". Bấm mở Google Maps để xem tuyến phố chi tiết."
     );
   } finally {
     clearTimeout(timeout);
@@ -8087,6 +8090,12 @@ loadRoadRoute();
           mapDestCoords.lat,
           mapDestCoords.lng
         );
+        const haversineDisplayEl = document.getElementById("mapHaversineDistDisplay");
+        if (haversineDisplayEl) {
+          haversineDisplayEl.textContent = realDistMeters >= 1000
+            ? (realDistMeters / 1000).toFixed(2) + " km"
+            : Math.round(realDistMeters) + " m";
+        }
 
         const travelTimeElement = document.getElementById("gmapTravelTimeText");
         if (travelTimeElement) {
