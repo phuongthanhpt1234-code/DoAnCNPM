@@ -2426,57 +2426,7 @@
   }
 
   
-  /* Context Filter Box */
-  #secMap .qm-context-filter-box {
-    margin-bottom: 12px;
-    padding: 10px 12px;
-    border: 1px solid #f0dfb1;
-    border-radius: 11px;
-    background: #fffdf8;
-    box-shadow: 0 2px 6px rgba(138, 32, 40, 0.04);
-  }
-
-  #secMap .qm-filter-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 7px;
-  }
-  #secMap .qm-filter-row:last-child {
-    margin-bottom: 0;
-  }
-
-  #secMap .qm-filter-col {
-    flex: 1;
-    min-width: 0;
-  }
-
-  #secMap .qm-filter-col label {
-    display: block;
-    margin-bottom: 3px;
-    color: #8c6a51;
-    font-size: 9.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-  }
-
-  #secMap .qm-filter-col select {
-    width: 100%;
-    padding: 6px 7px;
-    border: 1px solid #e7d5bd;
-    border-radius: 7px;
-    background: #ffffff;
-    color: var(--qm-ink);
-    font-size: 11px;
-    font-weight: 500;
-    outline: none;
-    cursor: pointer;
-  }
-
-  #secMap .qm-filter-col select:focus {
-    border-color: #bb5c4d;
-    box-shadow: 0 0 0 2px rgba(187, 92, 77, 0.12);
-  }
+  
 
   /* Food Tour Panel (TSP Multi-stop Route) */
   #secMap .qm-tour-panel {
@@ -2641,43 +2591,7 @@
   }
 
   /* Dish card metadata and tour button */
-  #secMap .qm-card-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 6px 0 6px;
-  }
-
-  #secMap .qm-open-badge {
-    font-size: 9.5px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #ecfdf5;
-    color: #059669;
-    border: 1px solid #a7f3d0;
-  }
-
-  #secMap .qm-closed-badge {
-    font-size: 9.5px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-  }
-
-  #secMap .qm-price-badge {
-    font-size: 9.5px;
-    color: #4b5563;
-    background: #f3f4f6;
-    padding: 2px 6px;
-    border-radius: 4px;
-    border: 1px solid #e5e7eb;
-    font-weight: 500;
-  }
+  
 
   #secMap .qm-btn-tour-add {
     padding: 8px 10px;
@@ -4111,45 +4025,7 @@
       </div>
 
       <!-- Không có các nút lọc danh mục -->
-      <!-- BỘ LỌC NÂNG CAO THEO NGỮ CẢNH -->
-      <div class="qm-context-filter-box">
-        <div class="qm-filter-row">
-          <div class="qm-filter-col">
-            <label for="mapFilterStatus">Trạng thái mở cửa</label>
-            <select id="mapFilterStatus" onchange="updateMapCalculations()">
-              <option value="all" selected>Tất cả trạng thái</option>
-              <option value="open">🟢 Đang mở cửa</option>
-              <option value="closed">🔴 Đã đóng cửa</option>
-            </select>
-          </div>
-          <div class="qm-filter-col">
-            <label for="mapFilterCategory">Danh mục</label>
-            <select id="mapFilterCategory" onchange="updateMapCalculations()">
-              <option value="all" selected>Tất cả danh mục</option>
-              <option value="main">Món chính</option>
-              <option value="drink">Chè & Đồ uống</option>
-            </select>
-          </div>
-        </div>
-        <div class="qm-filter-row">
-          <div class="qm-filter-col">
-            <label for="mapFilterPrice">Mức giá</label>
-            <select id="mapFilterPrice" onchange="updateMapCalculations()">
-              <option value="all" selected>Tất cả mức giá</option>
-              <option value="budget">&lt; 30.000đ (Bình dân)</option>
-              <option value="mid">30.000đ - 50.000đ</option>
-              <option value="high">&gt; 50.000đ</option>
-            </select>
-          </div>
-          <div class="qm-filter-col">
-            <label for="mapFilterSort">Sắp xếp</label>
-            <select id="mapFilterSort" onchange="updateMapCalculations()">
-              <option value="distance" selected>↗ Gần nhất</option>
-              <option value="name">A → Z Tên quán</option>
-            </select>
-          </div>
-        </div>
-      </div>
+      
 
       <!-- KHỐI LỘ TRÌNH NHIỀU ĐIỂM (TSP FOOD TOUR) -->
       <div id="mapFoodTourPanel" class="qm-tour-panel"></div>
@@ -8244,21 +8120,7 @@ loadRoadRoute();
           };
         });
 
-        // Áp dụng bộ lọc ngữ cảnh cho markers trên bản đồ
-        const statusFilter = document.getElementById("mapFilterStatus")?.value || "all";
-        const catFilter = document.getElementById("mapFilterCategory")?.value || "all";
-        const priceFilter = document.getElementById("mapFilterPrice")?.value || "all";
-
         let dishesInRange = mappedDishes.filter((d) => d.isWithin);
-        if (statusFilter === "open") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).isOpen);
-        else if (statusFilter === "closed") dishesInRange = dishesInRange.filter(d => !checkDishOpenStatus(d).isOpen);
-
-        if (catFilter === "main") dishesInRange = dishesInRange.filter(d => d.category_slug === "main" || (d.category_name && d.category_name.includes("chính")));
-        else if (catFilter === "drink") dishesInRange = dishesInRange.filter(d => d.category_slug === "drink" || (d.category_name && (d.category_name.includes("Chè") || d.category_name.includes("uống"))));
-
-        if (priceFilter === "budget") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "budget");
-        else if (priceFilter === "mid") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "mid");
-        else if (priceFilter === "high") dishesInRange = dishesInRange.filter(d => checkDishOpenStatus(d).priceLevel === "high");
 
         // Cập nhật số lượng món ăn trong phạm vi
         const counterEl = $("#mapCounterText");
@@ -8281,7 +8143,7 @@ loadRoadRoute();
         renderFoodTourPanel();
       }
 
-      // Bảng hiển thị toàn bộ món ăn kết hợp bộ lọc nâng cao theo ngữ cảnh
+      // Bảng hiển thị toàn bộ món ăn trong phạm vi khoảng cách
       function renderDishesDistanceTable(precomputedList, enteredDistMeters) {
         const container = document.getElementById("mapDishesTableBody");
         if (!container) return;
@@ -8306,81 +8168,29 @@ loadRoadRoute();
           return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
         }
 
-        // Đọc các giá trị bộ lọc
-        const statusFilter = document.getElementById("mapFilterStatus")?.value || "all";
-        const catFilter = document.getElementById("mapFilterCategory")?.value || "all";
-        const priceFilter = document.getElementById("mapFilterPrice")?.value || "all";
-        const sortFilter = document.getElementById("mapFilterSort")?.value || "distance";
-
-        let results = sourceDishes
+        const results = sourceDishes
           .filter(dish => dish.is_active !== false && dish.is_active !== 0 && validCoordinates(dish))
-          .map(dish => {
-            const dist = calculateHaversineDistance(
+          .map(dish => ({
+            ...dish,
+            computedDist: calculateHaversineDistance(
               mapOriginCoords.lat,
               mapOriginCoords.lng,
               Number(dish.lat),
               Number(dish.lng)
-            );
-            const meta = checkDishOpenStatus(dish);
-            return {
-              ...dish,
-              computedDist: dist,
-              meta
-            };
-          })
-          .filter(dish => dish.computedDist <= limitMeters);
-
-        // Áp dụng bộ lọc trạng thái mở cửa
-        if (statusFilter === "open") {
-          results = results.filter(d => d.meta.isOpen);
-        } else if (statusFilter === "closed") {
-          results = results.filter(d => !d.meta.isOpen);
-        }
-
-        // Áp dụng bộ lọc danh mục
-        if (catFilter === "main") {
-          results = results.filter(d => d.category_slug === "main" || (d.category_name && d.category_name.includes("chính")));
-        } else if (catFilter === "drink") {
-          results = results.filter(d => d.category_slug === "drink" || (d.category_name && (d.category_name.includes("Chè") || d.category_name.includes("uống"))));
-        }
-
-        // Áp dụng bộ lọc mức giá
-        if (priceFilter === "budget") {
-          results = results.filter(d => d.meta.priceLevel === "budget");
-        } else if (priceFilter === "mid") {
-          results = results.filter(d => d.meta.priceLevel === "mid");
-        } else if (priceFilter === "high") {
-          results = results.filter(d => d.meta.priceLevel === "high");
-        }
-
-        // Áp dụng sắp xếp
-        if (sortFilter === "distance") {
-          results.sort((a, b) => a.computedDist - b.computedDist);
-        
-        } else if (sortFilter === "name") {
-          results.sort((a, b) => {
-            const nameA = a.translations?.vi?.name || a.name || "";
-            const nameB = b.translations?.vi?.name || b.name || "";
-            return nameA.localeCompare(nameB, "vi");
-          });
-        }
+            )
+          }))
+          .filter(dish => dish.computedDist <= limitMeters)
+          .sort((a, b) => a.computedDist - b.computedDist);
 
         const counter = document.getElementById("mapCounterText");
         const radiusText = limitMeters >= 1000 ? limitMeters / 1000 + " km" : limitMeters + " m";
 
         if (counter) {
-          let filterSummary = "";
-          if (statusFilter === "open") filterSummary += " · Đang mở cửa";
-          if (catFilter !== "all") filterSummary += " · Đã lọc danh mục";
-          if (priceFilter !== "all") filterSummary += " · Đã lọc giá";
-          counter.textContent = `${results.length} kết quả trong bán kính ${radiusText}${filterSummary}`;
+          counter.textContent = `${results.length} kết quả trong bán kính ${radiusText}`;
         }
 
         if (results.length === 0) {
-          const emptyMsg = document.createElement("div");
-          emptyMsg.style.cssText = "padding:16px; color:#78716c; font-size:12px; background:#fffdf8; border:1px solid #f0dfbb; border-radius:10px; line-height:1.6;";
-          emptyMsg.innerHTML = `Chưa có địa điểm nào phù hợp trong bán kính <strong>${radiusText}</strong> với bộ lọc hiện tại.<br>👉 Bạn thử mở rộng bán kính hoặc chọn <em>"Tất cả trạng thái"</em>.`;
-          container.append(emptyMsg);
+          container.textContent = `Chưa có địa điểm đã cập nhật trong bán kính ${radiusText}. Bạn thử mở rộng phạm vi tìm kiếm.`;
           return;
         }
 
@@ -8428,25 +8238,6 @@ loadRoadRoute();
           heading.append(category, title);
           top.append(icon, heading);
 
-          // Hàng thông tin ngữ cảnh: Trạng thái mở cửa + Mức giá
-          const metaLine = document.createElement("div");
-          metaLine.className = "qm-card-meta";
-
-          const statusBadge = document.createElement("span");
-          if (dish.meta.isOpen) {
-            statusBadge.className = "qm-open-badge";
-            statusBadge.textContent = "🟢 Mở cửa (" + dish.meta.hoursText + ")";
-          } else {
-            statusBadge.className = "qm-closed-badge";
-            statusBadge.textContent = "🔴 Đóng cửa (" + dish.meta.hoursText + ")";
-          }
-
-          const priceBadge = document.createElement("span");
-          priceBadge.className = "qm-price-badge";
-          priceBadge.textContent = "🏷️ " + dish.meta.priceText;
-
-          metaLine.append(statusBadge, priceBadge);
-
           const addressElement = document.createElement("p");
           addressElement.className = "qm-address";
           addressElement.textContent = "⌖ " + address;
@@ -8456,7 +8247,7 @@ loadRoadRoute();
 
           const distance = document.createElement("span");
           distance.className = "qm-distance";
-          distance.textContent = "↗ " + distanceText;
+          distance.textContent = "↗ " + distanceText + " · đường thẳng";
 
           const actionWrap = document.createElement("div");
           actionWrap.style.cssText = "display:flex; align-items:center; gap:6px;";
@@ -8484,10 +8275,11 @@ loadRoadRoute();
 
           actionWrap.append(tourBtn, chooseBtn);
           bottom.append(distance, actionWrap);
-          card.append(top, metaLine, addressElement, bottom);
+          card.append(top, addressElement, bottom);
           container.append(card);
         }
       }
+
       // Render tab Bản đồ và GPS
       function renderMapSection() {
         initMapDistanceInputListeners();
