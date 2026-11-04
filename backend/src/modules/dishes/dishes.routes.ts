@@ -284,10 +284,7 @@ const dishSchema = z.object({
   name: z.string().min(1),
   description: z.string().nullable().optional(),
   address: z.string().nullable().optional(),
-  price_vnd: z.number().int().nonnegative().nullable().optional(),
   image_url: z.string().nullable().optional(),
-  emoji: z.string().min(1).optional().default('🍜'),
-  rating: z.number().min(0).max(5).optional().default(4.8),
   lat: z.number().optional().default(15.877),  // tọa độ 
   lng: z.number().optional().default(108.327),
   is_active: z.boolean().default(true),
@@ -305,7 +302,6 @@ const dishSchema = z.object({
 const DISH_SELECT_SQL = `
   SELECT
     d.*,
-    d.rating::float AS rating,
     c.name AS category_name,
     c.slug AS category_slug,
     c.translations AS category_translations,
@@ -518,21 +514,18 @@ export async function ensureAllDishesSynced() {
       const lng = item.lng ? Number(item.lng) : 108.327;
 
       await pool.query(
-        `INSERT INTO dishes (id, category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true)
+        `INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
          ON CONFLICT (id) DO UPDATE SET
            category_id = EXCLUDED.category_id,
            name = EXCLUDED.name,
            description = EXCLUDED.description,
            address = EXCLUDED.address,
-           price_vnd = EXCLUDED.price_vnd,
            image_url = COALESCE(NULLIF(EXCLUDED.image_url, ''), dishes.image_url),
-           emoji = EXCLUDED.emoji,
-           rating = EXCLUDED.rating,
            lat = EXCLUDED.lat,
            lng = EXCLUDED.lng,
            is_active = true`,
-        [item.id, catId, item.name, item.description, item.address, item.price_vnd, item.image_url, item.emoji || '🍜', rating, lat, lng],
+        [item.id, catId, item.name, item.description, item.address, item.image_url, lat, lng],
       );
 
       if (item.translations) {
@@ -682,17 +675,14 @@ r.post(
   ah(async (req, res) => {
     const b = dishSchema.parse(req.body);
     const { rows } = await pool.query(
-      `INSERT INTO dishes (category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
+      `INSERT INTO dishes (category_id, name, description, address, image_url, lat, lng, is_active)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
       [
         b.category_id ?? null,
         b.name,
         b.description ?? null,
         b.address ?? null,
-        b.price_vnd ?? null,
         b.image_url ?? null,
-        b.emoji ?? '🍜',
-        b.rating ?? 4.8,
         b.lat ?? 15.877,
         b.lng ?? 108.327,
         b.is_active,
@@ -717,18 +707,15 @@ r.put(
     const b = dishSchema.parse(req.body);
     const { rows } = await pool.query(
       `UPDATE dishes
-       SET category_id=$1, name=$2, description=$3, address=$4, price_vnd=$5,
-           image_url=$6, emoji=$7, rating=$8, lat=$9, lng=$10, is_active=$11
-       WHERE id=$12 RETURNING id`,
+       SET category_id=$1, name=$2, description=$3, address=$4,
+           image_url=$5, lat=$6, lng=$7, is_active=$8
+       WHERE id=$9 RETURNING id`,
       [
         b.category_id ?? null,
         b.name,
         b.description ?? null,
         b.address ?? null,
-        b.price_vnd ?? null,
         b.image_url ?? null,
-        b.emoji ?? '🍜',
-        b.rating ?? 4.8,
         b.lat ?? 15.877,
         b.lng ?? 108.327,
         b.is_active,

@@ -23,21 +23,18 @@ async function syncCloudDb() {
     for (const d of dishes) {
       const catId = catMap[d.category_slug] || 4;
       await client.query(
-        `INSERT INTO dishes (id, category_id, name, description, address, price_vnd, image_url, emoji, rating, lat, lng, is_active)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, true)
+        `INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
          ON CONFLICT (id) DO UPDATE SET
            category_id = EXCLUDED.category_id,
            name = EXCLUDED.name,
            description = EXCLUDED.description,
            address = EXCLUDED.address,
-           price_vnd = EXCLUDED.price_vnd,
            image_url = EXCLUDED.image_url,
-           emoji = EXCLUDED.emoji,
-           rating = EXCLUDED.rating,
            lat = EXCLUDED.lat,
            lng = EXCLUDED.lng,
            is_active = true`,
-        [d.id, catId, d.name, d.description, d.address || 'Hội An', d.price_vnd || null, d.image_url, d.emoji || '🍜', d.rating || 4.8, d.lat || 15.877, d.lng || 108.327]
+        [d.id, catId, d.name, d.description, d.address || 'Hội An', d.image_url, d.lat || 15.877, d.lng || 108.327]
       );
 
       if (d.translations) {
