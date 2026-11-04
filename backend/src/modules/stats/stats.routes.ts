@@ -41,7 +41,7 @@ r.get('/', requireAdminAuth, ah(async (_req, res) => {
       FROM generate_series(current_date - 6, current_date, interval '1 day') d
       LEFT JOIN check_ins c ON c.created_at::date = d::date
       GROUP BY d ORDER BY d`),
-    pool.query(`SELECT d.id, d.name, COALESCE(d.price_vnd, 0)::int AS price_vnd,
+    pool.query(`SELECT d.id, d.name, 0 AS price_vnd,
       count(f.dish_id)::int AS favorites,
       (SELECT count(*) FROM check_ins ci WHERE ci.dish_id = d.id)::int AS check_ins
       FROM dishes d LEFT JOIN favorites f ON f.dish_id = d.id
