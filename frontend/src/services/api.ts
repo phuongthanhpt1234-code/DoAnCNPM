@@ -2,12 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AppState, Platform } from "react-native";
 import { LangKey } from "../data/dishesData";
 
+const RENDER_API_URL = "https://doancnpm-backend.onrender.com";
+
 // Tự động nhận diện backend URL linh hoạt cho cả Local, Render và Vercel
 const resolveApiUrl = () => {
   if (Platform.OS === "web" && typeof window !== "undefined") {
     const host = window.location.hostname;
-    // Nếu đang chạy web local (localhost hoặc IP mạng LAN), luôn ưu tiên gọi port 4000 cùng host
-    // để không bị lỗi khi đổi Wi-Fi làm IP trong .env bị cũ
+    // Nếu đang chạy web local (localhost hoặc IP mạng LAN), ưu tiên gọi port 4000 cùng host
     if (
       host === "localhost" ||
       host === "127.0.0.1" ||
@@ -17,12 +18,22 @@ const resolveApiUrl = () => {
     ) {
       return `http://${host}:4000`;
     }
+    // Trên Vercel hoặc tên miền HTTPS công khai: tuyệt đối không dùng IP LAN http://192.168...
+    const envUrl = (process.env.EXPO_PUBLIC_API_URL || "").trim();
+    if (
+      envUrl &&
+      envUrl.startsWith("https://") &&
+      !/localhost|127\.0\.0\.1|192\.168\.|10\./.test(envUrl)
+    ) {
+      return envUrl;
+    }
+    return RENDER_API_URL;
   }
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
   }
   // Mặc định gọi đến Backend triển khai trên Render
-  return "https://doancnpm-backend.onrender.com";
+  return RENDER_API_URL;
 };
 
 export const API_URL = resolveApiUrl().replace(/\/+$/, "");
@@ -190,15 +201,27 @@ export function notifyPresenceLangChange(lang: LangKey) {
 }
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(API_URL + "/api" + path, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Lỗi " + res.status);
+  const candidates = Array.from(
+    new Set([API_URL, RENDER_API_URL, "http://localhost:4000"]),
+  );
+
+  let lastError: unknown = null;
+  for (const baseUrl of candidates) {
+    try {
+      const res = await fetch(baseUrl + "/api" + path, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Lỗi " + res.status);
+      }
+      return res.status === 204 ? (null as T) : res.json();
+    } catch (err) {
+      lastError = err;
+    }
   }
-  return res.status === 204 ? (null as T) : res.json();
+  throw lastError instanceof Error ? lastError : new Error("Lỗi kết nối máy chủ");
 }
 
 export type ApiDish = {
