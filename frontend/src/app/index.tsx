@@ -988,6 +988,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               rating: row.rating != null ? Number(row.rating) : 4.8,
               lat: row.lat != null ? Number(row.lat) : 15.877,
               lng: row.lng != null ? Number(row.lng) : 108.327,
+              address: row.address || "",
               name: mergedName,
               desc: mergedDesc,
               tag: mergedTag,

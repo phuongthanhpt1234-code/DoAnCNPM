@@ -1,3 +1,5 @@
+import fs from 'fs';
+import path from 'path';
 import { Router } from 'express';
 import { z } from 'zod';
 import { pool } from '../../config/db';
@@ -485,11 +487,25 @@ async function upsertTranslations(
 
 
 
+// Đồng bộ dữ liệu SQL xuất ra file feDishesData.json để luôn khớp 100%
+export async function syncFeDishesDataJson() {
+  try {
+    const { rows } = await pool.query(
+      `${DISH_SELECT_SQL} WHERE d.is_active = true ORDER BY d.id ASC`,
+    );
+    const formatted = rows.map((row) => formatDishRow(row));
+    const jsonPath = path.join(__dirname, '../../data/feDishesData.json');
+    fs.writeFileSync(jsonPath, JSON.stringify(formatted, null, 2), 'utf-8');
+    console.log('📁 Đã cập nhật file feDishesData.json khớp 100% với SQL database (' + formatted.length + ' món)!');
+  } catch (err) {
+    console.warn('⚠️ Lỗi khi cập nhật feDishesData.json:', err);
+  }
+}
+
 // Danh sách các món ăn chính thức đồng bộ từ Frontend
 export async function ensureAllDishesSynced() {
   try {
     const dishesList = require('../../data/feDishesData.json');
-    const keepIds: number[] = [];
 
     const catRows = await pool.query('SELECT id, slug FROM categories');
     const catMap: Record<string, number> = {};
@@ -518,7 +534,6 @@ export async function ensureAllDishesSynced() {
            is_active = true`,
         [item.id, catId, item.name, item.description, item.address, item.price_vnd, item.image_url, item.emoji || '🍜', rating, lat, lng],
       );
-      keepIds.push(item.id);
 
       if (item.translations) {
         for (const [lang, t] of Object.entries(item.translations as Record<string, any>)) {
@@ -535,15 +550,13 @@ export async function ensureAllDishesSynced() {
       }
     }
 
-    if (keepIds.length > 0) {
-      await pool.query(`DELETE FROM favorites WHERE dish_id NOT IN (${keepIds.join(',')})`);
-      await pool.query(`DELETE FROM check_ins WHERE dish_id NOT IN (${keepIds.join(',')})`);
-      await pool.query(`DELETE FROM dish_translations WHERE dish_id NOT IN (${keepIds.join(',')})`);
-      await pool.query(`UPDATE qr_codes SET target_id = NULL WHERE target_id NOT IN (${keepIds.join(',')})`);
-      await pool.query(`DELETE FROM dishes WHERE id NOT IN (${keepIds.join(',')})`);
-    }
+    // Cập nhật sequence id tự tăng trong PostgreSQL để khi thêm món mới không bị lỗi trùng ID
+    await pool.query(
+      `SELECT setval(pg_get_serial_sequence('dishes', 'id'), COALESCE((SELECT MAX(id) FROM dishes), 1))`
+    );
 
     console.log('✅ Đã đồng bộ chính xác các món ăn từ Frontend vào SQL database!');
+    await syncFeDishesDataJson();
   } catch (err) {
     console.error('⚠️ Lỗi khi đồng bộ món ăn từ Frontend:', err);
   }
@@ -690,6 +703,7 @@ r.post(
 
     const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [newId]);
     broadcastDishUpdate();
+    syncFeDishesDataJson().catch(() => {});
     res.status(201).json(formatDishRow(full.rows[0]));
   }),
 );
@@ -726,6 +740,7 @@ r.put(
     await upsertTranslations(id, b.name, b.description, b.translations);
     const full = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
     broadcastDishUpdate();
+    syncFeDishesDataJson().catch(() => {});
     res.json(formatDishRow(full.rows[0]));
   }),
 );
@@ -738,6 +753,7 @@ r.delete(
     const { rowCount } = await pool.query('DELETE FROM dishes WHERE id = $1', [Number(req.params.id)]);
     if (!rowCount) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
     broadcastDishUpdate();
+    syncFeDishesDataJson().catch(() => {});
     res.status(204).end();
   }),
 );
