@@ -1804,7 +1804,1186 @@
         box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
       }
 
+      #secMap .qm-route.qm-route-v2 {
+  display: block;
+  padding: 20px;
+  background: #fffdf8;
+  border: 1px solid #ffffff;
+  border-top: 3px solid #dfb348;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(72, 42, 45, 0.15);
+}
+
+#secMap .qm-route-v2 .qm-route-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+#secMap .qm-route-v2 .qm-route-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 47px;
+  height: 47px;
+  border-radius: 12px;
+  background: #fae9df;
+  color: #a52629;
+  font-size: 30px;
+}
+
+#secMap .qm-route-v2 .qm-route-content small {
+  color: #b28a43;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+#secMap .qm-route-v2 .qm-route-content h3 {
+  margin: 6px 0 0;
+  color: #482a2d;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#secMap .qm-transport {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin: 18px 0;
+}
+
+#secMap .qm-transport button {
+  min-height: 44px;
+  padding: 10px 6px;
+  background: #fffaf1;
+  color: #9b7b66;
+  border: 1px solid #ecd8c7;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#secMap .qm-transport button.active {
+  background: #a52629;
+  color: #ffe9bd;
+  border-color: #a52629;
+  font-weight: 700;
+}
+
+#secMap .qm-route-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding-top: 17px;
+  border-top: 1px solid #efdfd2;
+}
+
+#secMap .qm-route-metrics {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+#secMap .qm-route-metrics span {
+  display: block;
+  margin-bottom: 7px;
+  color: #967e73;
+  font-size: 11px;
+}
+
+#secMap .qm-route-metrics strong {
+  display: block;
+  color: #a52629;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+#secMap .qm-metric-divider {
+  width: 1px;
+  height: 38px;
+  background: #ead8c8;
+}
+
+#secMap .qm-route-v2 #gmapExternalLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 15px;
+  background: #a52629;
+  color: #fff0d5;
+  border: 0;
+  border-radius: 11px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+#secMap .qm-route-v2 .qm-preview-note,
+#secMap .qm-route-v2 .qm-road-message {
+  margin: 12px 0 0;
+  color: #a08a77;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+#secMap .qm-transport button:focus-visible {
+  outline: 3px solid #dfb348;
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  #secMap .qm-route.qm-route-v2 {
+    padding: 14px;
+  }
+
+  #secMap .qm-transport {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #secMap .qm-route-summary {
+    flex-wrap: wrap;
+  }
+
+  #secMap .qm-route-v2 #gmapExternalLink {
+    width: 100%;
+  }
+
+  #secMap .qm-route-metrics {
+    gap: 12px;
+  }
+
+  #secMap .qm-route-metrics strong {
+    font-size: 19px;
+  }
+}
+
     </style>
+    <style>
+  @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap");
+
+  #secMap {
+    --qm-red: #a52629;
+    --qm-deep: #761c22;
+    --qm-gold: #e5b84e;
+    --qm-ink: #40282a;
+    --qm-muted: #967d75;
+    --qm-line: #efdfd2;
+
+    padding: 27px 32px;
+    border: 0;
+    border-radius: 15px;
+    background: #f8f2e9;
+    color: var(--qm-ink);
+    font: 13px "Be Vietnam Pro", sans-serif;
+  }
+
+  #secMap [hidden] {
+    display: none !important;
+  }
+
+  #secMap * {
+    box-sizing: border-box;
+  }
+
+  #secMap button,
+  #secMap select,
+  #secMap input {
+    font: inherit;
+  }
+
+  #secMap button,
+  #secMap a,
+  #secMap select {
+    cursor: pointer;
+  }
+
+  #secMap button:focus-visible,
+  #secMap a:focus-visible,
+  #secMap select:focus-visible {
+    outline: 3px solid var(--qm-gold);
+    outline-offset: 3px;
+  }
+
+  #secMap .qm-toolbar {
+    margin-bottom: 22px;
+    overflow: hidden;
+    background: #fffdf8;
+    border: 1px solid var(--qm-line);
+    border-radius: 15px;
+    box-shadow: 0 7px 25px #82262b06;
+  }
+
+  #secMap .qm-toolbar-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 17px 21px;
+    border-bottom: 1px solid #f1e8db;
+  }
+
+  #secMap .qm-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #secMap .qm-title-icon {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #faeae1;
+    color: var(--qm-red);
+    font-size: 21px;
+  }
+
+  #secMap .qm-title h2 {
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: -0.4px;
+  }
+
+  #secMap .qm-status {
+    padding: 7px 10px;
+    background: #fff5dc;
+    border: 1px solid #f0dfb5;
+    border-radius: 20px;
+    color: #8a6520;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  #secMap .qm-filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 19px;
+    padding: 18px 21px;
+  }
+
+  #secMap .qm-field {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  #secMap .qm-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--qm-muted);
+    font-size: 11px;
+  }
+
+  #secMap .qm-field input,
+  #secMap .qm-field select {
+    width: 100%;
+    min-height: 32px;
+    padding: 4px 0;
+    border: 0;
+    background: transparent;
+    color: #573539;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  #secMap .qm-radius {
+    flex: 0 1 165px;
+  }
+
+  #secMap .qm-divider {
+    width: 1px;
+    height: 34px;
+    background: var(--qm-line);
+  }
+
+  #secMap .qm-secondary {
+    padding: 11px 13px;
+    border: 1px solid #f0dfb1;
+    border-radius: 9px;
+    background: #fff6df;
+    color: #8a6520;
+    font-size: 11px;
+  }
+
+  #secMap .qm-primary {
+    padding: 14px 19px;
+    border: 1px solid #9e262b;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #b73030, #8a2028);
+    color: #fff7e4;
+    font-size: 12px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px #a526291a;
+  }
+
+  #secMap .qm-primary span {
+    margin-left: 14px;
+    color: #f6d77d;
+  }
+
+  #secMap .qm-workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 345px;
+    align-items: start;
+    gap: 22px;
+  }
+
+  #secMap .qm-map-panel {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--qm-line);
+    border-radius: 15px;
+    background: #fffdf8;
+  }
+
+  #secMap .qm-map-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 19px;
+  }
+
+  #secMap .qm-map-head h3 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  #secMap .qm-legend {
+    display: flex;
+    gap: 13px;
+    color: var(--qm-muted);
+    font-size: 10px;
+  }
+
+  #secMap .qm-legend i {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 5px;
+    border-radius: 50%;
+    background: #d97706;
+  }
+
+  #secMap .qm-legend i.qm-blue {
+    background: #2563eb;
+  }
+
+  #secMap .qm-map {
+    position: relative;
+    background: #eee7d1;
+  }
+
+  #secMap #leafletMap,
+  #secMap #mapFallbackContainer {
+    width: 100%;
+    height: 560px;
+    border: 0;
+    border-radius: 0;
+  }
+
+  #secMap #mapFallbackContainer {
+    display: none;
+  }
+
+  #secMap #mapFallbackFrame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  #secMap .qm-map-label {
+    position: absolute;
+    top: 17px;
+    left: 55px;
+    z-index: 500;
+    max-width: calc(100% - 75px);
+    padding: 11px 13px;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    background: #fffdf7f5;
+    color: var(--qm-ink);
+    font-size: 11px;
+    box-shadow: 0 3px 14px #5c37221a;
+    pointer-events: none;
+  }
+
+  #secMap .qm-route {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid #fff;
+    border-top: 3px solid var(--qm-gold);
+    border-radius: 12px;
+    background: #fffdf8f7;
+    box-shadow: 0 8px 28px #46201622;
+    backdrop-filter: blur(10px);
+  }
+
+  #secMap .qm-route-wrap {
+    position: absolute;
+    right: 19px;
+    bottom: 30px;
+    left: 19px;
+    z-index: 500;
+  }
+
+  #secMap .qm-route-icon {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #fae9df;
+    color: var(--qm-red);
+    font-size: 25px;
+  }
+
+  #secMap .qm-route-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #secMap .qm-route-content small {
+    color: #af8c50;
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  #secMap .qm-route-content h3 {
+    margin: 6px 0;
+    color: var(--qm-ink);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+
+  #secMap .qm-route-content p {
+    margin: 0;
+    color: var(--qm-muted);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+
+  #secMap .qm-route a {
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--qm-red);
+    color: #fff3d2;
+    font-size: 11px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  #secMap .qm-map-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 13px 18px;
+    color: #a18b7e;
+    font-size: 10px;
+  }
+
+  #secMap .qm-map-foot button {
+    padding: 6px 9px;
+    border: 1px solid var(--qm-line);
+    border-radius: 7px;
+    background: transparent;
+    color: var(--qm-muted);
+    font-size: 10px;
+  }
+
+  #secMap .qm-aside-head {
+    margin: 4px 0 14px;
+  }
+
+  #secMap .qm-aside-head h3 {
+    margin: 0 0 7px;
+    color: var(--qm-ink);
+    font-size: 14px;
+  }
+
+  #secMap #mapCounterText {
+    color: var(--qm-red);
+    font-size: 11px;
+    line-height: 1.7;
+  }
+
+  #secMap .qm-cards {
+    display: grid;
+    gap: 12px;
+    max-height: 610px;
+    padding: 2px;
+    overflow-y: auto;
+  }
+
+  #secMap .qm-card {
+    padding: 16px;
+    border: 1px solid var(--qm-line);
+    border-radius: 13px;
+    background: #fffdf8;
+  }
+
+  #secMap .qm-card.active {
+    border-color: #bb5c4d;
+    box-shadow: 0 0 0 2px #a5262905;
+  }
+
+  #secMap .qm-card-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #secMap .qm-art {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border: 1px solid #f0dfbb;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f1d6a1, #fff0cb);
+    font-size: 27px;
+  }
+
+  #secMap .qm-category {
+    color: #b38e4e;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+
+  #secMap .qm-card h4 {
+    margin: 5px 0 0;
+    color: var(--qm-ink);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  #secMap .qm-address {
+    margin: 13px 0;
+    color: var(--qm-muted);
+    font-size: 11px;
+    line-height: 1.9;
+  }
+
+  #secMap .qm-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 11px;
+    border-top: 1px solid #f1e7da;
+  }
+
+  #secMap .qm-distance {
+    color: #9a7040;
+    font-size: 10px;
+  }
+
+  #secMap .qm-choose {
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 7px;
+    background: #faede3;
+    color: var(--qm-red);
+    font-size: 10px;
+  }
+
+  #secMap .qm-card.active .qm-choose {
+    background: var(--qm-red);
+    color: #ffe6a2;
+  }
+
+  #secMap .qm-note {
+    margin: 15px 3px 0;
+    color: #a48d7b;
+    font-size: 11px;
+    line-height: 1.9;
+  }
+
+  @media (max-width: 1050px) {
+    #secMap {
+      padding: 20px;
+    }
+
+    #secMap .qm-workspace {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 17px;
+    }
+
+    #secMap .qm-route-icon {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    #secMap {
+      padding: 12px;
+    }
+
+    #secMap .qm-toolbar-title {
+      flex-wrap: wrap;
+      padding: 14px;
+    }
+
+    #secMap .qm-filters {
+      padding: 15px;
+      gap: 14px;
+    }
+
+    #secMap .qm-field {
+      flex-basis: 100%;
+    }
+
+    #secMap .qm-radius {
+      flex: 1 1 140px;
+    }
+
+    #secMap .qm-divider {
+      display: none;
+    }
+
+    #secMap .qm-primary {
+      flex: 1;
+    }
+
+    #secMap .qm-workspace {
+      grid-template-columns: 1fr;
+    }
+
+    #secMap #leafletMap,
+    #secMap #mapFallbackContainer {
+      height: 450px;
+    }
+
+    #secMap .qm-route-wrap {
+      right: 12px;
+      left: 12px;
+    }
+
+    #secMap .qm-route {
+      flex-wrap: wrap;
+      padding: 12px;
+    }
+
+    #secMap .qm-cards {
+      max-height: 450px;
+    }
+  }
+  #secMap .qm-map {
+  display: block;
+  position: relative;
+  height: auto;
+  overflow: hidden;
+}
+
+/* Tăng chiều cao bản đồ để còn đủ chỗ xem tuyến */
+#secMap #leafletMap {
+  height: 720px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Khung nổi sát phía dưới bản đồ */
+#secMap .qm-map > .qm-route-wrap {
+  position: absolute;
+  top: auto;
+  bottom: 32px;
+  left: 16px;
+  right: 16px;
+  width: auto;
+  height: 33.333%;
+  margin: 0;
+  padding: 0;
+  transform: none;
+  z-index: 500;
+}
+
+#secMap .qm-route.qm-route-v2 {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 14px 18px;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(72, 42, 45, 0.18);
+}
+
+/* Thu gọn nội dung trong khung */
+#secMap .qm-route-v2 .qm-route-icon {
+  width: 36px;
+  height: 36px;
+  font-size: 24px;
+}
+
+#secMap .qm-route-v2 .qm-transport {
+  margin: 10px 0;
+}
+
+#secMap .qm-route-v2 .qm-transport button {
+  min-height: 36px;
+  padding: 7px;
+}
+
+#secMap .qm-route-v2 .qm-route-summary {
+  padding-top: 10px;
+}
+
+#secMap .qm-route-v2 .qm-preview-note,
+#secMap .qm-route-v2 .qm-road-message {
+  margin-top: 7px;
+  font-size: 11px;
+}/* Ẩn nút Mở bản đồ */
+#secMap .qm-route-v2 #gmapExternalLink {
+  display: none;
+}
+
+/* Bỏ cuộn, thu gọn khung */
+#secMap .qm-route.qm-route-v2 {
+  padding: 10px 14px;
+  overflow: hidden;
+}
+
+#secMap .qm-route-v2 .qm-route-heading {
+  gap: 8px;
+}
+
+#secMap .qm-route-v2 .qm-route-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 21px;
+}
+
+#secMap .qm-route-v2 .qm-route-content small {
+  font-size: 9px;
+}
+
+#secMap .qm-route-v2 .qm-route-content h3 {
+  margin-top: 3px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+#secMap .qm-route-v2 .qm-transport {
+  gap: 6px;
+  margin: 8px 0;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+#secMap .qm-route-v2 .qm-transport button {
+  min-height: 30px;
+  padding: 5px;
+  font-size: 11px;
+}
+
+#secMap .qm-route-v2 .qm-route-summary {
+  padding-top: 8px;
+}
+
+#secMap .qm-route-v2 .qm-route-metrics {
+  gap: 16px;
+}
+
+#secMap .qm-route-v2 .qm-route-metrics span {
+  margin-bottom: 3px;
+  font-size: 10px;
+}
+
+#secMap .qm-route-v2 .qm-route-metrics strong {
+  font-size: 18px;
+}
+
+#secMap .qm-route-v2 .qm-metric-divider {
+  height: 28px;
+}
+
+#secMap .qm-route-v2 .qm-preview-note {
+  margin-top: 7px;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* Ẩn dòng thông báo lặp lại khi tải tuyến thành công */
+#secMap .qm-route-v2 .qm-road-message {
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+#secMap #mapRadarView[hidden],
+#secMap #mapManageView[hidden] {
+  display: none !important;
+}
+
+#secMap .am-view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #eadbcd;
+}
+
+#secMap .am-view-tabs button {
+  padding: 11px 17px;
+  border: 1px solid #eadbcd;
+  border-radius: 9px;
+  background: #fffaf1;
+  color: #927c70;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#secMap .am-view-tabs button.active {
+  background: #a52629;
+  border-color: #a52629;
+  color: #fff0d5;
+}
+
+#secMap .am-view-tabs button:focus-visible {
+  outline: 3px solid #dfb348;
+  outline-offset: 3px;
+}
+
+#secMap .am-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+#secMap .am-eyebrow {
+  color: #ae8541;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+#secMap .am-header h2 {
+  margin: 7px 0;
+  color: #482a2d;
+  font-size: 23px;
+}
+
+#secMap .am-header p,
+#secMap .am-editor p {
+  color: #927c70;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#secMap .am-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+#secMap .am-stats > div {
+  padding: 17px;
+  background: #fffdf8;
+  border: 1px solid #eadbcd;
+  border-radius: 12px;
+}
+
+#secMap .am-stats span,
+#secMap .am-coordinates span {
+  display: block;
+  margin-bottom: 7px;
+  color: #927c70;
+  font-size: 12px;
+}
+
+#secMap .am-stats strong {
+  color: #a52629;
+  font-size: 26px;
+}
+
+#secMap .am-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+#secMap .am-toolbar input,
+#secMap .am-toolbar select {
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #eadbcd;
+  border-radius: 9px;
+  background: #fffdf8;
+  color: #482a2d;
+  font: inherit;
+  font-size: 13px;
+}
+
+#secMap .am-toolbar input {
+  flex: 1;
+  min-width: 200px;
+}
+
+#secMap .am-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  align-items: start;
+  gap: 18px;
+}
+
+#secMap .am-map-panel,
+#secMap .am-sidebar {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #eadbcd;
+  border-radius: 13px;
+  background: #fffdf8;
+}
+
+#secMap .am-map-heading,
+#secMap .am-list-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+}
+
+#secMap .am-map-heading span,
+#secMap .am-list-heading span {
+  color: #927c70;
+  font-size: 11px;
+}
+
+#secMap .am-list-heading h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+#secMap #adminLocationMap {
+  height: 470px;
+  width: 100%;
+  z-index: 1;
+}
+
+#secMap .am-message {
+  margin: 0;
+  padding: 12px 16px;
+  background: #fff5df;
+  color: #89672d;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+#secMap .am-editor {
+  padding: 18px;
+  border-top: 1px solid #eadbcd;
+}
+
+#secMap .am-editor h3 {
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+#secMap .am-coordinates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  margin: 16px 0;
+}
+
+#secMap .am-coordinates strong {
+  font-size: 15px;
+}
+
+#secMap .am-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#secMap .am-actions button,
+#secMap #amShowAll {
+  padding: 10px 13px;
+  border: 1px solid #eadbcd;
+  border-radius: 8px;
+  background: #fffaf1;
+  color: #a52629;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#secMap #amEdit,
+#secMap #amApply {
+  background: #a52629;
+  border-color: #a52629;
+  color: white;
+}
+
+#secMap .am-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+#secMap #amList {
+  padding: 0 12px 12px;
+}
+
+#secMap .am-place {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 14px;
+  border: 1px solid #eadbcd;
+  border-radius: 10px;
+  background: #fffdf8;
+  color: #482a2d;
+  text-align: left;
+  cursor: pointer;
+}
+
+#secMap .am-place.active {
+  border-color: #a52629;
+  background: #fff4ed;
+}
+
+#secMap .am-place strong,
+#secMap .am-place span,
+#secMap .am-place small {
+  display: block;
+  line-height: 1.6;
+}
+
+#secMap .am-place strong {
+  font-size: 14px;
+}
+
+#secMap .am-place span {
+  margin: 7px 0;
+  color: #927c70;
+  font-size: 12px;
+}
+
+#secMap .am-place small {
+  color: #977131;
+  font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  #secMap .am-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  #secMap .am-map-heading {
+    flex-wrap: wrap;
+  }
+}
+
+#secMap .gm-directions-inputs {
+  position: relative;
+  flex: 1 1 420px;
+  min-width: 0;
+  padding: 14px;
+  background: #fffdf8;
+  border: 1px solid #eadbcd;
+  border-radius: 14px;
+}
+
+#secMap .gm-direction-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  position: relative;
+  z-index: 1;
+}
+
+#secMap .gm-direction-row + .gm-direction-row {
+  margin-top: 12px;
+}
+
+#secMap .gm-origin-dot,
+#secMap .gm-destination-dot {
+  display: block;
+  box-sizing: border-box;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  background: #fffdf8;
+}
+
+#secMap .gm-origin-dot {
+  border: 3px solid #2563eb;
+  border-radius: 50%;
+}
+
+#secMap .gm-destination-dot {
+  border: 3px solid #a52629;
+  border-radius: 4px;
+}
+
+#secMap .gm-direction-connector {
+  height: 14px;
+  margin: 3px 0 3px 6px;
+  border-left: 2px dotted #b9afa7;
+}
+
+#secMap .gm-direction-field {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  border: 1px solid #e5d9ce;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+#secMap .gm-direction-field:focus-within {
+  border-color: #b58a42;
+  box-shadow: 0 0 0 2px rgba(223, 179, 72, 0.15);
+}
+
+#secMap .gm-direction-field label {
+  display: block;
+  margin-bottom: 4px;
+  color: #927c70;
+  font-size: 11px;
+}
+
+#secMap .gm-direction-field input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #482a2d;
+  font: inherit;
+  font-size: 14px;
+}
+
+#secMap #gmDirectionsStatus {
+  margin: 10px 0 0 27px;
+  color: #927c70;
+  font-size: 11px;
+  line-height: 1.5;
+}
+</style>
   </head>
   <body>
     <!-- MÀN HÌNH ĐĂNG NHẬP ADMIN BẢO MẬT -->
@@ -2124,9 +3303,7 @@
                     <div style="text-align: right">
                       <span class="presence-meta">Trạng thái kết nối</span>
                       <br />
-                      <b style="color: #34d399; font-size: 13px"
-                        >● Đang đồng bộ thời gian thực</b
-                      >
+                      
                     </div>
                   </div>
                 </div>
@@ -2431,207 +3608,255 @@
               </section>
 
               <!-- BẢN ĐỒ VÀ GPS -->
-              <section class="alt-panel" id="secMap" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 18px; padding: 20px;">
-                <!-- HEADER GỌN GÀNG -->
-                <div class="sec-head" style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--gold-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">🗺️</span>
-                    <div>
-                      <h2 style="font-size: 16.5px; margin: 0; color: var(--ink); font-weight: 700;">Bản Đồ Ẩm Thực & Định Vị GPS</h2>
-                      <p style="margin: 2px 0 0; font-size: 11.5px; color: var(--muted);">Chọn vị trí hiện tại hoặc nhập địa chỉ để tra cứu toàn bộ món ăn trong phạm vi khoảng cách</p>
-                    </div>
-                  </div>
-                  <div id="mapRadiusCounter" style="display: inline-flex; align-items: center; gap: 6px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; color: #047857;">
-                    <span>✨</span> <span id="mapCounterText">Đang tìm món ăn...</span>
-                  </div>
-                </div>
+<section class="alt-panel" id="secMap" hidden>
 
-                <!-- KHU VỰC ĐIỀU HƯỚNG: NƠI XUẤT PHÁT, NƠI ĐẾN & KHOẢNG CÁCH (m hoặc km) -->
-                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;">
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; align-items: flex-end;">
-                    
-                    <!-- Ô 1: Nơi xuất phát (Vị trí hiện tại hoặc nhập địa chỉ) -->
-                    <div>
-                      <label for="mapOriginInput" style="display: block; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px;">
-                        📍 Nơi xuất phát:
-                      </label>
-                      <div style="display: flex; gap: 6px; align-items: center;">
-                        <input
-                          type="text"
-                          id="mapOriginInput"
-                          placeholder="Nhập địa chỉ (VD: 150 Trần Phú, Hội An)..."
-                          value="Chùa Cầu Hội An"
-                          list="mapOriginDatalist"
-                          style="flex: 1; min-width: 140px; padding: 8px 10px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13px; font-weight: 600; outline: none;"
-                        />
-                        <button
-                          type="button"
-                          id="mapOriginGpsBtn"
-                          title="Lấy vị trí GPS hiện tại của tôi"
-                          style="padding: 8px 12px; background: #10b981; color: #ffffff; border: none; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(16,185,129,0.25);"
-                        >
-                          <span>📍</span> Vị trí hiện tại
-                        </button>
-                      </div>
-                      <datalist id="mapOriginDatalist">
-                        <option value="Chùa Cầu Hội An"></option>
-                        <option value="Chợ Hội An"></option>
-                        <option value="Bến thuyền Bạch Đằng"></option>
-                        <option value="Bãi biển An Bàng"></option>
-                        <option value="Làng rau Trà Quế"></option>
-                      </datalist>
-                    </div>
+<div id="mapRadarView">
+  <div class="qm-toolbar">
+    <div class="qm-toolbar-title">
+      <div class="qm-title">
+        <span class="qm-title-icon" aria-hidden="true">⌖</span>
+        <h2>Tìm quán và chỉ đường</h2>
+      </div>
 
-                    <!-- Ô 2: Nơi đến (Món ăn / Điểm đến) -->
-                    <div>
-                      <label for="mapDestinationSelect" style="display: block; font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px;">
-                        🏁 Nơi đến (Món ăn / Quán ăn):
-                      </label>
-                      <select id="mapDestinationSelect" style="width: 100%; padding: 8.5px 12px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13px; font-weight: 600; outline: none; cursor: pointer;">
-                        <option value="">-- Đang nạp danh sách món ăn... --</option>
-                      </select>
-                    </div>
+      <span class="qm-status">
+        Vị trí tìm kiếm · Hội An
+      </span>
+    </div>
 
-                    <!-- Ô 3: Khoảng cách (cho nhập m hoặc km, không được âm) -->
-                    <div>
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <label for="mapDistanceInput" style="font-size: 12px; font-weight: 700; color: var(--ink);">
-                          📏 Khoảng cách tìm kiếm (m hoặc km):
-                        </label>
-                        <span style="font-size: 10.5px; color: #10b981; font-weight: 700; background: #ecfdf5; padding: 1px 6px; border-radius: 6px; border: 1px solid #a7f3d0;">≥ 0</span>
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 5px;">
-                        <input
-                          type="number"
-                          id="mapDistanceInput"
-                          name="mapDistance"
-                          min="0"
-                          step="any"
-                          value="500"
-                          placeholder="500"
-                          style="width: 75px; padding: 7.5px 8px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 13.5px; font-weight: 700; text-align: center; outline: none;"
-                        />
-                        <select id="mapDistanceUnit" style="padding: 7.5px 6px; border: 1.5px solid var(--gold-border); border-radius: 8px; background: #ffffff; color: var(--ink); font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer;">
-                          <option value="m" selected>m</option>
-                          <option value="km">km</option>
-                        </select>
-                        <div style="display: flex; gap: 3px; margin-left: 2px;">
-                          <button type="button" class="quick-dist-btn" data-dist="100" data-unit="m" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">100m</button>
-                          <button type="button" class="quick-dist-btn active" data-dist="500" data-unit="m" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid #d97706; background: #d97706; color: #ffffff; cursor: pointer;">500m</button>
-                          <button type="button" class="quick-dist-btn" data-dist="1" data-unit="km" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">1km</button>
-                          <button type="button" class="quick-dist-btn" data-dist="2" data-unit="km" style="padding: 5px 6px; font-size: 11px; font-weight: 600; border-radius: 6px; border: 1px solid var(--gold-border); background: #ffffff; color: var(--ink); cursor: pointer;">2km</button>
-                        </div>
-                      </div>
-                    </div>
+    <div class="qm-filters">
+  <!-- Hai ô xuất phát và điểm đến -->
+  <div class="gm-directions-inputs">
+    <div class="gm-direction-row">
+      <span class="gm-origin-dot" aria-hidden="true"></span>
 
-                  </div>
+      <div class="gm-direction-field">
+        <label for="mapOriginInput">Điểm xuất phát</label>
 
-                  <div id="mapDistanceError" style="display: none; margin-top: 6px; color: #dc2626; font-size: 11px; font-weight: 600;">
-                    ⚠️ Khoảng cách không được âm! Đã tự động chuyển về 0.
-                  </div>
-                </div>
+        <input
+          id="mapOriginInput"
+          type="text"
+          list="mapOriginDatalist"
+          placeholder="Vị trí hiện tại hoặc nhập địa chỉ…"
+          autocomplete="off"
+        />
 
-                <!-- THANH ĐIỀU HƯỚNG & TRẠNG THÁI CHỈ ĐƯỜNG KIỂU GOOGLE MAPS -->
-                <div id="mapStatusBanner" style="background: #ffffff; border: 1.5px solid #dadce0; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 13px; box-shadow: 0 1px 4px rgba(60,64,67,0.12);">
-                  
-                  <!-- Tuyến đường xuất phát -> đích -->
-                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <span style="display: inline-flex; align-items: center; gap: 4px;">
-                      <span style="color: #1a73e8; font-size: 15px;">📍</span>
-                      <b>Từ:</b> <span id="mapOriginDisplay" style="color: #1a73e8; font-weight: 700;">Chùa Cầu Hội An</span>
-                    </span>
-                    <span style="color: #9aa0a6;">➔</span>
-                    <span style="display: inline-flex; align-items: center; gap: 4px;">
-                      <span style="color: #ea4335; font-size: 15px;">🏁</span>
-                      <b>Đến:</b> <span id="mapDestDisplay" style="color: #ea4335; font-weight: 700;">--</span>
-                    </span>
-                  </div>
+        <datalist id="mapOriginDatalist"></datalist>
+      </div>
+    </div>
 
-                  <!-- Chế độ di chuyển (Đi bộ / Xe máy / Ô tô) -->
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <button type="button" class="gmap-mode-tab active" data-mode="walking" title="Đi bộ (~4.5 km/h)">🚶 Đi bộ</button>
-                    <button type="button" class="gmap-mode-tab" data-mode="two_wheeler" title="Xe máy (~25 km/h)">🛵 Xe máy</button>
-                    <button type="button" class="gmap-mode-tab" data-mode="driving" title="Ô tô (~30 km/h)">🚗 Ô tô</button>
-                  </div>
+    <div
+      class="gm-direction-connector"
+      aria-hidden="true"
+    ></div>
 
-                  <!-- Thời gian di chuyển & Khoảng cách & Nút Google Maps -->
-                  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                      <span id="gmapTravelTimeText" style="font-weight: 800; color: #188038; font-size: 13.5px;">--</span>
-                      <span style="color: #5f6368; font-size: 12px;">(<span id="mapRealDistDisplay">-- m</span>)</span>
-                    </div>
-                    <span id="mapStatusDisplay" style="font-weight: 700; font-size: 12px;">--</span>
-                    <a
-                      id="gmapExternalLink"
-                      href="https://www.google.com/maps"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      title="Mở ứng dụng hoặc trang Google Maps để dẫn đường trực tiếp"
-                      style="display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; background: #1a73e8; color: #ffffff; font-size: 12px; font-weight: 700; border-radius: 8px; text-decoration: none; box-shadow: 0 2px 6px rgba(26,115,232,0.3); transition: background 0.15s ease;"
-                    >
-                      <span>↗️</span> Chỉ đường trên Google Maps
-                    </a>
-                  </div>
-                </div>
+    <div class="gm-direction-row">
+      <span class="gm-destination-dot" aria-hidden="true"></span>
 
-                <!-- BẢN ĐỒ TRỰC QUAN VỚI BẢNG ĐIỀU KHIỂN GOOGLE MAPS -->
-                <div style="position: relative; margin-bottom: 14px;">
-                  <!-- Bảng chuyển chế độ bản đồ Google Maps (Bản đồ / Vệ tinh / Địa hình) -->
-                  <div style="position: absolute; top: 12px; left: 12px; z-index: 500; background: #ffffff; border-radius: 8px; box-shadow: 0 2px 8px rgba(60,64,67,0.25); padding: 4px; display: flex; gap: 4px; border: 1px solid #dadce0;">
-                    <button type="button" class="gmap-type-btn active" data-type="m" title="Bản đồ đường phố Google Maps">🗺️ Bản đồ</button>
-                    <button type="button" class="gmap-type-btn" data-type="y" title="Ảnh vệ tinh độ nét cao kèm tên đường">🛰️ Vệ tinh</button>
-                    <button type="button" class="gmap-type-btn" data-type="p" title="Bản đồ địa hình Google Maps">⛰️ Địa hình</button>
-                  </div>
+      <div class="gm-direction-field">
+        <label for="mapDestinationInput">Nơi muốn đến</label>
 
-                  <!-- Các phím chức năng nhanh góc trên bên phải -->
-                  <div style="position: absolute; top: 12px; right: 12px; z-index: 500; display: flex; flex-direction: column; gap: 6px;">
-                    <button type="button" id="gmapFlyUserBtn" class="gmap-ctrl-btn" title="Phóng to đến vị trí hiện tại của tôi">
-                      <span>🎯</span> Vị trí của tôi
-                    </button>
-                    <button type="button" id="gmapFlyHoiAnBtn" class="gmap-ctrl-btn" title="Trở về trung tâm phố cổ Hội An">
-                      <span>🏮</span> Phố cổ Hội An
-                    </button>
-                  </div>
+        <input
+          id="mapDestinationInput"
+          type="text"
+          list="mapDestinationSuggestions"
+          placeholder="Nhập tên quán hoặc chọn quán trên bản đồ…"
+          autocomplete="off"
+        />
 
-                  <!-- Khung bản đồ Leaflet -->
-                  <div id="leafletMap" style="height: 460px; width: 100%; border-radius: 14px; border: 1px solid #dadce0; z-index: 1;"></div>
-                  <div id="mapFallbackContainer" style="display: none; height: 460px; width: 100%; border-radius: 14px; overflow: hidden; border: 1px solid #dadce0;">
-                    <iframe id="mapFallbackFrame" width="100%" height="100%" style="border:0;" loading="lazy"></iframe>
-                  </div>
-                </div>
+        <datalist id="mapDestinationSuggestions"></datalist>
+      </div>
+    </div>
 
-                <!-- DANH SÁCH TOÀN BỘ MÓN ĂN TRONG PHẠM VI KHOẢNG CÁCH -->
-                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 12px; padding: 12px 14px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
-                    <div style="font-size: 12.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 6px;">
-                      <span>📋</span> <span id="mapTableTitle">Toàn bộ món ăn trong phạm vi khoảng cách đã nhập:</span>
-                    </div>
-                    <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink); cursor: pointer;">
-                      <input type="checkbox" id="mapFilterWithinRadius" checked style="cursor: pointer;" />
-                      <span>Chỉ hiển thị món trong phạm vi khoảng cách</span>
-                    </label>
-                  </div>
+    <p id="gmDirectionsStatus" role="status">
+      Nhập điểm xuất phát hoặc lấy GPS, rồi chọn quán muốn đến.
+    </p>
+  </div>
 
-                  <div class="tablewrap" style="border: 1px solid var(--gold-border); border-radius: 8px; overflow: hidden; background: #ffffff; max-height: 260px; overflow-y: auto;">
-                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                      <thead>
-                        <tr style="background: #f8fafc; border-bottom: 1px solid var(--gold-border);">
-                          <th style="padding: 7px 10px; text-align: left;">Món Ăn</th>
-                          <th style="padding: 7px 10px; text-align: left;">Địa Chỉ Quán</th>
-                          <th style="padding: 7px 10px; text-align: center;">Khoảng Cách</th>
-                          <th style="padding: 7px 10px; text-align: center;">Trạng Thái</th>
-                          <th style="padding: 7px 10px; text-align: center; width: 90px;">Chọn Đến</th>
-                        </tr>
-                      </thead>
-                      <tbody id="mapDishesTableBody">
-                        <tr>
-                          <td colspan="5" style="text-align: center; color: var(--muted); padding: 12px;">Đang nạp danh sách món ăn...</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
+  <!-- Lấy vị trí thiết bị -->
+  <button
+    type="button"
+    id="mapOriginGpsBtn"
+    class="qm-secondary"
+  >
+    ◎ Lấy vị trí GPS
+  </button>
+
+  <div class="qm-divider"></div>
+
+  <!-- Bán kính radar -->
+  <div class="qm-field qm-radius">
+    <label for="mapDistanceInput">
+      Bán kính tìm kiếm
+    </label>
+
+    <select id="mapDistanceInput">
+      <option value="500" selected>Trong vòng 500 m</option>
+      <option value="1000">Trong vòng 1 km</option>
+      <option value="2000">Trong vòng 2 km</option>
+    </select>
+  </div>
+
+  <button
+    type="button"
+    class="qm-primary"
+    onclick="updateMapCalculations()"
+  >
+    Quét quanh đây <span aria-hidden="true">↗</span>
+  </button>
+</div>
+</div>
+
+  <div class="qm-workspace">
+    <!-- BẢN ĐỒ BÊN TRÁI -->
+    <div class="qm-map-panel">
+      <div class="qm-map-head">
+        <h3>Bản đồ khu vực</h3>
+
+        <div class="qm-legend">
+          <span>
+            <i class="qm-blue"></i>Điểm xuất phát
+          </span>
+
+          <span>
+            <i></i>Địa điểm đã cập nhật
+          </span>
+        </div>
+      </div>
+
+      <div class="qm-map">
+        <div id="leafletMap"></div>
+
+        <div id="mapFallbackContainer">
+          <iframe
+            id="mapFallbackFrame"
+            title="Bản đồ dự phòng"
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <div class="qm-map-label">
+          ⌖ <span id="mapOriginDisplay">
+            Chùa Cầu Hội An
+          </span>
+        </div>
+
+        <div class="qm-route-wrap">
+  <section class="qm-route qm-route-v2">
+    <div class="qm-route-heading">
+      <span class="qm-route-icon" aria-hidden="true">↱</span>
+
+      <div class="qm-route-content">
+        <small>ĐỊA ĐIỂM ĐANG CHỌN</small>
+        <h3 id="mapDestDisplay">Chưa chọn địa điểm</h3>
+      </div>
+    </div>
+
+    <div class="qm-transport" aria-label="Chọn phương tiện minh họa">
+      <button type="button" data-preview-mode="walking">
+        Đi bộ
+      </button>
+
+      <button type="button" data-preview-mode="bicycling">
+        Xe đạp
+      </button>
+
+      <button
+        type="button"
+        class="active"
+        data-preview-mode="two_wheeler"
+      >
+        Xe máy
+      </button>
+
+      <button type="button" data-preview-mode="driving">
+        Ô tô
+      </button>
+    </div>
+
+    <div class="qm-route-summary">
+      <div class="qm-route-metrics">
+        <div>
+          <span>Thời gian minh họa</span>
+          <strong id="qmPreviewTime">—</strong>
+        </div>
+
+        <div class="qm-metric-divider"></div>
+
+        <div>
+          <span>Quãng đường ô tô tham khảo</span>
+          <strong id="mapRealDistDisplay">—</strong>
+        </div>
+      </div>
+
+      <a
+        id="gmapExternalLink"
+        href="https://www.google.com/maps"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Mở bản đồ ↗
+      </a>
+    </div>
+
+    <p id="qmPreviewNote" class="qm-preview-note">
+      Chọn địa điểm để xem tuyến đường.
+    </p>
+
+    <p id="roadRouteMessage" class="qm-road-message" role="status"></p>
+  </section>
+</div>
+      </div>
+
+      <div class="qm-map-foot">
+        <span>ⓘ Bán kính tính theo đường thẳng</span>
+
+        <button type="button" id="gmapFlyUserBtn">
+          Về tâm tìm kiếm
+        </button>
+      </div>
+    </div>
+
+    <!-- DANH SÁCH BÊN PHẢI -->
+    <aside>
+      <div class="qm-aside-head">
+        <h3>Địa điểm gần bạn</h3>
+
+        <span id="mapCounterText">
+          Đang tải dữ liệu…
+        </span>
+      </div>
+
+      <!-- Không có các nút lọc danh mục -->
+      <div id="mapDishesTableBody" class="qm-cards"></div>
+
+      <p class="qm-note">
+        ⓘ Chỉ hiển thị dữ liệu do nhóm cập nhật.
+        Chọn một địa điểm để xem vị trí hoặc mở Google Maps.
+      </p>
+    </aside>
+  </div>
+
+  <!-- Giữ các thành phần mà JavaScript hiện tại đang sử dụng -->
+  <div hidden>
+    <select id="mapDistanceUnit">
+      <option value="m" selected>m</option>
+    </select>
+
+    <select id="mapDestinationSelect"></select>
+
+    <input
+      id="mapFilterWithinRadius"
+      type="checkbox"
+      checked
+    />
+
+      <span id="mapTableTitle"></span>
+    <div id="mapDistanceError"></div>
+  </div>
+
+</div><!-- Đóng mapRadarView -->
+
+</section>
 
 
             </div>
@@ -2806,6 +4031,16 @@
           <input type="checkbox" name="is_active" checked />
           Hiển thị món ăn này trên trang chủ
         </label>
+        <div style="margin:16px 0;">
+  <div id="dishMapPanel" hidden style="margin-top:12px;border:1px solid #eadbcd;border-radius:10px;overflow:hidden;">
+    <div id="dishMapCanvas" style="height:300px;width:100%;"></div>
+    <p id="dishMapStatus" role="status" style="margin:0;padding:12px;font-size:13px;color:#927c70;">Bấm trên bản đồ hoặc kéo ghim đến vị trí quán.</p>
+    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px;">
+      <button type="button" id="dishMapCancel">Hủy chọn</button>
+      <button type="button" id="dishMapApply">Dùng tọa độ này</button>
+    </div>
+  </div>
+</div>
         <p id="formErr" style="color: var(--danger); margin: 8px 0 0"></p>
         <div class="foot">
           <button type="button" id="cancel">Đóng</button>
@@ -3662,8 +4897,7 @@
         const secMapEl = $("#secMap");
         if (secMapEl) {
           secMapEl.hidden = nav !== "map";
-          if (nav === "map") renderMapSection();
-        }
+if (nav === "map") renderMapSection();        }
 
         mainGrid.classList.toggle("single-col", true);
         refresh();
@@ -4082,12 +5316,18 @@ xmlns="http://www.w3.org/TR/REC-html40">
           translations,
         };
         try {
-          await api(editing ? "/dishes/" + editing.id : "/dishes", {
-            method: editing ? "PUT" : "POST",
-            body: JSON.stringify(body),
-          });
-          $("#dlg").close();
-          await refresh();
+         await api(editing ? "/dishes/" + editing.id : "/dishes", {
+  method: editing ? "PUT" : "POST",
+  body: JSON.stringify(body),
+});
+
+// Đóng form và nạp dữ liệu mới sau khi lưu thành công.
+$("#dlg").close();
+await refresh();
+
+if (!document.getElementById("secMap").hidden) {
+  renderMapSection();
+}
         } catch (err) {
           $("#formErr").textContent = err.message;
         } finally {
@@ -4859,6 +6099,335 @@ xmlns="http://www.w3.org/TR/REC-html40">
       let mapDestMarker = null;
       let mapRadiusCircle = null;
       let mapRouteLine = null;
+      let roadRouteController = null;
+let roadRouteRequestId = 0;
+let roadRoutePendingKey = "";
+let roadRouteCache = null;
+let qmPreviewMode = "two_wheeler";
+
+function updateQmRoutePreview() {
+  const modes = {
+    walking: { label: "Đi bộ", speed: 75 },
+    bicycling: { label: "Xe đạp", speed: 250 },
+    two_wheeler: { label: "Xe máy", speed: 416 },
+    driving: { label: "Ô tô", speed: 500 },
+  };
+
+  const mode = modes[qmPreviewMode];
+  const timeElement = document.getElementById("qmPreviewTime");
+  const noteElement = document.getElementById("qmPreviewNote");
+
+  const meters = roadRoutePendingKey
+    ? NaN
+    : Number(roadRouteCache?.route?.distance);
+
+  document
+    .querySelectorAll("#secMap [data-preview-mode]")
+    .forEach((button) => {
+      const active = button.dataset.previewMode === qmPreviewMode;
+
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+
+      button.onclick = () => {
+        qmPreviewMode = button.dataset.previewMode;
+        updateQmRoutePreview();
+      };
+    });
+
+  if (timeElement) {
+    timeElement.textContent = Number.isFinite(meters)
+      ? `~${Math.max(1, Math.ceil(meters / mode.speed))} phút`
+      : "—";
+  }
+
+  if (noteElement) {
+    noteElement.textContent =
+      `${mode.label} · Thời gian minh họa theo tốc độ giả định. ` +
+      "Đường vẽ và quãng đường dùng tuyến ô tô tham khảo cho cả 4 lựa chọn. " +
+      "Không có dữ liệu giao thông trực tiếp.";
+  }
+}
+
+function showRoadRouteMessage(message) {
+  let element = document.getElementById(
+    "roadRouteMessage"
+  );
+
+  if (!element) {
+    element = document.createElement("p");
+    element.id = "roadRouteMessage";
+    element.setAttribute("role", "status");
+
+    element.style.cssText =
+      "font-size:12px;line-height:1.6;" +
+      "margin:8px 0;color:#967d75;";
+
+    const link = document.getElementById(
+      "gmapExternalLink"
+    );
+
+    link?.parentElement?.append(element);
+  }
+
+  if (element) {
+    element.textContent = message;
+  }
+}
+
+function clearRoadRouteLine() {
+  if (mapRouteLine && mapLeafletInstance) {
+    mapLeafletInstance.removeLayer(mapRouteLine);
+  }
+
+  mapRouteLine = null;
+}
+
+function roadRoutePointValid(point) {
+  return (
+    point.lat !== null &&
+    point.lng !== null &&
+    point.lat !== undefined &&
+    point.lng !== undefined &&
+    String(point.lat).trim() !== "" &&
+    String(point.lng).trim() !== "" &&
+    Number.isFinite(Number(point.lat)) &&
+    Number.isFinite(Number(point.lng)) &&
+    Math.abs(Number(point.lat)) <= 90 &&
+    Math.abs(Number(point.lng)) <= 180
+  );
+}
+
+function renderRoadRoute(routeData) {
+  if (!mapLeafletInstance) return;
+
+  clearRoadRouteLine();
+
+  // GeoJSON dùng [kinh độ, vĩ độ].
+  // Leaflet dùng [vĩ độ, kinh độ].
+  const points = routeData.geometry.coordinates.map(
+    ([lng, lat]) => [lat, lng]
+  );
+
+  mapRouteLine = L.polyline(points, {
+    color: "#2563eb",
+    weight: 5,
+    opacity: 0.9,
+    lineCap: "round",
+    lineJoin: "round",
+  }).addTo(mapLeafletInstance);
+
+  const distanceText =
+    routeData.distance >= 1000
+      ? (routeData.distance / 1000).toFixed(2) + " km"
+      : Math.round(routeData.distance) + " m";
+
+  const distanceElement = document.getElementById(
+    "mapRealDistDisplay"
+  );
+
+  if (distanceElement) {
+    distanceElement.textContent = distanceText;
+  }
+
+  showRoadRouteMessage(
+    "Quãng đường theo ô tô: " +
+    distanceText +
+    ". Tuyến tham khảo, không có giao thông trực tiếp."
+  );
+
+  if (mapDestMarker) {
+    mapDestMarker.bindPopup(`
+  <div style="min-width:190px;line-height:1.7;">
+    <strong>${esc(mapDestCoords.label || "Địa điểm")}</strong>
+    <p>${esc(mapDestCoords.address || "")}</p>
+    <p>Chọn địa điểm để xem quãng đường theo đường phố.</p>
+  </div>
+`);
+  }
+
+  mapLeafletInstance.fitBounds(
+    mapRouteLine.getBounds(),
+    {
+      paddingTopLeft: [35, 45],
+      paddingBottomRight: [35, 330],
+      maxZoom: 17,
+    }
+  );
+}
+
+async function loadRoadRoute() {
+  if (!mapLeafletInstance) return;
+
+  const valid =
+    roadRoutePointValid(mapOriginCoords) &&
+    roadRoutePointValid(mapDestCoords);
+
+  if (!valid) {
+    roadRouteRequestId++;
+
+    roadRouteController?.abort();
+    roadRoutePendingKey = "";
+
+    clearRoadRouteLine();
+
+    showRoadRouteMessage(
+      "Cần vị trí xuất phát và tọa độ quán hợp lệ."
+    );
+
+    return;
+  }
+
+  const origin = {
+    lat: Number(mapOriginCoords.lat),
+    lng: Number(mapOriginCoords.lng),
+  };
+
+  const destination = {
+    lat: Number(mapDestCoords.lat),
+    lng: Number(mapDestCoords.lng),
+  };
+
+  const key = [
+    origin.lng,
+    origin.lat,
+    destination.lng,
+    destination.lat,
+  ].join(",");
+
+  // Cập nhật link Google Maps cùng chế độ ô tô.
+  const googleLink = document.getElementById(
+    "gmapExternalLink"
+  );
+
+  if (googleLink) {
+    googleLink.href =
+      "https://www.google.com/maps/dir/?api=1" +
+      `&origin=${origin.lat},${origin.lng}` +
+      `&destination=${destination.lat},${destination.lng}` +
+      "&travelmode=driving";
+  }
+
+  if (roadRoutePendingKey === key) return;
+
+  // Không gọi lại API khi chỉ thay bán kính.
+  if (roadRouteCache?.key === key) {
+    const element = document.getElementById(
+      "mapRealDistDisplay"
+    );
+
+    if (element) {
+      const meters = roadRouteCache.route.distance;
+
+      element.textContent = meters >= 1000
+        ? (meters / 1000).toFixed(2) + " km"
+        : Math.round(meters) + " m";
+    }
+
+    return;
+  }
+
+  const requestId = ++roadRouteRequestId;
+
+  roadRouteController?.abort();
+  roadRouteController = new AbortController();
+  roadRoutePendingKey = key;
+  updateQmRoutePreview();
+
+  const controller = roadRouteController;
+
+  clearRoadRouteLine();
+
+  const distanceElement = document.getElementById(
+    "mapRealDistDisplay"
+  );
+
+  if (distanceElement) {
+    distanceElement.textContent = "Đang tính…";
+  }
+
+  showRoadRouteMessage(
+    "Đang tìm tuyến đường theo đường phố…"
+  );
+
+  const timeout = setTimeout(
+    () => controller.abort(),
+    12000
+  );
+
+  try {
+    const url =
+      "https://router.project-osrm.org/route/v1/driving/" +
+      `${origin.lng},${origin.lat};` +
+      `${destination.lng},${destination.lat}` +
+      "?overview=full&geometries=geojson&steps=false";
+
+    const response = await fetch(url, {
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      throw new Error("Dịch vụ chỉ đường chưa phản hồi");
+    }
+
+    const data = await response.json();
+
+    if (requestId !== roadRouteRequestId) return;
+
+    const route = data.routes?.[0];
+
+    if (
+      data.code !== "Ok" ||
+      route?.geometry?.type !== "LineString" ||
+      route.geometry.coordinates.length < 2 ||
+      !Number.isFinite(route.distance)
+    ) {
+      throw new Error("Không tìm thấy tuyến đường");
+    }
+
+    // Tránh hiển thị tuyến tới một đường quá xa
+    // tọa độ thật của điểm xuất phát hoặc quán.
+    const tooFarFromRoad = (data.waypoints || []).some(
+      (point) => point.distance > 100
+    );
+
+    if (tooFarFromRoad) {
+      throw new Error(
+        "Điểm xuất phát hoặc quán cách đường ô tô hơn 100 m"
+      );
+    }
+
+    roadRouteCache = {
+      key,
+      route,
+    };
+
+    renderRoadRoute(route);
+  } catch (error) {
+    if (requestId !== roadRouteRequestId) return;
+
+    roadRouteCache = null;
+    clearRoadRouteLine();
+
+    if (distanceElement) {
+      distanceElement.textContent = "Chưa có tuyến";
+    }
+
+    showRoadRouteMessage(
+      "Chưa lấy được tuyến đường. " +
+      "Kiểm tra tọa độ, thử chọn lại quán hoặc mở Google Maps. " +
+      "Không vẽ đường thẳng thay thế."
+    );
+  } finally {
+    clearTimeout(timeout);
+
+    if (requestId === roadRouteRequestId) {
+  roadRoutePendingKey = "";
+  roadRouteController = null;
+  updateQmRoutePreview();
+}
+  }
+}
       let mapNearbyMarkersLayer = null;
 
       // Google Maps Tile Layers & Trạng thái bản đồ
@@ -5005,6 +6574,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
             input.style.borderColor = "var(--gold-border)";
           }
           updateMapCalculations();
+          gmInitDirectionsInputs();
         };
 
         input.addEventListener("input", validateNonNegative);
@@ -5313,21 +6883,8 @@ xmlns="http://www.w3.org/TR/REC-html40">
           </div>
         `);
 
-        // Tuyến đường màu xanh Google Maps nối giữa Nơi xuất phát và Nơi đến
-        if (mapRouteLine) {
-          mapRouteLine.setLatLngs([
-            [mapOriginCoords.lat, mapOriginCoords.lng],
-            [mapDestCoords.lat, mapDestCoords.lng],
-          ]);
-        } else {
-          mapRouteLine = L.polyline(
-            [
-              [mapOriginCoords.lat, mapOriginCoords.lng],
-              [mapDestCoords.lat, mapDestCoords.lng],
-            ],
-            { color: "#1a73e8", weight: 4.5, opacity: 0.85 }
-          ).addTo(mapLeafletInstance);
-        }
+        // Lấy tuyến đường thực theo mạng lưới đường phố.
+loadRoadRoute();
 
         // HIỂN THỊ TOÀN BỘ CÁC MÓN ĂN TRONG PHẠM VI KHOẢNG CÁCH TRÊN BẢN ĐỒ
         if (!mapNearbyMarkersLayer) {
@@ -5371,7 +6928,9 @@ xmlns="http://www.w3.org/TR/REC-html40">
                 </div>
                 <div style="font-size:13.5px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(dishName)}</div>
                 <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(dish.address || dish.shopVi || 'Hội An')}</div>
-                <div style="font-size:12px; font-weight:700; color:#188038; margin-bottom:8px;">🚶 ~${dishWalkMin} phút (${distTxt})</div>
+<div style="font-size:12px;margin-bottom:8px;">
+  Khoảng cách đường thẳng: ${distTxt}
+</div>
                 <div style="display:flex; gap:6px;">
                   <button onclick="selectMapDestination('${dish.id}')" style="flex:1; padding:6px 8px; background:#ea4335; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🏁 Chọn đến</button>
                   <a href="${dishGmapUrl}" target="_blank" rel="noopener noreferrer" style="padding:6px 8px; background:#f1f3f4; color:#1a73e8; border:1px solid #dadce0; border-radius:6px; font-size:11px; font-weight:700; text-decoration:none; display:flex; align-items:center;">↗️ Google Maps</a>
@@ -5383,10 +6942,12 @@ xmlns="http://www.w3.org/TR/REC-html40">
         }
 
         // Căn chỉnh khung nhìn vừa vòng tròn phạm vi khoảng cách
-        try {
-          const circleBounds = mapRadiusCircle.getBounds();
-          mapLeafletInstance.fitBounds(circleBounds.pad(0.15));
-        } catch {}
+        if (!mapRouteLine && !roadRoutePendingKey) {
+  mapLeafletInstance.setView(
+    [mapOriginCoords.lat, mapOriginCoords.lng],
+    16
+  );
+}
       }
 
       // Hàm chọn điểm đến từ popup bản đồ
@@ -5407,6 +6968,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
       // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
       function updateMapCalculations() {
+        gmSyncDestinationInput();
         const originDisplayEl = $("#mapOriginDisplay");
         if (originDisplayEl) originDisplayEl.textContent = mapOriginCoords.label || "Điểm xuất phát";
 
@@ -5427,41 +6989,15 @@ xmlns="http://www.w3.org/TR/REC-html40">
           mapDestCoords.lat,
           mapDestCoords.lng
         );
-        const realDisplayEl = $("#mapRealDistDisplay");
-        if (realDisplayEl) {
-          realDisplayEl.textContent = realDistMeters >= 1000
-            ? (realDistMeters / 1000).toFixed(2) + " km"
-            : realDistMeters + " m";
-        }
+      // Quãng đường và link chỉ đường do loadRoadRoute cập nhật.
+// Không lấy đường thẳng chia tốc độ để tính số phút.
+const travelTimeElement = document.getElementById(
+  "gmapTravelTimeText"
+);
 
-        // Tính thời gian di chuyển theo chế độ Google Maps:
-        // Đi bộ: 75m / phút (~4.5 km/h)
-        // Xe máy: 416m / phút (~25 km/h)
-        // Ô tô: 500m / phút (~30 km/h)
-        let travelTimeText = "";
-        let gmapTravelModeParam = "walking";
-        if (currentTravelMode === "two_wheeler") {
-          const motoMin = Math.max(1, Math.round(realDistMeters / 416));
-          travelTimeText = `🛵 ~${motoMin} phút`;
-          gmapTravelModeParam = "two_wheeler";
-        } else if (currentTravelMode === "driving") {
-          const carMin = Math.max(1, Math.round(realDistMeters / 500));
-          travelTimeText = `🚗 ~${carMin} phút`;
-          gmapTravelModeParam = "driving";
-        } else {
-          const walkMin = Math.max(1, Math.round(realDistMeters / 75));
-          travelTimeText = `🚶 ~${walkMin} phút`;
-          gmapTravelModeParam = "walking";
-        }
-
-        const travelTimeEl = $("#gmapTravelTimeText");
-        if (travelTimeEl) travelTimeEl.textContent = travelTimeText;
-
-        // Cập nhật đường link mở Google Maps trực tiếp
-        const extLinkEl = $("#gmapExternalLink");
-        if (extLinkEl) {
-          extLinkEl.href = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${mapDestCoords.lat},${mapDestCoords.lng}&travelmode=${gmapTravelModeParam}`;
-        }
+if (travelTimeElement) {
+  travelTimeElement.textContent = "";
+}
 
         // Cập nhật trạng thái điểm đến so với khoảng cách đã nhập
         const statusDisplayEl = $("#mapStatusDisplay");
@@ -5510,80 +7046,181 @@ xmlns="http://www.w3.org/TR/REC-html40">
       }
 
       // Bảng hiển thị toàn bộ món ăn trong phạm vi khoảng cách đã nhập
-      function renderDishesDistanceTable(precomputedList, enteredDistMeters) {
-        const tbody = $("#mapDishesTableBody");
-        if (!tbody) return;
+     function renderDishesDistanceTable(
+  precomputedList,
+  enteredDistMeters
+) {
+  const container = document.getElementById(
+    "mapDishesTableBody"
+  );
 
-        if (!dishes || dishes.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 12px;">Chưa có món ăn nào trong hệ thống.</td></tr>`;
-          return;
-        }
+  if (!container) return;
 
-        const limitMeters = enteredDistMeters !== undefined ? enteredDistMeters : getMapEnteredDistanceMeters();
-        const onlyWithin = $("#mapFilterWithinRadius") ? $("#mapFilterWithinRadius").checked : true;
-        const selectedDestId = $("#mapDestinationSelect")?.value;
+  container.replaceChildren();
 
-        const list = precomputedList || dishes.map((d) => {
-          const dLat = Number(d.lat) || 15.8782;
-          const dLng = Number(d.lng) || 108.3265;
-          const dist = calculateHaversineDistance(mapOriginCoords.lat, mapOriginCoords.lng, dLat, dLng);
-          return {
-            ...d,
-            computedDist: dist,
-            isWithin: dist <= limitMeters,
-          };
-        });
+  if (!dishes || dishes.length === 0) {
+    container.textContent =
+      "Chưa có địa điểm nào được cập nhật.";
+    return;
+  }
 
-        list.sort((a, b) => a.computedDist - b.computedDist);
-        const filtered = onlyWithin ? list.filter((d) => d.isWithin) : list;
+  const limitMeters =
+    enteredDistMeters !== undefined
+      ? enteredDistMeters
+      : getMapEnteredDistanceMeters();
 
-        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
-        const enteredDisplayTxt = unit === "km"
-          ? (limitMeters / 1000).toFixed(1) + " km"
-          : limitMeters + " m";
+  const selectedId = document.getElementById(
+    "mapDestinationSelect"
+  )?.value;
 
-        if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--muted); padding: 16px;">
-            Không có món ăn nào trong phạm vi ${enteredDisplayTxt}.<br>
-            <span style="font-size: 11px; color: #d97706;">Gợi ý: Thử tăng khoảng cách lên (ví dụ: 1km hoặc 2km) hoặc bỏ dấu tick để xem toàn bộ.</span>
-          </td></tr>`;
-          return;
-        }
+  function validCoordinates(dish) {
+    if (
+      dish.lat == null ||
+      dish.lng == null ||
+      String(dish.lat).trim() === "" ||
+      String(dish.lng).trim() === ""
+    ) {
+      return false;
+    }
 
-        tbody.innerHTML = filtered
-          .map((d) => {
-            const isSelected = String(d.id) === String(selectedDestId);
-            const distLabel = d.computedDist >= 1000
-              ? (d.computedDist / 1000).toFixed(2) + " km"
-              : d.computedDist + " m";
-            const statusBadge = d.isWithin
-              ? `<span style="color:#059669; font-weight:700; background:#ecfdf5; padding:2px 6px; border-radius:6px; border:1px solid #a7f3d0;">✓ Trong ${enteredDisplayTxt}</span>`
-              : `<span style="color:var(--muted);">Cách ${distLabel}</span>`;
+    const lat = Number(dish.lat);
+    const lng = Number(dish.lng);
 
-            return `
-              <tr style="${isSelected ? 'background: #fffbeb;' : ''} border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 7px 10px; font-weight: 700; color: var(--ink);">${esc(d.translations?.vi?.name || d.name)}</td>
-                <td style="padding: 7px 10px; color: var(--desc); font-size: 11.5px;">${esc(d.address || d.shopVi || "Phố cổ Hội An")}</td>
-                <td style="padding: 7px 10px; text-align: center; font-weight: 700; color: #2563eb;">${distLabel}</td>
-                <td style="padding: 7px 10px; text-align: center;">${statusBadge}</td>
-                <td style="padding: 7px 10px; text-align: center;">
-                  <button type="button" class="table-view-dish-map-btn" data-dish-id="${d.id}" style="padding: 3px 8px; background: ${isSelected ? '#dc2626' : '#ffffff'}; color: ${isSelected ? '#ffffff' : 'var(--ink)'}; border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
-                    ${isSelected ? 'Đang chọn' : 'Chọn đến'}
-                  </button>
-                </td>
-              </tr>
-            `;
-          })
-          .join("");
+    return (
+      Number.isFinite(lat) &&
+      Number.isFinite(lng) &&
+      lat >= -90 &&
+      lat <= 90 &&
+      lng >= -180 &&
+      lng <= 180
+    );
+  }
 
-        $$(".table-view-dish-map-btn").forEach((btn) => {
-          btn.onclick = () => {
-            const did = btn.dataset.dishId;
-            selectMapDestination(did);
-          };
-        });
-      }
+  // Tính lại từ tọa độ để không dùng tọa độ thay thế.
+  const results = dishes
+    .filter(
+      (dish) =>
+        dish.is_active !== false &&
+        dish.is_active !== 0 &&
+        validCoordinates(dish)
+    )
+    .map((dish) => ({
+      ...dish,
 
+      computedDist: calculateHaversineDistance(
+        mapOriginCoords.lat,
+        mapOriginCoords.lng,
+        Number(dish.lat),
+        Number(dish.lng)
+      ),
+    }))
+    .filter(
+      (dish) => dish.computedDist <= limitMeters
+    )
+    .sort(
+      (a, b) => a.computedDist - b.computedDist
+    );
+
+  const counter = document.getElementById(
+    "mapCounterText"
+  );
+
+  const radiusText =
+    limitMeters >= 1000
+      ? limitMeters / 1000 + " km"
+      : limitMeters + " m";
+
+  if (counter) {
+    counter.textContent =
+      `${results.length} kết quả trong bán kính ${radiusText}`;
+  }
+
+  if (results.length === 0) {
+    container.textContent =
+      `Chưa có địa điểm đã cập nhật trong bán kính ${radiusText}. ` +
+      "Bạn thử mở rộng phạm vi tìm kiếm.";
+    return;
+  }
+
+  for (const dish of results) {
+    const isSelected =
+      String(dish.id) === String(selectedId);
+
+    const name =
+      dish.translations?.vi?.name ||
+      dish.name ||
+      "Chưa có tên";
+
+    const address =
+      dish.address ||
+      dish.shopVi ||
+      "Chưa cập nhật địa chỉ";
+
+    const distanceText =
+      dish.computedDist >= 1000
+        ? (dish.computedDist / 1000).toFixed(2) + " km"
+        : Math.round(dish.computedDist) + " m";
+
+    const card = document.createElement("article");
+
+    card.className =
+      "qm-card" + (isSelected ? " active" : "");
+
+    const top = document.createElement("div");
+    top.className = "qm-card-top";
+
+    const icon = document.createElement("div");
+    icon.className = "qm-art";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = dish.emoji || "🍲";
+
+    const heading = document.createElement("div");
+
+    const category = document.createElement("span");
+    category.className = "qm-category";
+    category.textContent =
+      dish.category_name || "Địa điểm được giới thiệu";
+
+    const title = document.createElement("h4");
+    title.textContent = name;
+
+    heading.append(category, title);
+    top.append(icon, heading);
+
+    const addressElement = document.createElement("p");
+    addressElement.className = "qm-address";
+    addressElement.textContent = "⌖ " + address;
+
+    const bottom = document.createElement("div");
+    bottom.className = "qm-card-bottom";
+
+    const distance = document.createElement("span");
+    distance.className = "qm-distance";
+    distance.textContent =
+      "↗ " + distanceText + " · đường thẳng";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "qm-choose";
+
+    button.setAttribute(
+      "aria-pressed",
+      String(isSelected)
+    );
+
+    button.textContent = isSelected
+      ? "✓ Đang chọn"
+      : "Chọn địa điểm ↗";
+
+    button.onclick = () => {
+      selectMapDestination(dish.id);
+    };
+
+    bottom.append(distance, button);
+    card.append(top, addressElement, bottom);
+    container.append(card);
+  }
+}
       // Render tab Bản đồ và GPS
       function renderMapSection() {
         initMapDistanceInputListeners();
@@ -5633,7 +7270,283 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
         updateMapCalculations();
       }
+updateQmRoutePreview();
 
-    </script>
+let gmInitialGpsRequested = false;
+let gmOriginRequest = 0;
+
+function gmDirectionsStatus(message) {
+  const element = document.getElementById("gmDirectionsStatus");
+  if (element) element.textContent = message;
+}
+
+function gmDestinationLabel(d) {
+  const name = d.translations?.vi?.name || d.name || "Chưa đặt tên";
+  return d.address ? `${name} · ${d.address}` : name;
+}
+
+function gmSyncDestinationInput() {
+  const input = document.getElementById("mapDestinationInput");
+  if (!input || document.activeElement === input) return;
+
+  const id = document.getElementById("mapDestinationSelect")?.value;
+  const selected = dishes.find((d) => String(d.id) === String(id));
+
+  input.value = selected
+    ? gmDestinationLabel(selected)
+    : mapDestCoords.label || "";
+}
+
+function gmInitDirectionsInputs() {
+  const originInput = document.getElementById("mapOriginInput");
+  const destinationInput =
+    document.getElementById("mapDestinationInput");
+
+  const suggestions =
+    document.getElementById("mapDestinationSuggestions");
+
+  const gpsButton = document.getElementById("mapOriginGpsBtn");
+
+  if (!originInput || !destinationInput || !suggestions) return;
+
+  const validPlaces = dishes.filter((d) => {
+    return (
+      d.lat !== null && d.lat !== undefined &&
+      String(d.lat).trim() !== "" &&
+      d.lng !== null && d.lng !== undefined &&
+      String(d.lng).trim() !== "" &&
+      Number.isFinite(Number(d.lat)) &&
+      Number.isFinite(Number(d.lng)) &&
+      Math.abs(Number(d.lat)) <= 90 &&
+      Math.abs(Number(d.lng)) <= 180
+    );
+  });
+
+  suggestions.replaceChildren();
+
+  validPlaces.forEach((d) => {
+    const option = document.createElement("option");
+    option.value = gmDestinationLabel(d);
+    suggestions.append(option);
+  });
+
+  destinationInput.oninput = () => {
+    gmDirectionsStatus(
+      "Điểm đến mới chưa áp dụng. Chọn một quán trong gợi ý."
+    );
+  };
+
+  destinationInput.onchange = () => {
+    const text = destinationInput.value.trim().toLocaleLowerCase("vi");
+
+    const matches = validPlaces.filter((d) => {
+      const fullLabel = gmDestinationLabel(d).toLocaleLowerCase("vi");
+      const name = (d.translations?.vi?.name || d.name || "")
+        .toLocaleLowerCase("vi");
+
+      return fullLabel === text || name === text;
+    });
+
+    if (matches.length !== 1) {
+      gmDirectionsStatus(
+        matches.length > 1
+          ? "Có nhiều quán trùng tên. Chọn gợi ý có địa chỉ đầy đủ."
+          : "Chọn một quán đã cập nhật trong danh sách gợi ý. Điểm đến cũ được giữ nguyên."
+      );
+      return;
+    }
+
+    const selected = matches[0];
+
+    // Dùng hàm chọn quán hiện có của dự án.
+    selectMapDestination(selected.id);
+
+    destinationInput.value = gmDestinationLabel(selected);
+    gmDirectionsStatus("Đã cập nhật điểm đến.");
+  };
+
+  destinationInput.onkeydown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      destinationInput.blur();
+    }
+  };
+
+  // Nhập địa chỉ mới sẽ vô hiệu hóa kết quả GPS đang chờ.
+  originInput.oninput = () => {
+    gmOriginRequest++;
+
+    gmDirectionsStatus(
+      "Địa chỉ xuất phát mới chưa áp dụng. Nhấn Enter để tìm."
+    );
+  };
+
+  if (gpsButton) {
+    gpsButton.onclick = () => {
+      if (!navigator.geolocation) {
+        gmDirectionsStatus(
+          "Trình duyệt không hỗ trợ GPS. Vui lòng nhập địa chỉ xuất phát."
+        );
+        return;
+      }
+
+      const request = ++gmOriginRequest;
+      gpsButton.disabled = true;
+      gpsButton.textContent = "Đang lấy GPS…";
+      gmDirectionsStatus("Đang xác định vị trí thiết bị…");
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          gpsButton.disabled = false;
+          gpsButton.textContent = "Lấy lại vị trí GPS";
+
+          if (request !== gmOriginRequest) return;
+
+          const { latitude, longitude, accuracy } = position.coords;
+
+          mapOriginCoords = {
+            lat: latitude,
+            lng: longitude,
+            label: "Vị trí hiện tại (GPS)",
+          };
+
+          originInput.value = mapOriginCoords.label;
+
+          // Nếu đã thêm chức năng hai POI, thoát chế độ đó.
+          if (typeof poiPairActive !== "undefined") {
+            poiPairActive = false;
+            poiPreviousState = null;
+          }
+
+          roadRouteCache = null;
+          updateMapCalculations();
+
+          if (mapRadiusCircle) {
+            mapRadiusCircle.setStyle({
+              opacity: 1,
+              fillOpacity: 0.12,
+            });
+          }
+
+          const accuracyText = Number.isFinite(accuracy)
+            ? ` Độ chính xác khoảng ±${Math.round(accuracy)} m.`
+            : "";
+
+          gmDirectionsStatus(
+            "Đã dùng vị trí GPS làm điểm xuất phát." + accuracyText
+          );
+        },
+        () => {
+          gpsButton.disabled = false;
+          gpsButton.textContent = "Thử lấy lại GPS";
+
+          if (request !== gmOriginRequest) return;
+
+          // Hiển thị đúng điểm đang dùng, không gắn nhãn GPS sai.
+          originInput.value = mapOriginCoords.label || "";
+
+          gmDirectionsStatus(
+            "Không lấy được GPS. Điểm xuất phát hiện tại được giữ nguyên; " +
+            "bạn có thể nhập địa chỉ khác."
+          );
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        }
+      );
+    };
+  }
+
+  gmSyncDestinationInput();
+
+  // Tự đề nghị lấy GPS một lần khi mở bản đồ.
+  if (!gmInitialGpsRequested && gpsButton) {
+    gmInitialGpsRequested = true;
+    gpsButton.click();
+  }
+}
+    
+// Chọn tọa độ trong form món ăn. Chỉ ghi vào form khi xác nhận.
+const dishMapPicker = { map: null, marker: null, point: null };
+
+function dishMapValid(lat, lng) {
+  return lat !== null && lat !== undefined && String(lat).trim() !== "" &&
+    lng !== null && lng !== undefined && String(lng).trim() !== "" &&
+    Number.isFinite(Number(lat)) && Number.isFinite(Number(lng)) &&
+    Math.abs(Number(lat)) <= 90 && Math.abs(Number(lng)) <= 180;
+}
+
+function dishMapSetPoint(lat, lng) {
+  if (!dishMapValid(lat, lng)) return;
+  const state = dishMapPicker;
+  state.point = { lat: Number(lat), lng: Number(lng) };
+  const position = [state.point.lat, state.point.lng];
+  if (state.marker) {
+    state.marker.setLatLng(position);
+  } else {
+    state.marker = L.marker(position, {
+      draggable: true, title: "Vị trí quán đang chọn",
+    }).addTo(state.map);
+    state.marker.on("dragend", (event) => {
+      const point = event.target.getLatLng();
+      dishMapSetPoint(point.lat, point.lng);
+    });
+  }
+  document.getElementById("dishMapApply").disabled = false;
+  document.getElementById("dishMapStatus").textContent =
+    `Vĩ độ: ${state.point.lat.toFixed(6)} · Kinh độ: ${state.point.lng.toFixed(6)}. Chưa lưu thay đổi.`;
+}
+
+function dishMapClose() {
+  document.getElementById("dishMapPanel").hidden = true;
+}
+
+document.getElementById("dishMapOpen").onclick = () => {
+  if (typeof L === "undefined") {
+    alert("Không tải được bản đồ. Vui lòng kiểm tra kết nối mạng.");
+    return;
+  }
+  const state = dishMapPicker;
+  const form = document.getElementById("form");
+  const lat = form.elements.namedItem("lat").value;
+  const lng = form.elements.namedItem("lng").value;
+  const valid = dishMapValid(lat, lng);
+  document.getElementById("dishMapPanel").hidden = false;
+  if (!state.map) {
+    state.map = L.map("dishMapCanvas");
+    createGoogleMapsTileLayer("m").addTo(state.map);
+    state.map.on("click", (event) => {
+      dishMapSetPoint(event.latlng.lat, event.latlng.lng);
+    });
+  }
+  if (state.marker) {
+    state.map.removeLayer(state.marker);
+    state.marker = null;
+  }
+  state.point = null;
+  document.getElementById("dishMapApply").disabled = true;
+  state.map.setView(valid ? [Number(lat), Number(lng)] : [15.877, 108.327], valid ? 17 : 14);
+  if (valid) {
+    dishMapSetPoint(lat, lng);
+  } else {
+    document.getElementById("dishMapStatus").textContent = "Bấm trên bản đồ để chọn vị trí quán.";
+  }
+  requestAnimationFrame(() => state.map.invalidateSize());
+};
+
+document.getElementById("dishMapCancel").onclick = dishMapClose;
+document.getElementById("dishMapApply").onclick = () => {
+  const point = dishMapPicker.point;
+  if (!point || !dishMapValid(point.lat, point.lng)) return;
+  const form = document.getElementById("form");
+  form.elements.namedItem("lat").value = point.lat.toFixed(6);
+  form.elements.namedItem("lng").value = point.lng.toFixed(6);
+  dishMapClose();
+  document.getElementById("formErr").textContent = "Đã điền tọa độ. Bấm Lưu món ăn để lưu thay đổi.";
+};
+document.getElementById("dlg").addEventListener("close", dishMapClose);
+</script>
   </body>
 </html>
