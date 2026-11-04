@@ -966,7 +966,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 ? "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=800"
                 : "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
 
-            const fallbackImg = localDish?.image || defaultCatImg;
+            const backendFallback = DISHES.find((d) => d.id === Number(row.id))?.img;
+            const fallbackImg = backendFallback || localDish?.image || defaultCatImg;
 
             let rawImg = (row.image_url || "").trim();
             if (rawImg.includes("/uploads/")) {

@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Dish, LANGS, LangKey } from "../../data/dishesData";
+import { DISHES, Dish, LANGS, LangKey } from "../../data/dishesData";
 import {
   API_URL,
   api,
@@ -70,6 +70,7 @@ export default function DishDetailScreen() {
         }
 
         const fallbackImg =
+          DISHES.find((d) => String(d.id) === String(row.id))?.img ||
           "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
 
         let rawImg = (row.image_url || "").trim();
