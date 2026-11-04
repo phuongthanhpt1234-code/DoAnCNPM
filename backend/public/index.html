@@ -2348,15 +2348,26 @@
   }
 
   #secMap .qm-art {
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 52px;
     height: 52px;
+    min-width: 52px;
     flex-shrink: 0;
     border: 1px solid #f0dfbb;
     border-radius: 10px;
     background: linear-gradient(135deg, #f1d6a1, #fff0cb);
-    font-size: 27px;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  #secMap .qm-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 9px;
   }
 
   #secMap .qm-category {
@@ -4079,6 +4090,43 @@
           minute: "2-digit",
         });
 
+      function getDishImageUrl(dish) {
+        if (!dish) return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+        let url = (dish.image_url || dish.img || dish.image || "").trim();
+        if (url) {
+          if (url.startsWith("http://doancnpm-backend.onrender.com")) {
+            url = url.replace("http://doancnpm-backend.onrender.com", "https://doancnpm-backend.onrender.com");
+          }
+          return url;
+        }
+        const name = (dish.translations?.vi?.name || dish.name || dish.shopVi || "").toLowerCase();
+        if (name.includes("cao lầu") || name.includes("cao lau")) {
+          return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("bánh mì") || name.includes("banh mi")) {
+          return "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("bánh bèo") || name.includes("banh beo")) {
+          return "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("mót") || name.includes("mot") || name.includes("trà") || name.includes("tra")) {
+          return "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("bánh đập") || name.includes("banh dap")) {
+          return "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("bánh ướt") || name.includes("banh uot")) {
+          return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("cơm gà") || name.includes("com ga")) {
+          return "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&q=80&w=800";
+        }
+        if (name.includes("mì quảng") || name.includes("mi quang")) {
+          return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+        }
+        return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+      }
+
       const DEFAULT_HOI_AN_DISHES = [
         {
           id: 1,
@@ -4089,6 +4137,7 @@
           lng: 108.3265,
           is_active: true,
           emoji: "🍲",
+          image_url: "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Bánh Bèo Bà Bảy" } }
         },
         {
@@ -4100,6 +4149,7 @@
           lng: 108.32986,
           is_active: true,
           emoji: "🍜",
+          image_url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Quán Cao lầu Bá Lễ" } }
         },
         {
@@ -4111,6 +4161,7 @@
           lng: 108.33035,
           is_active: true,
           emoji: "☕",
+          image_url: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Trà mót" } }
         },
         {
@@ -4122,6 +4173,7 @@
           lng: 108.33262,
           is_active: true,
           emoji: "🥖",
+          image_url: "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Bánh Mì Phượng" } }
         },
         {
@@ -4133,6 +4185,7 @@
           lng: 108.33685,
           is_active: true,
           emoji: "🥞",
+          image_url: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Bánh đập Ni Bà Già" } }
         },
         {
@@ -4144,6 +4197,7 @@
           lng: 108.3280,
           is_active: true,
           emoji: "🥢",
+          image_url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800",
           translations: { vi: { name: "Bánh Ướt Ban Mê Giang Vương" } }
         }
       ];
@@ -7111,6 +7165,7 @@ loadRoadRoute();
                   <span style="font-size:11px; font-weight:700; color:#d97706; background:#fef3c7; padding:2px 6px; border-radius:4px;">Ẩm thực Hội An</span>
                   <span style="font-size:11.5px; font-weight:700; color:#e37400;">⭐ 4.8</span>
                 </div>
+                <img src="${getDishImageUrl(dish)}" style="width:100%;height:95px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;" onerror="this.style.display='none'" />
                 <div style="font-size:13.5px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(dishName)}</div>
                 <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(dish.address || dish.shopVi || 'Hội An')}</div>
 <div style="font-size:12px;margin-bottom:8px;">
@@ -7379,7 +7434,15 @@ if (travelTimeElement) {
     const icon = document.createElement("div");
     icon.className = "qm-art";
     icon.setAttribute("aria-hidden", "true");
-    icon.textContent = dish.emoji || "🍲";
+    const img = document.createElement("img");
+    img.src = getDishImageUrl(dish);
+    img.alt = name;
+    img.loading = "lazy";
+    img.onerror = function() {
+      this.onerror = null;
+      this.src = "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+    };
+    icon.appendChild(img);
 
     const heading = document.createElement("div");
 
