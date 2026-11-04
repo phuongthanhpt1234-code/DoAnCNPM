@@ -3632,16 +3632,19 @@
       <div class="gm-direction-field">
         <label for="mapOriginInput">Điểm xuất phát</label>
 
-        <input
+        <select
           id="mapOriginInput"
-          type="text"
-          list="mapOriginDatalist"
-          value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam"
-          placeholder="Vị trí hiện tại hoặc nhập địa chỉ…"
-          autocomplete="off"
-        />
-
-        <datalist id="mapOriginDatalist"></datalist>
+          style="cursor: pointer; width: 100%; border: 0; outline: 0; background: transparent; color: #482a2d; font: inherit; font-size: 14px;"
+        >
+          <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" selected>Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam</option>
+          <option value="Chọn vị trí hiện tại">📍 Chọn vị trí hiện tại (Định vị GPS)</option>
+          <option value="Chùa Cầu Hội An">Chùa Cầu Hội An</option>
+          <option value="Chợ Hội An">Chợ Hội An</option>
+          <option value="Bến thuyền Bạch Đằng">Bến thuyền Bạch Đằng</option>
+          <option value="Bãi biển An Bàng">Bãi biển An Bàng</option>
+          <option value="Làng rau Trà Quế">Làng rau Trà Quế</option>
+          <option value="__custom__">✏️ Nhập địa chỉ khác...</option>
+        </select>
       </div>
     </div>
 
@@ -3673,24 +3676,13 @@
     </p>
   </div>
 
-  <!-- Lấy vị trí thiết bị -->
-  <button
-    type="button"
-    id="mapOriginGpsBtn"
-    class="qm-secondary"
-  >
-    ◎ Lấy vị trí GPS
-  </button>
-
-  <div class="qm-divider"></div>
-
   <!-- Bán kính radar -->
   <div class="qm-field qm-radius">
     <label for="mapDistanceInput">
       Bán kính tìm kiếm
     </label>
 
-    <select id="mapDistanceInput">
+    <select id="mapDistanceInput" onchange="updateMapCalculations()">
       <option value="500" selected>Trong vòng 500 m</option>
       <option value="1000">Trong vòng 1 km</option>
       <option value="2000">Trong vòng 2 km</option>
@@ -3700,7 +3692,7 @@
   <button
     type="button"
     class="qm-primary"
-    onclick="updateMapCalculations()"
+    onclick="handleScanNearbyDishes()"
   >
     Quét quanh đây <span aria-hidden="true">↗</span>
   </button>
@@ -4087,7 +4079,76 @@
           minute: "2-digit",
         });
 
-      let dishes = [],
+      const DEFAULT_HOI_AN_DISHES = [
+        {
+          id: 1,
+          name: "Bánh Bèo Bà Bảy",
+          category_name: "Món chính",
+          address: "2 Hoàng Văn Thụ, Old Town, Hội An",
+          lat: 15.8772,
+          lng: 108.3265,
+          is_active: true,
+          emoji: "🍲",
+          translations: { vi: { name: "Bánh Bèo Bà Bảy" } }
+        },
+        {
+          id: 2,
+          name: "Quán Cao lầu Bá Lễ",
+          category_name: "Món chính",
+          address: "49/3 Trần Hưng Đạo, Hội An",
+          lat: 15.87858,
+          lng: 108.32986,
+          is_active: true,
+          emoji: "🍜",
+          translations: { vi: { name: "Quán Cao lầu Bá Lễ" } }
+        },
+        {
+          id: 3,
+          name: "Trà mót",
+          category_name: "Chè & Đồ uống",
+          address: "150 Trần Phú, Old Town, Hội An",
+          lat: 15.87785,
+          lng: 108.33035,
+          is_active: true,
+          emoji: "☕",
+          translations: { vi: { name: "Trà mót" } }
+        },
+        {
+          id: 4,
+          name: "Bánh Mì Phượng",
+          category_name: "Món chính",
+          address: "2B Phan Châu Trinh, Hội An",
+          lat: 15.87955,
+          lng: 108.33262,
+          is_active: true,
+          emoji: "🥖",
+          translations: { vi: { name: "Bánh Mì Phượng" } }
+        },
+        {
+          id: 5,
+          name: "Bánh đập Ni Bà Già",
+          category_name: "Món chính",
+          address: "34 Nguyễn Tri Phương, Cẩm Nam, Hội An",
+          lat: 15.87335,
+          lng: 108.33685,
+          is_active: true,
+          emoji: "🥞",
+          translations: { vi: { name: "Bánh đập Ni Bà Già" } }
+        },
+        {
+          id: 6,
+          name: "Bánh Ướt Ban Mê Giang Vương",
+          category_name: "Món chính",
+          address: "86/23 Vũ Huy Tấn, Gia Định",
+          lat: 15.8765,
+          lng: 108.3280,
+          is_active: true,
+          emoji: "🥢",
+          translations: { vi: { name: "Bánh Ướt Ban Mê Giang Vương" } }
+        }
+      ];
+
+      let dishes = DEFAULT_HOI_AN_DISHES.slice(),
         cats = [],
         editing = null,
         viewMode = "table",
@@ -6503,6 +6564,80 @@ async function loadRoadRoute() {
         return Math.max(0, meters);
       }
 
+      
+      // Hàm định vị GPS và hiển thị vị trí hiện tại
+      function triggerFetchGpsLocation() {
+        const originSelect = document.getElementById("mapOriginInput");
+        if (!navigator.geolocation) {
+          alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
+          gmDirectionsStatus("Trình duyệt không hỗ trợ GPS.");
+          if (originSelect) originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
+          return;
+        }
+
+        gmDirectionsStatus("Đang định vị GPS của thiết bị…");
+        let gpsOpt = originSelect ? Array.from(originSelect.options).find(o => o.value === "Chọn vị trí hiện tại" || o.value.startsWith("Vị trí hiện tại")) : null;
+        if (gpsOpt) {
+          gpsOpt.textContent = "⏳ Đang xác định vị trí hiện tại...";
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+            const lat = Number(latitude.toFixed(6));
+            const lng = Number(longitude.toFixed(6));
+
+            mapOriginCoords = {
+              lat: lat,
+              lng: lng,
+              label: "Vị trí hiện tại (" + lat.toFixed(4) + ", " + lng.toFixed(4) + ")",
+            };
+
+            if (gpsOpt) {
+              gpsOpt.textContent = "📍 Vị trí hiện tại (" + lat.toFixed(4) + ", " + lng.toFixed(4) + ")";
+              originSelect.value = "Chọn vị trí hiện tại";
+            }
+
+            if (typeof poiPairActive !== "undefined") {
+              poiPairActive = false;
+              poiPreviousState = null;
+            }
+            roadRouteCache = null;
+            updateMapCalculations();
+
+            if (mapLeafletInstance) {
+              mapLeafletInstance.flyTo([lat, lng], 16, { duration: 1.2 });
+            }
+
+            if (mapRadiusCircle) {
+              mapRadiusCircle.setStyle({
+                opacity: 1,
+                fillOpacity: 0.12,
+              });
+            }
+
+            const accuracyText = Number.isFinite(accuracy)
+              ? " (±" + Math.round(accuracy) + " m)"
+              : "";
+            gmDirectionsStatus(
+              "Đã hiển thị vị trí hiện tại: " + lat.toFixed(4) + ", " + lng.toFixed(4) + accuracyText
+            );
+          },
+          (err) => {
+            alert("Không thể lấy GPS (" + err.message + "). Vui lòng cấp quyền định vị cho trình duyệt hoặc chọn lại địa chỉ.");
+            if (gpsOpt) {
+              gpsOpt.textContent = "📍 Chọn vị trí hiện tại (Định vị GPS)";
+            }
+            if (originSelect) {
+              originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
+            }
+            gmDirectionsStatus("Không lấy được GPS. Đã giữ nguyên điểm xuất phát.");
+            updateMapCalculations();
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+        );
+      }
+
       // Định vị địa chỉ người dùng gõ
       async function geocodeAddress(query) {
         if (!query || !query.trim()) return null;
@@ -6665,9 +6800,32 @@ async function loadRoadRoute() {
           originInput.addEventListener("change", async () => {
             const val = originInput.value.trim();
             if (!val) return;
-            if (val.includes("Vị trí hiện tại") || val.includes("GPS")) {
-              const gpsBtn = document.getElementById("mapOriginGpsBtn");
-              if (gpsBtn) gpsBtn.click();
+            if (val === "Chọn vị trí hiện tại" || val.toLowerCase().includes("vị trí hiện tại") || val.toUpperCase().includes("GPS")) {
+              triggerFetchGpsLocation();
+              return;
+            }
+            if (val === "__custom__") {
+              const custom = prompt("Nhập tên địa danh hoặc địa chỉ tại Hội An:");
+              if (custom && custom.trim()) {
+                const res = await geocodeAddress(custom.trim());
+                if (res) {
+                  mapOriginCoords.lat = res.lat;
+                  mapOriginCoords.lng = res.lng;
+                  mapOriginCoords.label = res.label;
+                  let opt = Array.from(originInput.options).find(o => o.value === res.label);
+                  if (!opt) {
+                    opt = new Option(res.label, res.label);
+                    originInput.add(opt, originInput.options[2]);
+                  }
+                  originInput.value = res.label;
+                  updateMapCalculations();
+                  if (mapLeafletInstance) mapLeafletInstance.flyTo([res.lat, res.lng], 16, { duration: 1.2 });
+                  return;
+                } else {
+                  alert("Không tìm thấy tọa độ cho địa chỉ: " + custom);
+                }
+              }
+              originInput.value = mapOriginCoords.label || "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
               return;
             }
             const res = await geocodeAddress(val);
@@ -6676,12 +6834,9 @@ async function loadRoadRoute() {
               mapOriginCoords.lng = res.lng;
               mapOriginCoords.label = res.label;
               updateMapCalculations();
-            }
-          });
-          originInput.addEventListener("keydown", async (e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              originInput.blur();
+              if (mapLeafletInstance) {
+                mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 16, { duration: 1.2 });
+              }
             }
           });
         }
@@ -6996,6 +7151,27 @@ loadRoadRoute();
         }
       };
 
+      
+      async function handleScanNearbyDishes() {
+        const btn = document.getElementById("mapRadiusApply");
+        if (btn) {
+          btn.innerHTML = `Đang quét... <span aria-hidden="true">⏳</span>`;
+          btn.disabled = true;
+        }
+        if (!dishes || dishes.length === 0) {
+          try {
+            await loadDishes();
+          } catch {}
+        }
+        updateMapCalculations();
+        if (btn) {
+          setTimeout(() => {
+            btn.innerHTML = `Quét quanh đây <span aria-hidden="true">↗</span>`;
+            btn.disabled = false;
+          }, 300);
+        }
+      }
+
       // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
       function updateMapCalculations() {
         gmSyncDestinationInput();
@@ -7044,7 +7220,8 @@ if (travelTimeElement) {
         }
 
         // Tính toán toàn bộ các món ăn nằm trong phạm vi khoảng cách
-        const mappedDishes = dishes.map((d) => {
+        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
+        const mappedDishes = sourceDishes.map((d) => {
           const dLat = Number(d.lat) || 15.8782;
           const dLng = Number(d.lng) || 108.3265;
           const dist = calculateHaversineDistance(mapOriginCoords.lat, mapOriginCoords.lng, dLat, dLng);
@@ -7276,23 +7453,30 @@ if (travelTimeElement) {
           }
         }
 
-        // Nạp danh sách gợi ý địa chỉ vào Datalist
-        const datalist = $("#mapOriginDatalist");
-        if (datalist && dishes.length > 0) {
-          const landmarkOpts = `
-            <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam">Điểm xuất phát mặc định (Nguyễn Thị Minh Khai)</option>
-            <option value="Vị trí hiện tại (GPS)">Vị trí hiện tại của bạn (Định vị GPS)</option>
-            <option value="Chùa Cầu Hội An"></option>
-            <option value="Chợ Hội An"></option>
-            <option value="Bến thuyền Bạch Đằng"></option>
-            <option value="Bãi biển An Bàng"></option>
-            <option value="Làng rau Trà Quế"></option>
+        // Nạp danh sách gợi ý địa chỉ vào Điểm xuất phát (select)
+        const originSelect = $("#mapOriginInput");
+        if (originSelect && dishes && dishes.length > 0) {
+          const currentVal = originSelect.value;
+          const staticOptions = `
+            <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam">Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam</option>
+            <option value="Chọn vị trí hiện tại">📍 Chọn vị trí hiện tại (Định vị GPS)</option>
+            <option value="Chùa Cầu Hội An">Chùa Cầu Hội An</option>
+            <option value="Chợ Hội An">Chợ Hội An</option>
+            <option value="Bến thuyền Bạch Đằng">Bến thuyền Bạch Đằng</option>
+            <option value="Bãi biển An Bàng">Bãi biển An Bàng</option>
+            <option value="Làng rau Trà Quế">Làng rau Trà Quế</option>
           `;
           const dishAddressOpts = dishes
             .filter((d) => d.address)
-            .map((d) => `<option value="${esc(d.address)}">${esc(d.translations?.vi?.name || d.name)}</option>`)
+            .map((d) => `<option value="${esc(d.address)}">${esc(d.translations?.vi?.name || d.name)} (${esc(d.address)})</option>`)
             .join("");
-          datalist.innerHTML = landmarkOpts + dishAddressOpts;
+          const customOpt = `<option value="__custom__">✏️ Nhập địa chỉ khác...</option>`;
+          originSelect.innerHTML = staticOptions + dishAddressOpts + customOpt;
+          if (currentVal && Array.from(originSelect.options).some(o => o.value === currentVal)) {
+            originSelect.value = currentVal;
+          } else {
+            originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
+          }
         }
 
         const mapBadge = $("#navMapBadge");
