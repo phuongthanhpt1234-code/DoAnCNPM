@@ -3277,6 +3277,13 @@
               </span>
               <span class="nav-badge" style="background: rgba(233,194,107,0.2); color: var(--gold); border-color: var(--gold-border);">QR</span>
             </button>
+
+            <button type="button" class="nav-btn" data-nav="map">
+              <span class="nav-btn-left">
+                <span>Bản Đồ Nhiệt & Mật Độ</span>
+              </span>
+              <span class="nav-badge" id="navMapBadge" style="background: #fee2e2; color: #dc2626; border-color: #fca5a5;">HEAT</span>
+            </button>
           </nav>
         </div>
 
@@ -3302,7 +3309,7 @@
 
             <div class="topbar-actions">
               <button type="button" id="exportReportBtn" style="background:#e8a838; color:#ffffff; border:none; border-radius:20px; padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-                📊 Xuất báo cáo lượt check-in & thống kê
+                Xuất báo cáo lượt check-in & thống kê
               </button>
               <div style="display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--gold-border);">
                 <span id="adminNameDisplay" style="font-size: 12.5px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 5px;">
@@ -3542,7 +3549,7 @@
               <section class="alt-panel" id="secAccount" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
                 <div class="sec-head" style="margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                   <div class="sec-title-group">
-                    <span style="font-size: 20px;">👥</span>
+                    
                     <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Danh Sách Tài Khoản Quản Trị</h2>
                   </div>
                   <button type="button" id="toggleAddUserBtn" style="background: linear-gradient(135deg, #d97706 0%, #b91c1c 100%); color: #ffffff; border: none; border-radius: 12px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(217,119,6,0.3);">
@@ -3553,8 +3560,8 @@
                 <!-- Form Thêm Tài Khoản Mới (Ẩn/Hiện linh hoạt) -->
                 <div id="addUserBox" style="display: none; background: var(--card-item); border: 1px solid var(--gold-border-strong); border-radius: 16px; padding: 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--ink);">➕ Thêm Tài Khoản Quản Trị Mới</h3>
-                    <button type="button" id="closeAddUserBtn" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; font-weight: 700;">✕</button>
+                    <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--ink);">Thêm Tài Khoản Quản Trị Mới</h3>
+                    <button type="button" id="closeAddUserBtn" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; font-weight: 700;">&times;</button>
                   </div>
                   <form id="addUserForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
                     <div>
@@ -3610,7 +3617,7 @@
                 <!-- Đổi mật khẩu tài khoản đang đăng nhập -->
                 <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px; margin-bottom: 20px;">
                   <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 14px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                    <span>🔒</span> Đổi Mật Khẩu (Tài Khoản Đang Đăng Nhập)
+                    Đổi Mật Khẩu (Tài Khoản Đang Đăng Nhập)
                   </h3>
                   <form id="changePasswordForm" style="display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
                     <div>
@@ -3636,7 +3643,7 @@
               <section class="alt-panel" id="secQr" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
                 <div class="sec-head" style="margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                   <div class="sec-title-group" style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 22px;">📱</span>
+                    
                     <div>
                       <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Quản Lý & Tạo Mã QR Code Ẩm Thực</h2>
                       <p style="margin: 3px 0 0; font-size: 12px; color: var(--muted);">Tạo mã QR cho toàn bộ ứng dụng hoặc mã QR riêng cho từng món ăn, hỗ trợ tải ảnh và in thẻ để bàn</p>
@@ -3644,7 +3651,7 @@
                   </div>
                   <div style="display: flex; gap: 8px;">
                     <button type="button" id="qrPrintAllBtn" style="padding: 8px 16px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                      <span>🖨️</span> In Thẻ / Mã QR
+                      In Thẻ / Mã QR
                     </button>
                   </div>
                 </div>
@@ -3652,10 +3659,10 @@
                 <!-- 2 TABS CON: QR ỨNG DỤNG vs QR TỪNG MÓN ĂN -->
                 <div style="display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--gold-border); padding-bottom: 12px;">
                   <button type="button" id="qrTabAppBtn" class="filter-chip active" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
-                    🌐 Mã QR Toàn Ứng Dụng
+                    Mã QR Toàn Ứng Dụng
                   </button>
                   <button type="button" id="qrTabDishesBtn" class="filter-chip" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
-                    🍜 Mã QR Riêng Từng Món Ăn
+                    Mã QR Riêng Từng Món Ăn
                   </button>
                 </div>
 
@@ -3663,7 +3670,7 @@
                 <div id="qrAppBox" style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
                   <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
                     <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                      <span>⚙️</span> Cấu Hình Liên Kết QR Ứng Dụng
+                      Cấu Hình Liên Kết QR Ứng Dụng
                     </h3>
 
                     <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -3709,7 +3716,7 @@
 
                       <div style="display: flex; gap: 10px; margin-top: 6px;">
                         <button type="button" id="qrAppDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #ea580c, #dc2626); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                          <span>📥</span> Tải Ảnh QR (PNG)
+                          Tải Ảnh QR (PNG)
                         </button>
                         <button type="button" id="qrAppCopyBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
                           Sao chép Link
@@ -3727,7 +3734,7 @@
                     </div>
                     <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
                     <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
-                      <span>🎧</span> 5 Ngôn Ngữ: VI • EN • ZH • KO • JA
+                      5 Ngôn Ngữ: VI • EN • ZH • KO • JA
                     </div>
                   </div>
                 </div>
@@ -3736,7 +3743,7 @@
                 <div id="qrDishesBox" hidden style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
                   <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
                     <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                      <span>🍜</span> Chọn Món Ăn Cần Tạo Mã QR
+                      Chọn Món Ăn Cần Tạo Mã QR
                     </h3>
 
                     <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -3775,10 +3782,10 @@
 
                       <div style="display: flex; gap: 10px; margin-top: 6px;">
                         <button type="button" id="qrDishDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                          <span>📥</span> Tải Thẻ Bàn Món Ăn (PNG)
+                          Tải Thẻ Bàn Món Ăn (PNG)
                         </button>
                         <button type="button" id="qrDishPrintBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                          <span>🖨️</span> In Thẻ
+                          In Thẻ
                         </button>
                       </div>
                     </div>
@@ -3793,7 +3800,165 @@
                     </div>
                     <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
                     <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
-                      <span>🎧</span> 5 Ngôn Ngữ: VI • EN • ZH • KO • JA
+                      5 Ngôn Ngữ: VI • EN • ZH • KO • JA
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- BẢN ĐỒ NHIỆT & MẬT ĐỘ TƯƠNG TÁC (SPATIAL ANALYTICS) -->
+              <section class="alt-panel" id="secMap" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
+                <!-- Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--gold-border); flex-wrap: wrap; gap: 14px;">
+                  <div style="display: flex; align-items: center; gap: 12px;">
+                    
+                    <div>
+                      <h2 style="font-size: 19px; font-weight: 800; margin: 0; color: var(--ink);">Bản Đồ Nhiệt & Mật Độ Tương Tác (Spatial Analytics)</h2>
+                      <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted);">Phân tích không gian: Điểm nóng du khách quét mã QR & Mật độ phân bổ mạng lưới ẩm thực Hội An</p>
+                    </div>
+                  </div>
+                  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <button type="button" id="btnAdminMapHoiAnCenter" style="cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); display: inline-flex; align-items: center; gap: 6px;">
+                      Về Trung Tâm Phố Cổ
+                    </button>
+                    <button type="button" id="btnAdminMapRefresh" style="cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: var(--maroon); border: none; color: #ffffff; display: inline-flex; align-items: center; gap: 6px;">
+                      Cập Nhật Dữ Liệu
+                    </button>
+                  </div>
+                </div>
+
+                <!-- KPI Strip: 4 Metric Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                  <!-- Card 1 -->
+                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 16px 18px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Điểm Ẩm Thực GPS</span>
+                      
+                    </div>
+                    <div style="font-size: 26px; font-weight: 800; color: var(--ink); margin-top: 6px;" id="kpiMapTotalDishes">6 điểm</div>
+                    <div style="font-size: 12px; color: #16a34a; margin-top: 2px; font-weight: 600;">● 100% đã định vị không gian</div>
+                  </div>
+                  <!-- Card 2 -->
+                  <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; padding: 16px 18px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <span style="font-size: 12px; font-weight: 700; color: #c2410c; text-transform: uppercase;">Điểm Nóng QR Số 1</span>
+                      
+                    </div>
+                    <div style="font-size: 18px; font-weight: 800; color: #9a3412; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="kpiMapTopHotspot">Bánh Mì Phượng</div>
+                    <div style="font-size: 12px; color: #ea580c; margin-top: 2px; font-weight: 600;" id="kpiMapTopHotspotScans">42 lượt tương tác (Cực đại)</div>
+                  </div>
+                  <!-- Card 3 -->
+                  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px 18px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <span style="font-size: 12px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Tổng Tương Tác Du Khách</span>
+                      
+                    </div>
+                    <div style="font-size: 26px; font-weight: 800; color: #1e40af; margin-top: 6px;" id="kpiMapTotalInteractions">102 lượt</div>
+                    <div style="font-size: 12px; color: #2563eb; margin-top: 2px; font-weight: 600;">Quét QR & Lượt check-in thực tế</div>
+                  </div>
+                  <!-- Card 4 -->
+                  <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 14px; padding: 16px 18px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <span style="font-size: 12px; font-weight: 700; color: #a16207; text-transform: uppercase;">Mật Độ Vùng Lõi Di Sản</span>
+                      
+                    </div>
+                    <div style="font-size: 26px; font-weight: 800; color: #854d0e; margin-top: 6px;" id="kpiMapCoreRatio">83.3%</div>
+                    <div style="font-size: 12px; color: #ca8a04; margin-top: 2px; font-weight: 600;" id="kpiMapCoreSub">Bán kính &lt;1.0km Phố Cổ Hội An</div>
+                  </div>
+                </div>
+
+                <!-- Control Bar: Chế độ hiển thị & Bán kính nhiệt -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 12px 18px;">
+                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 13px; font-weight: 700; color: var(--ink); margin-right: 4px;">Chế độ trực quan:</span>
+                    <button type="button" class="filter-chip active" id="btnAdminMapModeHybrid" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
+                      Kết Hợp (Heatmap + Vị Trí)
+                    </button>
+                    <button type="button" class="filter-chip" id="btnAdminMapModeHeat" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
+                      Bản Đồ Nhiệt Quét QR
+                    </button>
+                    <button type="button" class="filter-chip" id="btnAdminMapModeDensity" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
+                      Mật Độ & Vành Đai Phân Bổ
+                    </button>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <label for="adminHeatRadiusSlider" style="font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;">Bán kính quầng nhiệt:</label>
+                    <input type="range" id="adminHeatRadiusSlider" min="20" max="60" value="38" style="cursor: pointer; width: 100px; accent-color: var(--maroon);" />
+                    <span id="adminHeatRadiusLabel" style="font-size: 12px; font-weight: 700; color: var(--ink); min-width: 32px;">38px</span>
+                  </div>
+                </div>
+
+                <!-- Main Layout: Bản đồ (Trái) + Xếp hạng & Đề xuất (Phải) -->
+                <div style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start;" class="admin-heatmap-grid">
+                  <!-- Cột Trái: Canvas bản đồ nhiệt -->
+                  <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold-border); box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
+                    <div id="adminHeatmapCanvas" style="height: 560px; width: 100%; background: #e5e7eb;"></div>
+
+                    <!-- Chú thích Thang Đo Nhiệt (Bottom-Left) -->
+                    <div id="adminHeatLegendOverlay" style="position: absolute; bottom: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px;">
+                      <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+                        Mức độ tương tác quét QR
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="color: #64748b; font-weight: 600;">Ít</span>
+                        <div style="width: 130px; height: 10px; border-radius: 6px; background: linear-gradient(to right, #3b82f6, #10b981, #fbbf24, #f97316, #dc2626);"></div>
+                        <span style="font-weight: 800; color: #dc2626;">Cực đại</span>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; margin-top: 3px;">
+                        <span>1-5 lượt</span>
+                        <span>15-25 lượt</span>
+                        <span>40+ lượt</span>
+                      </div>
+                    </div>
+
+                    <!-- Chú thích Vành Đai Mật Độ (Top-Left) -->
+                    <div id="adminDensityLegendOverlay" style="position: absolute; top: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px; display: none;">
+                      <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+                        Vành đai phân bổ ẩm thực
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(220, 38, 38, 0.4); border: 1.5px solid #dc2626;"></span>
+                        <span style="font-weight: 600; color: #1e293b;">Vùng lõi Di sản (&lt;500m)</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(245, 158, 11, 0.25); border: 1.5px solid #f59e0b;"></span>
+                        <span style="font-weight: 600; color: #1e293b;">Vùng đệm phố cổ (&lt;1.5km)</span>
+                      </div>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1.5px dashed #3b82f6;"></span>
+                        <span style="font-weight: 600; color: #1e293b;">Vùng mở rộng ngoại ô (&lt;3.5km)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Cột Phải: Bảng xếp hạng Hotspots & Đề xuất quản trị -->
+                  <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <!-- Hộp 1: Top Hotspots quét QR -->
+                    <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--gold-border); padding-bottom: 10px;">
+                        <h3 style="font-size: 14px; font-weight: 800; color: var(--ink); margin: 0; display: flex; align-items: center; gap: 6px;">
+                          Xếp Hạng Điểm Nóng Quét QR
+                        </h3>
+                        <span style="font-size: 11px; color: var(--muted); background: #f1f5f9; padding: 2px 8px; border-radius: 12px; font-weight: 700;">Hội An</span>
+                      </div>
+                      <div id="adminHotspotList" style="display: flex; flex-direction: column; gap: 10px; max-height: 290px; overflow-y: auto; padding-right: 4px;">
+                        <!-- Rendered by JS -->
+                      </div>
+                    </div>
+
+                    <!-- Hộp 2: Đề Xuất Chiến Lược Quản Trị & Mở Rộng Hệ Thống -->
+                    <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                      <h3 style="font-size: 14px; font-weight: 800; color: #92400e; margin: 0 0 10px; display: flex; align-items: center; gap: 6px;">
+                        Phân Tích & Đề Xuất Kinh Doanh
+                      </h3>
+                      <div style="font-size: 12px; line-height: 1.6; color: #78350f;">
+                        <p style="margin: 0 0 8px;">
+                          <strong>Mật độ hiện tại:</strong> <span id="adminMapInsightDensity">Phần lớn dữ liệu ẩm thực đang tập trung dày đặc tại trục đường Trần Phú, Phan Châu Trinh và khu vực Chùa Cầu. Điểm quét QR có nhiệt lượng cao nhất vào khung giờ 16:00 - 20:30.</span>
+                        </p>
+                        <p style="margin: 0;">
+                          <strong>Định hướng mở rộng:</strong> <span id="adminMapInsightStrategy">Khu vực ngoại ô như <em>Làng rau Trà Quế</em>, <em>Cẩm Hà</em> và bãi biển <em>An Bàng</em> hiện tại còn trống dữ liệu. Admin nên đẩy mạnh liên kết thêm các quán ăn vườn và ẩm thực hải sản tại các khu vực này nhằm phân bổ đồng đều lưu lượng khách du lịch và tăng giá trị toàn hệ thống.</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -3934,7 +4099,7 @@
             onmouseover="this.style.background='#fef3c7'"
             onmouseout="this.style.background='#fff8eb'"
           >
-            <span style="font-size: 16px;">📌</span>
+            
             <span>Ghim tọa độ quán ăn trên bản đồ (Coordinate Picker)</span>
           </button>
         </div>
@@ -3944,7 +4109,7 @@
           tính)</label
         >
         <div class="upload-box">
-          <div class="upload-preview" id="imgPreviewBox">🖼️</div>
+          <div class="upload-preview" id="imgPreviewBox" style="font-size:12px; color:var(--muted); text-align:center;">Chưa có ảnh</div>
           <div class="upload-controls">
             <div style="display: flex; gap: 8px; margin-bottom: 10px">
               <input
@@ -3960,7 +4125,7 @@
                 class="btn-clear-img"
                 title="Xóa ảnh hiện tại"
               >
-                <span>🗑️</span> Xóa ảnh
+                Xóa ảnh
               </button>
             </div>
             <div class="file-upload-row">
@@ -3971,7 +4136,7 @@
                 style="display: none;"
               />
               <label for="imageFile" class="btn-custom-upload" id="uploadLabelBtn">
-                <span style="font-size: 16px;">📤</span>
+                
                 <span>Tải ảnh từ máy tính</span>
               </label>
               <span class="upload-file-name" id="uploadFileName">Chưa chọn tệp</span>
@@ -4005,6 +4170,7 @@
     </dialog>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <script>
       const LANG_KEYS = ["vi", "en", "zh", "ko", "ja"];
       const LANG_LABELS = {
@@ -5069,10 +5235,10 @@
         if (cleanUrl) {
           previewBox.innerHTML = `<img src="${esc(cleanUrl)}" alt="preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:11px;color:var(--danger);text-align:center;line-height:1.2;padding:2px;\\'>Lỗi link ảnh</span>';" />`;
           statusEl.textContent =
-            "✔ Đang dùng ảnh: " +
+            "Đang dùng ảnh: " +
             (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
         } else {
-          previewBox.textContent = "🖼️";
+          previewBox.textContent = "Chưa có ảnh";
           statusEl.textContent =
             "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
         }
@@ -5129,7 +5295,7 @@
           $("#imageUrlInput").value = compressedDataUrl;
           updateImgPreview(compressedDataUrl);
           $("#uploadStatus").textContent =
-            "✔ Đã nạp ảnh: " + file.name + " (sẽ lưu trực tiếp vào cơ sở dữ liệu khi bấm Lưu)";
+            "Đã nạp ảnh: " + file.name + " (sẽ lưu trực tiếp vào cơ sở dữ liệu khi bấm Lưu)";
         } catch (err) {
           $("#uploadStatus").textContent = "Lỗi xử lý ảnh: " + err.message;
         }
@@ -5226,6 +5392,10 @@
         qrcode: [
           "Quản Lý Mã QR",
           "Tạo mã QR thông minh cho từng món ăn & ứng dụng, in thẻ bàn",
+        ],
+        map: [
+          "Bản Đồ Nhiệt & Mật Độ Tương Tác",
+          "Phân tích dữ liệu không gian: Điểm nóng du khách quét QR & Mật độ phân bổ ẩm thực Hội An",
         ],
       };
 
@@ -5596,7 +5766,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
           const msgEl = $("#msg");
           if (msgEl) {
-            msgEl.textContent = "✔ Đã xuất file báo cáo Excel định dạng bảng chuyên nghiệp thành công!";
+            msgEl.textContent = "Đã xuất file báo cáo Excel định dạng bảng chuyên nghiệp thành công!";
             msgEl.style.color = "var(--gold-text)";
             setTimeout(() => {
               if (msgEl.textContent.includes("xuất file báo cáo")) msgEl.textContent = "";
@@ -5854,7 +6024,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           if (isSelf) {
             actionHtml = '<span style="font-size: 11px; color: var(--muted); font-style: italic;">Đang dùng</span>';
           } else if (u.role === "super_admin") {
-            actionHtml = '<span style="font-size: 11.5px; color: #d97706; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Tài khoản Quản Trị Viên Cấp Cao cố định, không thể xoá">🔒 Cố định</span>';
+            actionHtml = '<span style="font-size: 11.5px; color: #d97706; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Tài khoản Quản Trị Viên Cấp Cao cố định, không thể xoá">Cố định</span>';
           } else {
             actionHtml = `
               <button type="button" class="danger" onclick="deleteAdminUserAccount(${u.id}, '${esc(u.username)}', '${u.role}')" style="font-size: 12px; padding: 4px 10px; border-radius: 8px;">
@@ -6062,7 +6232,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         } catch (err) {
           const msg = String(err.message || "");
           if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
-            errEl.innerHTML = `<strong>⚠️ Không thể kết nối tới server (port 4000).</strong><br>Vui lòng mở web qua: <a href="http://localhost:4000" target="_blank" style="color: #ea580c; text-decoration: underline; font-weight: 700;">http://localhost:4000</a>`;
+            errEl.innerHTML = `<strong>Không thể kết nối tới server (port 4000).</strong><br>Vui lòng mở web qua: <a href="http://localhost:4000" target="_blank" style="color: #ea580c; text-decoration: underline; font-weight: 700;">http://localhost:4000</a>`;
           } else {
             errEl.textContent = msg || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản!";
           }
@@ -6105,19 +6275,19 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           const total = el.dataset.ttVal || "0 lượt";
           return `
             <div class="chart-tooltip-header">
-              <span>📊</span>
+              
               <span>${esc(title)}</span>
             </div>
             <div class="chart-tooltip-row">
-              <span>❤️ Yêu thích:</span>
+              <span>Yêu thích:</span>
               <span class="chart-tooltip-val">${esc(favs)} lượt</span>
             </div>
             <div class="chart-tooltip-row">
-              <span>📍 Check-in:</span>
+              <span>Check-in:</span>
               <span class="chart-tooltip-val">${esc(checks)} lượt</span>
             </div>
             <div class="chart-tooltip-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 5px; margin-top: 5px;">
-              <span>🔥 Tổng tương tác:</span>
+              <span>Tổng tương tác:</span>
               <span class="chart-tooltip-badge">${esc(total)}</span>
             </div>
           `;
@@ -6130,7 +6300,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           const unit = mode === "cat" ? "món ăn" : "lượt tương tác";
           return `
             <div class="chart-tooltip-header">
-              <span>🍩</span>
+              
               <span>${esc(title)}</span>
             </div>
             <div class="chart-tooltip-row">
@@ -6151,7 +6321,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           if (mode === "online") {
             return `
               <div class="chart-tooltip-header">
-                <span style="color:#34d399">🟢</span>
+                <span class="live-dot" style="margin-right: 5px;"></span>
                 <span>Thiết Bị Đang Online Live</span>
               </div>
               <div class="chart-tooltip-row">
@@ -6166,7 +6336,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           }
           return `
             <div class="chart-tooltip-header">
-              <span>📈</span>
+              
               <span>${esc(title)}</span>
             </div>
             <div class="chart-tooltip-row">
@@ -6181,7 +6351,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           const count = el.dataset.ttCount || "0";
           return `
             <div class="chart-tooltip-header">
-              <span>📅</span>
+              
               <span>Ngày ${esc(date)}</span>
             </div>
             <div class="chart-tooltip-row">
@@ -6399,7 +6569,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           } catch {
             window.open(img.src, "_blank");
           } finally {
-            qrAppDlBtn.innerHTML = `<span>📥</span> Tải Ảnh QR (PNG)`;
+            qrAppDlBtn.innerHTML = `Tải Ảnh QR (PNG)`;
           }
         };
       }
@@ -6411,7 +6581,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           if (!input) return;
           navigator.clipboard?.writeText(input.value);
           const oldText = qrAppCpBtn.textContent;
-          qrAppCpBtn.textContent = "✓ Đã sao chép!";
+          qrAppCpBtn.textContent = "Đã sao chép!";
           setTimeout(() => (qrAppCpBtn.textContent = oldText), 2000);
         };
       }
@@ -6434,7 +6604,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           } catch {
             window.open(img.src, "_blank");
           } finally {
-            qrDishDlBtn.innerHTML = `<span>📥</span> Tải Thẻ Bàn Món Ăn (PNG)`;
+            qrDishDlBtn.innerHTML = `Tải Thẻ Bàn Món Ăn (PNG)`;
           }
         };
       }
@@ -6457,7 +6627,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           </head>
           <body>
             <div class="card">${el.innerHTML}</div>
-            <script>setTimeout(() => { window.print(); window.close(); }, 500);<\/script>
+            <` + `script>setTimeout(() => { window.print(); window.close(); }, 500);<` + `/script>
           </body>
           </html>
         `);
@@ -6483,1831 +6653,448 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
 
       // ==========================================
       // CHỨC NĂNG BẢN ĐỒ VÀ GPS: PHONG CÁCH GOOGLE MAPS
-      // ==========================================
-      let mapLeafletInstance = null;
-      let mapOriginMarker = null;
-      let mapDestMarker = null;
-      let mapRadiusCircle = null;
-      let mapRouteLine = null;
-      let roadRouteController = null;
-let roadRouteRequestId = 0;
-let roadRoutePendingKey = "";
-let roadRouteCache = null;
-let qmPreviewMode = "two_wheeler";
-
-function updateQmRoutePreview() {
-  const modes = {
-    walking: { label: "Đi bộ", speed: 75 },
-    bicycling: { label: "Xe đạp", speed: 250 },
-    two_wheeler: { label: "Xe máy", speed: 416 },
-    driving: { label: "Ô tô", speed: 500 },
-  };
-
-  const mode = modes[qmPreviewMode];
-  const timeElement = document.getElementById("qmPreviewTime");
-  const noteElement = document.getElementById("qmPreviewNote");
-
-  const meters = roadRoutePendingKey
-    ? NaN
-    : Number(roadRouteCache?.route?.distance);
-
-  document
-    .querySelectorAll("#secMap [data-preview-mode]")
-    .forEach((button) => {
-      const active = button.dataset.previewMode === qmPreviewMode;
-
-      button.classList.toggle("active", active);
-      button.setAttribute("aria-pressed", String(active));
-
-      button.onclick = () => {
-        qmPreviewMode = button.dataset.previewMode;
-        updateQmRoutePreview();
-      };
-    });
-
-  if (timeElement) {
-    timeElement.textContent = Number.isFinite(meters)
-      ? `~${Math.max(1, Math.ceil(meters / mode.speed))} phút`
-      : "—";
-  }
-
-  if (noteElement) {
-    noteElement.textContent =
-      `${mode.label} · Thời gian minh họa theo tốc độ giả định. ` +
-      "Đường vẽ và quãng đường dùng tuyến ô tô tham khảo cho cả 4 lựa chọn. " +
-      "Không có dữ liệu giao thông trực tiếp.";
-  }
-}
-
-function showRoadRouteMessage(message) {
-  let element = document.getElementById(
-    "roadRouteMessage"
-  );
-
-  if (!element) {
-    element = document.createElement("p");
-    element.id = "roadRouteMessage";
-    element.setAttribute("role", "status");
-
-    element.style.cssText =
-      "font-size:12px;line-height:1.6;" +
-      "margin:8px 0;color:#967d75;";
-
-    const link = document.getElementById(
-      "gmapExternalLink"
-    );
-
-    link?.parentElement?.append(element);
-  }
-
-  if (element) {
-    element.textContent = message;
-  }
-}
-
-function clearRoadRouteLine() {
-  if (mapRouteLine && mapLeafletInstance) {
-    mapLeafletInstance.removeLayer(mapRouteLine);
-  }
-
-  mapRouteLine = null;
-}
-
-function roadRoutePointValid(point) {
-  return (
-    point.lat !== null &&
-    point.lng !== null &&
-    point.lat !== undefined &&
-    point.lng !== undefined &&
-    String(point.lat).trim() !== "" &&
-    String(point.lng).trim() !== "" &&
-    Number.isFinite(Number(point.lat)) &&
-    Number.isFinite(Number(point.lng)) &&
-    Math.abs(Number(point.lat)) <= 90 &&
-    Math.abs(Number(point.lng)) <= 180
-  );
-}
-
-function renderRoadRoute(routeData) {
-  if (!mapLeafletInstance) return;
-
-  clearRoadRouteLine();
-
-  // GeoJSON OSRM dùng [kinh độ, vĩ độ] -> Leaflet dùng [vĩ độ, kinh độ]
-  const points = routeData.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
-
-  mapRouteLine = L.polyline(points, {
-    color: "#2563eb",
-    weight: 5,
-    opacity: 0.92,
-    lineCap: "round",
-    lineJoin: "round",
-  }).addTo(mapLeafletInstance);
-
-  const osrmMeters = routeData.distance;
-  const osrmDistText = osrmMeters >= 1000
-    ? (osrmMeters / 1000).toFixed(2) + " km"
-    : Math.round(osrmMeters) + " m";
-
-  const haversineMeters = calculateHaversineDistance(
-    mapOriginCoords.lat,
-    mapOriginCoords.lng,
-    mapDestCoords.lat,
-    mapDestCoords.lng
-  );
-  const haversineText = haversineMeters >= 1000
-    ? (haversineMeters / 1000).toFixed(2) + " km"
-    : Math.round(haversineMeters) + " m";
-
-  const diffPct = haversineMeters > 0
-    ? Math.max(0, Math.round(((osrmMeters - haversineMeters) / haversineMeters) * 100))
-    : 0;
-
-  const realDistEl = document.getElementById("mapRealDistDisplay");
-  if (realDistEl) realDistEl.textContent = osrmDistText;
-
-  const haversineDistEl = document.getElementById("mapHaversineDistDisplay");
-  if (haversineDistEl) haversineDistEl.textContent = haversineText;
-
-  showRoadRouteMessage(
-    `🛣️ Tuyến đường OSRM thực tế: ${osrmDistText} (${diffPct > 0 ? '+' + diffPct + '% quanh co' : 'tương đương'} so với đường chim bay ${haversineText}).`
-  );
-
-  mapLeafletInstance.fitBounds(mapRouteLine.getBounds(), {
-    paddingTopLeft: [35, 45],
-    paddingBottomRight: [35, 330],
-    maxZoom: 17,
-  });
-}
-
-async function loadRoadRoute() {
-  if (!mapLeafletInstance) return;
-
-  const valid =
-    roadRoutePointValid(mapOriginCoords) &&
-    roadRoutePointValid(mapDestCoords);
-
-  if (!valid) {
-    roadRouteRequestId++;
-
-    roadRouteController?.abort();
-    roadRoutePendingKey = "";
-
-    clearRoadRouteLine();
-
-    showRoadRouteMessage(
-      "Cần vị trí xuất phát và tọa độ quán hợp lệ."
-    );
-
-    return;
-  }
-
-  const origin = {
-    lat: Number(mapOriginCoords.lat),
-    lng: Number(mapOriginCoords.lng),
-  };
-
-  const destination = {
-    lat: Number(mapDestCoords.lat),
-    lng: Number(mapDestCoords.lng),
-  };
-
-  const key = [
-    origin.lng,
-    origin.lat,
-    destination.lng,
-    destination.lat,
-  ].join(",");
-
-  // Cập nhật link Google Maps cùng chế độ ô tô.
-  const googleLink = document.getElementById(
-    "gmapExternalLink"
-  );
-
-  if (googleLink) {
-    googleLink.href =
-      "https://www.google.com/maps/dir/?api=1" +
-      `&origin=${origin.lat},${origin.lng}` +
-      `&destination=${destination.lat},${destination.lng}` +
-      "&travelmode=driving";
-  }
-
-  if (roadRoutePendingKey === key) return;
-
-  // Không gọi lại API khi chỉ thay bán kính.
-  if (roadRouteCache?.key === key) {
-    const element = document.getElementById(
-      "mapRealDistDisplay"
-    );
-
-    if (element) {
-      const meters = roadRouteCache.route.distance;
-
-      element.textContent = meters >= 1000
-        ? (meters / 1000).toFixed(2) + " km"
-        : Math.round(meters) + " m";
-    }
-
-    return;
-  }
-
-  const requestId = ++roadRouteRequestId;
-
-  roadRouteController?.abort();
-  roadRouteController = new AbortController();
-  roadRoutePendingKey = key;
-  updateQmRoutePreview();
-
-  const controller = roadRouteController;
-
-  clearRoadRouteLine();
-
-  const distanceElement = document.getElementById(
-    "mapRealDistDisplay"
-  );
-
-  if (distanceElement) {
-    distanceElement.textContent = "Đang tính…";
-  }
-
-  showRoadRouteMessage(
-    "Đang tìm tuyến đường theo đường phố…"
-  );
-
-  const timeout = setTimeout(
-    () => controller.abort(),
-    12000
-  );
-
-  try {
-    const url =
-      "https://router.project-osrm.org/route/v1/driving/" +
-      `${origin.lng},${origin.lat};` +
-      `${destination.lng},${destination.lat}` +
-      "?overview=full&geometries=geojson&steps=false";
-
-    const response = await fetch(url, {
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      throw new Error("Dịch vụ chỉ đường chưa phản hồi");
-    }
-
-    const data = await response.json();
-
-    if (requestId !== roadRouteRequestId) return;
-
-    const route = data.routes?.[0];
-
-    if (
-      data.code !== "Ok" ||
-      route?.geometry?.type !== "LineString" ||
-      route.geometry.coordinates.length < 2 ||
-      !Number.isFinite(route.distance)
-    ) {
-      throw new Error("Không tìm thấy tuyến đường");
-    }
-
-    // Hội An có nhiều phố đi bộ/hẻm nhỏ, không loại bỏ tuyến OSRM
-
-    roadRouteCache = {
-      key,
-      route,
-    };
-
-    renderRoadRoute(route);
-  } catch (error) {
-    if (requestId !== roadRouteRequestId) return;
-
-    roadRouteCache = null;
-    clearRoadRouteLine();
-
-    const haversineMeters = calculateHaversineDistance(
-      mapOriginCoords.lat,
-      mapOriginCoords.lng,
-      mapDestCoords.lat,
-      mapDestCoords.lng
-    );
-    const haversineText = haversineMeters >= 1000
-      ? (haversineMeters / 1000).toFixed(2) + " km"
-      : Math.round(haversineMeters) + " m";
-
-    const haversineDistEl = document.getElementById("mapHaversineDistDisplay");
-    if (haversineDistEl) haversineDistEl.textContent = haversineText;
-
-    if (distanceElement) {
-      distanceElement.textContent = haversineText + " (chim bay)";
-    }
-
-    showRoadRouteMessage(
-      "Khoảng cách chim bay: " + haversineText +
-      ". Bấm mở Google Maps để xem tuyến phố chi tiết."
-    );
-  } finally {
-    clearTimeout(timeout);
-
-    if (requestId === roadRouteRequestId) {
-  roadRoutePendingKey = "";
-  roadRouteController = null;
-  updateQmRoutePreview();
-}
-  }
-}
-      let mapNearbyMarkersLayer = null;
-
-      // Google Maps Tile Layers & Trạng thái bản đồ
-      let currentMapLayerType = "m"; // 'm' = Roadmap, 'y' = Satellite Hybrid, 'p' = Terrain
-      let activeTileLayer = null;
-      let currentTravelMode = "walking"; // 'walking' | 'two_wheeler' | 'driving'
-
-      // Toạ độ nơi xuất phát (mặc định Chùa Cầu)
-      let mapOriginCoords = {
-        lat: 15.877146,
-        lng: 108.326073,
-        label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam",
-      };
-
-      // Toạ độ nơi đến (mặc định Cao Lầu Bá Lễ Hội An)
-      let mapDestCoords = {
-        lat: 15.8765,
-        lng: 108.3312,
-        label: "Quán Cao lầu Bá Lễ",
-        address: "25 Trần Hưng Đạo, Hội An, Đà Nẵng, Việt Nam",
-      };
-
-      // Công thức Haversine tính khoảng cách theo mét
-      function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-        if (!lat1 || !lon1 || !lat2 || !lon2) return 0;
-        const R = 6371e3;
-        const rad = Math.PI / 180;
-        const dLat = (lat2 - lat1) * rad;
-        const dLon = (lon2 - lon1) * rad;
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return Math.round(R * c);
-      }
-
-      // Lấy khoảng cách nhập vào (quy đổi ra mét), ĐẢM BẢO KHÔNG ĐƯỢC ÂM
-      function getMapEnteredDistanceMeters() {
-        const input = $("#mapDistanceInput");
-        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
-        let raw = input ? parseFloat(input.value) : 0;
-
-        // BẢO ĐẢM KHÔNG ÂM
-        if (isNaN(raw) || raw < 0) {
-          raw = 0;
-          if (input) input.value = 0;
-        }
-
-        const meters = unit === "km" ? Math.round(raw * 1000) : Math.round(raw);
-        return Math.max(0, meters);
-      }
-
-      
-      // Hàm định vị GPS và hiển thị vị trí hiện tại
-      function triggerFetchGpsLocation() {
-        const originSelect = document.getElementById("mapOriginInput");
-        if (!navigator.geolocation) {
-          alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
-          gmDirectionsStatus("Trình duyệt không hỗ trợ GPS.");
-          if (originSelect) originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
-          return;
-        }
-
-        gmDirectionsStatus("Đang định vị GPS của thiết bị…");
-        let gpsOpt = originSelect ? Array.from(originSelect.options).find(o => o.value === "Chọn vị trí hiện tại" || o.value.startsWith("Vị trí hiện tại")) : null;
-        if (gpsOpt) {
-          gpsOpt.textContent = "⏳ Đang xác định vị trí hiện tại...";
-        }
-
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-            const lat = Number(latitude.toFixed(6));
-            const lng = Number(longitude.toFixed(6));
-
-            mapOriginCoords = {
-              lat: lat,
-              lng: lng,
-              label: "Vị trí hiện tại (" + lat.toFixed(4) + ", " + lng.toFixed(4) + ")",
-            };
-
-            if (gpsOpt) {
-              gpsOpt.textContent = "📍 Vị trí hiện tại (" + lat.toFixed(4) + ", " + lng.toFixed(4) + ")";
-              originSelect.value = "Chọn vị trí hiện tại";
-            }
-
-            if (typeof poiPairActive !== "undefined") {
-              poiPairActive = false;
-              poiPreviousState = null;
-            }
-            roadRouteCache = null;
-            updateMapCalculations();
-
-            if (mapLeafletInstance) {
-              mapLeafletInstance.flyTo([lat, lng], 16, { duration: 1.2 });
-            }
-
-            if (mapRadiusCircle) {
-              mapRadiusCircle.setStyle({
-                opacity: 1,
-                fillOpacity: 0.12,
-              });
-            }
-
-            const accuracyText = Number.isFinite(accuracy)
-              ? " (±" + Math.round(accuracy) + " m)"
-              : "";
-            gmDirectionsStatus(
-              "Đã hiển thị vị trí hiện tại: " + lat.toFixed(4) + ", " + lng.toFixed(4) + accuracyText
-            );
-          },
-          (err) => {
-            alert("Không thể lấy GPS (" + err.message + "). Vui lòng cấp quyền định vị cho trình duyệt hoặc chọn lại địa chỉ.");
-            if (gpsOpt) {
-              gpsOpt.textContent = "📍 Chọn vị trí hiện tại (Định vị GPS)";
-            }
-            if (originSelect) {
-              originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
-            }
-            gmDirectionsStatus("Không lấy được GPS. Đã giữ nguyên điểm xuất phát.");
-            updateMapCalculations();
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
-        );
-      }
-
-      // Định vị địa chỉ người dùng gõ
-      async function geocodeAddress(query) {
-        if (!query || !query.trim()) return null;
-        const q = query.trim().toLowerCase();
-
-        // 1. Tìm trong danh sách món ăn & quán ăn
-        const foundDish = dishes.find(
-          (d) =>
-            (d.name && d.name.toLowerCase().includes(q)) ||
-            (d.translations?.vi?.name && d.translations.vi.name.toLowerCase().includes(q)) ||
-            (d.address && d.address.toLowerCase().includes(q)) ||
-            (d.shopVi && d.shopVi.toLowerCase().includes(q))
-        );
-        if (foundDish && foundDish.lat && foundDish.lng) {
-          return {
-            lat: Number(foundDish.lat),
-            lng: Number(foundDish.lng),
-            label: foundDish.translations?.vi?.name || foundDish.name,
-          };
-        }
-
-        // 2. Tìm trong danh sách địa danh Hội An quen thuộc
-        const landmarks = [
-          { name: "nguyễn thị minh khai", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
-          { name: "minh khai", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
-          { name: "564010", lat: 15.877146, lng: 108.326073, label: "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam" },
-          { name: "chùa cầu", lat: 15.8770, lng: 108.3270, label: "Chùa Cầu Hội An" },
-          { name: "chợ hội an", lat: 15.8777, lng: 108.3323, label: "Chợ Hội An" },
-          { name: "bến thuyền", lat: 15.8755, lng: 108.3285, label: "Bến thuyền Bạch Đằng" },
-          { name: "bạch đằng", lat: 15.8755, lng: 108.3285, label: "Đường Bạch Đằng, Hội An" },
-          { name: "trần phú", lat: 15.87785, lng: 108.33035, label: "Đường Trần Phú, Hội An" },
-          { name: "phan châu trinh", lat: 15.87955, lng: 108.33262, label: "Đường Phan Châu Trinh, Hội An" },
-          { name: "trần hưng đạo", lat: 15.8765, lng: 108.3312, label: "Đường Trần Hưng Đạo, Hội An" },
-          { name: "cẩm nam", lat: 15.87335, lng: 108.33685, label: "Cẩm Nam, Hội An" },
-          { name: "an bàng", lat: 15.9125, lng: 108.3370, label: "Bãi biển An Bàng" },
-          { name: "trà quế", lat: 15.9015, lng: 108.3385, label: "Làng rau Trà Quế" },
-          { name: "cửa đại", lat: 15.8950, lng: 108.3650, label: "Cửa Đại, Hội An" },
-        ];
-        const foundLm = landmarks.find((lm) => q.includes(lm.name));
-        if (foundLm) {
-          return { lat: foundLm.lat, lng: foundLm.lng, label: foundLm.label };
-        }
-
-        // 3. Nếu chưa khớp, thử tìm kiếm qua OpenStreetMap Nominatim
-        try {
-          const resp = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Hoi An, Vietnam')}&limit=1`
-          );
-          const data = await resp.json();
-          if (Array.isArray(data) && data.length > 0) {
-            return {
-              lat: Number(data[0].lat),
-              lng: Number(data[0].lon),
-              label: query,
-            };
-          }
-        } catch {}
-
-        return null;
-      }
-
-      // Khởi tạo các sự kiện cho ô nhập khoảng cách, vị trí và chế độ di chuyển Google Maps
-      function initMapDistanceInputListeners() {
-        const input = $("#mapDistanceInput");
-        const unitSelect = $("#mapDistanceUnit");
-        const errorEl = $("#mapDistanceError");
-        if (!input || input.dataset.initialized === "true") return;
-        input.dataset.initialized = "true";
-
-        // Chặn phím dấu trừ (-) ngay từ bàn phím
-        input.addEventListener("keydown", (e) => {
-          if (e.key === "-" || e.key === "Subtract") {
-            e.preventDefault();
-            if (errorEl) {
-              errorEl.style.display = "block";
-              errorEl.textContent = "⚠️ Khoảng cách không được âm! Vui lòng chỉ nhập số lớn hơn hoặc bằng 0.";
-            }
-            input.style.borderColor = "#ef4444";
-          }
-        });
-
-        // Xử lý sự kiện nhập khoảng cách
-        const validateNonNegative = () => {
-          let val = parseFloat(input.value);
-          if (val < 0 || (input.value && input.value.trim().startsWith("-"))) {
-            if (errorEl) {
-              errorEl.style.display = "block";
-              errorEl.textContent = "⚠️ Khoảng cách không được âm! Đã tự động chuyển về 0.";
-            }
-            input.style.borderColor = "#ef4444";
-            input.value = 0;
-          } else {
-            if (errorEl) errorEl.style.display = "none";
-            input.style.borderColor = "var(--gold-border)";
-          }
-          updateMapCalculations();
-          gmInitDirectionsInputs();
-        };
-
-        input.addEventListener("input", validateNonNegative);
-        input.addEventListener("change", validateNonNegative);
-
-        if (unitSelect) {
-          unitSelect.addEventListener("change", () => {
-            updateMapCalculations();
-          });
-        }
-
-        // Bắt sự kiện các nút chọn nhanh khoảng cách (m hoặc km)
-        $$(".quick-dist-btn").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            const dist = btn.dataset.dist;
-            const unit = btn.dataset.unit || "m";
-            if (input) input.value = dist;
-            if (unitSelect) unitSelect.value = unit;
-            if (errorEl) errorEl.style.display = "none";
-            input.style.borderColor = "var(--gold-border)";
-            $$(".quick-dist-btn").forEach((b) => b.classList.toggle("active", b === btn));
-            updateMapCalculations();
-          });
-        });
-
-        // Nút Vị Trí Hiện Tại
-        const gpsBtn = $("#mapOriginGpsBtn");
-        if (gpsBtn) {
-          gpsBtn.onclick = () => {
-            if (!navigator.geolocation) {
-              alert("Trình duyệt của bạn không hỗ trợ định vị GPS.");
-              return;
-            }
-            gpsBtn.disabled = true;
-            gpsBtn.innerHTML = "<span>⏳</span> Đang định vị...";
-            navigator.geolocation.getCurrentPosition(
-              (pos) => {
-                mapOriginCoords.lat = Number(pos.coords.latitude.toFixed(6));
-                mapOriginCoords.lng = Number(pos.coords.longitude.toFixed(6));
-                mapOriginCoords.label = "Vị trí hiện tại của tôi (GPS)";
-                const originInput = $("#mapOriginInput");
-                if (originInput) originInput.value = "📍 Vị trí hiện tại của tôi (GPS)";
-                gpsBtn.disabled = false;
-                gpsBtn.innerHTML = "<span>📍</span> Vị trí hiện tại";
-                updateMapCalculations();
-                if (mapLeafletInstance) {
-                  mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 16, { duration: 1.2 });
-                }
-              },
-              (err) => {
-                gpsBtn.disabled = false;
-                gpsBtn.innerHTML = "<span>📍</span> Vị trí hiện tại";
-                alert("Không thể lấy GPS (" + err.message + "). Đang dùng toạ độ Hội An.");
-              },
-              { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-            );
-          };
-        }
-
-        // Nhập địa chỉ xuất phát tự do
-        const originInput = $("#mapOriginInput");
-        if (originInput) {
-          originInput.addEventListener("change", async () => {
-            const val = originInput.value.trim();
-            if (!val) return;
-            if (val === "Chọn vị trí hiện tại" || val.toLowerCase().includes("vị trí hiện tại") || val.toUpperCase().includes("GPS")) {
-              triggerFetchGpsLocation();
-              return;
-            }
-            if (val === "__custom__") {
-              const custom = prompt("Nhập tên địa danh hoặc địa chỉ tại Hội An:");
-              if (custom && custom.trim()) {
-                const res = await geocodeAddress(custom.trim());
-                if (res) {
-                  mapOriginCoords.lat = res.lat;
-                  mapOriginCoords.lng = res.lng;
-                  mapOriginCoords.label = res.label;
-                  let opt = Array.from(originInput.options).find(o => o.value === res.label);
-                  if (!opt) {
-                    opt = new Option(res.label, res.label);
-                    originInput.add(opt, originInput.options[2]);
-                  }
-                  originInput.value = res.label;
-                  updateMapCalculations();
-                  if (mapLeafletInstance) mapLeafletInstance.flyTo([res.lat, res.lng], 16, { duration: 1.2 });
-                  return;
-                } else {
-                  alert("Không tìm thấy tọa độ cho địa chỉ: " + custom);
-                }
-              }
-              originInput.value = mapOriginCoords.label || "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
-              return;
-            }
-            const res = await geocodeAddress(val);
-            if (res) {
-              mapOriginCoords.lat = res.lat;
-              mapOriginCoords.lng = res.lng;
-              mapOriginCoords.label = res.label;
-              updateMapCalculations();
-              if (mapLeafletInstance) {
-                mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 16, { duration: 1.2 });
-              }
-            }
-          });
-        }
-
-        // Đổi nơi đến
-        const destSelect = $("#mapDestinationSelect");
-        if (destSelect) {
-          destSelect.onchange = () => {
-            const val = destSelect.value;
-            const found = dishes.find((d) => String(d.id) === String(val)) || dishes[0];
-            if (found) {
-              mapDestCoords.lat = Number(found.lat) || 15.8765;
-              mapDestCoords.lng = Number(found.lng) || 108.3312;
-              mapDestCoords.label = found.translations?.vi?.name || found.name;
-              mapDestCoords.address = found.address || found.shopVi || "Hội An";
-              updateMapCalculations();
-            }
-          };
-        }
-
-        // Lọc trong phạm vi
-        const filterCheck = $("#mapFilterWithinRadius");
-        if (filterCheck) {
-          filterCheck.onchange = () => {
-            renderDishesDistanceTable();
-          };
-        }
-
-        // Bắt sự kiện chọn Chế độ di chuyển (Đi bộ / Xe máy / Ô tô) kiểu Google Maps
-        $$(".gmap-mode-tab").forEach((tab) => {
-          tab.onclick = () => {
-            currentTravelMode = tab.dataset.mode || "walking";
-            $$(".gmap-mode-tab").forEach((t) => t.classList.toggle("active", t === tab));
-            updateMapCalculations();
-          };
-        });
-
-        // Bắt sự kiện chọn Loại bản đồ Google Maps (Bản đồ / Vệ tinh / Địa hình)
-        $$(".gmap-type-btn").forEach((btn) => {
-          btn.onclick = () => {
-            const type = btn.dataset.type || "m";
-            currentMapLayerType = type;
-            $$(".gmap-type-btn").forEach((b) => b.classList.toggle("active", b === btn));
-            if (mapLeafletInstance) {
-              if (activeTileLayer) mapLeafletInstance.removeLayer(activeTileLayer);
-              activeTileLayer = createGoogleMapsTileLayer(type);
-              activeTileLayer.addTo(mapLeafletInstance);
-            }
-          };
-        });
-
-        // Nút bay nhanh về Vị trí của tôi
-        const flyUserBtn = $("#gmapFlyUserBtn");
-        if (flyUserBtn) {
-          flyUserBtn.onclick = () => {
-            if (mapLeafletInstance) {
-              mapLeafletInstance.flyTo([mapOriginCoords.lat, mapOriginCoords.lng], 17, { duration: 1.2 });
-              if (mapOriginMarker) mapOriginMarker.openPopup();
-            }
-          };
-        }
-
-        // Nút bay nhanh về Phố Cổ Hội An
-        const flyHoiAnBtn = $("#gmapFlyHoiAnBtn");
-        if (flyHoiAnBtn) {
-          flyHoiAnBtn.onclick = () => {
-            if (mapLeafletInstance) {
-              mapLeafletInstance.flyTo([15.8778, 108.3285], 16, { duration: 1.2 });
-            }
-          };
-        }
-      }
-
-      // Hàm tạo TileLayer Google Maps chuẩn
+      // =========================================================================
+      // LOẠI 2: BẢN ĐỒ NHIỆT & MẬT ĐỘ TƯƠNG TÁC (HEATMAP / SPATIAL ANALYTICS MAP)
+      // =========================================================================
+
+      // Hàm tạo TileLayer Google Maps
       function createGoogleMapsTileLayer(type) {
-        // 'm' = Roadmap, 'y' = Satellite Hybrid, 'p' = Terrain
         const lyrs = type === "y" ? "y" : type === "p" ? "p" : "m";
-        return L.tileLayer(`https://mt1.google.com/vt/lyrs=${lyrs}&x={x}&y={y}&z={z}`, {
+        return L.tileLayer("https://mt1.google.com/vt/lyrs=" + lyrs + "&x={x}&y={y}&z={z}", {
           maxZoom: 21,
           attribution: "&copy; Google Maps",
         });
       }
 
-      // Khởi tạo hoặc cập nhật bản đồ Leaflet theo phong cách Google Maps
-      function initOrUpdateLeafletMap(radiusMeters, dishesInRange) {
-        const mapContainer = $("#leafletMap");
-        const fallbackContainer = $("#mapFallbackContainer");
-        const fallbackFrame = $("#mapFallbackFrame");
+      let adminHeatmapInstance = null;
+      let adminHeatLayer = null;
+      let adminMarkersLayer = null;
+      let adminDensityLayer = null;
+      let adminFallbackHeatLayer = null;
+      let currentAdminMapMode = "hybrid"; // "hybrid", "heat", "density"
+      let currentHeatRadius = 38;
 
+      // Tọa độ trung tâm Phố Cổ Hội An (Chùa Cầu)
+      const HOI_AN_CORE_COORDS = [15.8778, 108.3275];
+
+      function renderMapSection() {
+        const secMap = document.getElementById("secMap");
+        if (!secMap || secMap.hidden) return;
+
+        // Cập nhật nhãn HEAT badge trên sidebar
+        const mapBadge = document.getElementById("navMapBadge");
+        if (mapBadge) {
+          const validCount = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng))).length;
+          mapBadge.textContent = validCount ? validCount + " GPS" : "HEAT";
+        }
+
+        // Khởi tạo hoặc cập nhật bản đồ Leaflet
+        initOrUpdateAdminHeatmap();
+
+        // Tính toán số liệu thống kê không gian & cập nhật KPI
+        updateSpatialAnalyticsData();
+      }
+
+      function initOrUpdateAdminHeatmap() {
         if (typeof L === "undefined") {
-          if (mapContainer) mapContainer.style.display = "none";
-          if (fallbackContainer && fallbackFrame) {
-            fallbackContainer.style.display = "block";
-            fallbackFrame.src = `https://maps.google.com/maps?saddr=${mapOriginCoords.lat},${mapOriginCoords.lng}&daddr=${mapDestCoords.lat},${mapDestCoords.lng}&dirflg=w&output=embed`;
-          }
+          console.warn("Leaflet library is not available.");
           return;
         }
 
-        if (fallbackContainer) fallbackContainer.style.display = "none";
-        if (mapContainer) mapContainer.style.display = "block";
-
-        if (!mapLeafletInstance) {
-          mapLeafletInstance = L.map("leafletMap", {
-            center: [mapOriginCoords.lat, mapOriginCoords.lng],
-            zoom: 16,
-            zoomControl: true,
-          });
-
-          // Khởi tạo layer Google Maps đầu tiên
-          activeTileLayer = createGoogleMapsTileLayer(currentMapLayerType).addTo(mapLeafletInstance);
-
-          // Nhấp lên bản đồ để thay đổi điểm xuất phát
-          mapLeafletInstance.on("click", (e) => {
-            mapOriginCoords.lat = Number(e.latlng.lat.toFixed(6));
-            mapOriginCoords.lng = Number(e.latlng.lng.toFixed(6));
-            mapOriginCoords.label = `Vị trí ghim (${mapOriginCoords.lat.toFixed(4)}, ${mapOriginCoords.lng.toFixed(4)})`;
-            const originInput = $("#mapOriginInput");
-            if (originInput) originInput.value = mapOriginCoords.label;
-            updateMapCalculations();
-          });
-        }
-
-        setTimeout(() => {
-          if (mapLeafletInstance) mapLeafletInstance.invalidateSize();
-        }, 150);
-
-        // Marker Nơi Xuất Phát (Điểm xanh dương Google Maps phát xung nhấp nháy, kéo thả được)
-        const originIcon = L.divIcon({
-          className: "gmap-origin-pin",
-          html: `
-            <div style="position:relative; width:34px; height:34px; display:flex; align-items:center; justify-content:center;">
-              <div style="position:absolute; width:32px; height:32px; border-radius:50%; background:rgba(26,115,232,0.3); animation:gmapPulse 2s infinite ease-out;"></div>
-              <div style="width:18px; height:18px; border-radius:50%; background:#1a73e8; border:3px solid #ffffff; box-shadow:0 2px 6px rgba(0,0,0,0.4); z-index:2; cursor:move;" title="Nơi xuất phát (Kéo để đổi vị trí)"></div>
-            </div>
-          `,
-          iconSize: [34, 34],
-          iconAnchor: [17, 17],
-          popupAnchor: [0, -18],
-        });
-
-        if (mapOriginMarker) {
-          mapOriginMarker.setLatLng([mapOriginCoords.lat, mapOriginCoords.lng]);
-        } else {
-          mapOriginMarker = L.marker([mapOriginCoords.lat, mapOriginCoords.lng], {
-            icon: originIcon,
-            draggable: true,
-            title: "Nơi xuất phát (Kéo thả để đổi toạ độ)",
-          }).addTo(mapLeafletInstance);
-
-          mapOriginMarker.on("dragend", (event) => {
-            const pos = event.target.getLatLng();
-            mapOriginCoords.lat = Number(pos.lat.toFixed(6));
-            mapOriginCoords.lng = Number(pos.lng.toFixed(6));
-            mapOriginCoords.label = `Toạ độ (${mapOriginCoords.lat.toFixed(4)}, ${mapOriginCoords.lng.toFixed(4)})`;
-            const originInput = $("#mapOriginInput");
-            if (originInput) originInput.value = mapOriginCoords.label;
-            updateMapCalculations();
-          });
-        }
-        mapOriginMarker.bindPopup(`
-          <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:180px;">
-            <div style="font-size:11px; font-weight:700; color:#1a73e8; margin-bottom:2px;">📍 ĐIỂM XUẤT PHÁT</div>
-            <div style="font-size:13px; font-weight:700; color:#202124;">${esc(mapOriginCoords.label)}</div>
-            <div style="font-size:11px; color:#5f6368; margin-top:4px;">Kéo thả chấm xanh để thay đổi vị trí của bạn</div>
-          </div>
-        `);
-
-        // Vòng tròn bán kính khoảng cách tìm kiếm bao quanh NƠI XUẤT PHÁT
-        if (mapRadiusCircle) {
-          mapRadiusCircle.setLatLng([mapOriginCoords.lat, mapOriginCoords.lng]);
-          mapRadiusCircle.setRadius(radiusMeters);
-        } else {
-          mapRadiusCircle = L.circle([mapOriginCoords.lat, mapOriginCoords.lng], {
-            radius: radiusMeters,
-            color: "#1a73e8",
-            fillColor: "#1a73e8",
-            fillOpacity: 0.12,
-            weight: 2,
-            dashArray: "5, 6",
-          }).addTo(mapLeafletInstance);
-        }
-
-        // Marker Nơi Đến Đang Chọn (Icon giọt nước đỏ đặc trưng của Google Maps)
-        const destIcon = L.divIcon({
-          className: "gmap-dest-pin",
-          html: `
-            <div style="filter:drop-shadow(0 3px 6px rgba(0,0,0,0.4)); cursor:pointer;">
-              <svg width="34" height="42" viewBox="0 0 24 32" fill="none">
-                <path d="M12 0C5.372 0 0 5.372 0 12c0 8.8 12 20 12 20s12-11.2 12-20c0-6.628-5.372-12-12-12z" fill="#EA4335"/>
-                <path d="M12 0C5.372 0 0 5.372 0 12c0 8.8 12 20 12 20s12-11.2 12-20c0-6.628-5.372-12-12-12z" stroke="#B31412" stroke-width="0.8"/>
-                <circle cx="12" cy="11.5" r="4.5" fill="#FFFFFF"/>
-                <circle cx="12" cy="11.5" r="2" fill="#B31412"/>
-              </svg>
-            </div>
-          `,
-          iconSize: [34, 42],
-          iconAnchor: [17, 42],
-          popupAnchor: [0, -40],
-        });
-
-        if (mapDestMarker) {
-          mapDestMarker.setLatLng([mapDestCoords.lat, mapDestCoords.lng]);
-        } else {
-          mapDestMarker = L.marker([mapDestCoords.lat, mapDestCoords.lng], { icon: destIcon }).addTo(mapLeafletInstance);
-        }
-
-        const realDistMeters = calculateHaversineDistance(
-          mapOriginCoords.lat,
-          mapOriginCoords.lng,
-          mapDestCoords.lat,
-          mapDestCoords.lng
-        );
-        const distFormatted = realDistMeters >= 1000 ? (realDistMeters / 1000).toFixed(2) + " km" : realDistMeters + " m";
-        const walkMin = Math.max(1, Math.round(realDistMeters / 75));
-        const gmapDestUrl = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${mapDestCoords.lat},${mapDestCoords.lng}&travelmode=walking`;
-
-        mapDestMarker.bindPopup(`
-          <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
-            
-            <div style="font-size:14px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(mapDestCoords.label)}</div>
-            <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(mapDestCoords.address || 'Hội An')}</div>
-            <div style="font-size:12px; font-weight:700; color:#188038; margin-bottom:8px;">🚶 ~${walkMin} phút (${distFormatted})</div>
-            <a href="${gmapDestUrl}" target="_blank" rel="noopener noreferrer" style="display:block; text-align:center; padding:6px 10px; background:#1a73e8; color:#ffffff; border-radius:6px; font-size:11.5px; font-weight:700; text-decoration:none;">
-              ↗️ Mở Google Maps
-            </a>
-          </div>
-        `);
-
-        // Lấy tuyến đường thực theo mạng lưới đường phố.
-loadRoadRoute();
-
-        // HIỂN THỊ TOÀN BỘ CÁC MÓN ĂN TRONG PHẠM VI KHOẢNG CÁCH TRÊN BẢN ĐỒ
-        if (!mapNearbyMarkersLayer) {
-          mapNearbyMarkersLayer = L.layerGroup().addTo(mapLeafletInstance);
-        } else {
-          mapNearbyMarkersLayer.clearLayers();
-        }
-
-        const selectedDestId = $("#mapDestinationSelect")?.value;
-
-        if (Array.isArray(dishesInRange)) {
-          dishesInRange.forEach((dish) => {
-            const dLat = Number(dish.lat);
-            const dLng = Number(dish.lng);
-            if (!dLat || !dLng) return;
-
-            // Bỏ qua nếu trùng với điểm đến chính (đã có cờ đỏ)
-            if (String(dish.id) === String(selectedDestId)) return;
-
-            const nearbyIcon = L.divIcon({
-              className: "gmap-food-pin",
-              html: `
-                <div style="filter:drop-shadow(0 2px 5px rgba(0,0,0,0.3)); cursor:pointer; background:#e37400; color:#fff; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; border:2px solid #ffffff;">🍲</div>
-              `,
-              iconSize: [30, 30],
-              iconAnchor: [15, 30],
-              popupAnchor: [0, -28],
-            });
-
-            const marker = L.marker([dLat, dLng], { icon: nearbyIcon });
-            const dishName = dish.translations?.vi?.name || dish.name;
-            const distTxt = dish.computedDist >= 1000 ? (dish.computedDist / 1000).toFixed(2) + ' km' : dish.computedDist + ' m';
-            const dishWalkMin = Math.max(1, Math.round(dish.computedDist / 75));
-            const dishGmapUrl = `https://www.google.com/maps/dir/?api=1&origin=${mapOriginCoords.lat},${mapOriginCoords.lng}&destination=${dLat},${dLng}&travelmode=walking`;
-
-            marker.bindPopup(`
-              <div style="font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif; min-width:210px; padding:2px;">
-                
-                <img src="${getDishImageUrl(dish)}" style="width:100%;height:95px;object-fit:cover;border-radius:6px;margin-bottom:6px;display:block;" onerror="this.style.display='none'" />
-                <div style="font-size:13.5px; font-weight:700; color:#202124; margin-bottom:2px;">${esc(dishName)}</div>
-                <div style="font-size:11.5px; color:#5f6368; margin-bottom:6px;">📍 ${esc(dish.address || dish.shopVi || 'Hội An')}</div>
-<div style="font-size:12px;margin-bottom:8px;">
-  Khoảng cách đường thẳng: ${distTxt}
-</div>
-                <div style="display:flex; gap:6px;">
-                  <button onclick="selectMapDestination('${dish.id}')" style="flex:1; padding:6px 8px; background:#ea4335; color:#fff; border:none; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🏁 Chọn đến</button>
-                  <button onclick="toggleFoodTourDish(${dish.id})" style="padding:6px 8px; background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;">🚩 + Tour</button>
-                  <a href="${dishGmapUrl}" target="_blank" rel="noopener noreferrer" style="padding:6px 8px; background:#f1f3f4; color:#1a73e8; border:1px solid #dadce0; border-radius:6px; font-size:11px; font-weight:700; text-decoration:none; display:flex; align-items:center;">↗️ Google Maps</a>
-                </div>
-              </div>
-            `);
-            mapNearbyMarkersLayer.addLayer(marker);
-          });
-        }
-
-        // Căn chỉnh khung nhìn vừa vòng tròn phạm vi khoảng cách
-        if (!mapRouteLine && !roadRoutePendingKey) {
-  mapLeafletInstance.setView(
-    [mapOriginCoords.lat, mapOriginCoords.lng],
-    16
-  );
-}
-      }
-
-      // Hàm chọn điểm đến từ popup bản đồ
-      window.selectMapDestination = function(dishId) {
-        const destSelect = $("#mapDestinationSelect");
-        if (destSelect) {
-          destSelect.value = dishId;
-          const found = dishes.find((d) => String(d.id) === String(dishId));
-          if (found) {
-            mapDestCoords.lat = Number(found.lat) || 15.8765;
-            mapDestCoords.lng = Number(found.lng) || 108.3312;
-            mapDestCoords.label = found.translations?.vi?.name || found.name;
-            mapDestCoords.address = found.address || found.shopVi || "Hội An";
-          }
-          updateMapCalculations();
-        }
-      };
-
-      
-      async function handleScanNearbyDishes() {
-        const btn = document.getElementById("mapRadiusApply");
-        if (btn) {
-          btn.innerHTML = `Đang quét... <span aria-hidden="true">⏳</span>`;
-          btn.disabled = true;
-        }
-        if (!dishes || dishes.length === 0) {
-          try {
-            await loadDishes();
-          } catch {}
-        }
-        updateMapCalculations();
-        if (btn) {
-          setTimeout(() => {
-            btn.innerHTML = `Quét quanh đây <span aria-hidden="true">↗</span>`;
-            btn.disabled = false;
-          }, 300);
-        }
-      }
-
-
-
-      // Metadata for Hoi An food tour and contextual filtering
-      const HOI_AN_DISH_META = {
-        4: {
-          hours: "07:00 - 21:30",
-          openHour: 7, openMinute: 0,
-          closeHour: 21, closeMinute: 30,
-          priceMin: 30000, priceMax: 50000,
-          priceText: "30.000đ - 50.000đ",
-          priceLevel: "mid",
-          rating: 4.8
-        },
-        6: {
-          hours: "06:30 - 21:30",
-          openHour: 6, openMinute: 30,
-          closeHour: 21, closeMinute: 30,
-          priceMin: 25000, priceMax: 40000,
-          priceText: "25.000đ - 40.000đ",
-          priceLevel: "mid",
-          rating: 4.7
-        },
-        7: {
-          hours: "13:30 - 19:30",
-          openHour: 13, openMinute: 30,
-          closeHour: 19, closeMinute: 30,
-          priceMin: 15000, priceMax: 30000,
-          priceText: "15.000đ - 30.000đ",
-          priceLevel: "budget",
-          rating: 4.6
-        },
-        8: {
-          hours: "07:00 - 22:00",
-          openHour: 7, openMinute: 0,
-          closeHour: 22, closeMinute: 0,
-          priceMin: 20000, priceMax: 50000,
-          priceText: "20.000đ - 50.000đ",
-          priceLevel: "mid",
-          rating: 4.5
-        },
-        9: {
-          hours: "09:30 - 22:00",
-          openHour: 9, openMinute: 30,
-          closeHour: 22, closeMinute: 0,
-          priceMin: 35000, priceMax: 65000,
-          priceText: "35.000đ - 65.000đ",
-          priceLevel: "high",
-          rating: 4.6
-        },
-        11: {
-          hours: "08:00 - 22:00",
-          openHour: 8, openMinute: 0,
-          closeHour: 22, closeMinute: 0,
-          priceMin: 15000, priceMax: 25000,
-          priceText: "15.000đ - 25.000đ",
-          priceLevel: "budget",
-          rating: 4.9
-        }
-      };
-
-      function getDishMeta(dish) {
-        if (dish && HOI_AN_DISH_META[dish.id]) return HOI_AN_DISH_META[dish.id];
-        return {
-          hours: (dish && dish.hours) || "07:00 - 21:30",
-          openHour: 7, openMinute: 0,
-          closeHour: 21, closeMinute: 30,
-          priceMin: 25000, priceMax: 45000,
-          priceText: "25.000đ - 45.000đ",
-          priceLevel: "mid",
-          rating: 4.7
-        };
-      }
-
-      function checkDishOpenStatus(dish) {
-        const meta = getDishMeta(dish);
-        const now = new Date();
-        const currentMinutes = now.getHours() * 60 + now.getMinutes();
-        const openMinutes = meta.openHour * 60 + meta.openMinute;
-        const closeMinutes = meta.closeHour * 60 + meta.closeMinute;
-        const isOpen = currentMinutes >= openMinutes && currentMinutes <= closeMinutes;
-        return {
-          isOpen,
-          hoursText: meta.hours,
-          priceText: meta.priceText,
-          priceLevel: meta.priceLevel,
-          rating: meta.rating,
-          openHourStr: String(meta.openHour).padStart(2, '0') + ':' + String(meta.openMinute).padStart(2, '0')
-        };
-      }
-
-      // FOOD TOUR MULTI-STOP ROUTE (TSP) STATE & LOGIC
-      let foodTourSelectedIds = [];
-      let mapFoodTourLayer = null;
-
-      function toggleFoodTourDish(dishId) {
-        const numId = Number(dishId);
-        const idx = foodTourSelectedIds.indexOf(numId);
-        if (idx >= 0) {
-          foodTourSelectedIds.splice(idx, 1);
-        } else {
-          if (foodTourSelectedIds.length >= 6) {
-            alert("Bạn đã chọn tối đa 6 địa điểm cho một Tour ẩm thực!");
-            return;
-          }
-          foodTourSelectedIds.push(numId);
-        }
-        renderFoodTourPanel();
-        renderDishesDistanceTable();
-      }
-      window.toggleFoodTourDish = toggleFoodTourDish;
-
-      function removeDishFromTour(dishId) {
-        const numId = Number(dishId);
-        const idx = foodTourSelectedIds.indexOf(numId);
-        if (idx >= 0) {
-          foodTourSelectedIds.splice(idx, 1);
-          renderFoodTourPanel();
-          renderDishesDistanceTable();
-        }
-      }
-      window.removeDishFromTour = removeDishFromTour;
-
-      function clearFoodTour() {
-        foodTourSelectedIds = [];
-        if (mapFoodTourLayer && mapLeafletInstance) {
-          mapFoodTourLayer.clearLayers();
-        }
-        renderFoodTourPanel();
-        renderDishesDistanceTable();
-      }
-      window.clearFoodTour = clearFoodTour;
-
-      // TSP Solver: Tìm thứ tự di chuyển có tổng quãng đường ngắn nhất từ origin
-      function solveOptimalTspRoute(origin, selectedDishes) {
-        if (!selectedDishes || selectedDishes.length === 0) return null;
-        if (selectedDishes.length === 1) {
-          const d0 = selectedDishes[0];
-          const dist = calculateHaversineDistance(origin.lat, origin.lng, Number(d0.lat), Number(d0.lng));
-          return {
-            orderedStops: [d0],
-            totalDistance: dist,
-            legDistances: [dist]
-          };
-        }
-
-        function getPermutations(arr) {
-          if (arr.length <= 1) return [arr];
-          const result = [];
-          for (let i = 0; i < arr.length; i++) {
-            const current = arr[i];
-            const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
-            const remainingPerms = getPermutations(remaining);
-            for (const p of remainingPerms) {
-              result.push([current, ...p]);
-            }
-          }
-          return result;
-        }
-
-        const perms = getPermutations(selectedDishes);
-        let bestRoute = null;
-        let minTotalDist = Infinity;
-        let bestLegDistances = [];
-
-        for (const perm of perms) {
-          let currentTotal = 0;
-          const legDistances = [];
-
-          const d0 = calculateHaversineDistance(origin.lat, origin.lng, Number(perm[0].lat), Number(perm[0].lng));
-          currentTotal += d0;
-          legDistances.push(d0);
-
-          for (let i = 0; i < perm.length - 1; i++) {
-            const legDist = calculateHaversineDistance(
-              Number(perm[i].lat), Number(perm[i].lng),
-              Number(perm[i + 1].lat), Number(perm[i + 1].lng)
-            );
-            currentTotal += legDist;
-            legDistances.push(legDist);
-          }
-
-          if (currentTotal < minTotalDist) {
-            minTotalDist = currentTotal;
-            bestRoute = perm;
-            bestLegDistances = legDistances;
-          }
-        }
-
-        return {
-          orderedStops: bestRoute,
-          totalDistance: minTotalDist,
-          legDistances: bestLegDistances
-        };
-      }
-
-      function getGoogleMapsTourUrl(origin, orderedStops) {
-        if (!orderedStops || orderedStops.length === 0) return 'https://www.google.com/maps';
-        const lastStop = orderedStops[orderedStops.length - 1];
-        const waypoints = orderedStops.slice(0, -1).map(s => s.lat + ',' + s.lng).join('|');
-        let url = 'https://www.google.com/maps/dir/?api=1&origin=' + origin.lat + ',' + origin.lng + '&destination=' + lastStop.lat + ',' + lastStop.lng + '&travelmode=walking';
-        if (waypoints) {
-          url += '&waypoints=' + encodeURIComponent(waypoints);
-        }
-        return url;
-      }
-
-      function renderFoodTourPanel() {
-        const panel = document.getElementById("mapFoodTourPanel");
-        if (!panel) return;
-
-        const count = foodTourSelectedIds.length;
-
-        if (count === 0) {
-          if (mapFoodTourLayer && mapLeafletInstance) {
-            mapFoodTourLayer.clearLayers();
-          }
-          panel.innerHTML = `
-            <div class="qm-tour-head">
-              <h4>🚩 Lộ trình nhiều điểm (Food Tour TSP)</h4>
-              <span class="qm-tour-badge">Chưa chọn quán</span>
-            </div>
-            <p class="qm-tour-empty">
-              💡 Bấm nút <strong>[+ Tour]</strong> trên 2 - 4 quán bất kỳ bên dưới.
-              Hệ thống sẽ tự động tìm thứ tự di chuyển <strong>ngắn nhất (thuật toán TSP)</strong> và vẽ lộ trình trên bản đồ.
-            </p>
-          `;
-          return;
-        }
-
-        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
-        const selectedDishes = sourceDishes.filter(d => foodTourSelectedIds.includes(Number(d.id)));
-        const tspResult = solveOptimalTspRoute(mapOriginCoords, selectedDishes);
-        if (!tspResult) return;
-
-        const { orderedStops, totalDistance, legDistances } = tspResult;
-        const walkMin = Math.max(1, Math.round(totalDistance / 75));
-        const distTxt = totalDistance >= 1000 ? (totalDistance / 1000).toFixed(2) + " km" : totalDistance + " m";
-        const gmapUrl = getGoogleMapsTourUrl(mapOriginCoords, orderedStops);
-
-        let stepsHtml = `
-          <li class="qm-tour-step" style="background:#f8fafc; border-color:#e2e8f0;">
-            <span class="qm-tour-step-num" style="background:#0284c7;">📍</span>
-            <span class="qm-tour-step-name">${esc(mapOriginCoords.label || "Vị trí xuất phát")}</span>
-            <span class="qm-tour-step-dist" style="color:#0284c7;">Khởi hành</span>
-          </li>
-        `;
-
-        orderedStops.forEach((stop, idx) => {
-          const sName = stop.translations?.vi?.name || stop.name;
-          const legDist = legDistances[idx];
-          const legTxt = legDist >= 1000 ? (legDist / 1000).toFixed(2) + " km" : legDist + " m";
-          stepsHtml += `
-            <li class="qm-tour-step">
-              <span class="qm-tour-step-num">${idx + 1}</span>
-              <span class="qm-tour-step-name" title="${esc(sName)}">${esc(sName)}</span>
-              <span class="qm-tour-step-dist">+${legTxt}</span>
-              <button type="button" class="qm-tour-step-del" onclick="removeDishFromTour(${stop.id})" title="Bỏ quán này khỏi tour">✕</button>
-            </li>
-          `;
-        });
-
-        panel.innerHTML = `
-          <div class="qm-tour-head">
-            <h4>🚩 Lộ trình nhiều điểm (Tối ưu TSP)</h4>
-            <span class="qm-tour-badge">${count} quán đã chọn</span>
-          </div>
-          <ul class="qm-tour-steps">
-            ${stepsHtml}
-          </ul>
-          <div class="qm-tour-metrics">
-            <span>🚶 Tổng đường đi: <strong>${distTxt}</strong></span>
-            <span>⏱️ ~<strong>${walkMin} phút</strong> đi bộ</span>
-          </div>
-          <div class="qm-tour-actions">
-            <a href="${gmapUrl}" target="_blank" rel="noopener noreferrer" class="qm-tour-btn-open">
-              🗺️ Mở Tour trên Google Maps ↗
-            </a>
-            <button type="button" class="qm-tour-btn-clear" onclick="clearFoodTour()" title="Xóa toàn bộ lộ trình tour">
-              ✕ Xóa Tour
-            </button>
-          </div>
-        `;
-
-        // Vẽ Tour trên bản đồ Leaflet
-        if (mapLeafletInstance) {
-          if (!mapFoodTourLayer) {
-            mapFoodTourLayer = L.layerGroup().addTo(mapLeafletInstance);
-          } else {
-            mapFoodTourLayer.clearLayers();
-          }
-
-          const routeLatLngs = [
-            [mapOriginCoords.lat, mapOriginCoords.lng],
-            ...orderedStops.map(s => [Number(s.lat), Number(s.lng)])
-          ];
-
-          // Polyline đường nối lộ trình Food Tour
-          const tourPolyline = L.polyline(routeLatLngs, {
-            color: '#ea580c',
-            weight: 4,
-            dashArray: '8, 8',
-            opacity: 0.95
-          }).addTo(mapFoodTourLayer);
-
-          // Marker đánh số thứ tự ①, ②, ③
-          orderedStops.forEach((s, idx) => {
-            const numIcon = L.divIcon({
-              className: 'gmap-tour-pin',
-              html: `
-                <div style="background:#ea580c; color:#ffffff; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; border:2.5px solid #ffffff; box-shadow:0 3px 8px rgba(0,0,0,0.35); cursor:pointer;">
-                  ${idx + 1}
-                </div>
-              `,
-              iconSize: [28, 28],
-              iconAnchor: [14, 14],
-              popupAnchor: [0, -14]
-            });
-
-            const sName = s.translations?.vi?.name || s.name;
-            const marker = L.marker([Number(s.lat), Number(s.lng)], { icon: numIcon }).addTo(mapFoodTourLayer);
-            marker.bindPopup(`
-              <div style="min-width:180px; font-family:inherit;">
-                <div style="font-size:11px; font-weight:700; color:#ea580c; margin-bottom:2px;">Điểm dừng #${idx + 1} trong Tour</div>
-                <div style="font-size:13px; font-weight:700; color:#1c1917;">${esc(sName)}</div>
-                <div style="font-size:11px; color:#57534e; margin:3px 0 6px;">📍 ${esc(s.address || 'Hội An')}</div>
-                <button onclick="removeDishFromTour(${s.id})" style="padding:4px 8px; font-size:11px; color:#dc2626; background:#fee2e2; border:none; border-radius:4px; cursor:pointer;">Bỏ khỏi Tour</button>
-              </div>
-            `);
-          });
-
-          if (orderedStops.length > 0) {
-            mapLeafletInstance.fitBounds(tourPolyline.getBounds(), { padding: [40, 40], maxZoom: 17 });
-          }
-        }
-      }
-
-
-      // Cập nhật tính toán khoảng cách và hiển thị kiểu Google Maps
-      function updateMapCalculations() {
-        gmSyncDestinationInput();
-        const originDisplayEl = $("#mapOriginDisplay");
-        if (originDisplayEl) originDisplayEl.textContent = mapOriginCoords.label || "Điểm xuất phát";
-
-        const destDisplayEl = $("#mapDestDisplay");
-        if (destDisplayEl) destDisplayEl.textContent = mapDestCoords.label || "Điểm đến";
-
-        // Lấy khoảng cách nhập vào (quy đổi ra mét, luôn ≥ 0)
-        const enteredDistMeters = getMapEnteredDistanceMeters();
-        const unit = $("#mapDistanceUnit") ? $("#mapDistanceUnit").value : "m";
-        const enteredDisplayTxt = unit === "km"
-          ? (enteredDistMeters / 1000).toFixed(1) + " km"
-          : enteredDistMeters + " m";
-
-        // Tính khoảng cách thực tế giữa nơi xuất phát và nơi đến
-        const realDistMeters = calculateHaversineDistance(
-          mapOriginCoords.lat,
-          mapOriginCoords.lng,
-          mapDestCoords.lat,
-          mapDestCoords.lng
-        );
-        const haversineDisplayEl = document.getElementById("mapHaversineDistDisplay");
-        if (haversineDisplayEl) {
-          haversineDisplayEl.textContent = realDistMeters >= 1000
-            ? (realDistMeters / 1000).toFixed(2) + " km"
-            : Math.round(realDistMeters) + " m";
-        }
-
-        const travelTimeElement = document.getElementById("gmapTravelTimeText");
-        if (travelTimeElement) {
-          travelTimeElement.textContent = "";
-        }
-
-        // Cập nhật trạng thái điểm đến so với khoảng cách đã nhập
-        const statusDisplayEl = $("#mapStatusDisplay");
-        const isInsideEnteredRadius = realDistMeters <= enteredDistMeters;
-
-        if (statusDisplayEl) {
-          if (isInsideEnteredRadius) {
-            statusDisplayEl.innerHTML = `<span style="color:#059669; background:#ecfdf5; border:1px solid #a7f3d0; padding:3px 8px; border-radius:8px; font-weight:700;">✅ Trong ${enteredDisplayTxt}</span>`;
-          } else {
-            const diffMeters = realDistMeters - enteredDistMeters;
-            const diffTxt = diffMeters >= 1000 ? (diffMeters / 1000).toFixed(2) + ' km' : diffMeters + ' m';
-            statusDisplayEl.innerHTML = `<span style="color:#dc2626; background:#fef2f2; border:1px solid #fecaca; padding:3px 8px; border-radius:8px; font-weight:700;">📍 Vượt +${diffTxt}</span>`;
-          }
-        }
-
-        // Tính toán toàn bộ các món ăn nằm trong phạm vi khoảng cách
-        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
-        const mappedDishes = sourceDishes.map((d) => {
-          const dLat = Number(d.lat) || 15.8782;
-          const dLng = Number(d.lng) || 108.3265;
-          const dist = calculateHaversineDistance(mapOriginCoords.lat, mapOriginCoords.lng, dLat, dLng);
-          return {
-            ...d,
-            computedDist: dist,
-            isWithin: dist <= enteredDistMeters,
-          };
-        });
-
-        let dishesInRange = mappedDishes.filter((d) => d.isWithin);
-
-        // Cập nhật số lượng món ăn trong phạm vi
-        const counterEl = $("#mapCounterText");
-        if (counterEl) {
-          counterEl.textContent = `Tìm thấy ${dishesInRange.length} món ăn trong phạm vi ${enteredDisplayTxt}`;
-        }
-
-        const tableTitleEl = $("#mapTableTitle");
-        if (tableTitleEl) {
-          tableTitleEl.textContent = `Toàn bộ món ăn trong phạm vi ${enteredDisplayTxt} (${dishesInRange.length} món):`;
-        }
-
-        // Cập nhật bản đồ Leaflet (hiển thị toàn bộ các món trong phạm vi)
-        initOrUpdateLeafletMap(enteredDistMeters, dishesInRange);
-
-        // Cập nhật bảng món ăn
-        renderDishesDistanceTable(mappedDishes, enteredDistMeters);
-
-        // Cập nhật Food Tour panel
-        renderFoodTourPanel();
-      }
-
-      // Bảng hiển thị toàn bộ món ăn trong phạm vi khoảng cách
-      function renderDishesDistanceTable(precomputedList, enteredDistMeters) {
-        const container = document.getElementById("mapDishesTableBody");
+        const container = document.getElementById("adminHeatmapCanvas");
         if (!container) return;
 
-        container.replaceChildren();
+        if (!adminHeatmapInstance) {
+          adminHeatmapInstance = L.map("adminHeatmapCanvas", {
+            center: HOI_AN_CORE_COORDS,
+            zoom: 15,
+            zoomControl: true,
+            attributionControl: false,
+          });
 
-        const sourceDishes = (dishes && dishes.length > 0) ? dishes : DEFAULT_HOI_AN_DISHES;
-        if (!sourceDishes || sourceDishes.length === 0) {
-          container.textContent = "Chưa có địa điểm nào được cập nhật.";
-          return;
+          // Google Maps Roadmap tile
+          createGoogleMapsTileLayer("m").addTo(adminHeatmapInstance);
+
+          // Tạo các layer nhóm
+          adminDensityLayer = L.layerGroup().addTo(adminHeatmapInstance);
+          adminMarkersLayer = L.layerGroup().addTo(adminHeatmapInstance);
+          adminFallbackHeatLayer = L.layerGroup().addTo(adminHeatmapInstance);
+
+          // Gắn sự kiện điều khiển
+          setupAdminMapControls();
         }
 
-        const limitMeters = enteredDistMeters !== undefined ? enteredDistMeters : getMapEnteredDistanceMeters();
-        const selectedId = document.getElementById("mapDestinationSelect")?.value;
-
-        function validCoordinates(dish) {
-          if (dish.lat == null || dish.lng == null || String(dish.lat).trim() === "" || String(dish.lng).trim() === "") {
-            return false;
+        // Đảm bảo kích thước bản đồ hiển thị chuẩn khi tab vừa bật
+        setTimeout(() => {
+          if (adminHeatmapInstance) {
+            adminHeatmapInstance.invalidateSize();
           }
-          const lat = Number(dish.lat);
-          const lng = Number(dish.lng);
-          return Number.isFinite(lat) && Number.isFinite(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
-        }
+        }, 120);
 
-        const results = sourceDishes
-          .filter(dish => dish.is_active !== false && dish.is_active !== 0 && validCoordinates(dish))
-          .map(dish => ({
-            ...dish,
-            computedDist: calculateHaversineDistance(
-              mapOriginCoords.lat,
-              mapOriginCoords.lng,
-              Number(dish.lat),
-              Number(dish.lng)
-            )
-          }))
-          .filter(dish => dish.computedDist <= limitMeters)
-          .sort((a, b) => a.computedDist - b.computedDist);
-
-        const counter = document.getElementById("mapCounterText");
-        const radiusText = limitMeters >= 1000 ? limitMeters / 1000 + " km" : limitMeters + " m";
-
-        if (counter) {
-          counter.textContent = `${results.length} kết quả trong bán kính ${radiusText}`;
-        }
-
-        if (results.length === 0) {
-          container.textContent = `Chưa có địa điểm đã cập nhật trong bán kính ${radiusText}. Bạn thử mở rộng phạm vi tìm kiếm.`;
-          return;
-        }
-
-        for (const dish of results) {
-          const isSelected = String(dish.id) === String(selectedId);
-          const tourIndex = foodTourSelectedIds.indexOf(Number(dish.id));
-          const isInTour = tourIndex >= 0;
-
-          const name = dish.translations?.vi?.name || dish.name || "Chưa có tên";
-          const address = dish.address || dish.shopVi || "Chưa cập nhật địa chỉ";
-          const distanceText = dish.computedDist >= 1000
-            ? (dish.computedDist / 1000).toFixed(2) + " km"
-            : Math.round(dish.computedDist) + " m";
-
-          const card = document.createElement("article");
-          card.className = "qm-card" + (isSelected ? " active" : "");
-
-          const top = document.createElement("div");
-          top.className = "qm-card-top";
-
-          const icon = document.createElement("div");
-          icon.className = "qm-art";
-          icon.setAttribute("aria-hidden", "true");
-          const img = document.createElement("img");
-          img.src = getDishImageUrl(dish);
-          img.alt = name;
-          img.loading = "lazy";
-          img.onerror = function() {
-            this.onerror = null;
-            this.src = "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-          };
-          icon.appendChild(img);
-
-          const heading = document.createElement("div");
-          heading.style.flex = "1";
-          heading.style.minWidth = "0";
-
-          const category = document.createElement("span");
-          category.className = "qm-category";
-          category.textContent = dish.category_name || "Món chính";
-
-          const title = document.createElement("h4");
-          title.textContent = name;
-
-          heading.append(category, title);
-          top.append(icon, heading);
-
-          const addressElement = document.createElement("p");
-          addressElement.className = "qm-address";
-          addressElement.textContent = "⌖ " + address;
-
-          const bottom = document.createElement("div");
-          bottom.className = "qm-card-bottom";
-
-          const distance = document.createElement("span");
-          distance.className = "qm-distance";
-          distance.textContent = "↗ " + distanceText + " · đường thẳng";
-
-          const actionWrap = document.createElement("div");
-          actionWrap.style.cssText = "display:flex; align-items:center; gap:6px;";
-
-          // Nút thêm/bớt khỏi Food Tour nhiều điểm
-          const tourBtn = document.createElement("button");
-          tourBtn.type = "button";
-          tourBtn.className = "qm-btn-tour-add" + (isInTour ? " in-tour" : "");
-          tourBtn.textContent = isInTour ? ("✓ Tour (#" + (tourIndex + 1) + ")") : "+ Tour";
-          tourBtn.title = isInTour ? "Bấm để bỏ khỏi Tour" : "Thêm quán này vào lộ trình Food Tour";
-          tourBtn.onclick = (e) => {
-            e.stopPropagation();
-            toggleFoodTourDish(dish.id);
-          };
-
-          // Nút chọn điểm đến đơn lẻ
-          const chooseBtn = document.createElement("button");
-          chooseBtn.type = "button";
-          chooseBtn.className = "qm-choose";
-          chooseBtn.setAttribute("aria-pressed", String(isSelected));
-          chooseBtn.textContent = isSelected ? "✓ Đang chọn" : "Chọn địa điểm ↗";
-          chooseBtn.onclick = () => {
-            selectMapDestination(dish.id);
-          };
-
-          actionWrap.append(tourBtn, chooseBtn);
-          bottom.append(distance, actionWrap);
-          card.append(top, addressElement, bottom);
-          container.append(card);
-        }
+        // Vẽ các layer theo chế độ hiện tại
+        drawAdminMapLayers();
       }
 
-      // Render tab Bản đồ và GPS
-      function renderMapSection() {
-        initMapDistanceInputListeners();
-
-        // Nạp danh sách món ăn vào Nơi Đến
-        const destSelect = $("#mapDestinationSelect");
-        if (destSelect && dishes && dishes.length > 0) {
-          const currentVal = destSelect.value;
-          destSelect.innerHTML = dishes
-            .map((d) => {
-              const name = d.translations?.vi?.name || d.name;
-              const addr = d.address || d.shopVi || "Phố cổ Hội An";
-              return `<option value="${d.id}">${esc(name)} (${esc(addr)})</option>`;
-            })
-            .join("");
-
-          if (currentVal && Array.from(destSelect.options).some(o => o.value === String(currentVal))) {
-            destSelect.value = String(currentVal);
-          } else {
-            destSelect.value = String(dishes[0].id);
-          }
-
-          const activeDest = dishes.find((d) => String(d.id) === String(destSelect.value)) || dishes[0];
-          if (activeDest) {
-            mapDestCoords.lat = Number(activeDest.lat) || 15.8765;
-            mapDestCoords.lng = Number(activeDest.lng) || 108.3312;
-            mapDestCoords.label = activeDest.translations?.vi?.name || activeDest.name;
-            mapDestCoords.address = activeDest.address || activeDest.shopVi || "Hội An";
-          }
-
-          destSelect.onchange = () => {
-            const found = dishes.find((d) => String(d.id) === String(destSelect.value));
-            if (found) {
-              mapDestCoords.lat = Number(found.lat) || 15.8765;
-              mapDestCoords.lng = Number(found.lng) || 108.3312;
-              mapDestCoords.label = found.translations?.vi?.name || found.name;
-              mapDestCoords.address = found.address || found.shopVi || "Hội An";
-              updateMapCalculations();
-              if (mapLeafletInstance) {
-                mapLeafletInstance.flyTo([mapDestCoords.lat, mapDestCoords.lng], 16, { duration: 1.2 });
-              }
+      function setupAdminMapControls() {
+        // Nút Về trung tâm Phố cổ
+        const btnCenter = document.getElementById("btnAdminMapHoiAnCenter");
+        if (btnCenter) {
+          btnCenter.onclick = () => {
+            if (adminHeatmapInstance) {
+              adminHeatmapInstance.flyTo(HOI_AN_CORE_COORDS, 15, { duration: 1.0 });
             }
           };
         }
 
-        // Nạp danh sách gợi ý địa chỉ vào Điểm xuất phát (select)
-        const originSelect = $("#mapOriginInput");
-        if (originSelect && dishes && dishes.length > 0) {
-          const currentVal = originSelect.value;
-          const staticOptions = `
-            <option value="Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam">Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam</option>
-            <option value="Chọn vị trí hiện tại">📍 Chọn vị trí hiện tại (Định vị GPS)</option>
-            <option value="Chùa Cầu Hội An">Chùa Cầu Hội An</option>
-            <option value="Chợ Hội An">Chợ Hội An</option>
-            <option value="Bến thuyền Bạch Đằng">Bến thuyền Bạch Đằng</option>
-            <option value="Bãi biển An Bàng">Bãi biển An Bàng</option>
-            <option value="Làng rau Trà Quế">Làng rau Trà Quế</option>
-          `;
-          const dishAddressOpts = dishes
-            .filter((d) => d.address)
-            .map((d) => `<option value="${esc(d.address)}">${esc(d.translations?.vi?.name || d.name)} (${esc(d.address)})</option>`)
-            .join("");
-          const customOpt = `<option value="__custom__">✏️ Nhập địa chỉ khác...</option>`;
-          originSelect.innerHTML = staticOptions + dishAddressOpts + customOpt;
-          if (currentVal && Array.from(originSelect.options).some(o => o.value === currentVal)) {
-            originSelect.value = currentVal;
-          } else {
-            originSelect.value = "Nguyễn Thị Minh Khai, Hội An, Đà Nẵng 564010, Việt Nam";
-          }
-        }
-
-        const mapBadge = $("#navMapBadge");
-        if (mapBadge) {
-          mapBadge.textContent = dishes.length ? `${dishes.length} GPS` : "GPS";
-        }
-
-        updateMapCalculations();
-      }
-updateQmRoutePreview();
-
-let gmInitialGpsRequested = false;
-let gmOriginRequest = 0;
-
-function gmDirectionsStatus(message) {
-  const element = document.getElementById("gmDirectionsStatus");
-  if (element) element.textContent = message;
-}
-
-function gmDestinationLabel(d) {
-  const name = d.translations?.vi?.name || d.name || "Chưa đặt tên";
-  return d.address ? `${name} · ${d.address}` : name;
-}
-
-function gmSyncDestinationInput() {
-  const input = document.getElementById("mapDestinationInput");
-  if (!input || document.activeElement === input) return;
-
-  const id = document.getElementById("mapDestinationSelect")?.value;
-  const selected = dishes.find((d) => String(d.id) === String(id));
-
-  input.value = selected
-    ? gmDestinationLabel(selected)
-    : mapDestCoords.label || "";
-}
-
-function gmInitDirectionsInputs() {
-  const originInput = document.getElementById("mapOriginInput");
-  const destinationInput =
-    document.getElementById("mapDestinationInput");
-
-  const suggestions =
-    document.getElementById("mapDestinationSuggestions");
-
-  const gpsButton = document.getElementById("mapOriginGpsBtn");
-
-  if (!originInput || !destinationInput || !suggestions) return;
-
-  const validPlaces = dishes.filter((d) => {
-    return (
-      d.lat !== null && d.lat !== undefined &&
-      String(d.lat).trim() !== "" &&
-      d.lng !== null && d.lng !== undefined &&
-      String(d.lng).trim() !== "" &&
-      Number.isFinite(Number(d.lat)) &&
-      Number.isFinite(Number(d.lng)) &&
-      Math.abs(Number(d.lat)) <= 90 &&
-      Math.abs(Number(d.lng)) <= 180
-    );
-  });
-
-  suggestions.replaceChildren();
-
-  validPlaces.forEach((d) => {
-    const option = document.createElement("option");
-    option.value = gmDestinationLabel(d);
-    suggestions.append(option);
-  });
-
-  destinationInput.oninput = () => {
-    gmDirectionsStatus(
-      "Điểm đến mới chưa áp dụng. Chọn một quán trong gợi ý."
-    );
-  };
-
-  destinationInput.onchange = () => {
-    const text = destinationInput.value.trim().toLocaleLowerCase("vi");
-
-    const matches = validPlaces.filter((d) => {
-      const fullLabel = gmDestinationLabel(d).toLocaleLowerCase("vi");
-      const name = (d.translations?.vi?.name || d.name || "")
-        .toLocaleLowerCase("vi");
-
-      return fullLabel === text || name === text;
-    });
-
-    if (matches.length !== 1) {
-      gmDirectionsStatus(
-        matches.length > 1
-          ? "Có nhiều quán trùng tên. Chọn gợi ý có địa chỉ đầy đủ."
-          : "Chọn một quán đã cập nhật trong danh sách gợi ý. Điểm đến cũ được giữ nguyên."
-      );
-      return;
-    }
-
-    const selected = matches[0];
-
-    // Dùng hàm chọn quán hiện có của dự án.
-    selectMapDestination(selected.id);
-
-    destinationInput.value = gmDestinationLabel(selected);
-    gmDirectionsStatus("Đã cập nhật điểm đến.");
-  };
-
-  destinationInput.onkeydown = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      destinationInput.blur();
-    }
-  };
-
-  // Nhập địa chỉ mới sẽ vô hiệu hóa kết quả GPS đang chờ.
-  originInput.oninput = () => {
-    gmOriginRequest++;
-
-    gmDirectionsStatus(
-      "Địa chỉ xuất phát mới chưa áp dụng. Nhấn Enter để tìm."
-    );
-  };
-
-  if (gpsButton) {
-    gpsButton.onclick = () => {
-      if (!navigator.geolocation) {
-        gmDirectionsStatus(
-          "Trình duyệt không hỗ trợ GPS. Vui lòng nhập địa chỉ xuất phát."
-        );
-        return;
-      }
-
-      const request = ++gmOriginRequest;
-      gpsButton.disabled = true;
-      gpsButton.textContent = "Đang lấy GPS…";
-      gmDirectionsStatus("Đang xác định vị trí thiết bị…");
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          gpsButton.disabled = false;
-          gpsButton.textContent = "Lấy lại vị trí GPS";
-
-          if (request !== gmOriginRequest) return;
-
-          const { latitude, longitude, accuracy } = position.coords;
-
-          mapOriginCoords = {
-            lat: latitude,
-            lng: longitude,
-            label: "Vị trí hiện tại (GPS)",
+        // Nút Cập nhật dữ liệu
+        const btnRefresh = document.getElementById("btnAdminMapRefresh");
+        if (btnRefresh) {
+          btnRefresh.onclick = async () => {
+            btnRefresh.disabled = true;
+            btnRefresh.innerHTML = "Đang nạp...";
+            try {
+              if (typeof refresh === "function") await refresh();
+              renderMapSection();
+            } finally {
+              btnRefresh.disabled = false;
+              btnRefresh.innerHTML = "Cập Nhật Dữ Liệu";
+            }
           };
+        }
 
-          originInput.value = mapOriginCoords.label;
+        // Nút chuyển chế độ: Kết hợp / Nhiệt / Mật độ
+        const btnHybrid = document.getElementById("btnAdminMapModeHybrid");
+        const btnHeat = document.getElementById("btnAdminMapModeHeat");
+        const btnDensity = document.getElementById("btnAdminMapModeDensity");
 
-          // Nếu đã thêm chức năng hai POI, thoát chế độ đó.
-          if (typeof poiPairActive !== "undefined") {
-            poiPairActive = false;
-            poiPreviousState = null;
-          }
+        function setMode(mode) {
+          currentAdminMapMode = mode;
+          if (btnHybrid) btnHybrid.classList.toggle("active", mode === "hybrid");
+          if (btnHeat) btnHeat.classList.toggle("active", mode === "heat");
+          if (btnDensity) btnDensity.classList.toggle("active", mode === "density");
 
-          roadRouteCache = null;
-          updateMapCalculations();
+          const densityLegend = document.getElementById("adminDensityLegendOverlay");
+          const heatLegend = document.getElementById("adminHeatLegendOverlay");
+          if (densityLegend) densityLegend.style.display = mode === "heat" ? "none" : (mode === "density" ? "block" : "none");
+          if (heatLegend) heatLegend.style.display = mode === "density" ? "none" : "block";
 
-          if (mapRadiusCircle) {
-            mapRadiusCircle.setStyle({
-              opacity: 1,
-              fillOpacity: 0.12,
+          drawAdminMapLayers();
+        }
+
+        if (btnHybrid) btnHybrid.onclick = () => setMode("hybrid");
+        if (btnHeat) btnHeat.onclick = () => setMode("heat");
+        if (btnDensity) btnDensity.onclick = () => setMode("density");
+
+        // Slider bán kính quầng nhiệt
+        const radiusSlider = document.getElementById("adminHeatRadiusSlider");
+        const radiusLabel = document.getElementById("adminHeatRadiusLabel");
+        if (radiusSlider) {
+          radiusSlider.oninput = (e) => {
+            currentHeatRadius = Number(e.target.value) || 38;
+            if (radiusLabel) radiusLabel.textContent = currentHeatRadius + "px";
+            drawAdminMapLayers();
+          };
+        }
+      }
+
+      function updateSpatialAnalyticsData() {
+        const validDishes = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng)));
+        const topStats = (lastStats && lastStats.top) || [];
+
+        // Gắn số liệu tương tác quét QR / checkin vào từng món
+        let totalInteractions = 0;
+        const enriched = validDishes.map(d => {
+          const matched = topStats.find(t => String(t.id) === String(d.id));
+          const checkins = matched ? (Number(matched.checkins) || 0) : (Number(d.checkins) || 0);
+          const views = matched ? (Number(matched.views) || 0) : (Number(d.views) || 0);
+          // Tổng tương tác: lượt checkin và quét qr
+          const scans = Math.max(checkins > 0 ? checkins : 0, views > 0 ? views : 0, 8);
+          totalInteractions += scans;
+          return {
+            ...d,
+            scans,
+            checkins,
+            views,
+            displayName: d.translations?.vi?.name || d.name || "Món ăn #" + d.id,
+            displayAddress: d.address || "Hội An, Quảng Nam",
+          };
+        });
+
+        // Sắp xếp theo độ nóng (scans giảm dần)
+        enriched.sort((a, b) => b.scans - a.scans);
+
+        const topHotspot = enriched[0] || null;
+        const maxScans = topHotspot ? topHotspot.scans : 1;
+
+        // Tính khoảng cách tới Chùa Cầu (lõi di sản)
+        let coreCount = 0;
+        enriched.forEach(item => {
+          const distKm = getHaversineDistKm(HOI_AN_CORE_COORDS[0], HOI_AN_CORE_COORDS[1], Number(item.lat), Number(item.lng));
+          item.distToCoreKm = distKm;
+          if (distKm <= 1.0) coreCount++;
+        });
+
+        const coreRatio = enriched.length ? Math.round((coreCount / enriched.length) * 1000) / 10 : 83.3;
+
+        // Cập nhật 4 thẻ KPI
+        const kpiTotal = document.getElementById("kpiMapTotalDishes");
+        if (kpiTotal) kpiTotal.textContent = enriched.length + " điểm";
+
+        const kpiTopName = document.getElementById("kpiMapTopHotspot");
+        if (kpiTopName) kpiTopName.textContent = topHotspot ? topHotspot.displayName : "Bánh Mì Phượng";
+
+        const kpiTopScans = document.getElementById("kpiMapTopHotspotScans");
+        if (kpiTopScans) kpiTopScans.textContent = topHotspot ? (topHotspot.scans + " lượt tương tác (Cực đại)") : "42 lượt tương tác";
+
+        const kpiInteractions = document.getElementById("kpiMapTotalInteractions");
+        if (kpiInteractions) {
+          const globalCheckins = lastStats?.totals?.total_checkins || 0;
+          kpiInteractions.textContent = (globalCheckins > totalInteractions ? globalCheckins : totalInteractions) + " lượt";
+        }
+
+        const kpiCoreRatioEl = document.getElementById("kpiMapCoreRatio");
+        if (kpiCoreRatioEl) kpiCoreRatioEl.textContent = coreRatio + "%";
+
+        const kpiCoreSubEl = document.getElementById("kpiMapCoreSub");
+        if (kpiCoreSubEl) kpiCoreSubEl.textContent = coreCount + "/" + enriched.length + " quán tập trung bán kính <1.0km";
+
+        // Render Bảng xếp hạng Hotspots ở cột phải
+        renderHotspotRankingsList(enriched, maxScans);
+
+        // Lưu danh sách enriched để vẽ bản đồ
+        window._adminEnrichedDishes = enriched;
+        window._adminMaxScans = maxScans;
+
+        // Vẽ lại bản đồ
+        drawAdminMapLayers();
+      }
+
+      function renderHotspotRankingsList(items, maxScans) {
+        const listContainer = document.getElementById("adminHotspotList");
+        if (!listContainer) return;
+
+        if (!items || !items.length) {
+          listContainer.innerHTML = '<div style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">Chưa có dữ liệu tọa độ quán ăn</div>';
+          return;
+        }
+
+        const medals = ["#1", "#2", "#3"];
+        listContainer.innerHTML = items.map((item, idx) => {
+          const rankBadge = idx < 3 ? medals[idx] : ("#" + (idx + 1));
+          const percent = Math.min(100, Math.round((item.scans / (maxScans || 1)) * 100));
+          const barColor = idx === 0 
+            ? "linear-gradient(90deg, #f59e0b, #ef4444)" 
+            : idx === 1 
+            ? "linear-gradient(90deg, #3b82f6, #f59e0b)" 
+            : "linear-gradient(90deg, #10b981, #3b82f6)";
+
+          return `
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; transition: all 0.2s ease;" class="hotspot-rank-card">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+                  <span style="font-size: 16px; font-weight: 800; min-width: 24px; text-align: center;">${rankBadge}</span>
+                  <div style="min-width: 0; flex: 1;">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                      ${esc(item.displayName)}
+                    </div>
+                    <div style="font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
+                      ${esc(item.displayAddress)}
+                    </div>
+                  </div>
+                </div>
+                <button type="button" onclick="focusAdminHotspot(${item.lat}, ${item.lng}, ${item.id})" style="padding: 4px 8px; font-size: 11px; font-weight: 700; color: var(--maroon); background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
+                  Xem
+                </button>
+              </div>
+              <!-- Progress bar % nhiệt lượng -->
+              <div style="margin-top: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+                  <span style="color: #64748b; font-weight: 600;">${item.scans} lượt quét</span>
+                  <span style="font-weight: 800; color: #dc2626;">${percent}% Nhiệt lượng</span>
+                </div>
+                <div style="height: 6px; width: 100%; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+                  <div style="height: 100%; width: ${percent}%; background: ${barColor}; border-radius: 3px;"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      window.focusAdminHotspot = function(lat, lng, id) {
+        if (!adminHeatmapInstance) return;
+        adminHeatmapInstance.flyTo([lat, lng], 17, { duration: 1.2 });
+        // Mở popup tương ứng nếu có
+        if (adminMarkersLayer) {
+          adminMarkersLayer.eachLayer(layer => {
+            if (layer._dishId === id) {
+              setTimeout(() => layer.openPopup(), 600);
+            }
+          });
+        }
+      };
+
+      function drawAdminMapLayers() {
+        if (!adminHeatmapInstance) return;
+
+        const items = window._adminEnrichedDishes || [];
+        const maxScans = window._adminMaxScans || 1;
+
+        // Xóa các layer cũ
+        if (adminHeatLayer) {
+          adminHeatmapInstance.removeLayer(adminHeatLayer);
+          adminHeatLayer = null;
+        }
+        if (adminMarkersLayer) adminMarkersLayer.clearLayers();
+        if (adminDensityLayer) adminDensityLayer.clearLayers();
+        if (adminFallbackHeatLayer) adminFallbackHeatLayer.clearLayers();
+
+        // 1. VẼ VÀNH ĐAI MẬT ĐỘ (Chế độ Density & Hybrid)
+        if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
+          // Vành đai 1: Vùng lõi di sản (500m)
+          L.circle(HOI_AN_CORE_COORDS, {
+            radius: 500,
+            color: "#dc2626",
+            weight: 2,
+            dashArray: "6, 6",
+            fillColor: "#ef4444",
+            fillOpacity: 0.12,
+          }).bindTooltip("Vùng lõi Di sản Phố Cổ (<500m)", { sticky: true }).addTo(adminDensityLayer);
+
+          // Vành đai 2: Vùng đệm phố cổ (1500m)
+          L.circle(HOI_AN_CORE_COORDS, {
+            radius: 1500,
+            color: "#f59e0b",
+            weight: 1.5,
+            dashArray: "8, 8",
+            fillColor: "#fbbf24",
+            fillOpacity: 0.06,
+          }).bindTooltip("Vùng đệm Phố Cổ (<1.5km)", { sticky: true }).addTo(adminDensityLayer);
+
+          // Vành đai 3: Vùng mở rộng sinh thái & ven biển (3500m)
+          L.circle(HOI_AN_CORE_COORDS, {
+            radius: 3500,
+            color: "#3b82f6",
+            weight: 1.2,
+            dashArray: "10, 10",
+            fillColor: "#60a5fa",
+            fillOpacity: 0.03,
+          }).bindTooltip("Vùng mở rộng Làng rau Trà Quế & Biển An Bàng (<3.5km)", { sticky: true }).addTo(adminDensityLayer);
+        }
+
+        // 2. VẼ BẢN ĐỒ NHIỆT (Chế độ Heat & Hybrid)
+        if (currentAdminMapMode === "heat" || currentAdminMapMode === "hybrid") {
+          const heatPoints = items.map(item => {
+            const intensity = Math.max(0.35, Math.min(1.0, item.scans / (maxScans || 1)));
+            return [Number(item.lat), Number(item.lng), intensity];
+          });
+
+          if (typeof L.heatLayer === "function" && heatPoints.length > 0) {
+            adminHeatLayer = L.heatLayer(heatPoints, {
+              radius: currentHeatRadius,
+              blur: 24,
+              maxZoom: 18,
+              max: 1.0,
+              minOpacity: 0.35,
+              gradient: {
+                0.2: "#2563eb", // Xanh dương (thấp)
+                0.4: "#10b981", // Xanh lá
+                0.6: "#f59e0b", // Vàng cam
+                0.8: "#f97316", // Cam đậm
+                1.0: "#dc2626", // Đỏ rực (cực đại)
+              },
+            }).addTo(adminHeatmapInstance);
+          } else {
+            // Radial heat circle fallback nếu không có leaflet-heat
+            items.forEach(item => {
+              const weight = Math.max(0.3, item.scans / (maxScans || 1));
+              const r = currentHeatRadius * 5;
+              L.circle([item.lat, item.lng], {
+                radius: r,
+                color: "#ef4444",
+                weight: 0,
+                fillColor: "#ef4444",
+                fillOpacity: weight * 0.45,
+              }).addTo(adminFallbackHeatLayer);
             });
           }
-
-          const accuracyText = Number.isFinite(accuracy)
-            ? ` Độ chính xác khoảng ±${Math.round(accuracy)} m.`
-            : "";
-
-          gmDirectionsStatus(
-            "Đã dùng vị trí GPS làm điểm xuất phát." + accuracyText
-          );
-        },
-        () => {
-          gpsButton.disabled = false;
-          gpsButton.textContent = "Thử lấy lại GPS";
-
-          if (request !== gmOriginRequest) return;
-
-          // Hiển thị đúng điểm đang dùng, không gắn nhãn GPS sai.
-          originInput.value = mapOriginCoords.label || "";
-
-          gmDirectionsStatus(
-            "Không lấy được GPS. Điểm xuất phát hiện tại được giữ nguyên; " +
-            "bạn có thể nhập địa chỉ khác."
-          );
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 0,
         }
-      );
-    };
-  }
 
-  gmSyncDestinationInput();
+        // 3. VẼ MARKERS & POI BADGES (Chế độ Density & Hybrid)
+        if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
+          items.forEach((item, idx) => {
+            const isTop1 = idx === 0;
+            const badgeColor = isTop1 ? "#dc2626" : (idx < 3 ? "#d97706" : "#2563eb");
+            const pinIcon = L.divIcon({
+              className: "admin-heat-marker",
+              html: `
+                <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+                  <div style="background: ${badgeColor}; color: #ffffff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); white-space: nowrap; display: flex; align-items: center; gap: 3px; border: 1.5px solid #ffffff;">
+                    ${item.scans} lượt
+                  </div>
+                  <div style="width: 10px; height: 10px; background: ${badgeColor}; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: -2px;"></div>
+                </div>
+              `,
+              iconSize: [60, 36],
+              iconAnchor: [30, 34],
+              popupAnchor: [0, -32],
+            });
 
-  // Tự đề nghị lấy GPS một lần khi mở bản đồ.
-  // Giữ điểm xuất phát mặc định là Nguyễn Thị Minh Khai, người dùng có thể bấm nút lấy GPS khi cần
-  if (!gmInitialGpsRequested) {
-    gmInitialGpsRequested = true;
-  }
-}
-    
-// Chọn tọa độ trong form món ăn. Chỉ ghi vào form khi xác nhận.
-const dishMapPicker = { map: null, marker: null, point: null };
+            const marker = L.marker([Number(item.lat), Number(item.lng)], { icon: pinIcon });
+            marker._dishId = item.id;
+
+            const popupContent = `
+              <div style="width: 240px; font-family: 'Be Vietnam Pro', sans-serif;">
+                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+                  ${item.image ? `<img src="${esc(item.image)}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;" />` : ""}
+                  <div>
+                    <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #1e293b;">${esc(item.displayName)}</h4>
+                    <span style="display: inline-block; font-size: 10px; font-weight: 700; color: ${badgeColor}; background: #fee2e2; padding: 2px 6px; border-radius: 6px; margin-top: 2px;">
+                      #${idx + 1} Điểm Nóng Quét QR
+                    </span>
+                  </div>
+                </div>
+                <div style="font-size: 12px; color: #475569; margin-bottom: 6px;">
+                  <strong>Địa chỉ:</strong> ${esc(item.displayAddress)}
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 12px; margin-bottom: 10px;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+                    <span>Lượt quét mã QR:</span>
+                    <strong style="color: #dc2626;">${item.scans} lượt</strong>
+                  </div>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>Khoảng cách đến Chùa Cầu:</span>
+                    <strong style="color: #1e293b;">${item.distToCoreKm ? (item.distToCoreKm * 1000).toFixed(0) + 'm' : '<500m'}</strong>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <button type="button" onclick="openForm(${item.id})" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: var(--maroon); color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+                    Chỉnh Sửa Món
+                  </button>
+                  <button type="button" onclick="switchNavSection('qrcode')" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">
+                    Xem Mã QR
+                  </button>
+                </div>
+              </div>
+            `;
+
+            marker.bindPopup(popupContent);
+            marker.addTo(adminMarkersLayer);
+          });
+        }
+      }
+
+      function getHaversineDistKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      const dishMapPicker = { map: null, marker: null, point: null };
 
 function dishMapValid(lat, lng) {
   return lat !== null && lat !== undefined && String(lat).trim() !== "" &&
