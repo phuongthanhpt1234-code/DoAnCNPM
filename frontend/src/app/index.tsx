@@ -2120,34 +2120,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             </View>
 
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              {/* Language switcher inside the map modal header */}
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
-                {(Object.keys(LANGS) as LangKey[]).map((k) => (
-                  <TouchableOpacity
-                    key={k}
-                    onPress={() => handleSelectLanguage(k)}
-                    style={{
-                      paddingVertical: 4,
-                      paddingHorizontal: 8,
-                      borderRadius: 14,
-                      backgroundColor: lang === k ? "#8b1d24" : "#f3f4f6",
-                      borderWidth: 1,
-                      borderColor: lang === k ? "#73171d" : "#e5e7eb",
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 11,
-                        fontWeight: "bold",
-                        color: lang === k ? "#ffffff" : "#4b5563",
-                      }}
-                    >
-                      {k.toUpperCase()}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
               <TouchableOpacity
                 style={styles.customerMapCloseBtn}
                 onPress={() => setCustomerMapVisible(false)}
