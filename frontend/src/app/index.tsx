@@ -1026,7 +1026,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               rating: row.rating != null ? Number(row.rating) : 4.8,
               lat: row.lat != null ? Number(row.lat) : 15.877,
               lng: row.lng != null ? Number(row.lng) : 108.327,
-              address: row.address || "",
+              address: row.address || DISHES.find((d) => d.id === Number(row.id))?.address || localDish?.shopVi || "",
               name: mergedName,
               desc: mergedDesc,
               tag: mergedTag,
@@ -1526,7 +1526,20 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 <Text style={styles.cardTitle} numberOfLines={1}>
                   {item.name[lang] || item.name.vi}
                 </Text>
-                <Text style={styles.cardDesc} numberOfLines={3}>
+                {item.address ? (
+                  <View style={styles.cardAddressRow}>
+                    <Ionicons
+                      name="location-sharp"
+                      size={13}
+                      color="#ea580c"
+                      style={{ marginRight: 3, flexShrink: 0 }}
+                    />
+                    <Text style={styles.cardAddressText} numberOfLines={1}>
+                      {item.address}
+                    </Text>
+                  </View>
+                ) : null}
+                <Text style={styles.cardDesc} numberOfLines={2}>
                   {item.desc[lang] || item.desc.vi}
                 </Text>
               </View>
@@ -1755,7 +1768,20 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               />
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>{selectedDish.name[lang]}</Text>
-                <ScrollView style={{ maxHeight: 160 }}>
+                {selectedDish.address ? (
+                  <View style={styles.modalAddressRow}>
+                    <Ionicons
+                      name="location-sharp"
+                      size={14}
+                      color="#ea580c"
+                      style={{ marginRight: 5, flexShrink: 0 }}
+                    />
+                    <Text style={styles.modalAddressText} numberOfLines={2}>
+                      {selectedDish.address}
+                    </Text>
+                  </View>
+                ) : null}
+                <ScrollView style={{ maxHeight: 150 }}>
                   <Text style={styles.modalDesc}>
                     {selectedDish.desc[lang]}
                   </Text>
@@ -2564,6 +2590,36 @@ const styles = StyleSheet.create({
   cardRating: { color: "#d97706", fontSize: 13, fontWeight: "bold" },
   cardTitle: { color: "#111827", fontSize: 19, fontWeight: "bold" },
   cardSub: { color: "#6b7280", fontSize: 12 },
+  cardAddressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 3,
+    marginBottom: 5,
+  },
+  cardAddressText: {
+    color: "#b45309",
+    fontSize: 12.5,
+    fontWeight: "600",
+    flex: 1,
+  },
+  modalAddressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 6,
+    marginBottom: 10,
+    backgroundColor: "#fffbeb",
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fed7aa",
+  },
+  modalAddressText: {
+    color: "#9a3412",
+    fontSize: 13,
+    fontWeight: "600",
+    flex: 1,
+  },
   cardDesc: {
     color: "#4b5563",
     fontSize: 13,
