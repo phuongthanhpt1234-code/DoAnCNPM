@@ -693,6 +693,222 @@
       color: #1d4ed8;
       border: 1px solid #bfdbfe;
     }
+
+    /* TRAVEL MODES SELECTOR */
+    .travel-modes-bar {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .travel-modes-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .travel-modes-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .travel-mode-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border-dark);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .travel-mode-btn:hover {
+      background: #fffbeb;
+      border-color: #f59e0b;
+      transform: translateY(-1px);
+    }
+    .travel-mode-btn.active {
+      background: #8b1d24;
+      color: #ffffff;
+      border-color: #73171d;
+      box-shadow: 0 3px 10px rgba(139, 29, 36, 0.25);
+    }
+    .travel-mode-btn.active .mode-speed {
+      background: rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+    }
+    .mode-icon {
+      font-size: 15px;
+    }
+    .mode-speed {
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    /* ROUTE DETAIL CARD */
+    .route-detail-card {
+      margin-top: 12px;
+      background: #ffffff;
+      border: 1.5px solid #fed7aa;
+      border-radius: 14px;
+      padding: 14px 18px;
+      box-shadow: 0 4px 16px rgba(180, 83, 9, 0.08);
+      animation: routeCardFadeIn 0.25s ease;
+    }
+    @keyframes routeCardFadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .route-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #fed7aa;
+    }
+    .route-target-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+    }
+    .route-target-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .route-target-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .route-target-addr {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+    .route-metrics {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .route-metric-pill {
+      display: flex;
+      flex-direction: column;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: 11px;
+    }
+    .route-metric-pill.eta-pill {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+    .route-metric-pill.dist-pill {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e40af;
+    }
+    .metric-label {
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .eta-pill .metric-label { color: #047857; }
+    .dist-pill .metric-label { color: #1d4ed8; }
+    .metric-val {
+      font-size: 13.5px;
+      font-weight: 800;
+      margin-top: 1px;
+    }
+    .route-detail-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .route-note {
+      font-size: 12px;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+    .btn-gmaps-direct {
+      padding: 7px 16px;
+      border-radius: 8px;
+      background: #1e40af;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s ease;
+    }
+    .btn-gmaps-direct:hover {
+      background: #1d4ed8;
+    }
+
+    /* POPUP TRAVEL MODE CHIPS */
+    .popup-mode-chips {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .popup-mode-chip {
+      flex: 1;
+      padding: 4px 6px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+    .popup-mode-chip:hover {
+      background: #fffbeb;
+      border-color: #f59e0b;
+    }
+    .popup-mode-chip.active {
+      background: #8b1d24;
+      color: #ffffff;
+      border-color: #73171d;
+    }
   </style>
   <script>
     if (window.self !== window.top || window.location.search.includes('embed=true')) {
@@ -769,6 +985,65 @@
           </button>
           <a id="btnOpenGoogleMaps" class="btn btn-gmaps" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" title="Mở trực tiếp trên ứng dụng Google Maps">
             Google Maps
+          </a>
+        </div>
+      </div>
+
+      <!-- BỘ CHỌN PHƯƠNG TIỆN CHỈ ĐƯỜNG: ĐƯỜNG BỘ, ĐƯỜNG XE MÁY, ĐƯỜNG Ô TÔ -->
+      <div class="travel-modes-bar" id="travelModesBar">
+        <span class="travel-modes-label">
+          <span>🧭</span> Phương tiện chỉ đường:
+        </span>
+        <div class="travel-modes-group">
+          <button type="button" class="travel-mode-btn active" data-mode="walking" id="modeBtnWalking">
+            <span class="mode-icon">🚶</span>
+            <span>Đường bộ (Đi bộ)</span>
+            <span class="mode-speed">~4.5 km/h</span>
+          </button>
+          <button type="button" class="travel-mode-btn" data-mode="motorbike" id="modeBtnMotorbike">
+            <span class="mode-icon">🛵</span>
+            <span>Đường xe máy</span>
+            <span class="mode-speed">~25 km/h</span>
+          </button>
+          <button type="button" class="travel-mode-btn" data-mode="driving" id="modeBtnDriving">
+            <span class="mode-icon">🚗</span>
+            <span>Đường ô tô</span>
+            <span class="mode-speed">~35 km/h</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- HỘP THÔNG TIN LỘ TRÌNH CHỈ ĐƯỜNG CHI TIẾT -->
+      <div id="routeDetailCard" class="route-detail-card" style="display: none;">
+        <div class="route-detail-header">
+          <div class="route-target-info">
+            <div class="route-target-icon" id="routeModeIcon">🚶</div>
+            <div>
+              <div class="route-target-title" id="routeDestName">Đang chỉ đường...</div>
+              <div class="route-target-addr" id="routeDestAddr">Địa chỉ quán ăn</div>
+            </div>
+          </div>
+          <div class="route-metrics">
+            <div class="route-metric-pill eta-pill">
+              <span class="metric-label">Thời gian dự kiến</span>
+              <strong class="metric-val" id="routeEtaVal">-- phút</strong>
+            </div>
+            <div class="route-metric-pill dist-pill">
+              <span class="metric-label">Độ dài thực tế</span>
+              <strong class="metric-val" id="routeDistanceVal">-- m</strong>
+            </div>
+            <div class="route-metric-pill straight-pill">
+              <span class="metric-label">Đường chim bay</span>
+              <strong class="metric-val" id="routeHaversineVal">-- m</strong>
+            </div>
+          </div>
+        </div>
+        <div class="route-detail-foot">
+          <div class="route-note" id="routeModeNote">
+            <span>ℹ️</span> Lộ trình đi bộ tối ưu qua các tuyến phố đi bộ Phố Cổ.
+          </div>
+          <a id="btnGmapsDirect" class="btn-gmaps-direct" href="#" target="_blank" rel="noopener noreferrer">
+            Mở chỉ đường Google Maps
           </a>
         </div>
       </div>
@@ -1003,10 +1278,16 @@
               <h4 class="popup-title">${d.name}</h4>
               <p class="popup-addr">${d.address || 'Hội An, Quảng Nam'}</p>
               <p class="popup-dist">Khoảng cách: ${formatDistance(dist)}</p>
+              <!-- 3 Chế độ chỉ đường -->
+              <div class="popup-mode-chips">
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">🚶 Đi bộ</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">🛵 Xe máy</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'driving' ? 'active' : ''}" data-mode="driving" onclick="setTravelModeAndRoute('driving', ${d.id})">🚗 Ô tô</button>
+              </div>
               <div class="popup-btns">
                 <button class="popup-btn popup-btn-route" onclick="selectDestinationById(${d.id})">Chỉ đường</button>
                 <button class="popup-btn popup-btn-tour" onclick="toggleTourDishById(${d.id})">+ Tour</button>
-                <a class="popup-btn popup-btn-gmap" href="https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=walking" target="_blank">Google Maps</a>
+                <a class="popup-btn popup-btn-gmap" id="popupGmapsBtn_${d.id}" href="https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=${TRAVEL_MODES[currentTravelMode].gmapsMode}" target="_blank">Google Maps</a>
               </div>
             </div>
           </div>
@@ -1069,7 +1350,74 @@
       }
     }
 
-    // --- 7. OSRM STREET ROUTING & GOOGLE MAPS LINK ---
+    // --- 7. MULTI-MODE ROUTING (ĐƯỜNG BỘ, ĐƯỜNG XE MÁY, ĐƯỜNG Ô TÔ) ---
+    let currentTravelMode = 'walking'; // 'walking' | 'motorbike' | 'driving'
+
+    const TRAVEL_MODES = {
+      walking: {
+        label: 'Đường bộ (Đi bộ)',
+        icon: '🚶',
+        osrmProfile: 'walking',
+        gmapsMode: 'walking',
+        speedKmH: 4.5,
+        color: '#059669', // Xanh lá
+        weight: 6,
+        note: 'Đi bộ thuận tiện qua các tuyến phố đi bộ (Trần Phú, Nguyễn Thái Học, Chùa Cầu).'
+      },
+      motorbike: {
+        label: 'Đường xe máy',
+        icon: '🛵',
+        osrmProfile: 'driving',
+        gmapsMode: 'two_wheeler',
+        speedKmH: 25,
+        color: '#ea580c', // Cam đậm
+        weight: 6,
+        note: 'Xe máy linh hoạt qua các ngõ hẻm phố cổ và trục đường ven sông.'
+      },
+      driving: {
+        label: 'Đường ô tô',
+        icon: '🚗',
+        osrmProfile: 'driving',
+        gmapsMode: 'driving',
+        speedKmH: 35,
+        color: '#8b1d24', // Đỏ đô Hội An
+        weight: 7,
+        note: 'Ô tô ưu tiên các trục đường chính (Trần Hưng Đạo, Phan Châu Trinh, Hai Bà Trưng, Lý Thường Kiệt).'
+      }
+    };
+
+    function setTravelMode(mode) {
+      if (!TRAVEL_MODES[mode]) return;
+      currentTravelMode = mode;
+
+      // Update mode buttons in control card
+      document.querySelectorAll('.travel-mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      // Update popup chips if open
+      document.querySelectorAll('.popup-mode-chip').forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.mode === mode);
+      });
+
+      // Re-calculate route if destination is selected
+      if (selectedDestDish) {
+        selectDestinationById(selectedDestDish.id);
+      }
+    }
+
+    window.setTravelModeAndRoute = function(mode, dishId) {
+      setTravelMode(mode);
+      selectDestinationById(dishId);
+    };
+
+    // Attach mode tab events
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.travel-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => setTravelMode(btn.dataset.mode));
+      });
+    });
+
     async function selectDestinationById(dishId) {
       const dish = allDishes.find(d => d.id === dishId);
       if (!dish) return;
@@ -1078,65 +1426,78 @@
       // Update select element
       document.getElementById('cDestSelect').value = dish.id;
 
+      const modeInfo = TRAVEL_MODES[currentTravelMode] || TRAVEL_MODES.walking;
+
       // Calculate distance
       const haversineMeters = calcHaversine(userCoords.lat, userCoords.lng, dish.lat, dish.lng);
 
-      // Update Google Maps external button
+      // Google Maps URLs
+      const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lng}&destination=${dish.lat},${dish.lng}&travelmode=${modeInfo.gmapsMode}`;
+
       const gmapsBtn = document.getElementById('btnOpenGoogleMaps');
-      if (gmapsBtn) {
-        gmapsBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lng}&destination=${dish.lat},${dish.lng}&travelmode=walking`;
-      }
+      if (gmapsBtn) gmapsBtn.href = gmapsUrl;
+
+      const gmapsDirectBtn = document.getElementById('btnGmapsDirect');
+      if (gmapsDirectBtn) gmapsDirectBtn.href = gmapsUrl;
+
+      // Show route detail card
+      const routeCard = document.getElementById('routeDetailCard');
+      if (routeCard) routeCard.style.display = 'block';
+
+      document.getElementById('routeModeIcon').textContent = modeInfo.icon;
+      document.getElementById('routeDestName').textContent = dish.name + ' (' + modeInfo.label + ')';
+      document.getElementById('routeDestAddr').textContent = dish.address || 'Hội An, Quảng Nam';
+      document.getElementById('routeHaversineVal').textContent = formatDistance(haversineMeters);
+      document.getElementById('routeModeNote').innerHTML = '<span>ℹ️</span> ' + modeInfo.note;
+
+      // Try fetching OSRM road geometry
+      let routeDistance = Math.round(haversineMeters * (currentTravelMode === 'walking' ? 1.2 : 1.35));
+      let routeCoords = null;
 
       try {
-        const url = `https://router.project-osrm.org/route/v1/walking/${userCoords.lng},${userCoords.lat};${dish.lng},${dish.lat}?overview=full&geometries=geojson`;
+        const url = `https://router.project-osrm.org/route/v1/${modeInfo.osrmProfile}/${userCoords.lng},${userCoords.lat};${dish.lng},${dish.lat}?overview=full&geometries=geojson`;
         const res = await fetch(url);
         const data = await res.json();
 
         if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
           const route = data.routes[0];
-          const osrmDistance = Math.round(route.distance);
-          
-
-          // Calculate winding diff %
-          const diffPct = Math.round(((osrmDistance - haversineMeters) / (haversineMeters || 1)) * 100);
-          if (diffPct > 0) {
-            windingBox.style.display = 'inline-flex';
-            windingVal.textContent = '+' + diffPct + '% quanh co hẻm';
-          } else {
-            windingBox.style.display = 'none';
-          }
-
-          // Draw polyline on map
-          if (routePolyline) mapInstance.removeLayer(routePolyline);
-          const coords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
-          // Đường viền trắng nổi bật
-          routePolyline = L.polyline(coords, {
-            color: '#2563eb',
-            weight: 6,
-            opacity: 0.92,
-            lineJoin: 'round',
-            lineCap: 'round'
-          }).addTo(mapInstance);
-
-          mapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
-        } else {
-          
-          drawStraightLine(userCoords, dish);
+          routeDistance = Math.round(route.distance);
+          routeCoords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
         }
       } catch (err) {
-        console.warn('OSRM route fetch failed, fallback to straight line:', err);
-        
-        drawStraightLine(userCoords, dish);
+        console.warn('OSRM fetch error, using road fallback:', err);
       }
-    }
 
-    function drawStraightLine(p1, p2) {
+      // Calculate estimated time (ETA)
+      // Speed in m/min = speedKmH * 1000 / 60
+      const speedMPerMin = (modeInfo.speedKmH * 1000) / 60;
+      const etaMinutes = Math.max(1, Math.round(routeDistance / speedMPerMin));
+
+      document.getElementById('routeEtaVal').textContent = '~' + etaMinutes + ' phút';
+      document.getElementById('routeDistanceVal').textContent = formatDistance(routeDistance);
+
+      // Draw polyline on map
       if (routePolyline) mapInstance.removeLayer(routePolyline);
-      routePolyline = L.polyline([[p1.lat, p1.lng], [p2.lat, p2.lng]], {
-        color: '#dc2626',
-        dashArray: '6, 6',
-        weight: 3
-      }).addTo(mapInstance);
+
+      if (routeCoords && routeCoords.length > 1) {
+        // Vẽ đường bộ uốn lượn thực tế
+        routePolyline = L.polyline(routeCoords, {
+          color: modeInfo.color,
+          weight: modeInfo.weight,
+          opacity: 0.92,
+          lineJoin: 'round',
+          lineCap: 'round'
+        }).addTo(mapInstance);
+      } else {
+        // Fallback đường nét đứt theo màu phương tiện
+        routePolyline = L.polyline([[userCoords.lat, userCoords.lng], [dish.lat, dish.lng]], {
+          color: modeInfo.color,
+          dashArray: '8, 8',
+          weight: 4,
+          opacity: 0.85
+        }).addTo(mapInstance);
+      }
+
       mapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
     }
 
@@ -1315,6 +1676,10 @@
       document.getElementById('cRadiusSelect').onchange = runRadarScan;
       document.getElementById('btnGetGps').onclick = getInstantGps;
       document.getElementById('btnClearTour').onclick = clearTour;
+
+      document.querySelectorAll('.travel-mode-btn').forEach(btn => {
+        btn.onclick = () => setTravelMode(btn.dataset.mode);
+      });
 
       document.getElementById('cDestSelect').onchange = (e) => {
         const id = parseInt(e.target.value);
