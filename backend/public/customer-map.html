@@ -1031,8 +1031,8 @@
           </label>
           <select id="cRadiusSelect" class="form-control">
             <option value="500">Trong 500m</option>
-            <option value="1000" selected>Trong 1.0 km</option>
-            <option value="2000">Trong 2.0 km</option>
+            <option value="1000">Trong 1.0 km</option>
+            <option value="2000" selected>Trong 2.0 km (Tất cả 6 quán phố cổ)</option>
             <option value="5000">Trong 5.0 km</option>
           </select>
         </div>
@@ -1167,6 +1167,13 @@
 
     const I18N = {
       vi: {
+        origin_chua_cau_default: "Chùa Cầu Hội An (Tâm phố cổ - Mặc định)",
+        origin_my_real_gps: "📍 Định vị GPS thực tế của tôi",
+        user_location_real: "Vị trí GPS thực tế của bạn",
+        gps_outside_hoian: "Đã nhận GPS thực tế của bạn (cách Hội An {dist}km). Để khám phá các quán ăn phố cổ, bạn hãy chọn điểm xuất phát tại Chùa Cầu Hội An.",
+        gps_locating: "Đang dò tìm tọa độ GPS vệ tinh...",
+        gps_failed: "Chưa cấp quyền GPS. Dùng Chùa Cầu Hội An.",
+        gps_not_supported: "Trình duyệt không hỗ trợ định vị GPS.",
         unit_mins: "~{n} phút",
         tour_stops_suffix: "quán - Tối ưu TSP",
         tour_stop_prefix: "Trạm",
@@ -1221,6 +1228,13 @@
         user_location_title: "Vị trí của bạn"
       },
       en: {
+        origin_chua_cau_default: "Chua Cau / Japanese Bridge (Ancient Town - Default)",
+        origin_my_real_gps: "📍 My Real GPS Location",
+        user_location_real: "Your Real GPS Location",
+        gps_outside_hoian: "Located your real GPS ({dist}km from Hoi An). To explore ancient town cuisine, select Chua Cau as your starting point.",
+        gps_locating: "Detecting satellite GPS coordinates...",
+        gps_failed: "GPS permission denied. Using Chua Cau center.",
+        gps_not_supported: "Geolocation GPS not supported by browser.",
         unit_mins: "~{n} mins",
         tour_stops_suffix: "stops - TSP Optimized",
         tour_stop_prefix: "Stop",
@@ -1275,6 +1289,13 @@
         user_location_title: "Your location"
       },
       zh: {
+        origin_chua_cau_default: "来远桥/日本廊桥（古镇中心 - 默认）",
+        origin_my_real_gps: "📍 我的即时真实GPS定位",
+        user_location_real: "您的即时真实GPS位置",
+        gps_outside_hoian: "已获取您的真实GPS（距会安{dist}公里）。如需探索古镇美食，请选择来远桥作为出发点。",
+        gps_locating: "正在探测卫星GPS坐标...",
+        gps_failed: "未获得GPS权限，使用来远桥古镇中心。",
+        gps_not_supported: "浏览器不支持GPS定位。",
         unit_mins: "约 {n} 分钟",
         tour_stops_suffix: "站 - TSP路线最佳",
         tour_stop_prefix: "第",
@@ -1329,6 +1350,13 @@
         user_location_title: "您的位置"
       },
       ko: {
+        origin_chua_cau_default: "내원교 / 처우꺼우 (고대 도시 중심 - 기본)",
+        origin_my_real_gps: "📍 나의 실제 GPS 위치",
+        user_location_real: "당신의 실제 GPS 위치",
+        gps_outside_hoian: "실제 GPS가 확인되었습니다(호이안에서 {dist}km). 고대 도시 맛집을 둘러보시려면 내원교(Chua Cau)를 출발지로 선택하세요.",
+        gps_locating: "위성 GPS 위치 감지 중...",
+        gps_failed: "GPS 권한이 없습니다. 내원교 중심으로 설정됩니다.",
+        gps_not_supported: "브라우저가 GPS 위치를 지원하지 않습니다.",
         unit_mins: "약 {n}분",
         tour_stops_suffix: "개소 - TSP 최적화",
         tour_stop_prefix: "경유지",
@@ -1383,6 +1411,13 @@
         user_location_title: "현재 내 위치"
       },
       ja: {
+        origin_chua_cau_default: "来遠橋 / 日本橋（旧市街中心 - デフォルト）",
+        origin_my_real_gps: "📍 私の実際のGPS現在地",
+        user_location_real: "あなたの実際のGPS現在地",
+        gps_outside_hoian: "実際のGPSを取得しました（ホイアンから{dist}km）。旧市街のグルメを探索する場合は、来遠橋（Chua Cau）を出発地に選択してください。",
+        gps_locating: "衛星GPS座標を測位中...",
+        gps_failed: "GPS権限が拒否されました。来遠橋中心を使用します。",
+        gps_not_supported: "ブラウザがGPS位置情報に対応していません。",
         unit_mins: "約 {n}分",
         tour_stops_suffix: "箇所 - TSP最適化",
         tour_stop_prefix: "経由地",
@@ -1441,86 +1476,176 @@
     // DEFAULT DISHES IN HOI AN WITH MULTILINGUAL TRANSLATIONS
     const DEFAULT_DISHES = [
       {
-        id: 1,
-        lat: 15.8794,
-        lng: 108.3312,
-        image: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400",
-        translations: {
-          vi: { name: "Cao lầu Bá Lễ", address: "49/3 Trần Hưng Đạo, Hội An" },
-          en: { name: "Traditional Ba Le Cao Lau Noodles", address: "49/3 Tran Hung Dao, Hoi An" },
-          zh: { name: "巴礼高楼面 (Cao Lau Ba Le)", address: "陈兴道街49/3号, 会安" },
-          ko: { name: "바레 까오러우 전통 국수", address: "49/3 쩐흥다오, 호이안" },
-          ja: { name: "バーレー カオラウ麺", address: "チャンフンダオ通り49/3, ホイアン" }
-        }
+            "id": 4,
+            "lat": 15.8765,
+            "lng": 108.3312,
+            "image": "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Quán Cao lầu Bá Le",
+                        "address": "25 Trần Hưng Đạo, Hội An, Đà Nẵng, Việt Nam"
+                  },
+                  "en": {
+                        "name": "Traditional Hoi An Cao Lau Noodles",
+                        "address": "25 Tran Hung Dao, Hoi An, Da Nang, Vietnam"
+                  },
+                  "zh": {
+                        "name": "会安传统高楼面 (Cao Lầu Bá Lễ)",
+                        "address": "陈兴道街25号, 会安, 越南"
+                  },
+                  "ko": {
+                        "name": "호이안 전통 까오러우 (바레 까오러우)",
+                        "address": "25 쩐흥다오, 호이안, 베트남"
+                  },
+                  "ja": {
+                        "name": "ホイアン伝統カオラウ（バーレー・カオラウ）",
+                        "address": "チャンフンダオ通り25, ホイアン, ベトナム"
+                  }
+            }
       },
       {
-        id: 2,
-        lat: 15.8778,
-        lng: 108.3295,
-        image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400",
-        translations: {
-          vi: { name: "Cơm gà Bà Buội", address: "22 Phan Chu Trinh, Hội An" },
-          en: { name: "Ba Buoi Hoi An Chicken Rice", address: "22 Phan Chu Trinh, Hoi An" },
-          zh: { name: "布依婆鸡饭 (Com Ga Ba Buoi)", address: "潘周桢街22号, 会安" },
-          ko: { name: "바부오이 치킨 라이스", address: "22 판쩌우찐, 호이안" },
-          ja: { name: "バーブオイ チキンライス", address: "ファンチャウチン通り22, ホイアン" }
-        }
+            "id": 6,
+            "lat": 15.8795,
+            "lng": 108.3301,
+            "image": "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Bánh Mì Phượng",
+                        "address": "2B Phan Châu Trinh, Hội An"
+                  },
+                  "en": {
+                        "name": "Hoi An Crispy Baguette (Banh Mi Phuong)",
+                        "address": "2B Phan Chau Trinh, Hoi An"
+                  },
+                  "zh": {
+                        "name": "会安炭烤法棍三明治 (Bánh Mì Phượng)",
+                        "address": "潘周桢街2B号, 会安"
+                  },
+                  "ko": {
+                        "name": "호이안 크리스피 반미 (반미 프엉)",
+                        "address": "2B 판쩌우찐, 호이안"
+                  },
+                  "ja": {
+                        "name": "ホイアン炭火焼きバインミー（バインミー・フオン）",
+                        "address": "ファンチャウチン通り2B, ホイアン"
+                  }
+            }
       },
       {
-        id: 3,
-        lat: 15.8785,
-        lng: 108.3332,
-        image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400",
-        translations: {
-          vi: { name: "Bánh mì Phượng", address: "2B Phan Châu Trinh, Hội An" },
-          en: { name: "Hoi An Crispy Baguette (Banh Mi Phuong)", address: "2B Phan Chau Trinh, Hoi An" },
-          zh: { name: "芳面包 (Bánh Mì Phượng)", address: "潘周桢街2B号, 会安" },
-          ko: { name: "반미 프엉 (호이안 바게트 샌드위치)", address: "2B 판쩌우찐, 호이안" },
-          ja: { name: "バインミー・フーン", address: "ファンチャウチン通り2B, ホイアン" }
-        }
+            "id": 7,
+            "lat": 15.877057,
+            "lng": 108.329936,
+            "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Bánh Bèo Bà Bảy",
+                        "address": "2 Hoàng Văn Thụ, Old Town, Hội An, Đà Nẵng, Việt Nam"
+                  },
+                  "en": {
+                        "name": "Crispy Roast Pork Vermicelli (Banh Beo Ba Bay)",
+                        "address": "2 Hoang Van Thu, Old Town, Hoi An, Da Nang, Vietnam"
+                  },
+                  "zh": {
+                        "name": "脆皮烧肉菠萝鱼露拌米粉 (Bánh Bèo Bà Bảy)",
+                        "address": "黄文树街2号, 会安古镇, 越南"
+                  },
+                  "ko": {
+                        "name": "바삭한 구운 삼겹살 비빔 쌀국수 (반베오 바베이)",
+                        "address": "2 황반투, 호이안 고대도시, 베트남"
+                  },
+                  "ja": {
+                        "name": "カリカリ焼き豚の発酵魚醤ビーフン（バンベオ・バーバイ）",
+                        "address": "ホアンヴァンツー通り2, ホイアン旧市街"
+                  }
+            }
       },
       {
-        id: 4,
-        lat: 15.8821,
-        lng: 108.3361,
-        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400",
-        translations: {
-          vi: { name: "Mì Quảng Ông Hai", address: "6A Trương Minh Lượng, Hội An" },
-          en: { name: "Ong Hai Savory Quang Noodles", address: "6A Truong Minh Luong, Hoi An" },
-          zh: { name: "二爷广南面 (Mi Quang Ong Hai)", address: "张明亮街6A号, 会安" },
-          ko: { name: "옹하이 미꽝 국수", address: "6A 쯔엉민르엉, 호이안" },
-          ja: { name: "オンハイ ミークアン麺", address: "チュオンミンルオン通り6A, ホイアン" }
-        }
+            "id": 8,
+            "lat": 15.87335,
+            "lng": 108.33685,
+            "image": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Bánh đập Ni Bà Già",
+                        "address": "34 Nguyễn Tri Phương, Hội An, Đà Nẵng, Việt Nam"
+                  },
+                  "en": {
+                        "name": "Cracked Rice Paper & Stir-Fried Baby Clams (Banh Dap Ba Gia)",
+                        "address": "34 Nguyen Tri Phuong, Hoi An, Da Nang, Vietnam"
+                  },
+                  "zh": {
+                        "name": "锦南香炒河蚬配脆拍米饼 (Bánh Đập Bà Già)",
+                        "address": "阮知方街34号, 会安, 越南"
+                  },
+                  "ko": {
+                        "name": "바삭한 반답 크래커와 깜남 재첩 볶음 (반답 바지아)",
+                        "address": "34 응우옌찌프엉, 호이안, 베트남"
+                  },
+                  "ja": {
+                        "name": "バインダップ（割れせんべい）とシジミ炒め（バインダップ・バージャー）",
+                        "address": "グエンチーフオン通り34, ホイアン"
+                  }
+            }
       },
       {
-        id: 5,
-        lat: 15.8768,
-        lng: 108.3292,
-        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
-        translations: {
-          vi: { name: "Bánh bèo Bà Bảy", address: "2 Hoàng Văn Thụ, Hội An" },
-          en: { name: "Ba Bay Savory Water Fern Cakes", address: "2 Hoang Van Thu, Hoi An" },
-          zh: { name: "七婆水蕨糕 (Banh Beo Ba Bay)", address: "黄文树街2号, 会安" },
-          ko: { name: "바베이 반베오 쌀떡", address: "2 황반투, 호이안" },
-          ja: { name: "バーバイ バンベオ蒸し米粉餅", address: "ホアンヴァンツー通り2, ホイアン" }
-        }
+            "id": 9,
+            "lat": 15.8765,
+            "lng": 108.328,
+            "image": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Bánh Ướt Ban Mê Giang Vương",
+                        "address": "86/23 Vũ Huy Tấn, Gia Định, Hồ Chí Minh 72317, Việt Nam"
+                  },
+                  "en": {
+                        "name": "Ban Me Wet Cake (Banh Uot Ban Me Giang Vuong)",
+                        "address": "86/23 Vu Huy Tan, Gia Dinh, Ho Chi Minh 72317, Vietnam"
+                  },
+                  "zh": {
+                        "name": "班迷蒸米卷皮 (Bánh Ướt Ban Mê Giang Vương)",
+                        "address": "胡志明市嘉定武辉晋街86/23号"
+                  },
+                  "ko": {
+                        "name": "반메 젖은 쌀전병 (반uot 반메 지앙브엉)",
+                        "address": "86/23 부후이떤, 호치민, 베트남"
+                  },
+                  "ja": {
+                        "name": "バンメ蒸し生春巻き皮（バンウオット・バンメ）",
+                        "address": "ホーチミン市ヴーフィータン通り86/23"
+                  }
+            }
       },
       {
-        id: 6,
-        lat: 15.8771,
-        lng: 108.3289,
-        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
-        translations: {
-          vi: { name: "Nước Mót Hội An", address: "150 Trần Phú, Hội An" },
-          en: { name: "Mot Herbal & Lotus Refreshment", address: "150 Tran Phu, Hoi An" },
-          zh: { name: "莫特草本莲花茶 (Nuoc Mot)", address: "陈富街150号, 会安" },
-          ko: { name: "호이안 못 허브 연꽃 음료", address: "150 쩐푸, 호이안" },
-          ja: { name: "モット ホイアン蓮ハーブティー", address: "チャンフー通り150, ホイアン" }
-        }
+            "id": 11,
+            "lat": 15.877801,
+            "lng": 108.332363,
+            "image": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
+            "translations": {
+                  "vi": {
+                        "name": "Trà mót",
+                        "address": "150 Trần Phú, Old Town, Hội An, Đà Nẵng 550000, Việt Nam"
+                  },
+                  "en": {
+                        "name": "Mot Lotus Petal Herbal Lemongrass Tea",
+                        "address": "150 Tran Phu, Old Town, Hoi An, Da Nang 550000, Vietnam"
+                  },
+                  "zh": {
+                        "name": "会安荷花瓣九味草本柠檬香茅茶 (Trà Mót)",
+                        "address": "陈富街150号, 会安古镇, 越南"
+                  },
+                  "ko": {
+                        "name": "연꽃잎 레몬그라스 한방 허브티 (느억못 / 트라못)",
+                        "address": "150 쩐푸, 호이안 고대도시, 베트남"
+                  },
+                  "ja": {
+                        "name": "蓮の花びら添え・9種ハーブのレモングラス茶（モット茶）",
+                        "address": "チャンフー通り150, ホイアン旧市街"
+                  }
+            }
       }
-    ];
+];
 
-    let allDishes = [];
+        let allDishes = [];
     let mapInstance = null;
     let userCoords = { lat: 15.8778, lng: 108.3275 }; // Default Hoi An Ancient Town
     let userMarker = null;
@@ -1563,9 +1688,9 @@
       // 4. Update origin options
       const origSel = document.getElementById('cOriginSelect');
       if (origSel && origSel.options && origSel.options.length >= 6) {
-        origSel.options[0].textContent = t.origin_current;
-        origSel.options[1].textContent = t.origin_nguyen_thi_minh_khai;
-        origSel.options[2].textContent = t.origin_chua_cau;
+        origSel.options[0].textContent = t.origin_chua_cau_default || 'Chùa Cầu Hội An (Tâm phố cổ - Mặc định)';
+        origSel.options[1].textContent = t.origin_my_real_gps || '📍 Định vị GPS thực tế của tôi';
+        origSel.options[2].textContent = t.origin_nguyen_thi_minh_khai;
         origSel.options[3].textContent = t.origin_cho_hoi_an;
         origSel.options[4].textContent = t.origin_ben_thuyen;
         origSel.options[5].textContent = t.origin_an_bang;
@@ -1752,27 +1877,55 @@
     // --- 4. GPS INSTANT LOCATOR ---
     function getInstantGps() {
       const statusEl = document.getElementById('gpsLiveStatus');
+      const origSel = document.getElementById('cOriginSelect');
+      const t = I18N[currentMapLang] || I18N.vi;
+
       if (!navigator.geolocation) {
-        alert('Trình duyệt không hỗ trợ Geolocation GPS.');
+        alert(t.gps_not_supported || 'Trình duyệt không hỗ trợ Geolocation GPS.');
         return;
       }
-      statusEl.textContent = 'Đang định vị GPS...';
+      statusEl.textContent = t.gps_locating || 'Đang định vị GPS...';
+
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
-          updateUserMarker(lat, lng, 'Vị trí GPS của bạn');
+          userCoords = { lat, lng };
+
+          updateUserMarker(lat, lng, t.user_location_real || 'Vị trí GPS thực tế của bạn');
           mapInstance.setView([lat, lng], 16);
           statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
+
+          // Check distance to Hoi An center (Chua Cau: 15.8778, 108.3275)
+          const distToHoiAn = calcHaversine(lat, lng, 15.8778, 108.3275);
+          if (origSel) {
+            // Find or update GPS option
+            let gpsOpt = origSel.querySelector('option[value="gps"]');
+            if (!gpsOpt) {
+              gpsOpt = document.createElement('option');
+              gpsOpt.value = 'gps';
+              origSel.insertBefore(gpsOpt, origSel.firstChild);
+            }
+            gpsOpt.textContent = '📍 GPS: ' + lat.toFixed(4) + ', ' + lng.toFixed(4);
+            origSel.value = 'gps';
+          }
+
+          if (distToHoiAn > 20000) {
+            const distKm = Math.round(distToHoiAn / 1000);
+            statusEl.textContent = 'GPS: ' + distKm + 'km từ Hội An';
+            alert((t.gps_outside_hoian || 'Đã định vị GPS thực tế của bạn (cách Hội An {dist}km). Nếu bạn muốn xem ẩm thực phố cổ Hội An, hãy chọn điểm xuất phát tại Chùa Cầu.').replace('{dist}', distKm));
+          }
+
           runRadarScan();
         },
         (err) => {
-          console.warn('GPS error, using Hoi An center:', err);
-          statusEl.textContent = 'GPS: Phố cổ Hội An (Mặc định)';
-          updateUserMarker(15.8778, 108.3275, 'Phố cổ Hội An');
+          console.warn('GPS error, keeping Hoi An center:', err);
+          statusEl.textContent = t.gps_failed || 'Không lấy được GPS (Đã dùng tâm Phố cổ Hội An)';
+          updateUserMarker(15.8778, 108.3275, t.origin_chua_cau_default || 'Chùa Cầu Hội An');
+          if (origSel) origSel.value = '15.8778,108.3275';
           runRadarScan();
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 10000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
       );
     }
 
@@ -2189,24 +2342,28 @@
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
             allDishes = data.map(d => {
-              const transName = (d.name_i18n && d.name_i18n[currentMapLang]) || d.translated_name || d.name;
-              const preset = DEFAULT_DISHES.find(dd => dd.id == d.id || dd.translations?.vi?.name === d.name);
-              const presetTrans = preset?.translations?.[currentMapLang] || preset?.translations?.vi;
-              const finalName = presetTrans?.name || transName;
-              const finalAddr = presetTrans?.address || d.address || 'Hội An';
+              const defaultDish = DEFAULT_DISHES.find(dd => dd.id === Number(d.id));
+              const trans = defaultDish?.translations?.[currentMapLang] || defaultDish?.translations?.vi;
+              const nameFromApi = (d.name_i18n && d.name_i18n[currentMapLang]) || d.translated_name || d.name;
+              const finalName = trans?.name || nameFromApi;
+              const finalAddr = d.address || trans?.address || 'Hội An, Quảng Nam';
+              const finalLat = Number(d.lat) || defaultDish?.lat || 15.8778;
+              const finalLng = Number(d.lng) || defaultDish?.lng || 108.3275;
+              const finalImg = d.image || d.image_url || defaultDish?.image || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400';
+
               return {
-                id: d.id,
+                id: Number(d.id),
                 name: finalName,
                 address: finalAddr,
-                lat: Number(d.lat) || 15.8778,
-                lng: Number(d.lng) || 108.3275,
-                image: d.image || d.image_url || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'
+                lat: finalLat,
+                lng: finalLng,
+                image: finalImg
               };
             });
           }
         }
       } catch (e) {
-        console.warn('API /api/dishes unreachable, fallback to default dishes:', e);
+        console.warn('API /api/dishes unreachable, fallback to exact default dishes:', e);
       }
 
       if (!allDishes || allDishes.length === 0) {
@@ -2244,6 +2401,15 @@
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
       setMapLanguage(currentMapLang);
+
+      // Try automatic real GPS if permission was already granted previously
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'geolocation' }).then(result => {
+          if (result.state === 'granted') {
+            getInstantGps();
+          }
+        }).catch(() => {});
+      }
 
       document.getElementById('btnRadarScan').onclick = runRadarScan;
       document.getElementById('cRadiusSelect').onchange = runRadarScan;
