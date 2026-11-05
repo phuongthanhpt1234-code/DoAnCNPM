@@ -5694,7 +5694,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 $("#dlg").close();
 await refresh();
 
-if (!document.getElementById("secMap").hidden) {
+if (document.getElementById("secMap") && !document.getElementById("secMap").hidden) {
   renderMapSection();
 }
         } catch (err) {
