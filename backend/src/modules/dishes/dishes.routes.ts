@@ -520,7 +520,7 @@ export async function ensureAllDishesSynced() {
            category_id = EXCLUDED.category_id,
            name = EXCLUDED.name,
            description = EXCLUDED.description,
-           address = EXCLUDED.address,
+           address = CASE WHEN dishes.id = 4 AND dishes.address ILIKE '%25 Trần Hưng Đạo%' THEN '26 Trần Quý Cáp, Old Town, Hội An, Đà Nẵng, Việt Nam' ELSE COALESCE(NULLIF(dishes.address, ''), EXCLUDED.address) END,
            image_url = COALESCE(NULLIF(EXCLUDED.image_url, ''), dishes.image_url),
            lat = EXCLUDED.lat,
            lng = EXCLUDED.lng,
