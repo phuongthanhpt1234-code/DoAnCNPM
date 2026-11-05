@@ -1005,9 +1005,9 @@
             Điểm xuất phát
           </label>
           <select id="cOriginSelect" class="form-control">
-            <option value="gps" selected>Vị trí hiện tại của tôi</option>
-            <option value="15.8778,108.3275">Nguyễn Thị Minh Khai, Hội An</option>
+            <option value="gps" selected>📍 Vị trí GPS của tôi</option>
             <option value="15.8773,108.3259">Chùa Cầu Hội An</option>
+            <option value="15.8768,108.3248">Nguyễn Thị Minh Khai, Hội An</option>
             <option value="15.8788,108.3325">Chợ Hội An (Trần Phú)</option>
             <option value="15.8762,108.3294">Bến thuyền Bạch Đằng</option>
             <option value="15.9083,108.3364">Bãi biển An Bàng</option>
@@ -1687,13 +1687,29 @@
 
       // 4. Update origin options
       const origSel = document.getElementById('cOriginSelect');
-      if (origSel && origSel.options && origSel.options.length >= 6) {
-        origSel.options[0].textContent = t.origin_chua_cau_default || 'Chùa Cầu Hội An (Tâm phố cổ - Mặc định)';
-        origSel.options[1].textContent = t.origin_my_real_gps || '📍 Định vị GPS thực tế của tôi';
-        origSel.options[2].textContent = t.origin_nguyen_thi_minh_khai;
-        origSel.options[3].textContent = t.origin_cho_hoi_an;
-        origSel.options[4].textContent = t.origin_ben_thuyen;
-        origSel.options[5].textContent = t.origin_an_bang;
+      if (origSel) {
+        const gpsOpt = origSel.querySelector('option[value="gps"]');
+        if (gpsOpt) {
+          if (userCoords && userCoords.isRealGps) {
+            gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi') + ' (' + userCoords.lat.toFixed(4) + ', ' + userCoords.lng.toFixed(4) + ')';
+          } else {
+            gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi');
+          }
+        }
+        const optChuaCau = origSel.querySelector('option[value="15.8773,108.3259"]');
+        if (optChuaCau) optChuaCau.textContent = t.origin_chua_cau || 'Chùa Cầu Hội An';
+
+        const optMinhKhai = origSel.querySelector('option[value="15.8768,108.3248"]');
+        if (optMinhKhai) optMinhKhai.textContent = t.origin_nguyen_thi_minh_khai || 'Nguyễn Thị Minh Khai, Hội An';
+
+        const optCho = origSel.querySelector('option[value="15.8788,108.3325"]');
+        if (optCho) optCho.textContent = t.origin_cho_hoi_an || 'Chợ Hội An (Trần Phú)';
+
+        const optBenThuyen = origSel.querySelector('option[value="15.8762,108.3294"]');
+        if (optBenThuyen) optBenThuyen.textContent = t.origin_ben_thuyen || 'Bến thuyền Bạch Đằng';
+
+        const optAnBang = origSel.querySelector('option[value="15.9083,108.3364"]');
+        if (optAnBang) optAnBang.textContent = t.origin_an_bang || 'Bãi biển An Bàng';
       }
 
       // 5. Update radius options
@@ -1884,45 +1900,41 @@
         alert(t.gps_not_supported || 'Trình duyệt không hỗ trợ Geolocation GPS.');
         return;
       }
-      statusEl.textContent = t.gps_locating || 'Đang định vị GPS...';
+      if (statusEl) statusEl.textContent = t.gps_locating || 'Đang định vị GPS...';
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
-          userCoords = { lat, lng };
+          userCoords = { lat, lng, isRealGps: true };
 
           updateUserMarker(lat, lng, t.user_location_real || 'Vị trí GPS thực tế của bạn');
           mapInstance.setView([lat, lng], 16);
-          statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
+          if (statusEl) statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
 
-          // Check distance to Hoi An center (Chua Cau: 15.8778, 108.3275)
-          const distToHoiAn = calcHaversine(lat, lng, 15.8778, 108.3275);
+          // Update the single GPS option text with coordinates
           if (origSel) {
-            // Find or update GPS option
-            let gpsOpt = origSel.querySelector('option[value="gps"]');
-            if (!gpsOpt) {
-              gpsOpt = document.createElement('option');
-              gpsOpt.value = 'gps';
-              origSel.insertBefore(gpsOpt, origSel.firstChild);
+            const gpsOpt = origSel.querySelector('option[value="gps"]');
+            if (gpsOpt) {
+              gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
             }
-            gpsOpt.textContent = '📍 GPS: ' + lat.toFixed(4) + ', ' + lng.toFixed(4);
             origSel.value = 'gps';
           }
 
+          // Check distance to Hoi An center (Chua Cau: 15.8773, 108.3259)
+          const distToHoiAn = calcHaversine(lat, lng, 15.8773, 108.3259);
           if (distToHoiAn > 20000) {
             const distKm = Math.round(distToHoiAn / 1000);
-            statusEl.textContent = 'GPS: ' + distKm + 'km từ Hội An';
-            alert((t.gps_outside_hoian || 'Đã định vị GPS thực tế của bạn (cách Hội An {dist}km). Nếu bạn muốn xem ẩm thực phố cổ Hội An, hãy chọn điểm xuất phát tại Chùa Cầu.').replace('{dist}', distKm));
+            if (statusEl) statusEl.textContent = 'GPS: ' + distKm + 'km từ Hội An';
           }
 
           runRadarScan();
         },
         (err) => {
-          console.warn('GPS error, keeping Hoi An center:', err);
-          statusEl.textContent = t.gps_failed || 'Không lấy được GPS (Đã dùng tâm Phố cổ Hội An)';
-          updateUserMarker(15.8778, 108.3275, t.origin_chua_cau_default || 'Chùa Cầu Hội An');
-          if (origSel) origSel.value = '15.8778,108.3275';
+          console.warn('GPS error, using Hoi An center:', err);
+          if (statusEl) statusEl.textContent = t.gps_failed || 'Không lấy được GPS (Đã dùng tâm Phố cổ Hội An)';
+          userCoords = { lat: 15.8773, lng: 108.3259, isRealGps: false };
+          updateUserMarker(15.8773, 108.3259, t.origin_chua_cau || 'Chùa Cầu Hội An');
           runRadarScan();
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
