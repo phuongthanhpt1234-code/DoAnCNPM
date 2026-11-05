@@ -29,11 +29,11 @@ import {
 } from "../services/api";
 import { playSpeech, stopSpeech } from "../services/speech";
 
-function getCustomerMapUrl() {
+function getCustomerMapUrl(lang: string = 'vi') {
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
-    return '/customer-map.html?embed=true';
+    return `/customer-map.html?embed=true&lang=${lang}`;
   }
-  return `${API_URL}/customer-map.html?embed=true`;
+  return `${API_URL}/customer-map.html?embed=true&lang=${lang}`;
 }
 
 function DishCardImage({
@@ -2092,7 +2092,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             {Platform.OS === "web" ? (
               // @ts-ignore
               <iframe
-                src={getCustomerMapUrl()}
+                key={`customer-map-iframe-${lang}`}
+                src={getCustomerMapUrl(lang)}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -2112,7 +2113,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 </Text>
                 <TouchableOpacity
                   style={styles.qrTriggerBtn}
-                  onPress={() => Linking.openURL("/customer-map.html")}
+                  onPress={() => Linking.openURL(`/customer-map.html?lang=${lang}`)}
                 >
                   <Text style={styles.qrTriggerText}>Mở Bản Đồ Trên Trình Duyệt</Text>
                 </TouchableOpacity>

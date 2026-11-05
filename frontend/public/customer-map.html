@@ -100,6 +100,54 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
+    /* LANGUAGE BAR (SYNCS WITH MAIN WEB) */
+    .map-lang-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .map-lang-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .map-lang-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .map-lang-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+      color: #374151;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .map-lang-pill:hover {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+    .map-lang-pill.active {
+      background: #8b1d24;
+      color: #ffffff;
+      border-color: #73171d;
+      box-shadow: 0 2px 8px rgba(139, 29, 36, 0.3);
+    }
+
     /* MAIN CONTAINER */
     .app-body {
       flex: 1;
@@ -936,6 +984,20 @@
   <main class="app-body">
     <!-- CONTROLS CARD -->
     <section class="controls-card">
+      <!-- THANH CHỌN ĐA NGÔN NGỮ (5 NGÔN NGỮ ĐỒNG BỘ VỚI WEB CHÍNH) -->
+      <div class="map-lang-bar">
+        <div class="map-lang-title" id="mapLangTitle">
+          <span>🌐</span> Ngôn ngữ bản đồ / Language:
+        </div>
+        <div class="map-lang-pills" id="mapLangPills">
+          <button type="button" class="map-lang-pill active" data-lang="vi" onclick="setMapLanguage('vi')">VI Tiếng Việt</button>
+          <button type="button" class="map-lang-pill" data-lang="en" onclick="setMapLanguage('en')">EN English</button>
+          <button type="button" class="map-lang-pill" data-lang="zh" onclick="setMapLanguage('zh')">ZH 中文</button>
+          <button type="button" class="map-lang-pill" data-lang="ko" onclick="setMapLanguage('ko')">KO 한국어</button>
+          <button type="button" class="map-lang-pill" data-lang="ja" onclick="setMapLanguage('ja')">JA 日本語</button>
+        </div>
+      </div>
+
       <div class="route-grid">
         <!-- Điểm xuất phát -->
         <div class="form-group form-group-origin">
@@ -1098,14 +1160,334 @@
   <!-- LEAFLET JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // DEFAULT DISHES IN HOI AN
+    // --- 0. MULTILINGUAL SUPPORT (VI, EN, ZH, KO, JA) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    let currentMapLang = urlParams.get('lang') || localStorage.getItem('customer_map_lang') || 'vi';
+    if (!['vi', 'en', 'zh', 'ko', 'ja'].includes(currentMapLang)) currentMapLang = 'vi';
+
+    const I18N = {
+      vi: {
+        brand_sub: "Khám Phá & Chỉ Đường GPS Quán Ăn Hội An",
+        lang_title: "Ngôn ngữ bản đồ / Language:",
+        origin_label: "Điểm xuất phát",
+        origin_current: "Vị trí hiện tại của tôi",
+        origin_nguyen_thi_minh_khai: "Nguyễn Thị Minh Khai, Hội An",
+        origin_chua_cau: "Chùa Cầu Hội An",
+        origin_cho_hoi_an: "Chợ Hội An (Trần Phú)",
+        origin_ben_thuyen: "Bến thuyền Bạch Đằng",
+        origin_an_bang: "Bãi biển An Bàng",
+        dest_label: "Chọn quán muốn đến",
+        dest_placeholder: "-- Chọn quán ăn trên bản đồ --",
+        radius_label: "Bán kính tìm kiếm",
+        radius_500: "Trong 500m",
+        radius_1000: "Trong 1.0 km",
+        radius_2000: "Trong 2.0 km",
+        radius_5000: "Trong 5.0 km",
+        btn_scan: "Quét tìm quán",
+        btn_my_loc: "Vị trí của tôi",
+        travel_mode_title: "Phương tiện chỉ đường:",
+        mode_walking: "Đường bộ (Đi bộ)",
+        mode_motorbike: "Đường xe máy",
+        mode_driving: "Đường ô tô",
+        mode_walking_speed: "~4.5 km/h",
+        mode_motorbike_speed: "~25 km/h",
+        mode_driving_speed: "~35 km/h",
+        note_walking: "Đi bộ thuận tiện qua các tuyến phố đi bộ (Trần Phú, Nguyễn Thái Học, Chùa Cầu).",
+        note_motorbike: "Xe máy linh hoạt qua các ngõ hẻm phố cổ và trục đường ven sông.",
+        note_driving: "Ô tô ưu tiên các trục đường chính (Trần Hưng Đạo, Phan Châu Trinh, Hai Bà Trưng, Lý Thường Kiệt).",
+        metric_eta: "Thời gian dự kiến",
+        metric_dist: "Độ dài thực tế",
+        metric_straight: "Đường chim bay",
+        btn_gmaps_direct: "Mở chỉ đường Google Maps",
+        nearby_title: "Quán ăn quanh đây",
+        places_suffix: "quán",
+        btn_directions: "Chỉ đường",
+        btn_tour: "+ Tour",
+        btn_selected: "✓ Đã chọn",
+        distance_label: "Khoảng cách:",
+        tsp_title: "Lộ trình Food Tour tối ưu (TSP)",
+        btn_clear_tour: "Xóa tour",
+        btn_open_gmaps_tour: "Mở Food Tour Google Maps",
+        tsp_summary_prefix: "Hệ thống tự động sắp xếp thứ tự các quán ngắn nhất để bạn di chuyển thuận tiện nhất.",
+        loading_dishes: "Đang tải danh sách quán ăn Hội An...",
+        no_dishes_found: "Không tìm thấy quán nào trong bán kính đã chọn.",
+        max_tour_alert: "Chỉ có thể chọn tối đa 4 quán cho một lộ trình Food Tour.",
+        user_location_title: "Vị trí của bạn"
+      },
+      en: {
+        brand_sub: "Explore & GPS Navigation for Hoi An Cuisine",
+        lang_title: "Map Language:",
+        origin_label: "Starting point",
+        origin_current: "My current location",
+        origin_nguyen_thi_minh_khai: "Nguyen Thi Minh Khai, Hoi An",
+        origin_chua_cau: "Japanese Covered Bridge (Chua Cau)",
+        origin_cho_hoi_an: "Hoi An Central Market (Tran Phu)",
+        origin_ben_thuyen: "Bach Dang Boat Pier",
+        origin_an_bang: "An Bang Beach",
+        dest_label: "Select destination",
+        dest_placeholder: "-- Select a restaurant on map --",
+        radius_label: "Search radius",
+        radius_500: "Within 500m",
+        radius_1000: "Within 1.0 km",
+        radius_2000: "Within 2.0 km",
+        radius_5000: "Within 5.0 km",
+        btn_scan: "Search Nearby",
+        btn_my_loc: "My Location",
+        travel_mode_title: "Travel mode:",
+        mode_walking: "Walking",
+        mode_motorbike: "Motorbike",
+        mode_driving: "Car / Driving",
+        mode_walking_speed: "~4.5 km/h",
+        mode_motorbike_speed: "~25 km/h",
+        mode_driving_speed: "~35 km/h",
+        note_walking: "Convenient walking route through pedestrian streets (Tran Phu, Nguyen Thai Hoc, Chua Cau).",
+        note_motorbike: "Flexible motorbike route through ancient alleyways and riverside boulevards.",
+        note_driving: "Car route following main thoroughfares (Tran Hung Dao, Phan Chau Trinh, Hai Ba Trung).",
+        metric_eta: "Estimated time",
+        metric_dist: "Actual distance",
+        metric_straight: "Straight line",
+        btn_gmaps_direct: "Open Google Maps Directions",
+        nearby_title: "Nearby Restaurants",
+        places_suffix: "places",
+        btn_directions: "Directions",
+        btn_tour: "+ Tour",
+        btn_selected: "✓ Selected",
+        distance_label: "Distance:",
+        tsp_title: "Optimized Food Tour Route (TSP)",
+        btn_clear_tour: "Clear tour",
+        btn_open_gmaps_tour: "Open Food Tour on Google Maps",
+        tsp_summary_prefix: "The system automatically optimizes the shortest sequence of stops for your tour.",
+        loading_dishes: "Loading Hoi An dishes...",
+        no_dishes_found: "No food spots found within selected radius.",
+        max_tour_alert: "You can select up to 4 places for a Food Tour itinerary.",
+        user_location_title: "Your location"
+      },
+      zh: {
+        brand_sub: "会安特色美食探索与GPS智能导航",
+        lang_title: "地图语言 / Language:",
+        origin_label: "出发地点",
+        origin_current: "我的当前位置",
+        origin_nguyen_thi_minh_khai: "阮氏明开街 (Nguyễn Thị Minh Khai)",
+        origin_chua_cau: "来远桥 / 日本廊桥 (Chùa Cầu)",
+        origin_cho_hoi_an: "会安中心市场 (Trần Phú)",
+        origin_ben_thuyen: "白藤码头 (Bạch Đằng)",
+        origin_an_bang: "安邦海滩 (An Bàng)",
+        dest_label: "选择美食目的地",
+        dest_placeholder: "-- 在地图上选择餐厅 --",
+        radius_label: "搜索范围",
+        radius_500: "500米以内",
+        radius_1000: "1.0公里以内",
+        radius_2000: "2.0公里以内",
+        radius_5000: "5.0公里以内",
+        btn_scan: "搜索周边美食",
+        btn_my_loc: "定位我的位置",
+        travel_mode_title: "出行导航方式:",
+        mode_walking: "步行",
+        mode_motorbike: "摩托车",
+        mode_driving: "汽车 / 驾车",
+        mode_walking_speed: "约4.5公里/时",
+        mode_motorbike_speed: "约25公里/时",
+        mode_driving_speed: "约35公里/时",
+        note_walking: "步行游览会安古城步行街（陈富街、阮太学街、日本廊桥）的最优路线。",
+        note_motorbike: "摩托车路线，便捷穿行古街小巷及河畔景观道路。",
+        note_driving: "驾车路线，优先经由主干道（陈兴道、潘周桢、二征街）。",
+        metric_eta: "预计用时",
+        metric_dist: "实际路程",
+        metric_straight: "直线距离",
+        btn_gmaps_direct: "在谷歌地图中打开导航",
+        nearby_title: "周边特色美食",
+        places_suffix: "家餐厅",
+        btn_directions: "路线导航",
+        btn_tour: "+ 美食路线",
+        btn_selected: "✓ 已加入",
+        distance_label: "距离:",
+        tsp_title: "优化美食路线 (TSP)",
+        btn_clear_tour: "清空路线",
+        btn_open_gmaps_tour: "在谷歌地图中打开美食路线",
+        tsp_summary_prefix: "系统自动计算最短途经顺序，为您规划省时便捷的美食路线。",
+        loading_dishes: "正在载入会安美食数据...",
+        no_dishes_found: "在所选范围内未找到美食餐厅。",
+        max_tour_alert: "每个美食路线最多只能选择4家餐厅。",
+        user_location_title: "您的位置"
+      },
+      ko: {
+        brand_sub: "호이안 미식 탐방 및 GPS 스마트 길찾기",
+        lang_title: "지도 언어 / Language:",
+        origin_label: "출발 위치",
+        origin_current: "내 현재 위치",
+        origin_nguyen_thi_minh_khai: "응우옌티민카이 거리",
+        origin_chua_cau: "내원교 / 일본다리 (Chùa Cầu)",
+        origin_cho_hoi_an: "호이안 중앙시장 (Trần Phú)",
+        origin_ben_thuyen: "박당 유람선 선착장",
+        origin_an_bang: "안방 해변",
+        dest_label: "도착지 맛집 선택",
+        dest_placeholder: "-- 지도에서 맛집 선택 --",
+        radius_label: "검색 반경",
+        radius_500: "500m 이내",
+        radius_1000: "1.0km 이내",
+        radius_2000: "2.0km 이내",
+        radius_5000: "5.0km 이내",
+        btn_scan: "주변 맛집 검색",
+        btn_my_loc: "내 위치 찾기",
+        travel_mode_title: "이동 수단:",
+        mode_walking: "도보",
+        mode_motorbike: "오토바이",
+        mode_driving: "자동차 / 운전",
+        mode_walking_speed: "약 4.5km/h",
+        mode_motorbike_speed: "약 25km/h",
+        mode_driving_speed: "약 35km/h",
+        note_walking: "보행자 전용 거리(쩐푸, 응우옌타이학, 내원교)를 통과하는 최적 도보 코스입니다.",
+        note_motorbike: "골목길과 강변 도로를 편리하게 오갈 수 있는 오토바이 코스입니다.",
+        note_driving: "주요 간선도로(쩐흥다오, 판쩌우찐, 하이바쯩)를 경유하는 차량 경로입니다.",
+        metric_eta: "예상 시간",
+        metric_dist: "실제 거리",
+        metric_straight: "직선 거리",
+        btn_gmaps_direct: "구글 지도에서 길찾기 열기",
+        nearby_title: "주변 인기 맛집",
+        places_suffix: "곳",
+        btn_directions: "길찾기",
+        btn_tour: "+ 투어",
+        btn_selected: "✓ 선택됨",
+        distance_label: "거리:",
+        tsp_title: "최적의 푸드 투어 코스 (TSP)",
+        btn_clear_tour: "투어 삭제",
+        btn_open_gmaps_tour: "구글 지도에서 푸드 투어 열기",
+        tsp_summary_prefix: "시스템이 최단 순서를 자동으로 계산하여 둘러보시기 편리하게 안내합니다.",
+        loading_dishes: "호이안 맛집 정보를 불러오는 중...",
+        no_dishes_found: "선택한 반경 내에 등록된 맛집이 없습니다.",
+        max_tour_alert: "푸드 투어 코스는 최대 4곳까지 선택할 수 있습니다.",
+        user_location_title: "현재 내 위치"
+      },
+      ja: {
+        brand_sub: "ホイアングルメ探索＆GPSスマート道案内",
+        lang_title: "地図言語 / Language:",
+        origin_label: "出発地",
+        origin_current: "現在地",
+        origin_nguyen_thi_minh_khai: "グエンティミンカイ通り",
+        origin_chua_cau: "日本橋 / 来遠橋 (Chùa Cầu)",
+        origin_cho_hoi_an: "ホイアン中央市場 (Trần Phú)",
+        origin_ben_thuyen: "バクダン船着場",
+        origin_an_bang: "アンバンビーチ",
+        dest_label: "目的地（店舗）を選択",
+        dest_placeholder: "-- 地図から店舗を選択 --",
+        radius_label: "検索範囲",
+        radius_500: "500m以内",
+        radius_1000: "1.0km以内",
+        radius_2000: "2.0km以内",
+        radius_5000: "5.0km以内",
+        btn_scan: "周辺の店舗を検索",
+        btn_my_loc: "現在地を取得",
+        travel_mode_title: "移動手段:",
+        mode_walking: "徒歩",
+        mode_motorbike: "バイク",
+        mode_driving: "自動車 / ドライブ",
+        mode_walking_speed: "約4.5km/h",
+        mode_motorbike_speed: "約25km/h",
+        mode_driving_speed: "約35km/h",
+        note_walking: "旧市街の歩行者天国（チャンフー通り、グエンタイホック通り、日本橋）を通る最短徒歩ルートです。",
+        note_motorbike: "路地や川沿いの通りをスピーディに移動できるバイク向けルートです。",
+        note_driving: "幹線道路（チャンフンダオ通り、ファンチャウチン通りなど）を通る車向けルートです。",
+        metric_eta: "所要時間（目安）",
+        metric_dist: "実際の道のり",
+        metric_straight: "直線距離",
+        btn_gmaps_direct: "Googleマップで道案内を開く",
+        nearby_title: "周辺のグルメ店舗",
+        places_suffix: "件",
+        btn_directions: "道案内",
+        btn_tour: "+ ツアー",
+        btn_selected: "✓ 選択済み",
+        distance_label: "距離:",
+        tsp_title: "最適化フードツアールート (TSP)",
+        btn_clear_tour: "ツアーをクリア",
+        btn_open_gmaps_tour: "Googleマップでフードツアーを開く",
+        tsp_summary_prefix: "最短ルートで巡れるよう、訪問順序を自動で最適化します。",
+        loading_dishes: "ホイアンのグルメ情報を読み込み中...",
+        no_dishes_found: "指定の範囲内に店舗が見つかりませんでした。",
+        max_tour_alert: "1つのフードツアーで選択できる店舗は最大4件です。",
+        user_location_title: "あなたの現在地"
+      }
+    };
+
+    // DEFAULT DISHES IN HOI AN WITH MULTILINGUAL TRANSLATIONS
     const DEFAULT_DISHES = [
-      { id: 1, name: "Cao lầu Bá Lễ", address: "49/3 Trần Hưng Đạo, Hội An", lat: 15.8794, lng: 108.3312, image: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400" },
-      { id: 2, name: "Cơm gà Bà Buội", address: "22 Phan Chu Trinh, Hội An", lat: 15.8778, lng: 108.3295, image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400" },
-      { id: 3, name: "Bánh mì Phượng", address: "2B Phan Chu Trinh, Hội An", lat: 15.8785, lng: 108.3332, image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400" },
-      { id: 4, name: "Mì Quảng Ông Hai", address: "6A Trương Minh Lượng, Hội An", lat: 15.8821, lng: 108.3361, image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400" },
-      { id: 5, name: "Bánh đập Ni Bà Già", address: "34 Nguyễn Tri Phương, Hội An", lat: 15.8752, lng: 108.3418, image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400" },
-      { id: 6, name: "Nước Mót Hội An", address: "150 Trần Phú, Hội An", lat: 15.8771, lng: 108.3289, image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400" }
+      {
+        id: 1,
+        lat: 15.8794,
+        lng: 108.3312,
+        image: "https://images.unsplash.com/photo-1555126634-323283e090fa?w=400",
+        translations: {
+          vi: { name: "Cao lầu Bá Lễ", address: "49/3 Trần Hưng Đạo, Hội An" },
+          en: { name: "Traditional Ba Le Cao Lau Noodles", address: "49/3 Tran Hung Dao, Hoi An" },
+          zh: { name: "巴礼高楼面 (Cao Lau Ba Le)", address: "陈兴道街49/3号, 会安" },
+          ko: { name: "바레 까오러우 전통 국수", address: "49/3 쩐흥다오, 호이안" },
+          ja: { name: "バーレー カオラウ麺", address: "チャンフンダオ通り49/3, ホイアン" }
+        }
+      },
+      {
+        id: 2,
+        lat: 15.8778,
+        lng: 108.3295,
+        image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400",
+        translations: {
+          vi: { name: "Cơm gà Bà Buội", address: "22 Phan Chu Trinh, Hội An" },
+          en: { name: "Ba Buoi Hoi An Chicken Rice", address: "22 Phan Chu Trinh, Hoi An" },
+          zh: { name: "布依婆鸡饭 (Com Ga Ba Buoi)", address: "潘周桢街22号, 会安" },
+          ko: { name: "바부오이 치킨 라이스", address: "22 판쩌우찐, 호이안" },
+          ja: { name: "バーブオイ チキンライス", address: "ファンチャウチン通り22, ホイアン" }
+        }
+      },
+      {
+        id: 3,
+        lat: 15.8785,
+        lng: 108.3332,
+        image: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400",
+        translations: {
+          vi: { name: "Bánh mì Phượng", address: "2B Phan Châu Trinh, Hội An" },
+          en: { name: "Hoi An Crispy Baguette (Banh Mi Phuong)", address: "2B Phan Chau Trinh, Hoi An" },
+          zh: { name: "芳面包 (Bánh Mì Phượng)", address: "潘周桢街2B号, 会安" },
+          ko: { name: "반미 프엉 (호이안 바게트 샌드위치)", address: "2B 판쩌우찐, 호이안" },
+          ja: { name: "バインミー・フーン", address: "ファンチャウチン通り2B, ホイアン" }
+        }
+      },
+      {
+        id: 4,
+        lat: 15.8821,
+        lng: 108.3361,
+        image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400",
+        translations: {
+          vi: { name: "Mì Quảng Ông Hai", address: "6A Trương Minh Lượng, Hội An" },
+          en: { name: "Ong Hai Savory Quang Noodles", address: "6A Truong Minh Luong, Hoi An" },
+          zh: { name: "二爷广南面 (Mi Quang Ong Hai)", address: "张明亮街6A号, 会安" },
+          ko: { name: "옹하이 미꽝 국수", address: "6A 쯔엉민르엉, 호이안" },
+          ja: { name: "オンハイ ミークアン麺", address: "チュオンミンルオン通り6A, ホイアン" }
+        }
+      },
+      {
+        id: 5,
+        lat: 15.8768,
+        lng: 108.3292,
+        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+        translations: {
+          vi: { name: "Bánh bèo Bà Bảy", address: "2 Hoàng Văn Thụ, Hội An" },
+          en: { name: "Ba Bay Savory Water Fern Cakes", address: "2 Hoang Van Thu, Hoi An" },
+          zh: { name: "七婆水蕨糕 (Banh Beo Ba Bay)", address: "黄文树街2号, 会安" },
+          ko: { name: "바베이 반베오 쌀떡", address: "2 황반투, 호이안" },
+          ja: { name: "バーバイ バンベオ蒸し米粉餅", address: "ホアンヴァンツー通り2, ホイアン" }
+        }
+      },
+      {
+        id: 6,
+        lat: 15.8771,
+        lng: 108.3289,
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
+        translations: {
+          vi: { name: "Nước Mót Hội An", address: "150 Trần Phú, Hội An" },
+          en: { name: "Mot Herbal & Lotus Refreshment", address: "150 Tran Phu, Hoi An" },
+          zh: { name: "莫特草本莲花茶 (Nuoc Mot)", address: "陈富街150号, 会安" },
+          ko: { name: "호이안 못 허브 연꽃 음료", address: "150 쩐푸, 호이안" },
+          ja: { name: "モット ホイアン蓮ハーブティー", address: "チャンフー通り150, ホイアン" }
+        }
+      }
     ];
 
     let allDishes = [];
@@ -1119,7 +1501,123 @@
     let foodTourDishes = []; // Selected 3-4 dishes for TSP
     let tourPolylines = [];
 
-    // --- 1. HAVERSINE FORMULA ---
+    function setMapLanguage(lang) {
+      if (!I18N[lang]) lang = 'vi';
+      currentMapLang = lang;
+      localStorage.setItem('customer_map_lang', lang);
+
+      // 1. Update language pills active state
+      document.querySelectorAll('.map-lang-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      const t = I18N[lang];
+
+      // 2. Update brand subtitle
+      const subEl = document.querySelector('.brand-subtitle');
+      if (subEl) subEl.textContent = t.brand_sub;
+
+      // 3. Update form labels
+      const langTitleEl = document.getElementById('mapLangTitle');
+      if (langTitleEl) langTitleEl.innerHTML = '<span>🌐</span> ' + t.lang_title;
+
+      const originLabel = document.querySelector('.form-group-origin .form-label');
+      if (originLabel) originLabel.textContent = t.origin_label;
+
+      const destLabel = document.querySelector('.form-group-dest .form-label');
+      if (destLabel) destLabel.textContent = t.dest_label;
+
+      const radiusLabel = document.querySelector('.form-group-radius .form-label');
+      if (radiusLabel) radiusLabel.textContent = t.radius_label;
+
+      // 4. Update origin options
+      const origSel = document.getElementById('cOriginSelect');
+      if (origSel && origSel.options && origSel.options.length >= 6) {
+        origSel.options[0].textContent = t.origin_current;
+        origSel.options[1].textContent = t.origin_nguyen_thi_minh_khai;
+        origSel.options[2].textContent = t.origin_chua_cau;
+        origSel.options[3].textContent = t.origin_cho_hoi_an;
+        origSel.options[4].textContent = t.origin_ben_thuyen;
+        origSel.options[5].textContent = t.origin_an_bang;
+      }
+
+      // 5. Update radius options
+      const radSel = document.getElementById('cRadiusSelect');
+      if (radSel && radSel.options && radSel.options.length >= 4) {
+        radSel.options[0].textContent = t.radius_500;
+        radSel.options[1].textContent = t.radius_1000;
+        radSel.options[2].textContent = t.radius_2000;
+        radSel.options[3].textContent = t.radius_5000;
+      }
+
+      // 6. Update action buttons
+      const btnScan = document.getElementById('btnRadarScan');
+      if (btnScan) btnScan.textContent = t.btn_scan;
+
+      const btnGps = document.getElementById('btnGetGps');
+      if (btnGps) btnGps.textContent = t.btn_my_loc;
+
+      // 7. Update travel mode buttons
+      const tmTitle = document.querySelector('.travel-modes-label');
+      if (tmTitle) tmTitle.innerHTML = '<span>🧭</span> ' + t.travel_mode_title;
+
+      const btnWalk = document.getElementById('modeBtnWalking');
+      if (btnWalk) {
+        btnWalk.innerHTML = '<span class="mode-icon">🚶</span><span>' + t.mode_walking + '</span><span class="mode-speed">' + t.mode_walking_speed + '</span>';
+      }
+      const btnMoto = document.getElementById('modeBtnMotorbike');
+      if (btnMoto) {
+        btnMoto.innerHTML = '<span class="mode-icon">🛵</span><span>' + t.mode_motorbike + '</span><span class="mode-speed">' + t.mode_motorbike_speed + '</span>';
+      }
+      const btnDrive = document.getElementById('modeBtnDriving');
+      if (btnDrive) {
+        btnDrive.innerHTML = '<span class="mode-icon">🚗</span><span>' + t.mode_driving + '</span><span class="mode-speed">' + t.mode_driving_speed + '</span>';
+      }
+
+      // 8. Update metrics labels
+      const etaLabel = document.querySelector('.eta-pill .metric-label');
+      if (etaLabel) etaLabel.textContent = t.metric_eta;
+
+      const distLabel = document.querySelector('.dist-pill .metric-label');
+      if (distLabel) distLabel.textContent = t.metric_dist;
+
+      const straightLabel = document.querySelector('.straight-pill .metric-label');
+      if (straightLabel) straightLabel.textContent = t.metric_straight;
+
+      const btnGmapsDirect = document.getElementById('btnGmapsDirect');
+      if (btnGmapsDirect) btnGmapsDirect.textContent = t.btn_gmaps_direct;
+
+      // 9. Update nearby panel
+      const nearbyTitleEl = document.querySelector('.dishes-panel-title');
+      if (nearbyTitleEl) nearbyTitleEl.textContent = t.nearby_title;
+
+      // 10. Update TSP Food Tour Box
+      const tspTitleEl = document.querySelector('.tsp-title span:first-child');
+      if (tspTitleEl) tspTitleEl.textContent = t.tsp_title;
+
+      const btnClearTour = document.getElementById('btnClearTour');
+      if (btnClearTour) btnClearTour.textContent = t.btn_clear_tour;
+
+      const btnGmapsTour = document.getElementById('btnOpenGmapsTour');
+      if (btnGmapsTour) btnGmapsTour.textContent = t.btn_open_gmaps_tour;
+
+      const tspSummary = document.getElementById('tspSummaryText');
+      if (tspSummary && !foodTourDishes.length) {
+        tspSummary.textContent = t.tsp_summary_prefix;
+      }
+
+      // Reload dishes with translated names and re-render
+      loadDishesData();
+    }
+
+    // Listen to parent window message
+    window.addEventListener('message', (event) => {
+      if (event.data && (event.data.type === 'CHANGE_LANG' || event.data.type === 'SET_LANG') && event.data.lang) {
+        setMapLanguage(event.data.lang);
+      }
+    });
+
+        // --- 1. HAVERSINE FORMULA ---
     function calcHaversine(lat1, lon1, lat2, lon2) {
       const R = 6371000; // meters
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -1306,10 +1804,10 @@
             <p class="dish-addr">${d.address || 'Hội An'}</p>
             <div class="dish-actions">
               <button class="dish-btn-sm" onclick="selectDestinationById(${d.id}); event.stopPropagation();">
-                Chỉ đường
+                ${t.btn_directions}
               </button>
               <button class="dish-btn-sm ${inTour ? 'active' : ''}" onclick="toggleTourDishById(${d.id}); event.stopPropagation();">
-                ${inTour ? '✓ Đã chọn' : '+ Tour'}
+                ${inTour ? t.btn_selected : t.btn_tour}
               </button>
               <span class="dish-dist">${formatDistance(dist)}</span>
             </div>
@@ -1628,11 +2126,12 @@
 
     // --- 9. POPULATE SELECT OPTIONS & FETCH DISHES ---
     async function loadDishesData() {
+      const t = I18N[currentMapLang] || I18N.vi;
       try {
         const apiBase = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
           ? 'http://localhost:4000'
           : 'https://doancnpm-backend.onrender.com';
-        const res = await fetch(`${apiBase}/api/dishes`);
+        const res = await fetch(`${apiBase}/api/dishes?lang=${currentMapLang}`);
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
@@ -1651,12 +2150,22 @@
       }
 
       if (!allDishes || allDishes.length === 0) {
-        allDishes = DEFAULT_DISHES;
+        allDishes = DEFAULT_DISHES.map(d => {
+          const trans = d.translations?.[currentMapLang] || d.translations?.vi || {};
+          return {
+            id: d.id,
+            name: trans.name || d.name,
+            address: trans.address || d.address,
+            lat: d.lat,
+            lng: d.lng,
+            image: d.image
+          };
+        });
       }
 
       // Populate destination select
       const destSelect = document.getElementById('cDestSelect');
-      destSelect.innerHTML = '<option value="">-- Chọn quán ăn trên bản đồ --</option>';
+      destSelect.innerHTML = `<option value="">${t.dest_placeholder}</option>`;
       allDishes.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d.id;
@@ -1670,7 +2179,7 @@
     // --- 10. EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
-      loadDishesData();
+      setMapLanguage(currentMapLang);
 
       document.getElementById('btnRadarScan').onclick = runRadarScan;
       document.getElementById('cRadiusSelect').onchange = runRadarScan;
