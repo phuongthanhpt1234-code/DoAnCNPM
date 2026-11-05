@@ -1167,6 +1167,12 @@
 
     const I18N = {
       vi: {
+        unit_mins: "~{n} phút",
+        tour_stops_suffix: "quán - Tối ưu TSP",
+        tour_stop_prefix: "Trạm",
+        tour_del_tooltip: "Bỏ quán này",
+        tour_total_distance: "Tổng quãng đường Food Tour:",
+        tour_start_from_user: "(Bắt đầu từ vị trí của bạn)",
         brand_sub: "Khám Phá & Chỉ Đường GPS Quán Ăn Hội An",
         lang_title: "Ngôn ngữ bản đồ / Language:",
         origin_label: "Điểm xuất phát",
@@ -1215,6 +1221,12 @@
         user_location_title: "Vị trí của bạn"
       },
       en: {
+        unit_mins: "~{n} mins",
+        tour_stops_suffix: "stops - TSP Optimized",
+        tour_stop_prefix: "Stop",
+        tour_del_tooltip: "Remove stop",
+        tour_total_distance: "Total Food Tour distance:",
+        tour_start_from_user: "(Starting from your location)",
         brand_sub: "Explore & GPS Navigation for Hoi An Cuisine",
         lang_title: "Map Language:",
         origin_label: "Starting point",
@@ -1263,6 +1275,12 @@
         user_location_title: "Your location"
       },
       zh: {
+        unit_mins: "约 {n} 分钟",
+        tour_stops_suffix: "站 - TSP路线最佳",
+        tour_stop_prefix: "第",
+        tour_del_tooltip: "移除此站",
+        tour_total_distance: "美食路线总距离：",
+        tour_start_from_user: "（从您的当前位置出发）",
         brand_sub: "会安特色美食探索与GPS智能导航",
         lang_title: "地图语言 / Language:",
         origin_label: "出发地点",
@@ -1311,6 +1329,12 @@
         user_location_title: "您的位置"
       },
       ko: {
+        unit_mins: "약 {n}분",
+        tour_stops_suffix: "개소 - TSP 최적화",
+        tour_stop_prefix: "경유지",
+        tour_del_tooltip: "경유지 삭제",
+        tour_total_distance: "총 맛집 투어 거리:",
+        tour_start_from_user: "(현재 내 위치에서 출발)",
         brand_sub: "호이안 미식 탐방 및 GPS 스마트 길찾기",
         lang_title: "지도 언어 / Language:",
         origin_label: "출발 위치",
@@ -1359,6 +1383,12 @@
         user_location_title: "현재 내 위치"
       },
       ja: {
+        unit_mins: "約 {n}分",
+        tour_stops_suffix: "箇所 - TSP最適化",
+        tour_stop_prefix: "経由地",
+        tour_del_tooltip: "この地点を削除",
+        tour_total_distance: "総ツアールート距離：",
+        tour_start_from_user: "（現在地からスタート）",
         brand_sub: "ホイアングルメ探索＆GPSスマート道案内",
         lang_title: "地図言語 / Language:",
         origin_label: "出発地",
@@ -1606,6 +1636,24 @@
         tspSummary.textContent = t.tsp_summary_prefix;
       }
 
+      // Update user marker label
+      updateUserMarker(userCoords.lat, userCoords.lng, t.user_location_title || t.origin_current || 'Vị trí của bạn');
+
+      // Refresh destination selection or tour if active
+      if (selectedDestDish) {
+        selectDestinationById(selectedDestDish.id);
+      }
+      if (foodTourDishes.length > 0) {
+        updateTourUiAndSolveTsp();
+      }
+
+      // Notify parent window
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'MAP_LANG_CHANGED', lang }, '*');
+        }
+      } catch (e) {}
+
       // Reload dishes with translated names and re-render
       loadDishesData();
     }
@@ -1730,16 +1778,20 @@
 
     // --- 5. RENDER DISHES ON MAP & LIST ---
     function renderDishes(dishesToRender) {
+      const t = I18N[currentMapLang] || I18N.vi;
+
       // Clear old dish markers
       dishMarkers.forEach(m => mapInstance.removeLayer(m));
       dishMarkers = [];
 
       const listContainer = document.getElementById('nearbyDishesList');
       const badge = document.getElementById('dishesCountBadge');
-      badge.textContent = dishesToRender.length + ' quán';
+      if (badge) {
+        badge.textContent = dishesToRender.length + ' ' + (t.places_suffix || 'quán');
+      }
 
       if (dishesToRender.length === 0) {
-        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#9ca3af; font-size:13px;">Không tìm thấy quán nào trong bán kính đã chọn.</div>';
+        listContainer.innerHTML = '<div style="text-align:center; padding:30px; color:#9ca3af; font-size:13px;">' + (t.no_dishes_found || 'Không tìm thấy quán nào trong bán kính đã chọn.') + '</div>';
         return;
       }
 
@@ -1768,23 +1820,23 @@
           offset: [0, 4]
         });
         
-        // Popup content cleanly styled
+        // Popup content cleanly styled with dynamic i18n
         const popupHtml = `
           <div class="popup-box">
             <img class="popup-img" src="${d.image || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'}" alt="${d.name}" />
             <div class="popup-body">
               <h4 class="popup-title">${d.name}</h4>
               <p class="popup-addr">${d.address || 'Hội An, Quảng Nam'}</p>
-              <p class="popup-dist">Khoảng cách: ${formatDistance(dist)}</p>
+              <p class="popup-dist">${t.distance_label || 'Khoảng cách:'} ${formatDistance(dist)}</p>
               <!-- 3 Chế độ chỉ đường -->
               <div class="popup-mode-chips">
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">🚶 Đi bộ</button>
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">🛵 Xe máy</button>
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'driving' ? 'active' : ''}" data-mode="driving" onclick="setTravelModeAndRoute('driving', ${d.id})">🚗 Ô tô</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">🚶 ${t.mode_walking}</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">🛵 ${t.mode_motorbike}</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'driving' ? 'active' : ''}" data-mode="driving" onclick="setTravelModeAndRoute('driving', ${d.id})">🚗 ${t.mode_driving}</button>
               </div>
               <div class="popup-btns">
-                <button class="popup-btn popup-btn-route" onclick="selectDestinationById(${d.id})">Chỉ đường</button>
-                <button class="popup-btn popup-btn-tour" onclick="toggleTourDishById(${d.id})">+ Tour</button>
+                <button class="popup-btn popup-btn-route" onclick="selectDestinationById(${d.id})">${t.btn_directions}</button>
+                <button class="popup-btn popup-btn-tour" onclick="toggleTourDishById(${d.id})">${t.btn_tour}</button>
                 <a class="popup-btn popup-btn-gmap" id="popupGmapsBtn_${d.id}" href="https://www.google.com/maps/dir/?api=1&destination=${d.lat},${d.lng}&travelmode=${TRAVEL_MODES[currentTravelMode].gmapsMode}" target="_blank">Google Maps</a>
               </div>
             </div>
@@ -2061,6 +2113,7 @@
     }
 
     function updateTourUiAndSolveTsp() {
+      const t = I18N[currentMapLang] || I18N.vi;
       const tourBox = document.getElementById('tspTourBox');
       const countEl = document.getElementById('tspStopsCount');
       const chipsEl = document.getElementById('tspChipsList');
@@ -2077,7 +2130,7 @@
 
       tourBox.classList.add('active');
       const optimalStops = solveOptimalTspRoute();
-      countEl.textContent = `${optimalStops.length} quán - Tối ưu TSP`;
+      countEl.textContent = optimalStops.length + ' ' + (t.tour_stops_suffix || 'quán - Tối ưu TSP');
 
       chipsEl.innerHTML = '';
       let totalTourDist = 0;
@@ -2091,15 +2144,15 @@
         const chip = document.createElement('div');
         chip.className = 'tsp-chip';
         chip.innerHTML = `
-          <span class="tsp-chip-num">Trạm ${index + 1}</span>
+          <span class="tsp-chip-num">${t.tour_stop_prefix || 'Trạm'} ${index + 1}</span>
           <span>${stop.name}</span>
-          <span class="tsp-chip-del" onclick="toggleTourDishById(${stop.id})" title="Bỏ quán này">✕</span>
+          <span class="tsp-chip-del" onclick="toggleTourDishById(${stop.id})" title="${t.tour_del_tooltip || 'Bỏ quán này'}">✕</span>
         `;
         chipsEl.appendChild(chip);
       });
 
       document.getElementById('tspSummaryText').textContent =
-        `Tổng quãng đường Food Tour: ${formatDistance(totalTourDist)} (Bắt đầu từ vị trí của bạn qua ${optimalStops.length} trạm theo thứ tự ngắn nhất).`;
+        (t.tour_total_distance || 'Tổng quãng đường Food Tour:') + ' ' + formatDistance(totalTourDist) + ' ' + (t.tour_start_from_user || '(Bắt đầu từ vị trí của bạn)');
 
       // Build Google Maps multi-stop URL
       if (optimalStops.length > 0) {
@@ -2135,14 +2188,21 @@
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data) && data.length > 0) {
-            allDishes = data.map(d => ({
-              id: d.id,
-              name: d.name,
-              address: d.address || 'Hội An',
-              lat: Number(d.lat) || 15.8778,
-              lng: Number(d.lng) || 108.3275,
-              image: d.image || d.image_url || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'
-            }));
+            allDishes = data.map(d => {
+              const transName = (d.name_i18n && d.name_i18n[currentMapLang]) || d.translated_name || d.name;
+              const preset = DEFAULT_DISHES.find(dd => dd.id == d.id || dd.translations?.vi?.name === d.name);
+              const presetTrans = preset?.translations?.[currentMapLang] || preset?.translations?.vi;
+              const finalName = presetTrans?.name || transName;
+              const finalAddr = presetTrans?.address || d.address || 'Hội An';
+              return {
+                id: d.id,
+                name: finalName,
+                address: finalAddr,
+                lat: Number(d.lat) || 15.8778,
+                lng: Number(d.lng) || 108.3275,
+                image: d.image || d.image_url || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'
+              };
+            });
           }
         }
       } catch (e) {
@@ -2155,7 +2215,7 @@
           return {
             id: d.id,
             name: trans.name || d.name,
-            address: trans.address || d.address,
+            address: trans.address || d.address || 'Hội An',
             lat: d.lat,
             lng: d.lng,
             image: d.image
@@ -2165,13 +2225,17 @@
 
       // Populate destination select
       const destSelect = document.getElementById('cDestSelect');
-      destSelect.innerHTML = `<option value="">${t.dest_placeholder}</option>`;
-      allDishes.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = `${d.name} (${d.address || 'Hội An'})`;
-        destSelect.appendChild(opt);
-      });
+      if (destSelect) {
+        const currentVal = destSelect.value;
+        destSelect.innerHTML = `<option value="">${t.dest_placeholder}</option>`;
+        allDishes.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = `${d.name} (${d.address || 'Hội An'})`;
+          destSelect.appendChild(opt);
+        });
+        if (currentVal) destSelect.value = currentVal;
+      }
 
       runRadarScan();
     }

@@ -319,9 +319,17 @@ const PAGE_UI: Record<
     qrModalDesc: string;
     closeQrModalBtn: string;
     spamCheckInWarning: string;
+    mapTriggerBtn?: string;
+    mapModalTitle?: string;
+    mapModalSubtitle?: string;
+    closeModalBtn?: string;
   }
 > = {
   vi: {
+    mapTriggerBtn: "Bản Đồ & GPS",
+    mapModalTitle: "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS",
+    mapModalSubtitle: "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP",
+    closeModalBtn: "✕ Đóng",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Thuyết Minh Tự Động Đa Ngôn Ngữ",
     qrMobileBtn: "Quét QR Mobile",
@@ -372,6 +380,10 @@ const PAGE_UI: Record<
     spamCheckInWarning: "⚠️ Bạn đang thao tác quá nhanh! Vui lòng chờ 2 giây trước khi bấm lại.",
   },
   en: {
+    mapTriggerBtn: "Map & GPS",
+    mapModalTitle: "FLAVORS OF HOI AN — GPS MAP & DIRECTIONS",
+    mapModalSubtitle: "Real-time GPS · Radius Scanner · Turn-by-turn OSRM · Optimized Food Tour TSP",
+    closeModalBtn: "✕ Close",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Multilingual Automated Audio Guide",
     qrMobileBtn: "Mobile QR Code",
@@ -423,6 +435,10 @@ const PAGE_UI: Record<
     spamCheckInWarning: "⚠️ You're doing that too fast! Please wait 2 seconds before tapping again.",
   },
   zh: {
+    mapTriggerBtn: "地图与GPS",
+    mapModalTitle: "寻味会安 — GPS地图与路线指引",
+    mapModalSubtitle: "即时GPS定位 · 半径雷达探测 · OSRM实境导航 · TSP最佳美食巡回路线",
+    closeModalBtn: "✕ 关闭",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "多语言自动语音导览系统",
     qrMobileBtn: "手机扫码",
@@ -470,6 +486,10 @@ const PAGE_UI: Record<
     spamCheckInWarning: "⚠️ 操作过于频繁！请等待 2 秒后再试。",
   },
   ko: {
+    mapTriggerBtn: "지도 & GPS",
+    mapModalTitle: "호이안의 맛 — GPS 지도 & 길찾기",
+    mapModalSubtitle: "실시간 GPS 위치 · 반경 스캔 · OSRM 실시간 경로 · TSP 최적 맛집 투어 경로",
+    closeModalBtn: "✕ 닫기",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "다국어 자동 음성 가이드",
     qrMobileBtn: "모바일 QR 코드",
@@ -520,6 +540,10 @@ const PAGE_UI: Record<
     spamCheckInWarning: "⚠️ 작업이 너무 빠릅니다! 2초 후 다시 시도해 주세요.",
   },
   ja: {
+    mapTriggerBtn: "地図 & GPS",
+    mapModalTitle: "ホイアンの味 — GPS地図＆ルート案内",
+    mapModalSubtitle: "リアルタイムGPS測位 · 半径レーダースキャン · OSRM実走ルート案内 · TSP最適グルメツアールート",
+    closeModalBtn: "✕ 閉じる",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "多言語自動音声グルメガイド",
     qrMobileBtn: "モバイルQR",
@@ -1176,7 +1200,23 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   useEffect(() => {
     notifyPresenceLangChange(lang);
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem("customer_map_lang", lang);
+      }
+    } catch (e) {}
   }, [lang]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleMapMessage = (event: MessageEvent) => {
+      if (event.data && event.data.type === "MAP_LANG_CHANGED" && event.data.lang && (LANGS as any)[event.data.lang]) {
+        handleSelectLanguage(event.data.lang as LangKey);
+      }
+    };
+    window.addEventListener("message", handleMapMessage);
+    return () => window.removeEventListener("message", handleMapMessage);
+  }, []);
 
   useEffect(() => {
     if (params.lang && PAGE_UI[params.lang]) {
@@ -1229,6 +1269,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     router.setParams({ lang: k });
     try {
       await AsyncStorage.setItem("appLanguage", k);
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem("customer_map_lang", k);
+      }
     } catch (e) {}
   };
 
@@ -1429,7 +1472,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             style={styles.mapTriggerBtn}
             onPress={() => setCustomerMapVisible(true)}
           >
-            <Text style={styles.mapTriggerText}>Bản Đồ & GPS</Text>
+            <Text style={styles.mapTriggerText}>{ui.mapTriggerBtn || "Bản Đồ & GPS"}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.qrTriggerBtn}
@@ -2062,27 +2105,56 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         <View style={{ flex: 1, backgroundColor: "#fdfbf7" }}>
           {/* Modal Header */}
           <View style={styles.customerMapHeader}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1, marginRight: 10 }}>
               <View style={styles.customerMapIconBox}>
                 <Text style={{ fontSize: 13, fontWeight: "800", color: "#8b1d24" }}>MAP</Text>
               </View>
-              <View>
-                <Text style={styles.customerMapTitle}>
-                  THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS
+              <View style={{ flex: 1 }}>
+                <Text style={styles.customerMapTitle} numberOfLines={1}>
+                  {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
                 </Text>
-                <Text style={styles.customerMapSubtitle}>
-                  Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP
+                <Text style={styles.customerMapSubtitle} numberOfLines={1}>
+                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP"}
                 </Text>
               </View>
             </View>
 
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              
+              {/* Language switcher inside the map modal header */}
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
+                {(Object.keys(LANGS) as LangKey[]).map((k) => (
+                  <TouchableOpacity
+                    key={k}
+                    onPress={() => handleSelectLanguage(k)}
+                    style={{
+                      paddingVertical: 4,
+                      paddingHorizontal: 8,
+                      borderRadius: 14,
+                      backgroundColor: lang === k ? "#8b1d24" : "#f3f4f6",
+                      borderWidth: 1,
+                      borderColor: lang === k ? "#73171d" : "#e5e7eb",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        fontWeight: "bold",
+                        color: lang === k ? "#ffffff" : "#4b5563",
+                      }}
+                    >
+                      {k.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
               <TouchableOpacity
                 style={styles.customerMapCloseBtn}
                 onPress={() => setCustomerMapVisible(false)}
               >
-                <Text style={styles.customerMapCloseBtnText}>✕ Đóng</Text>
+                <Text style={styles.customerMapCloseBtnText}>
+                  {ui.closeModalBtn || `✕ ${ui.closeBtn || "Đóng"}`}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
