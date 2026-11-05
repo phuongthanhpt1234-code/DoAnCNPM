@@ -4969,6 +4969,9 @@
           api("/checkins?limit=8"),
         ]);
         lastStats = s;
+        if (typeof updateSpatialAnalyticsData === "function") {
+          updateSpatialAnalyticsData();
+        }
         const t = s.totals;
         if (s.presence) {
           renderPresence(s.presence);
@@ -5147,6 +5150,7 @@
         }
         renderDishes();
         if (typeof renderQrManager === "function") renderQrManager();
+        if (typeof updateSpatialAnalyticsData === "function") updateSpatialAnalyticsData();
       }
 
       function renderCatChips() {
@@ -6802,19 +6806,19 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         const topStats = (lastStats && lastStats.top) || [];
 
         // Gắn số liệu tương tác quét QR / checkin vào từng món
-        let totalInteractions = 0;
+        let totalDishScans = 0;
         const enriched = validDishes.map(d => {
           const matched = topStats.find(t => String(t.id) === String(d.id));
-          const checkins = matched ? (Number(matched.checkins) || 0) : (Number(d.checkins) || 0);
-          const views = matched ? (Number(matched.views) || 0) : (Number(d.views) || 0);
-          // Tổng tương tác: lượt checkin và quét qr
-          const scans = Math.max(checkins > 0 ? checkins : 0, views > 0 ? views : 0, 8);
-          totalInteractions += scans;
+          const checkins = matched ? Number(matched.check_ins ?? matched.checkins ?? 0) : Number(d.check_ins ?? d.checkins ?? 0);
+          const favs = matched ? Number(matched.favorites ?? 0) : Number(d.favorites ?? 0);
+          // Tổng tương tác thực tế từ khách: check-in + yêu thích
+          const scans = checkins + favs;
+          totalDishScans += scans;
           return {
             ...d,
             scans,
             checkins,
-            views,
+            favorites: favs,
             displayName: d.translations?.vi?.name || d.name || "Món ăn #" + d.id,
             displayAddress: d.address || "Hội An, Quảng Nam",
           };
@@ -6824,7 +6828,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         enriched.sort((a, b) => b.scans - a.scans);
 
         const topHotspot = enriched[0] || null;
-        const maxScans = topHotspot ? topHotspot.scans : 1;
+        const maxScans = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 1;
 
         // Tính khoảng cách tới Chùa Cầu (lõi di sản)
         let coreCount = 0;
@@ -6841,15 +6845,25 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         if (kpiTotal) kpiTotal.textContent = enriched.length + " điểm";
 
         const kpiTopName = document.getElementById("kpiMapTopHotspot");
-        if (kpiTopName) kpiTopName.textContent = topHotspot ? topHotspot.displayName : "Bánh Mì Phượng";
+        if (kpiTopName) {
+          kpiTopName.textContent = (topHotspot && topHotspot.scans > 0)
+            ? topHotspot.displayName
+            : (enriched[0]?.displayName || "Chưa có tương tác");
+        }
 
         const kpiTopScans = document.getElementById("kpiMapTopHotspotScans");
-        if (kpiTopScans) kpiTopScans.textContent = topHotspot ? (topHotspot.scans + " lượt tương tác (Cực đại)") : "42 lượt tương tác";
+        if (kpiTopScans) {
+          const sCount = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 0;
+          kpiTopScans.textContent = sCount > 0 ? (sCount + " lượt tương tác (Cực đại)") : "0 lượt tương tác";
+        }
 
         const kpiInteractions = document.getElementById("kpiMapTotalInteractions");
         if (kpiInteractions) {
-          const globalCheckins = lastStats?.totals?.total_checkins || 0;
-          kpiInteractions.textContent = (globalCheckins > totalInteractions ? globalCheckins : totalInteractions) + " lượt";
+          const sysCheckins = Number(lastStats?.totals?.check_ins || 0);
+          const sysFavs = Number(lastStats?.totals?.favorites || 0);
+          const globalInteractions = sysCheckins + sysFavs;
+          const displayInteractions = globalInteractions > totalDishScans ? globalInteractions : totalDishScans;
+          kpiInteractions.textContent = displayInteractions + " lượt";
         }
 
         const kpiCoreRatioEl = document.getElementById("kpiMapCoreRatio");

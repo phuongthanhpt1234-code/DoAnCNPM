@@ -1335,14 +1335,31 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             note: `Check-in món ${dish.name.vi}`,
           }),
         });
+        const dishTitle = dish.name[lang] || dish.name.vi || "";
+        showToast(
+          lang === "vi"
+            ? `✅ Đã check-in thành công: ${dishTitle}`
+            : `✅ Successfully checked in: ${dishTitle}`
+        );
       } else {
         await api(
           `/checkins?device_id=${encodeURIComponent(deviceId)}&dish_id=${dish.id}`,
           { method: "DELETE" },
         );
+        const dishTitle = dish.name[lang] || dish.name.vi || "";
+        showToast(
+          lang === "vi"
+            ? `Đã hủy check-in: ${dishTitle}`
+            : `Unchecked: ${dishTitle}`
+        );
       }
     } catch (e) {
       console.warn("Check-in/out error:", e);
+      showToast(
+        lang === "vi"
+          ? "Không thể kết nối máy chủ để check-in."
+          : "Unable to connect to server for check-in."
+      );
       setCheckedDishIds((prev) =>
         isAlreadyChecked
           ? [...prev, dish.id]
