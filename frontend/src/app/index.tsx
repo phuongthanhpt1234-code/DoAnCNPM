@@ -1917,17 +1917,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                     </TouchableOpacity>
                   )}
 
-                  <TouchableOpacity
-                    style={[styles.secondaryBtn, { backgroundColor: "#fff7ed", borderColor: "#fed7aa" }]}
-                    onPress={() => {
-                      handleCloseDishModal();
-                      setCustomerMapVisible(true);
-                    }}
-                  >
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                      
-                    </View>
-                  </TouchableOpacity>
+                 
 
                   <TouchableOpacity
                     style={styles.secondaryBtn}
