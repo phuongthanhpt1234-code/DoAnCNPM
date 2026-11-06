@@ -1101,7 +1101,7 @@
             Quét tìm quán
           </button>
           <button type="button" id="btnGetGps" class="btn btn-gmaps" title="Định vị GPS vị trí hiện tại của bạn">
-            📍 Vị trí hiện tại
+            Vị trí hiện tại
           </button>
         </div>
       </div>
@@ -1143,7 +1143,7 @@
       <div id="routeDetailCard" class="route-detail-card" style="display: none;">
         <div class="route-detail-header">
           <div class="route-target-info">
-            <div class="route-target-icon" id="routeModeIcon">🚶</div>
+            <div class="route-target-icon" id="routeModeIcon" style="display:none;"></div>
             <div>
               <div class="route-target-title" id="routeDestName">Đang chỉ đường...</div>
               <div class="route-target-addr" id="routeDestAddr">Địa chỉ quán ăn</div>
@@ -1232,7 +1232,7 @@
     const I18N = {
       vi: {
         origin_chua_cau_default: "Chùa Cầu Hội An (Tâm phố cổ - Mặc định)",
-        origin_my_real_gps: "📍 Định vị GPS thực tế của tôi",
+        origin_my_real_gps: "Định vị GPS thực tế của tôi",
         user_location_real: "Vị trí GPS thực tế của bạn",
         gps_outside_hoian: "Đã nhận GPS thực tế của bạn (cách Hội An {dist}km). Để khám phá các quán ăn phố cổ, bạn hãy chọn điểm xuất phát tại Chùa Cầu Hội An.",
         gps_locating: "Đang dò tìm tọa độ GPS vệ tinh...",
@@ -1266,7 +1266,7 @@
         radius_2000: "Trong 2.0 km",
         radius_5000: "Trong 5.0 km",
         btn_scan: "Quét tìm quán",
-        btn_my_loc: "📍 Vị trí hiện tại",
+        btn_my_loc: "Vị trí hiện tại",
         travel_mode_title: "Phương tiện chỉ đường:",
         mode_walking: "Đường bộ (Đi bộ)",
         mode_motorbike: "Đường xe máy",
@@ -1298,7 +1298,7 @@
       },
       en: {
         origin_chua_cau_default: "Chua Cau / Japanese Bridge (Ancient Town - Default)",
-        origin_my_real_gps: "📍 My Real GPS Location",
+        origin_my_real_gps: "My Real GPS Location",
         user_location_real: "Your Real GPS Location",
         gps_outside_hoian: "Located your real GPS ({dist}km from Hoi An). To explore ancient town cuisine, select Chua Cau as your starting point.",
         gps_locating: "Detecting satellite GPS coordinates...",
@@ -1332,7 +1332,7 @@
         radius_2000: "Within 2.0 km",
         radius_5000: "Within 5.0 km",
         btn_scan: "Search Nearby",
-        btn_my_loc: "📍 Current Location",
+        btn_my_loc: "Current Location",
         travel_mode_title: "Travel mode:",
         mode_walking: "Walking",
         mode_motorbike: "Motorbike",
@@ -1364,7 +1364,7 @@
       },
       zh: {
         origin_chua_cau_default: "来远桥/日本廊桥（古镇中心 - 默认）",
-        origin_my_real_gps: "📍 我的即时真实GPS定位",
+        origin_my_real_gps: "我的即时真实GPS定位",
         user_location_real: "您的即时真实GPS位置",
         gps_outside_hoian: "已获取您的真实GPS（距会安{dist}公里）。如需探索古镇美食，请选择来远桥作为出发点。",
         gps_locating: "正在探测卫星GPS坐标...",
@@ -1398,7 +1398,7 @@
         radius_2000: "2.0公里以内",
         radius_5000: "5.0公里以内",
         btn_scan: "搜索周边美食",
-        btn_my_loc: "📍 当前位置",
+        btn_my_loc: "当前位置",
         travel_mode_title: "出行导航方式:",
         mode_walking: "步行",
         mode_motorbike: "摩托车",
@@ -1430,7 +1430,7 @@
       },
       ko: {
         origin_chua_cau_default: "내원교 / 처우꺼우 (고대 도시 중심 - 기본)",
-        origin_my_real_gps: "📍 나의 실제 GPS 위치",
+        origin_my_real_gps: "나의 실제 GPS 위치",
         user_location_real: "당신의 실제 GPS 위치",
         gps_outside_hoian: "실제 GPS가 확인되었습니다(호이안에서 {dist}km). 고대 도시 맛집을 둘러보시려면 내원교(Chua Cau)를 출발지로 선택하세요.",
         gps_locating: "위성 GPS 위치 감지 중...",
@@ -1464,7 +1464,7 @@
         radius_2000: "2.0km 이내",
         radius_5000: "5.0km 이내",
         btn_scan: "주변 맛집 검색",
-        btn_my_loc: "📍 현재 위치",
+        btn_my_loc: "현재 위치",
         travel_mode_title: "이동 수단:",
         mode_walking: "도보",
         mode_motorbike: "오토바이",
@@ -1496,7 +1496,7 @@
       },
       ja: {
         origin_chua_cau_default: "来遠橋 / 日本橋（旧市街中心 - デフォルト）",
-        origin_my_real_gps: "📍 私の実際のGPS現在地",
+        origin_my_real_gps: "私の実際のGPS現在地",
         user_location_real: "あなたの実際のGPS現在地",
         gps_outside_hoian: "実際のGPSを取得しました（ホイアンから{dist}km）。旧市街のグルメを探索する場合は、来遠橋（Chua Cau）を出発地に選択してください。",
         gps_locating: "衛星GPS座標を測位中...",
@@ -1530,7 +1530,7 @@
         radius_2000: "2.0km以内",
         radius_5000: "5.0km以内",
         btn_scan: "周辺の店舗を検索",
-        btn_my_loc: "📍 現在地",
+        btn_my_loc: "現在地",
         travel_mode_title: "移動手段:",
         mode_walking: "徒歩",
         mode_motorbike: "バイク",
@@ -1763,7 +1763,7 @@
 
       // 3. Update form labels
       const langTitleEl = document.getElementById('mapLangTitle');
-      if (langTitleEl) langTitleEl.innerHTML = '<span>🌐</span> ' + t.lang_title;
+      if (langTitleEl) langTitleEl.textContent = t.lang_title;
 
       const originLabel = document.querySelector('.form-group-origin .form-label');
       if (originLabel) originLabel.textContent = t.origin_label;
@@ -1780,9 +1780,9 @@
         const gpsOpt = origSel.querySelector('option[value="gps"]');
         if (gpsOpt) {
           if (userCoords && userCoords.isRealGps) {
-            gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi') + ' (' + userCoords.lat.toFixed(4) + ', ' + userCoords.lng.toFixed(4) + ')';
+            gpsOpt.textContent = '' + (t.origin_current || 'Vị trí GPS của tôi') + ' (' + userCoords.lat.toFixed(4) + ', ' + userCoords.lng.toFixed(4) + ')';
           } else {
-            gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi');
+            gpsOpt.textContent = '' + (t.origin_current || 'Vị trí GPS của tôi');
           }
         }
         const optChuaCau = origSel.querySelector('option[value="15.8773,108.3259"]');
@@ -1819,19 +1819,19 @@
 
       // 7. Update travel mode buttons
       const tmTitle = document.querySelector('.travel-modes-label');
-      if (tmTitle) tmTitle.innerHTML = '<span>🧭</span> ' + t.travel_mode_title;
+      if (tmTitle) tmTitle.textContent = t.travel_mode_title;
 
       const btnWalk = document.getElementById('modeBtnWalking');
       if (btnWalk) {
-        btnWalk.innerHTML = '<span class="mode-icon">🚶</span><span>' + t.mode_walking + '</span><span class="mode-speed">' + t.mode_walking_speed + '</span>';
+        btnWalk.innerHTML = '<span>' + t.mode_walking + '</span><span class="mode-speed">' + t.mode_walking_speed + '</span>';
       }
       const btnMoto = document.getElementById('modeBtnMotorbike');
       if (btnMoto) {
-        btnMoto.innerHTML = '<span class="mode-icon">🛵</span><span>' + t.mode_motorbike + '</span><span class="mode-speed">' + t.mode_motorbike_speed + '</span>';
+        btnMoto.innerHTML = '<span>' + t.mode_motorbike + '</span><span class="mode-speed">' + t.mode_motorbike_speed + '</span>';
       }
       const btnDrive = document.getElementById('modeBtnDriving');
       if (btnDrive) {
-        btnDrive.innerHTML = '<span class="mode-icon">🚗</span><span>' + t.mode_driving + '</span><span class="mode-speed">' + t.mode_driving_speed + '</span>';
+        btnDrive.innerHTML = '<span>' + t.mode_driving + '</span><span class="mode-speed">' + t.mode_driving_speed + '</span>';
       }
 
       // 8. Update metrics labels
@@ -1939,8 +1939,8 @@
 
       // Trình chuyển đổi lớp bản đồ trực quan
       L.control.layers({
-        "🗺️ Bản đồ đường phố": googleRoadmap,
-        "🛰️ Ảnh vệ tinh": googleSatellite
+        "Bản đồ đường phố": googleRoadmap,
+        "Ảnh vệ tinh": googleSatellite
       }, null, { position: 'topright' }).addTo(mapInstance);
 
       updateUserMarker(userCoords.lat, userCoords.lng, 'Vị trí của bạn');
@@ -1990,7 +1990,7 @@
         banner.className = 'gps-notice-banner ' + type;
         msgEl.textContent = msg;
         if (iconEl) {
-          iconEl.textContent = type === 'warning' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️');
+          iconEl.textContent = '';
         }
         banner.style.display = 'flex';
       }
@@ -2015,7 +2015,7 @@
         return;
       }
       if (btnGps) {
-        btnGps.textContent = '⏳ ' + (t.gps_locating_btn || 'Đang định vị...');
+        btnGps.textContent = t.gps_locating_btn || 'Đang định vị...';
       }
       if (statusEl) statusEl.textContent = t.gps_locating || 'Đang dò tìm tọa độ GPS vệ tinh...';
 
@@ -2026,7 +2026,7 @@
           userCoords = { lat, lng, isRealGps: true };
 
           if (btnGps) {
-            btnGps.textContent = t.btn_my_loc || '📍 Vị trí hiện tại';
+            btnGps.textContent = t.btn_my_loc || 'Vị trí hiện tại';
           }
 
           updateUserMarker(lat, lng, t.user_location_real || 'Vị trí GPS thực tế của bạn');
@@ -2041,7 +2041,7 @@
               gpsOpt.value = 'gps';
               origSel.insertBefore(gpsOpt, origSel.firstChild);
             }
-            gpsOpt.textContent = (t.btn_my_loc || '📍 Vị trí hiện tại') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
+            gpsOpt.textContent = (t.btn_my_loc || 'Vị trí hiện tại') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
             origSel.value = 'gps';
           }
 
@@ -2061,7 +2061,7 @@
         (err) => {
           console.warn('GPS error handled safely, avoiding app crash:', err);
           if (btnGps) {
-            btnGps.textContent = t.btn_my_loc || '📍 Vị trí hiện tại';
+            btnGps.textContent = t.btn_my_loc || 'Vị trí hiện tại';
           }
 
           let errMsg = '';
@@ -2148,9 +2148,9 @@
               <p class="popup-dist">${t.distance_label || 'Khoảng cách:'} ${formatDistance(dist)}</p>
               <!-- 3 Chế độ chỉ đường -->
               <div class="popup-mode-chips">
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">🚶 ${t.mode_walking}</button>
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">🛵 ${t.mode_motorbike}</button>
-                <button type="button" class="popup-mode-chip ${currentTravelMode === 'driving' ? 'active' : ''}" data-mode="driving" onclick="setTravelModeAndRoute('driving', ${d.id})">🚗 ${t.mode_driving}</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">${t.mode_walking}</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">${t.mode_motorbike}</button>
+                <button type="button" class="popup-mode-chip ${currentTravelMode === 'driving' ? 'active' : ''}" data-mode="driving" onclick="setTravelModeAndRoute('driving', ${d.id})">${t.mode_driving}</button>
               </div>
               <div class="popup-btns">
                 <button class="popup-btn popup-btn-route" onclick="selectDestinationById(${d.id})">${t.btn_directions}</button>
@@ -2226,7 +2226,7 @@
     const TRAVEL_MODES = {
       walking: {
         label: 'Đường bộ (Đi bộ)',
-        icon: '🚶',
+        icon: '',
         osrmProfile: 'walking',
         gmapsMode: 'walking',
         speedKmH: 4.5,
@@ -2236,7 +2236,7 @@
       },
       motorbike: {
         label: 'Đường xe máy',
-        icon: '🛵',
+        icon: '',
         osrmProfile: 'driving',
         gmapsMode: 'two_wheeler',
         speedKmH: 25,
@@ -2246,7 +2246,7 @@
       },
       driving: {
         label: 'Đường ô tô',
-        icon: '🚗',
+        icon: '',
         osrmProfile: 'driving',
         gmapsMode: 'driving',
         speedKmH: 35,

@@ -2110,18 +2110,13 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         <View style={{ flex: 1, backgroundColor: "#fdfbf7" }}>
           {/* Modal Header */}
           <View style={styles.customerMapHeader}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flex: 1, marginRight: 10 }}>
-              <View style={styles.customerMapIconBox}>
-                <Text style={{ fontSize: 13, fontWeight: "800", color: "#8b1d24" }}>MAP</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.customerMapTitle} numberOfLines={1}>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <Text style={styles.customerMapTitle} numberOfLines={1}>
                   {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
                 </Text>
-                <Text style={styles.customerMapSubtitle} numberOfLines={1}>
+              <Text style={styles.customerMapSubtitle} numberOfLines={1}>
                   {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP"}
                 </Text>
-              </View>
             </View>
 
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
