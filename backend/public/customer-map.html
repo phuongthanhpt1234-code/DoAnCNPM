@@ -1041,12 +1041,9 @@
           <button id="btnRadarScan" class="btn btn-primary" title="Quét tìm quán ăn xung quanh">
             Quét tìm quán
           </button>
-          <button id="btnGetGps" class="btn btn-gps" style="display: none;" title="Lấy GPS tức thời">
-            Vị trí của tôi
+          <button type="button" id="btnGetGps" class="btn btn-gmaps" title="Định vị GPS vị trí hiện tại của bạn">
+            📍 Vị trí hiện tại
           </button>
-          <a id="btnOpenGoogleMaps" class="btn btn-gmaps" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" title="Mở trực tiếp trên ứng dụng Google Maps">
-            Google Maps
-          </a>
         </div>
       </div>
 
@@ -1196,7 +1193,7 @@
         radius_2000: "Trong 2.0 km",
         radius_5000: "Trong 5.0 km",
         btn_scan: "Quét tìm quán",
-        btn_my_loc: "Vị trí của tôi",
+        btn_my_loc: "📍 Vị trí hiện tại",
         travel_mode_title: "Phương tiện chỉ đường:",
         mode_walking: "Đường bộ (Đi bộ)",
         mode_motorbike: "Đường xe máy",
@@ -1257,7 +1254,7 @@
         radius_2000: "Within 2.0 km",
         radius_5000: "Within 5.0 km",
         btn_scan: "Search Nearby",
-        btn_my_loc: "My Location",
+        btn_my_loc: "📍 Current Location",
         travel_mode_title: "Travel mode:",
         mode_walking: "Walking",
         mode_motorbike: "Motorbike",
@@ -1318,7 +1315,7 @@
         radius_2000: "2.0公里以内",
         radius_5000: "5.0公里以内",
         btn_scan: "搜索周边美食",
-        btn_my_loc: "定位我的位置",
+        btn_my_loc: "📍 当前位置",
         travel_mode_title: "出行导航方式:",
         mode_walking: "步行",
         mode_motorbike: "摩托车",
@@ -1379,7 +1376,7 @@
         radius_2000: "2.0km 이내",
         radius_5000: "5.0km 이내",
         btn_scan: "주변 맛집 검색",
-        btn_my_loc: "내 위치 찾기",
+        btn_my_loc: "📍 현재 위치",
         travel_mode_title: "이동 수단:",
         mode_walking: "도보",
         mode_motorbike: "오토바이",
@@ -1440,7 +1437,7 @@
         radius_2000: "2.0km以内",
         radius_5000: "5.0km以内",
         btn_scan: "周辺の店舗を検索",
-        btn_my_loc: "現在地を取得",
+        btn_my_loc: "📍 現在地",
         travel_mode_title: "移動手段:",
         mode_walking: "徒歩",
         mode_motorbike: "バイク",
@@ -1895,11 +1892,15 @@
     function getInstantGps() {
       const statusEl = document.getElementById('gpsLiveStatus');
       const origSel = document.getElementById('cOriginSelect');
+      const btnGps = document.getElementById('btnGetGps');
       const t = I18N[currentMapLang] || I18N.vi;
 
       if (!navigator.geolocation) {
         alert(t.gps_not_supported || 'Trình duyệt không hỗ trợ Geolocation GPS.');
         return;
+      }
+      if (btnGps) {
+        btnGps.textContent = '⏳ Đang định vị...';
       }
       if (statusEl) statusEl.textContent = t.gps_locating || 'Đang định vị GPS...';
 
@@ -1909,16 +1910,23 @@
           const lng = pos.coords.longitude;
           userCoords = { lat, lng, isRealGps: true };
 
+          if (btnGps) {
+            btnGps.textContent = t.btn_my_loc || '📍 Vị trí hiện tại';
+          }
+
           updateUserMarker(lat, lng, t.user_location_real || 'Vị trí GPS thực tế của bạn');
           mapInstance.setView([lat, lng], 16);
           if (statusEl) statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
 
-          // Update the single GPS option text with coordinates
+          // Update or insert GPS option into dropdown and select it
           if (origSel) {
-            const gpsOpt = origSel.querySelector('option[value="gps"]');
-            if (gpsOpt) {
-              gpsOpt.textContent = '📍 ' + (t.origin_current || 'Vị trí GPS của tôi') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
+            let gpsOpt = origSel.querySelector('option[value="gps"]');
+            if (!gpsOpt) {
+              gpsOpt = document.createElement('option');
+              gpsOpt.value = 'gps';
+              origSel.insertBefore(gpsOpt, origSel.firstChild);
             }
+            gpsOpt.textContent = (t.btn_my_loc || '📍 Vị trí hiện tại') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
             origSel.value = 'gps';
           }
 
@@ -1930,13 +1938,15 @@
           }
 
           runRadarScan();
+          if (selectedDestDish) selectDestinationById(selectedDestDish.id);
         },
         (err) => {
           console.warn('GPS error, using Hoi An center:', err);
+          if (btnGps) {
+            btnGps.textContent = t.btn_my_loc || '📍 Vị trí hiện tại';
+          }
           if (statusEl) statusEl.textContent = t.gps_failed || 'Không lấy được GPS (Đã dùng tâm Phố cổ Hội An)';
-          userCoords = { lat: 15.8773, lng: 108.3259, isRealGps: false };
-          updateUserMarker(15.8773, 108.3259, t.origin_chua_cau || 'Chùa Cầu Hội An');
-          runRadarScan();
+          alert(t.gps_failed || 'Không thể lấy vị trí GPS. Vui lòng kiểm tra quyền truy cập vị trí trên trình duyệt.');
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
       );
@@ -2435,12 +2445,16 @@
 
       document.getElementById('cOriginSelect').onchange = (e) => {
         const val = e.target.value;
-        const parts = val.split(',').map(s => parseFloat(s.trim()));
-        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-          const originText = e.target.options[e.target.selectedIndex]?.textContent || 'Điểm xuất phát';
-          updateUserMarker(parts[0], parts[1], originText);
-          runRadarScan();
-          if (selectedDestDish) selectDestinationById(selectedDestDish.id);
+        if (val === 'gps') {
+          getInstantGps();
+        } else {
+          const parts = val.split(',').map(s => parseFloat(s.trim()));
+          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+            const originText = e.target.options[e.target.selectedIndex]?.textContent || 'Điểm xuất phát';
+            updateUserMarker(parts[0], parts[1], originText);
+            runRadarScan();
+            if (selectedDestDish) selectDestinationById(selectedDestDish.id);
+          }
         }
       };
     });
