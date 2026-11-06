@@ -1925,9 +1925,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                     }}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6 }}>
-                      <Text style={[styles.secondaryBtnText, { color: "#c2410c", fontWeight: "700" }]}>
-                        Mở Bản Đồ & GPS Hội An
-                      </Text>
+                      
                     </View>
                   </TouchableOpacity>
 
