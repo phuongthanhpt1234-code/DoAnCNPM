@@ -1005,8 +1005,7 @@
             Điểm xuất phát
           </label>
           <select id="cOriginSelect" class="form-control">
-            <option value="gps" selected>📍 Vị trí GPS của tôi</option>
-            <option value="15.8773,108.3259">Chùa Cầu Hội An</option>
+            <option value="15.8773,108.3259" selected>Chùa Cầu Hội An</option>
             <option value="15.8768,108.3248">Nguyễn Thị Minh Khai, Hội An</option>
             <option value="15.8788,108.3325">Chợ Hội An (Trần Phú)</option>
             <option value="15.8762,108.3294">Bến thuyền Bạch Đằng</option>
@@ -1042,7 +1041,7 @@
           <button id="btnRadarScan" class="btn btn-primary" title="Quét tìm quán ăn xung quanh">
             Quét tìm quán
           </button>
-          <button id="btnGetGps" class="btn btn-gps" title="Lấy GPS tức thời">
+          <button id="btnGetGps" class="btn btn-gps" style="display: none;" title="Lấy GPS tức thời">
             Vị trí của tôi
           </button>
           <a id="btnOpenGoogleMaps" class="btn btn-gmaps" href="https://maps.google.com" target="_blank" rel="noopener noreferrer" title="Mở trực tiếp trên ứng dụng Google Maps">
@@ -1647,7 +1646,7 @@
 
         let allDishes = [];
     let mapInstance = null;
-    let userCoords = { lat: 15.8778, lng: 108.3275 }; // Default Hoi An Ancient Town
+    let userCoords = { lat: 15.8773, lng: 108.3259 }; // Mặc định Chùa Cầu Hội An // Default Hoi An Ancient Town
     let userMarker = null;
     let radiusCircle = null;
     let dishMarkers = [];
@@ -1778,7 +1777,9 @@
       }
 
       // Update user marker label
-      updateUserMarker(userCoords.lat, userCoords.lng, t.user_location_title || t.origin_current || 'Vị trí của bạn');
+      const currentOriginOpt = origSel ? origSel.options[origSel.selectedIndex] : null;
+      const currentOriginLabel = currentOriginOpt ? currentOriginOpt.textContent : (t.origin_chua_cau || 'Chùa Cầu Hội An');
+      updateUserMarker(userCoords.lat, userCoords.lng, currentOriginLabel);
 
       // Refresh destination selection or tour if active
       if (selectedDestDish) {
@@ -2041,7 +2042,9 @@
     // --- 6. RADAR SCANNER ---
     function runRadarScan() {
       const radiusMeters = parseInt(document.getElementById('cRadiusSelect').value) || 1000;
-      updateUserMarker(userCoords.lat, userCoords.lng, 'Vị trí của bạn');
+      const origSel = document.getElementById('cOriginSelect');
+      const originLabel = (origSel && origSel.options[origSel.selectedIndex]?.textContent) || 'Điểm xuất phát';
+      updateUserMarker(userCoords.lat, userCoords.lng, originLabel);
 
       // Filter dishes within radius
       const filtered = allDishes.filter(d => {
@@ -2414,14 +2417,7 @@
       initMap();
       setMapLanguage(currentMapLang);
 
-      // Try automatic real GPS if permission was already granted previously
-      if (navigator.permissions && navigator.permissions.query) {
-        navigator.permissions.query({ name: 'geolocation' }).then(result => {
-          if (result.state === 'granted') {
-            getInstantGps();
-          }
-        }).catch(() => {});
-      }
+      // Điểm xuất phát mặc định cố định tại Chùa Cầu Hội An
 
       document.getElementById('btnRadarScan').onclick = runRadarScan;
       document.getElementById('cRadiusSelect').onchange = runRadarScan;
@@ -2439,15 +2435,12 @@
 
       document.getElementById('cOriginSelect').onchange = (e) => {
         const val = e.target.value;
-        if (val === 'gps') {
-          getInstantGps();
-        } else {
-          const parts = val.split(',').map(s => parseFloat(s.trim()));
-          if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
-            updateUserMarker(parts[0], parts[1], 'Điểm xuất phát');
-            runRadarScan();
-            if (selectedDestDish) selectDestinationById(selectedDestDish.id);
-          }
+        const parts = val.split(',').map(s => parseFloat(s.trim()));
+        if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+          const originText = e.target.options[e.target.selectedIndex]?.textContent || 'Điểm xuất phát';
+          updateUserMarker(parts[0], parts[1], originText);
+          runRadarScan();
+          if (selectedDestDish) selectDestinationById(selectedDestDish.id);
         }
       };
     });
