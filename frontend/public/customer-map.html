@@ -808,6 +808,65 @@
       font-weight: 600;
     }
 
+    /* GPS NOTICE BANNER */
+    .gps-notice-banner {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      animation: routeCardFadeIn 0.2s ease;
+    }
+    .gps-notice-banner.warning {
+      background: #fef2f2;
+      border: 1.5px solid #fecaca;
+      color: #991b1b;
+    }
+    .gps-notice-banner.info {
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      color: #1e40af;
+    }
+    .gps-notice-banner.success {
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      color: #166534;
+    }
+    .gps-notice-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+    .gps-notice-icon {
+      font-size: 18px;
+      line-height: 1;
+    }
+    .gps-notice-msg {
+      line-height: 1.4;
+      font-weight: 600;
+    }
+    .gps-notice-close {
+      background: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: inherit;
+      padding: 2px 8px;
+      border-radius: 6px;
+      opacity: 0.7;
+      transition: all 0.15s;
+    }
+    .gps-notice-close:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.08);
+    }
+
     /* ROUTE DETAIL CARD */
     .route-detail-card {
       margin-top: 12px;
@@ -1071,6 +1130,15 @@
         </div>
       </div>
 
+      <!-- THÔNG BÁO QUYỀN GPS / TRẠNG THÁI ĐỊNH VỊ -->
+      <div id="gpsNoticeBanner" class="gps-notice-banner" style="display: none;">
+        <div class="gps-notice-content">
+          <span class="gps-notice-icon" id="gpsNoticeIcon">⚠️</span>
+          <span class="gps-notice-msg" id="gpsNoticeMsg">Ứng dụng không có quyền định vị. Vui lòng cấp quyền truy cập vị trí trong cài đặt trình duyệt.</span>
+        </div>
+        <button type="button" class="gps-notice-close" onclick="document.getElementById('gpsNoticeBanner').style.display='none'">✕</button>
+      </div>
+
       <!-- HỘP THÔNG TIN LỘ TRÌNH CHỈ ĐƯỜNG CHI TIẾT -->
       <div id="routeDetailCard" class="route-detail-card" style="display: none;">
         <div class="route-detail-header">
@@ -1168,8 +1236,13 @@
         user_location_real: "Vị trí GPS thực tế của bạn",
         gps_outside_hoian: "Đã nhận GPS thực tế của bạn (cách Hội An {dist}km). Để khám phá các quán ăn phố cổ, bạn hãy chọn điểm xuất phát tại Chùa Cầu Hội An.",
         gps_locating: "Đang dò tìm tọa độ GPS vệ tinh...",
-        gps_failed: "Chưa cấp quyền GPS. Dùng Chùa Cầu Hội An.",
-        gps_not_supported: "Trình duyệt không hỗ trợ định vị GPS.",
+        gps_permission_denied: "Ứng dụng không có quyền định vị. Vui lòng cấp quyền truy cập vị trí trong cài đặt trình duyệt để sử dụng tính năng này.",
+        gps_permission_denied_status: "Không có quyền định vị",
+        gps_timeout: "Quá thời gian chờ tín hiệu định vị GPS. Đang dùng tâm Phố cổ Hội An.",
+        gps_failed: "Không thể lấy vị trí GPS hiện tại. Đang dùng tâm Phố cổ Hội An.",
+        gps_not_supported: "Trình duyệt hoặc môi trường hiện tại không hỗ trợ định vị GPS.",
+        gps_success: "Đã định vị thành công vị trí thực tế của bạn.",
+        gps_locating_btn: "Đang định vị...",
         unit_mins: "~{n} phút",
         tour_stops_suffix: "quán - Tối ưu TSP",
         tour_stop_prefix: "Trạm",
@@ -1229,8 +1302,13 @@
         user_location_real: "Your Real GPS Location",
         gps_outside_hoian: "Located your real GPS ({dist}km from Hoi An). To explore ancient town cuisine, select Chua Cau as your starting point.",
         gps_locating: "Detecting satellite GPS coordinates...",
-        gps_failed: "GPS permission denied. Using Chua Cau center.",
-        gps_not_supported: "Geolocation GPS not supported by browser.",
+        gps_permission_denied: "Location permission denied. Please allow location access in your browser settings to use GPS navigation.",
+        gps_permission_denied_status: "Location permission denied",
+        gps_timeout: "GPS location request timed out. Continuing with Hoi An Ancient Town center.",
+        gps_failed: "Unable to retrieve current GPS location. Continuing with Hoi An Ancient Town center.",
+        gps_not_supported: "Your browser does not support or allow GPS geolocation.",
+        gps_success: "Successfully acquired your real GPS coordinates.",
+        gps_locating_btn: "Locating...",
         unit_mins: "~{n} mins",
         tour_stops_suffix: "stops - TSP Optimized",
         tour_stop_prefix: "Stop",
@@ -1290,8 +1368,13 @@
         user_location_real: "您的即时真实GPS位置",
         gps_outside_hoian: "已获取您的真实GPS（距会安{dist}公里）。如需探索古镇美食，请选择来远桥作为出发点。",
         gps_locating: "正在探测卫星GPS坐标...",
-        gps_failed: "未获得GPS权限，使用来远桥古镇中心。",
-        gps_not_supported: "浏览器不支持GPS定位。",
+        gps_permission_denied: "应用未获得定位权限。请在浏览器设置中开启位置权限以使用此功能。",
+        gps_permission_denied_status: "无定位权限",
+        gps_timeout: "GPS定位请求超时。系统继续使用会安古镇中心。",
+        gps_failed: "无法获取当前GPS位置。系统继续使用会安古镇中心。",
+        gps_not_supported: "当前浏览器不支持或未开启GPS定位。",
+        gps_success: "成功获取您的即时GPS坐标。",
+        gps_locating_btn: "定位中...",
         unit_mins: "约 {n} 分钟",
         tour_stops_suffix: "站 - TSP路线最佳",
         tour_stop_prefix: "第",
@@ -1351,8 +1434,13 @@
         user_location_real: "당신의 실제 GPS 위치",
         gps_outside_hoian: "실제 GPS가 확인되었습니다(호이안에서 {dist}km). 고대 도시 맛집을 둘러보시려면 내원교(Chua Cau)를 출발지로 선택하세요.",
         gps_locating: "위성 GPS 위치 감지 중...",
-        gps_failed: "GPS 권한이 없습니다. 내원교 중심으로 설정됩니다.",
-        gps_not_supported: "브라우저가 GPS 위치를 지원하지 않습니다.",
+        gps_permission_denied: "애플리케이션에 위치 권한이 없습니다. 이 기능을 사용하려면 브라우저 설정에서 위치 권한을 허용해주세요.",
+        gps_permission_denied_status: "위치 권한 없음",
+        gps_timeout: "GPS 위치 요청 시간이 초과되었습니다. 호이안 구시가지 중심을 계속 사용합니다.",
+        gps_failed: "현재 GPS 위치를 가져올 수 없습니다. 호이안 구시가지 중심을 계속 사용합니다.",
+        gps_not_supported: "현재 브라우저에서 GPS 위치 서비스를 지원하지 않거나 허용되지 않았습니다.",
+        gps_success: "실제 GPS 좌표를 성공적으로 가져왔습니다.",
+        gps_locating_btn: "위치 확인 중...",
         unit_mins: "약 {n}분",
         tour_stops_suffix: "개소 - TSP 최적화",
         tour_stop_prefix: "경유지",
@@ -1412,8 +1500,13 @@
         user_location_real: "あなたの実際のGPS現在地",
         gps_outside_hoian: "実際のGPSを取得しました（ホイアンから{dist}km）。旧市街のグルメを探索する場合は、来遠橋（Chua Cau）を出発地に選択してください。",
         gps_locating: "衛星GPS座標を測位中...",
-        gps_failed: "GPS権限が拒否されました。来遠橋中心を使用します。",
-        gps_not_supported: "ブラウザがGPS位置情報に対応していません。",
+        gps_permission_denied: "位置情報の利用権限がありません。ブラウザの設定で位置情報の利用を許可してください。",
+        gps_permission_denied_status: "位置情報権限なし",
+        gps_timeout: "GPS位置情報の取得がタイムアウトしました。ホイアン旧市街中心を引き続き使用します。",
+        gps_failed: "現在のGPS位置情報を取得できませんでした。ホイアン旧市街中心を引き続き使用します。",
+        gps_not_supported: "ご利用のブラウザはGPS位置情報に対応していないか、許可されていません。",
+        gps_success: "実際のGPS座標を取得しました。",
+        gps_locating_btn: "位置情報取得中...",
         unit_mins: "約 {n}分",
         tour_stops_suffix: "箇所 - TSP最適化",
         tour_stop_prefix: "経由地",
@@ -1888,7 +1981,28 @@
       }
     }
 
-    // --- 4. GPS INSTANT LOCATOR ---
+    // --- 4. GPS INSTANT LOCATOR & NOTIFICATIONS ---
+    function showGpsNotice(msg, type = 'warning', alsoAlert = true) {
+      const banner = document.getElementById('gpsNoticeBanner');
+      const msgEl = document.getElementById('gpsNoticeMsg');
+      const iconEl = document.getElementById('gpsNoticeIcon');
+      if (banner && msgEl) {
+        banner.className = 'gps-notice-banner ' + type;
+        msgEl.textContent = msg;
+        if (iconEl) {
+          iconEl.textContent = type === 'warning' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️');
+        }
+        banner.style.display = 'flex';
+      }
+      if (alsoAlert) {
+        try {
+          alert(msg);
+        } catch (e) {
+          console.warn('Alert suppressed:', e);
+        }
+      }
+    }
+
     function getInstantGps() {
       const statusEl = document.getElementById('gpsLiveStatus');
       const origSel = document.getElementById('cOriginSelect');
@@ -1896,13 +2010,14 @@
       const t = I18N[currentMapLang] || I18N.vi;
 
       if (!navigator.geolocation) {
-        alert(t.gps_not_supported || 'Trình duyệt không hỗ trợ Geolocation GPS.');
+        const notSupportedMsg = t.gps_not_supported || 'Trình duyệt không hỗ trợ hoặc không cho phép định vị GPS.';
+        showGpsNotice(notSupportedMsg, 'warning', true);
         return;
       }
       if (btnGps) {
-        btnGps.textContent = '⏳ Đang định vị...';
+        btnGps.textContent = '⏳ ' + (t.gps_locating_btn || 'Đang định vị...');
       }
-      if (statusEl) statusEl.textContent = t.gps_locating || 'Đang định vị GPS...';
+      if (statusEl) statusEl.textContent = t.gps_locating || 'Đang dò tìm tọa độ GPS vệ tinh...';
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -1918,7 +2033,7 @@
           mapInstance.setView([lat, lng], 16);
           if (statusEl) statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
 
-          // Update or insert GPS option into dropdown and select it
+          // Cập nhật hoặc thêm option GPS vào select và chọn nó
           if (origSel) {
             let gpsOpt = origSel.querySelector('option[value="gps"]');
             if (!gpsOpt) {
@@ -1930,23 +2045,50 @@
             origSel.value = 'gps';
           }
 
-          // Check distance to Hoi An center (Chua Cau: 15.8773, 108.3259)
+          // Kiểm tra khoảng cách tới trung tâm Hội An (Chùa Cầu: 15.8773, 108.3259)
           const distToHoiAn = calcHaversine(lat, lng, 15.8773, 108.3259);
           if (distToHoiAn > 20000) {
             const distKm = Math.round(distToHoiAn / 1000);
             if (statusEl) statusEl.textContent = 'GPS: ' + distKm + 'km từ Hội An';
+            showGpsNotice(t.gps_outside_hoian ? t.gps_outside_hoian.replace('{dist}', distKm) : ('Đã nhận GPS thực tế (' + distKm + 'km từ Hội An).'), 'info', false);
+          } else {
+            showGpsNotice((t.gps_success || 'Đã định vị thành công vị trí thực tế của bạn.') + ' (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')', 'success', false);
           }
 
           runRadarScan();
           if (selectedDestDish) selectDestinationById(selectedDestDish.id);
         },
         (err) => {
-          console.warn('GPS error, using Hoi An center:', err);
+          console.warn('GPS error handled safely, avoiding app crash:', err);
           if (btnGps) {
             btnGps.textContent = t.btn_my_loc || '📍 Vị trí hiện tại';
           }
-          if (statusEl) statusEl.textContent = t.gps_failed || 'Không lấy được GPS (Đã dùng tâm Phố cổ Hội An)';
-          alert(t.gps_failed || 'Không thể lấy vị trí GPS. Vui lòng kiểm tra quyền truy cập vị trí trên trình duyệt.');
+
+          let errMsg = '';
+          // err.code === 1: PERMISSION_DENIED (User clicks Block / Don't allow)
+          if (err && err.code === 1) {
+            errMsg = t.gps_permission_denied || 'Ứng dụng không có quyền định vị. Vui lòng cấp quyền truy cập vị trí trong cài đặt trình duyệt để sử dụng tính năng này.';
+            if (statusEl) statusEl.textContent = t.gps_permission_denied_status || 'Không có quyền định vị';
+          } else if (err && err.code === 3) {
+            errMsg = t.gps_timeout || 'Quá thời gian chờ tín hiệu định vị GPS. Đang dùng tâm Phố cổ Hội An.';
+            if (statusEl) statusEl.textContent = 'Hết thời gian chờ GPS';
+          } else {
+            errMsg = t.gps_failed || 'Không thể lấy vị trí GPS hiện tại. Đang dùng tâm Phố cổ Hội An.';
+            if (statusEl) statusEl.textContent = 'Không lấy được GPS';
+          }
+
+          // Thông báo rõ ràng về quyền định vị, an toàn và không bị crash
+          showGpsNotice(errMsg, 'warning', true);
+
+          // Giữ an toàn trạng thái bản đồ và toạ độ mặc định
+          try {
+            if (!userCoords) {
+              userCoords = { lat: 15.8773, lng: 108.3259, isRealGps: false };
+            }
+            runRadarScan();
+          } catch (safeErr) {
+            console.error('Safe fallback error suppressed:', safeErr);
+          }
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
       );
