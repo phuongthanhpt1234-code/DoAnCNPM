@@ -16,14 +16,12 @@ async function bootstrap() {
       await ensureDefaultAdminUser();
       await ensureQrCodesTable();
       await ensureAllDishesSynced();
-      console.log('✅ Cơ sở dữ liệu đã sẵn sàng!');
+      console.log('✅ Cơ sở dữ liệu đã sẵn sàng !');
       await syncDishTranslations();
     } catch (err) {
       console.error('⚠️ Không thể tự chạy migration khi khởi động:', err);
     }
   }
-
   app.listen(port, () => console.log(`API chạy tại port ${port}`));
 }
-
 bootstrap();
