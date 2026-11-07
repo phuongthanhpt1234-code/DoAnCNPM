@@ -3867,27 +3867,6 @@
                   </div>
                 </div>
 
-                <!-- Control Bar: Chế độ hiển thị & Bán kính nhiệt -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 12px 18px;">
-                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                    <span style="font-size: 13px; font-weight: 700; color: var(--ink); margin-right: 4px;">Chế độ trực quan:</span>
-                    <button type="button" class="filter-chip active" id="btnAdminMapModeHybrid" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Kết Hợp (Heatmap + Vị Trí)
-                    </button>
-                    <button type="button" class="filter-chip" id="btnAdminMapModeHeat" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Bản Đồ Nhiệt Quét QR
-                    </button>
-                    <button type="button" class="filter-chip" id="btnAdminMapModeDensity" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Mật Độ & Vành Đai Phân Bổ
-                    </button>
-                  </div>
-                  <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="adminHeatRadiusSlider" style="font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;">Bán kính quầng nhiệt:</label>
-                    <input type="range" id="adminHeatRadiusSlider" min="20" max="60" value="38" style="cursor: pointer; width: 100px; accent-color: var(--maroon);" />
-                    <span id="adminHeatRadiusLabel" style="font-size: 12px; font-weight: 700; color: var(--ink); min-width: 32px;">38px</span>
-                  </div>
-                </div>
-
                 <!-- Main Layout: Bản đồ (Trái) + Xếp hạng & Đề xuất (Phải) -->
                 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start;" class="admin-heatmap-grid">
                   <!-- Cột Trái: Canvas bản đồ nhiệt -->
