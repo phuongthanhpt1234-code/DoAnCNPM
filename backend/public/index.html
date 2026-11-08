@@ -290,7 +290,23 @@
         color: var(--gold);
         border: 1px solid var(--gold-border);
       }
-
+        .nav-btn[data-nav="map"] {
+        gap: 6px;
+        font-size: 12.5px;
+      }
+      
+      .nav-btn[data-nav="map"] .nav-btn-left {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      
+      .nav-btn[data-nav="map"] .nav-badge {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
       .nav-btn.active .nav-badge {
         background: rgba(0, 0, 0, 0.3);
         color: #fff;
