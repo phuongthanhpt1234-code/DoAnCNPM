@@ -35,6 +35,421 @@
       flex-direction: column;
     }
 
+    /* HEADER */
+    .top-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-icon {
+      font-size: 26px;
+      background: #fef2f2;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      border: 1px solid #fee2e2;
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .gps-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .gps-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: pulseGps 1.8s infinite;
+    }
+    @keyframes pulseGps {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* LANGUAGE BAR (SYNCS WITH MAIN WEB) */
+    .map-lang-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .map-lang-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .map-lang-pills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .map-lang-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid #e5e7eb;
+      background: #f3f4f6;
+      color: #374151;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .map-lang-pill:hover {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
+    }
+    .map-lang-pill.active {
+      background: #8b1d24;
+      color: #ffffff;
+      border-color: #73171d;
+      box-shadow: 0 2px 8px rgba(139, 29, 36, 0.3);
+    }
+
+    /* MAIN CONTAINER */
+    .app-body {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* CONTROLS CARD */
+    .controls-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 16px 18px;
+      overflow: hidden;
+    }
+
+    .route-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: flex-end;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      min-width: 0;
+    }
+    .form-group-origin {
+      flex: 1 1 200px;
+      min-width: 0;
+    }
+    .form-group-dest {
+      flex: 1.3 1 240px;
+      min-width: 0;
+    }
+    .form-group-radius {
+      flex: 0 0 125px;
+      min-width: 0;
+    }
+    .form-group-actions {
+      display: flex;
+      gap: 8px;
+      flex: 0 0 auto;
+      margin-left: auto;
+    }
+    @media (max-width: 860px) {
+      .form-group-origin,
+      .form-group-dest {
+        flex: 1 1 100%;
+      }
+      .form-group-radius {
+        flex: 1 1 calc(50% - 6px);
+      }
+      .form-group-actions {
+        flex: 1 1 calc(50% - 6px);
+        margin-left: 0;
+      }
+    }
+    @media (max-width: 580px) {
+      .form-group-radius,
+      .form-group-actions {
+        flex: 1 1 100%;
+      }
+      .form-group-actions {
+        width: 100%;
+      }
+      .form-group-actions .btn {
+        flex: 1;
+      }
+      .app-body {
+        padding: 8px;
+        gap: 10px;
+      }
+      .controls-card {
+        padding: 12px 14px;
+      }
+      #customerLeafletMap,
+      .map-wrapper {
+        min-height: 400px;
+      }
+      .workspace-grid {
+        min-height: auto;
+      }
+      .dishes-panel {
+        max-height: 450px;
+      }
+    }
+    .form-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #78350f;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .form-control {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      border: 1px solid var(--border-dark);
+      background: #fffcf8;
+      border-radius: 10px;
+      padding: 9px 12px;
+      font-size: 13.5px;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .form-control:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(139, 29, 36, 0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+    .btn-secondary:hover {
+      background: #fde68a;
+    }
+    .btn-gps {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+    .btn-gps:hover {
+      background: #d1fae5;
+    }
+    .btn-gmaps {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+    .btn-gmaps:hover {
+      background: #dbeafe;
+    }
+
+    /* KHỐI LỘ TRÌNH FOOD TOUR TSP ĐẸP MẮT & DỄ NHÌN */
+    .tsp-tour-box {
+      margin-top: 14px;
+      background: #fffcf8;
+      border: 1px solid #fed7aa;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: none;
+      box-shadow: 0 2px 10px rgba(180, 83, 9, 0.06);
+    }
+    .tsp-tour-box.active {
+      display: block;
+    }
+    .tsp-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #fed7aa;
+    }
+    .tsp-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #9a3412;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tsp-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: #ffedd5;
+      color: #c2410c;
+      padding: 2px 8px;
+      border-radius: 12px;
+      border: 1px solid #fdba74;
+    }
+    .tsp-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-tsp-clear {
+      background: #f3f4f6;
+      color: #4b5563;
+      border: 1px solid #d1d5db;
+      padding: 5px 12px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-tsp-clear:hover {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .btn-tsp-open {
+      background: #8b1d24;
+      color: #ffffff;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s;
+    }
+    .btn-tsp-open:hover {
+      background: #73171d;
+    }
+    .tsp-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .tsp-chip {
+      background: #ffffff;
+      border: 1px solid #f97316;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #431407;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .tsp-chip-num {
+      background: #ea580c;
+      color: #ffffff;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tsp-chip-del {
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 1px 4px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .tsp-chip-del:hover {
+      color: #dc2626;
+      background: #fee2e2;
+    }
+    .tsp-summary {
+      font-size: 12.5px;
+      color: #78350f;
+      font-weight: 500;
+      background: #fff7ed;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border-left: 3px solid #f97316;
+      line-height: 1.5;
+    }
+
     /* WORKSPACE: MAP + NEARBY DISHES */
     .workspace-grid {
       display: grid;
@@ -344,6 +759,11 @@
     .popup-btn-route {
       background: var(--primary);
       color: #ffffff;
+    }
+    .popup-btn-tour {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
     }
     .popup-btn-gmap {
       background: #eff6ff;
@@ -781,11 +1201,8 @@
           </a>
         </div>
       </div>
-        <div id="tspChipsList" class="tsp-chips"></div>
-        <div id="tspSummaryText" class="tsp-summary">
-          Hệ thống tự động sắp xếp thứ tự các quán ngắn nhất để bạn đi bộ thuận tiện nhất.
-        </div>
-      </div>
+
+
     </section>
 
     <!-- MAP & DISHES LIST WORKSPACE -->
@@ -1622,7 +2039,7 @@
           }
 
           runRadarScan();
-          if (selectedDestDish) selectDestinationById(selectedDestDish.id);
+          if (selectedDestDish) selectDestinationById(selectedDestDish.id); // cOriginSelect_TourUpdated
         },
         (err) => {
           console.warn('GPS error handled safely, avoiding app crash:', err);
