@@ -1772,6 +1772,7 @@
     let routePolyline = null;
     let foodTourDishes = []; // Selected 3-4 dishes for TSP
     let tourPolylines = [];
+    let tspReqId = 0;
 
     function setMapLanguage(lang) {
       if (!I18N[lang]) lang = 'vi';
@@ -1903,7 +1904,7 @@
       if (selectedDestDish) {
         selectDestinationById(selectedDestDish.id);
       }
-      if (foodTourDishes.length > 0) {
+      if (foodTourDishes && foodTourDishes.length > 0) {
         updateTourUiAndSolveTsp();
       }
 
@@ -2302,6 +2303,9 @@
       if (selectedDestDish) {
         selectDestinationById(selectedDestDish.id);
       }
+      if (foodTourDishes && foodTourDishes.length > 0) {
+        updateTourUiAndSolveTsp();
+      }
     }
 
     window.setTravelModeAndRoute = function(mode, dishId) {
@@ -2460,7 +2464,8 @@
       return bestPerm || foodTourDishes;
     }
 
-    function updateTourUiAndSolveTsp() {
+    async function updateTourUiAndSolveTsp() {
+      const currentReqId = ++tspReqId;
       const t = I18N[currentMapLang] || I18N.vi;
       const tourBox = document.getElementById('tspTourBox');
       const countEl = document.getElementById('tspStopsCount');
@@ -2481,12 +2486,12 @@
       countEl.textContent = optimalStops.length + ' ' + (t.tour_stops_suffix || 'quán - Tối ưu TSP');
 
       chipsEl.innerHTML = '';
-      let totalTourDist = 0;
+      let initialStraightDist = 0;
       let prev = userCoords;
 
       optimalStops.forEach((stop, index) => {
         const segDist = calcHaversine(prev.lat, prev.lng, stop.lat, stop.lng);
-        totalTourDist += segDist;
+        initialStraightDist += segDist;
         prev = stop;
 
         const chip = document.createElement('div');
@@ -2499,10 +2504,13 @@
         chipsEl.appendChild(chip);
       });
 
+      const modeInfo = TRAVEL_MODES[currentTravelMode] || TRAVEL_MODES.walking;
+      // Ước tính khoảng cách đường bộ thực tế trong khi chờ OSRM phản hồi
+      const initialEstimate = Math.round(initialStraightDist * (currentTravelMode === 'walking' ? 1.2 : 1.35));
       document.getElementById('tspSummaryText').textContent =
-        (t.tour_total_distance || 'Tổng quãng đường Food Tour:') + ' ' + formatDistance(totalTourDist) + ' ' + (t.tour_start_from_user || '(Bắt đầu từ vị trí của bạn)');
+        (t.tour_total_distance || 'Tổng quãng đường Food Tour:') + ' ' + formatDistance(initialEstimate) + ' ' + (t.tour_start_from_user || '(Bắt đầu từ vị trí của bạn)');
 
-      // Build Google Maps multi-stop URL
+      // Cập nhật link mở Google Maps đa trạm với phương tiện tương ứng
       if (optimalStops.length > 0) {
         const originStr = `${userCoords.lat},${userCoords.lng}`;
         const destStr = `${optimalStops[optimalStops.length - 1].lat},${optimalStops[optimalStops.length - 1].lng}`;
@@ -2510,19 +2518,66 @@
         if (optimalStops.length > 1) {
           waypointsStr = optimalStops.slice(0, optimalStops.length - 1).map(s => `${s.lat},${s.lng}`).join('|');
         }
-        gmapsTourBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${originStr}&destination=${destStr}${waypointsStr ? '&waypoints=' + waypointsStr : ''}&travelmode=walking`;
+        gmapsTourBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${originStr}&destination=${destStr}${waypointsStr ? '&waypoints=' + waypointsStr : ''}&travelmode=${modeInfo.gmapsMode || 'walking'}`;
       }
 
-      // Draw tour polylines
-      const tourPoints = [[userCoords.lat, userCoords.lng], ...optimalStops.map(s => [s.lat, s.lng])];
-      const pl = L.polyline(tourPoints, {
-        color: '#d97706',
-        weight: 4,
-        dashArray: '8, 6',
-        opacity: 0.9
-      }).addTo(mapInstance);
-      tourPolylines.push(pl);
-      mapInstance.fitBounds(pl.getBounds(), { padding: [40, 40] });
+      // Lấy tọa độ đường bộ đi thực tế qua các trạm từ OSRM API (đường phố có thể đi được)
+      const osrmProfile = modeInfo.osrmProfile || 'foot';
+      const allCoords = [userCoords, ...optimalStops];
+      const osrmCoordsStr = allCoords.map(c => `${c.lng},${c.lat}`).join(';');
+      const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${osrmCoordsStr}?overview=full&geometries=geojson`;
+
+      let routeCoords = null;
+      let actualRoadDist = null;
+
+      try {
+        const res = await fetch(osrmUrl);
+        const data = await res.json();
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          actualRoadDist = Math.round(route.distance);
+          routeCoords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+        }
+      } catch (err) {
+        console.warn('Food Tour OSRM fetch error, fallback to road approximation:', err);
+      }
+
+      // Nếu có thao tác chọn mới trong lúc đang tải, hủy kết quả cũ
+      if (currentReqId !== tspReqId) return;
+
+      // Xóa các đường cũ trước khi vẽ đường mới
+      tourPolylines.forEach(pl => mapInstance.removeLayer(pl));
+      tourPolylines = [];
+
+      // Cập nhật lại quãng đường chính xác theo các con đường thực tế
+      if (actualRoadDist !== null) {
+        document.getElementById('tspSummaryText').textContent =
+          (t.tour_total_distance || 'Tổng quãng đường Food Tour:') + ' ' + formatDistance(actualRoadDist) + ' ' + (t.tour_start_from_user || '(Bắt đầu từ vị trí của bạn)');
+      }
+
+      if (routeCoords && routeCoords.length > 1) {
+        // Vẽ đường bộ uốn lượn thực tế theo đường phố Hội An (không cắt qua nhà cửa/sông)
+        const pl = L.polyline(routeCoords, {
+          color: '#d97706',
+          weight: 6,
+          opacity: 0.95,
+          lineJoin: 'round',
+          lineCap: 'round'
+        }).addTo(mapInstance);
+        tourPolylines.push(pl);
+        mapInstance.fitBounds(pl.getBounds(), { padding: [40, 40] });
+      } else {
+        // Fallback đường thẳng nét đứt nếu thiết bị mất kết nối mạng
+        const tourPoints = [[userCoords.lat, userCoords.lng], ...optimalStops.map(s => [s.lat, s.lng])];
+        const pl = L.polyline(tourPoints, {
+          color: '#d97706',
+          weight: 4,
+          dashArray: '8, 6',
+          opacity: 0.9
+        }).addTo(mapInstance);
+        tourPolylines.push(pl);
+        mapInstance.fitBounds(pl.getBounds(), { padding: [40, 40] });
+      }
     }
 
     // --- 9. POPULATE SELECT OPTIONS & FETCH DISHES ---
