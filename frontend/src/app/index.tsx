@@ -328,7 +328,7 @@ const PAGE_UI: Record<
   vi: {
     mapTriggerBtn: "Bản Đồ & GPS",
     mapModalTitle: "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS",
-    mapModalSubtitle: "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP",
+    mapModalSubtitle: "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM",
     closeModalBtn: "✕ Đóng",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Thuyết Minh Tự Động Đa Ngôn Ngữ",
@@ -382,7 +382,7 @@ const PAGE_UI: Record<
   en: {
     mapTriggerBtn: "Map & GPS",
     mapModalTitle: "FLAVORS OF HOI AN — GPS MAP & DIRECTIONS",
-    mapModalSubtitle: "Real-time GPS · Radius Scanner · Turn-by-turn OSRM · Optimized Food Tour TSP",
+    mapModalSubtitle: "Real-time GPS · Radius Scanner · Turn-by-turn OSRM",
     closeModalBtn: "✕ Close",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Multilingual Automated Audio Guide",
@@ -2115,7 +2115,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                   {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
                 </Text>
               <Text style={styles.customerMapSubtitle} numberOfLines={1}>
-                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP"}
+                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM"}
                 </Text>
             </View>
 
@@ -2153,7 +2153,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                   Bản Đồ Ẩm Thực Du Khách Hội An
                 </Text>
                 <Text style={{ fontSize: 13, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
-                  Trải nghiệm khám phá quán ăn với radar GPS, định tuyến OSRM và Food Tour tối ưu TSP.
+                  Trải nghiệm khám phá quán ăn với radar GPS và định tuyến đường bộ OSRM.
                 </Text>
                 <TouchableOpacity
                   style={styles.qrTriggerBtn}
