@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { activityHistoryText } from "../locales/activityHistory";
 import {
   FlatList,
   Image,
@@ -892,6 +893,11 @@ export default function HomeScreen() {
   );
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
+  const [activityFilter, setActivityFilter] = useState<
+  "all" | "favorites" | "checkins"
+>("all");
+
+  const [checkinHistoryIds, setCheckinHistoryIds] = useState<number[]>([]);
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
   const [toastMsg, setToastMsg] = useState<string>("");
 
@@ -1156,25 +1162,29 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     }, 2800);
   }, []);
 
-  useEffect(() => {
-    const deviceId = getClientDeviceId();
-    if (!deviceId) return;
-    api<any[]>(`/favorites?device_id=${encodeURIComponent(deviceId)}`)
-      .then((favs) => {
-        if (Array.isArray(favs)) {
-          setFavoritedDishIds(favs.map((f) => Number(f.id)));
-        }
-      })
-      .catch(() => {});
+  useFocusEffect(useCallback(() => {
+  const controller = new AbortController();
+  const deviceId = encodeURIComponent(getClientDeviceId());
+  const options = { signal: controller.signal };
 
-    api<any[]>(`/checkins?device_id=${encodeURIComponent(deviceId)}`)
-      .then((checks) => {
-        if (Array.isArray(checks)) {
-          setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
-        }
-      })
-      .catch(() => {});
-  }, []);
+  api<{ id: number }[]>(`/favorites?device_id=${deviceId}`, options)
+    .then((favs) => {
+      if (!controller.signal.aborted && Array.isArray(favs)) {
+        setFavoritedDishIds(favs.map((f) => Number(f.id)));
+      }
+    })
+    .catch(() => {});
+
+  api<{ dish_id: number }[]>(`/checkins?device_id=${deviceId}`, options)
+    .then((checks) => {
+      if (!controller.signal.aborted && Array.isArray(checks)) {
+        setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
+      }
+    })
+    .catch(() => {});
+
+  return () => controller.abort();
+}, []));
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
     "no_spicy",
@@ -1277,17 +1287,57 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const isDesktop = width >= 900;
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
+async function loadCheckinHistory() {
+  try {
+    const deviceId = encodeURIComponent(getClientDeviceId());
 
+    const history = await api<{ items: { dish_id: number }[] }>(
+      `/checkins/history?device_id=${deviceId}&lang=${lang}`,
+    );
+
+    setCheckinHistoryIds(history.items.map((item) => Number(item.dish_id)));
+  } catch (error) {
+    console.warn("Load check-in history failed:", error);
+    showToast(activityHistoryText[lang].loadError);
+  }
+}
   const filtered = useMemo(() => {
-    return apiDishes.filter((d) => {
-      const matchCat = cat === "all" || d.cat === cat;
-      const q = search.toLowerCase();
-      const nameStr = (d.name?.[lang] || "") + (d.name?.vi || "");
-      const descStr = (d.desc?.[lang] || "") + (d.desc?.vi || "");
-      const matchSearch = (nameStr + descStr).toLowerCase().includes(q);
-      return matchCat && matchSearch;
-    });
-  }, [apiDishes, cat, search, lang]);
+  const query = search.trim().toLowerCase();
+
+  return apiDishes.filter((dish) => {
+    if (
+      activityFilter === "favorites" &&
+      !favoritedDishIds.includes(dish.id)
+    ) {
+      return false;
+    }
+
+    if (
+      activityFilter === "checkins" &&
+      !checkinHistoryIds.includes(dish.id)
+    ) {
+      return false;
+    }
+
+    const matchCat = cat === "all" || dish.cat === cat;
+    const searchableText = [
+      dish.name?.[lang],
+      dish.name?.vi,
+      dish.desc?.[lang],
+      dish.desc?.vi,
+    ].join(" ").toLowerCase();
+
+    return matchCat && searchableText.includes(query);
+  });
+}, [
+  apiDishes,
+  cat,
+  search,
+  lang,
+  activityFilter,
+  favoritedDishIds,
+  checkinHistoryIds,
+]);
 
   const speakText = useCallback(
     (text: string, customSpeechCode?: string) => {
@@ -1365,9 +1415,13 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           ? [...prev, dish.id]
           : prev.filter((id) => id !== dish.id),
       );
-    } finally {
-      isCheckInBusyRef.current[dish.id] = false;
-    }
+        } finally {
+          isCheckInBusyRef.current[dish.id] = false;
+
+          if (activityFilter === "checkins") {
+            void loadCheckinHistory();
+          }
+        }
   };
 
   const handleToggleFavorite = async (dish: Dish) => {
@@ -1485,12 +1539,46 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         </ScrollView>
 
         <View style={styles.authRow}>
+          {([
+  ["favorites", activityHistoryText[lang].favorite],
+  ["checkins", activityHistoryText[lang].checkins],
+] as const).map(([value, label]) => {
+  const selected = activityFilter === value;
+
+  return (
+    <TouchableOpacity
+      key={value}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      style={selected ? styles.registerBtn : styles.loginBtn}
+      onPress={() => {
+        const nextFilter = selected ? "all" : value;
+
+        setActivityFilter(nextFilter);
+        setCat("all");
+        setSearch("");
+
+        if (nextFilter === "checkins") {
+          void loadCheckinHistory();
+        }
+      }}
+    >
+      <Text style={selected ? styles.registerBtnText : styles.loginBtnText}>
+        {label}
+      </Text>
+    </TouchableOpacity>
+    
+  );
+})}
           <TouchableOpacity
             style={styles.mapTriggerBtn}
             onPress={() => setCustomerMapVisible(true)}
           >
-            <Text style={styles.mapTriggerText}>{ui.mapTriggerBtn || "Bản Đồ & GPS"}</Text>
+            <Text style={styles.mapTriggerText}>
+              {ui.mapTriggerBtn || "Bản Đồ & GPS"}
+            </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
             style={styles.qrTriggerBtn}
             onPress={() => setQrVisible(true)}
@@ -1501,7 +1589,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       </View>
 
       <FlatList
-        key={"${numColumns}-${lang}"}
+        key={`dishes-${numColumns}`}
         data={filtered}
         extraData={{ lang, checkedDishIds, favoritedDishIds }}
         numColumns={numColumns}
