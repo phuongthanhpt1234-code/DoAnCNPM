@@ -18,6 +18,9 @@ const resolveApiUrl = () => {
     ) {
       return `http://${host}:4000`;
     }
+    if (host === "vercel.app" || host.endsWith(".vercel.app")) {
+  return RENDER_API_URL;
+}
     // Trên Vercel hoặc tên miền HTTPS công khai: tuyệt đối không dùng IP LAN http://192.168...
     const envUrl = (process.env.EXPO_PUBLIC_API_URL || "").trim();
     if (
