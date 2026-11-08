@@ -2,27 +2,61 @@ import crypto from "crypto";
 import { Request, Response, NextFunction } from "express";
 import { pool } from "../config/db";
 
-const SECRET =
-  process.env.ADMIN_JWT_SECRET ||
-  process.env.JWT_SECRET ||
-  "hoian-food-admin-secret-key-2026";
+const rawSecret = process.env.ADMIN_JWT_SECRET || process.env.JWT_SECRET;
+
+if (!rawSecret || rawSecret.length < 32) {
+  throw new Error("ADMIN_JWT_SECRET chưa được cấu hình an toàn");
+}
+
+const SECRET: string = rawSecret;
+
+const CURRENT_ITERATIONS = 310000;
+const KEY_LEN = 64;
+const DIGEST = "sha256";
 
 export function hashPassword(password: string): string {
   const salt = crypto.randomBytes(16).toString("hex");
   const hash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, "sha256")
+    .pbkdf2Sync(password, salt, CURRENT_ITERATIONS, KEY_LEN, DIGEST)
     .toString("hex");
-  return `${salt}:${hash}`;
+  return `pbkdf2:${DIGEST}:${CURRENT_ITERATIONS}:${salt}:${hash}`;
 }
 
 export function comparePassword(password: string, stored: string): boolean {
+  if (!stored) return false;
+
+  // Chuẩn hiện hành: pbkdf2:sha256:iterations:salt:hash
+  if (stored.startsWith("pbkdf2:")) {
+    const parts = stored.split(":");
+    if (parts.length !== 5) return false;
+    const [, digest, iterStr, salt, hash] = parts;
+    const iterations = parseInt(iterStr, 10);
+    if (!iterations || isNaN(iterations)) return false;
+    const verifyHash = crypto
+      .pbkdf2Sync(password, salt, iterations, KEY_LEN, digest)
+      .toString("hex");
+    return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(verifyHash));
+  }
+
+  // Tương thích ngược với hash cũ: salt:hash (1000 iterations)
   const parts = stored.split(":");
-  if (parts.length !== 2) return false;
-  const [salt, hash] = parts;
-  const verifyHash = crypto
-    .pbkdf2Sync(password, salt, 1000, 64, "sha256")
-    .toString("hex");
-  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(verifyHash));
+  if (parts.length === 2) {
+    const [salt, hash] = parts;
+    const verifyHash = crypto
+      .pbkdf2Sync(password, salt, 1000, KEY_LEN, "sha256")
+      .toString("hex");
+    return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(verifyHash));
+  }
+
+  return false;
+}
+
+export function needsRehash(stored: string): boolean {
+  if (!stored || !stored.startsWith("pbkdf2:")) return true;
+  const parts = stored.split(":");
+  if (parts.length !== 5) return true;
+  const iterations = parseInt(parts[2], 10);
+  return iterations < CURRENT_ITERATIONS;
 }
 
 export async function ensureDefaultAdminUser() {
@@ -142,7 +176,10 @@ export function requireAdminAuth(
 }
 
 export function checkAdminCredentials(u: string, p: string): boolean {
-  const currentAdminUser = process.env.ADMIN_USERNAME || "admin";
-  const currentAdminPass = process.env.ADMIN_PASSWORD || "admin123";
+  const currentAdminUser = process.env.ADMIN_USERNAME;
+  const currentAdminPass = process.env.ADMIN_PASSWORD;
+  // Bắt buộc cấu hình thông tin an toàn trong .env (không chấp nhận mật khẩu mặc định admin/admin123)
+  if (!currentAdminUser || !currentAdminPass) return false;
+  if (currentAdminPass === "admin123" || currentAdminPass === "admin") return false;
   return u === currentAdminUser && p === currentAdminPass;
 }

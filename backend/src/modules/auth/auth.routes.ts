@@ -8,6 +8,7 @@ import {
   comparePassword,
   generateAdminToken,
   hashPassword,
+  needsRehash,
   requireAdminAuth,
   verifyAdminToken,
 } from "../../middlewares/auth";
@@ -37,11 +38,22 @@ r.post(
       );
       if (q.rows.length > 0) {
         const u = q.rows[0];
-        const isMatch =
-          comparePassword(cleanPass, u.password_hash) ||
-          (cleanUser.toLowerCase() === "admin" &&
-            (cleanPass === "admin123" || cleanPass === "admin"));
+        const isMatch = comparePassword(cleanPass, u.password_hash);
         if (isMatch) {
+          // Cơ chế tự động nâng cấp hash mật khẩu nếu tài khoản đang dùng hash cũ/yếu
+          if (needsRehash(u.password_hash)) {
+            try {
+              const upgradedHash = hashPassword(cleanPass);
+              await pool.query(
+                `UPDATE admin_users SET password_hash = $1 WHERE id = $2`,
+                [upgradedHash, u.id]
+              );
+              console.log(`[AUTH] Tự động nâng cấp hash mật khẩu chuẩn PBKDF2 (310,000 vòng) cho '${u.username}'`);
+            } catch (rehashErr: any) {
+              console.warn("[AUTH] Tự động nâng cấp hash thất bại:", rehashErr.message);
+            }
+          }
+
           const token = generateAdminToken(u.username, u.role);
           return res.json({
             ok: true,
@@ -55,17 +67,21 @@ r.post(
             message: "Đăng nhập quản trị viên thành công!",
           });
         }
+        return res.status(401).json({
+          ok: false,
+          message: "Tên đăng nhập hoặc mật khẩu không chính xác!",
+        });
       }
     } catch (err: any) {
-      console.warn("[AUTH] DB query failed, using fallback env:", err.message);
+      console.error("[AUTH] DB query failed during login:", err.message);
+      return res.status(500).json({
+        ok: false,
+        message: "Lỗi kết nối cơ sở dữ liệu khi xác thực tài khoản!",
+      });
     }
 
-    // 1.2 Fallback kiểm tra thông qua biến môi trường .env
-    if (
-      checkAdminCredentials(cleanUser, cleanPass) ||
-      (cleanUser.toLowerCase() === "admin" &&
-        (cleanPass === "admin123" || cleanPass === "admin"))
-    ) {
+    // 1.2 Fallback kiểm tra thông qua biến môi trường .env (chỉ khi tài khoản chưa có trong DB)
+    if (checkAdminCredentials(cleanUser, cleanPass)) {
       const token = generateAdminToken(cleanUser, "super_admin");
       return res.json({
         ok: true,
@@ -73,7 +89,7 @@ r.post(
         user: {
           username: cleanUser,
           role: "super_admin",
-          full_name: "Quản Trị Viên Mặc Định",
+          full_name: "Quản Trị Viên",
         },
         message: "Đăng nhập quản trị viên thành công!",
       });
