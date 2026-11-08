@@ -2086,6 +2086,7 @@
 
           runRadarScan();
           if (selectedDestDish) selectDestinationById(selectedDestDish.id);
+            if (foodTourDishes && foodTourDishes.length > 0) updateTourUiAndSolveTsp(); // cOriginSelect_TourUpdated
         },
         (err) => {
           console.warn('GPS error handled safely, avoiding app crash:', err);
@@ -2320,6 +2321,98 @@
       });
     });
 
+    
+    // --- BỘ ĐỊNH TUYẾN THÔNG MINH CHO NGƯỜI ĐI BỘ TRONG PHỐ CỔ HỘI AN ---
+    // Kiểm tra xem 2 điểm có nằm ở 2 bờ kênh Chùa Cầu (Trần Phú <-> Nguyễn Thị Minh Khai)
+    function isChuaCauPedestrianCrossing(ptA, ptB) {
+      const latInRange = (ptA.lat >= 15.8750 && ptA.lat <= 15.8795) &&
+                         (ptB.lat >= 15.8750 && ptB.lat <= 15.8795);
+      const crossCanal = (ptA.lng < 108.32575 && ptB.lng >= 108.32575) ||
+                         (ptA.lng >= 108.32575 && ptB.lng < 108.32575);
+      const directDist = calcHaversine(ptA.lat, ptA.lng, ptB.lat, ptB.lng);
+      return latInRange && crossCanal && (directDist < 450);
+    }
+
+    // Lộ trình đi bộ trực tiếp qua Chùa Cầu (nối thẳng Trần Phú & Nguyễn Thị Minh Khai)
+    function getChuaCauBridgePath(ptA, ptB) {
+      const eastEntry = [15.87718, 108.32595]; // Đầu cầu mạn Trần Phú
+      const midBridge = [15.87714, 108.32575]; // Thân Chùa Cầu
+      const westEntry = [15.87710, 108.32555]; // Đầu cầu mạn Nguyễn Thị Minh Khai
+
+      if (ptA.lng >= 108.32575) {
+        return [
+          [ptA.lat, ptA.lng],
+          eastEntry,
+          midBridge,
+          westEntry,
+          [ptB.lat, ptB.lng]
+        ];
+      } else {
+        return [
+          [ptA.lat, ptA.lng],
+          westEntry,
+          midBridge,
+          eastEntry,
+          [ptB.lat, ptB.lng]
+        ];
+      }
+    }
+
+    // Hàm lấy lộ trình cho từng chặng di chuyển (xử lý thông minh cho người đi bộ)
+    async function getRouteSegment(fromPt, toPt, travelMode) {
+      const directDist = calcHaversine(fromPt.lat, fromPt.lng, toPt.lat, toPt.lng);
+      const modeInfo = TRAVEL_MODES[travelMode] || TRAVEL_MODES.walking;
+
+      // Xử lý ưu tiên: Nếu là người đi bộ qua khu vực Chùa Cầu, đi thẳng qua cầu thay vì vòng ô tô
+      if (travelMode === 'walking' && isChuaCauPedestrianCrossing(fromPt, toPt)) {
+        const bridgeCoords = getChuaCauBridgePath(fromPt, toPt);
+        let dist = 0;
+        for (let i = 0; i < bridgeCoords.length - 1; i++) {
+          dist += calcHaversine(bridgeCoords[i][0], bridgeCoords[i][1], bridgeCoords[i+1][0], bridgeCoords[i+1][1]);
+        }
+        return {
+          coords: bridgeCoords,
+          distance: Math.round(dist)
+        };
+      }
+
+      // Với các chặng thông thường, truy vấn OSRM
+      const osrmProfile = modeInfo.osrmProfile || 'driving';
+      const url = `https://router.project-osrm.org/route/v1/${osrmProfile}/${fromPt.lng},${fromPt.lat};${toPt.lng},${toPt.lat}?overview=full&geometries=geojson`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+          const route = data.routes[0];
+          let roadDist = Math.round(route.distance);
+          let roadCoords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+
+          // Nếu ở chế độ đi bộ mà OSRM trả đường vòng quá xa (> 2.5 lần đường thẳng) trong cự ly ngắn
+          if (travelMode === 'walking' && directDist < 300 && roadDist > directDist * 2.5) {
+            if (isChuaCauPedestrianCrossing(fromPt, toPt)) {
+              const bridgeCoords = getChuaCauBridgePath(fromPt, toPt);
+              let dist = 0;
+              for (let i = 0; i < bridgeCoords.length - 1; i++) {
+                dist += calcHaversine(bridgeCoords[i][0], bridgeCoords[i][1], bridgeCoords[i+1][0], bridgeCoords[i+1][1]);
+              }
+              return { coords: bridgeCoords, distance: Math.round(dist) };
+            }
+          }
+
+          return { coords: roadCoords, distance: roadDist };
+        }
+      } catch (err) {
+        console.warn('OSRM segment routing error:', err);
+      }
+
+      // Fallback
+      return {
+        coords: [[fromPt.lat, fromPt.lng], [toPt.lat, toPt.lng]],
+        distance: Math.round(directDist * 1.25)
+      };
+    }
+
     async function selectDestinationById(dishId) {
       const dish = allDishes.find(d => d.id === dishId);
       if (!dish) return;
@@ -2352,22 +2445,18 @@
       document.getElementById('routeHaversineVal').textContent = formatDistance(haversineMeters);
       document.getElementById('routeModeNote').innerHTML = '<span>ℹ️</span> ' + modeInfo.note;
 
-      // Try fetching OSRM road geometry
+      // Try fetching road geometry (smart pedestrian bridge & street routing)
       let routeDistance = Math.round(haversineMeters * (currentTravelMode === 'walking' ? 1.2 : 1.35));
       let routeCoords = null;
 
       try {
-        const url = `https://router.project-osrm.org/route/v1/${modeInfo.osrmProfile}/${userCoords.lng},${userCoords.lat};${dish.lng},${dish.lat}?overview=full&geometries=geojson`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-          const route = data.routes[0];
-          routeDistance = Math.round(route.distance);
-          routeCoords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+        const seg = await getRouteSegment(userCoords, dish, currentTravelMode);
+        if (seg && seg.coords) {
+          routeDistance = seg.distance;
+          routeCoords = seg.coords;
         }
       } catch (err) {
-        console.warn('OSRM fetch error, using road fallback:', err);
+        console.warn('Route segment error, using road fallback:', err);
       }
 
       // Calculate estimated time (ETA)
@@ -2426,42 +2515,44 @@
       runRadarScan();
     }
 
-    // Generate all permutations for TSP
-    function getPermutations(arr) {
-      if (arr.length <= 1) return [arr];
-      const result = [];
-      for (let i = 0; i < arr.length; i++) {
-        const current = arr[i];
-        const remaining = arr.slice(0, i).concat(arr.slice(i + 1));
-        const subPerms = getPermutations(remaining);
-        for (const p of subPerms) {
-          result.push([current, ...p]);
-        }
-      }
-      return result;
-    }
-
-    // Solve TSP: Find shortest tour starting at userCoords through all selected stops
+    // Thuật toán sắp xếp lộ trình Food Tour:
+    // Bắt đầu từ vị trí xuất phát (GPS hiện tại hoặc điểm người dùng đã chọn)
+    // -> Đi tới địa điểm GẦN NHẤT (Trạm 1)
+    // -> Từ Trạm 1 đi tới địa điểm GẦN NHẤT tiếp theo (Trạm 2)
+    // -> Từ Trạm 2 đi tới địa điểm GẦN NHẤT tiếp theo (Trạm 3)...
     function solveOptimalTspRoute() {
-      if (foodTourDishes.length <= 1) return foodTourDishes;
-      const perms = getPermutations(foodTourDishes);
-      let bestPerm = null;
-      let minTotalDist = Infinity;
+      if (!foodTourDishes || foodTourDishes.length <= 1) return [...(foodTourDishes || [])];
 
-      perms.forEach(perm => {
-        let total = 0;
-        let prev = userCoords;
-        for (const stop of perm) {
-          total += calcHaversine(prev.lat, prev.lng, stop.lat, stop.lng);
-          prev = stop;
+      // Tính khoảng cách hiệu quả giữa 2 điểm (ưu tiên đường bộ Chùa Cầu nếu đi bộ)
+      function getEffectiveDist(pA, pB) {
+        if (currentTravelMode === 'walking' && isChuaCauPedestrianCrossing(pA, pB)) {
+          return 65; // ~65m đi bộ qua Chùa Cầu
         }
-        if (total < minTotalDist) {
-          minTotalDist = total;
-          bestPerm = perm;
-        }
-      });
+        return calcHaversine(pA.lat, pA.lng, pB.lat, pB.lng);
+      }
 
-      return bestPerm || foodTourDishes;
+      const orderedStops = [];
+      const remaining = [...foodTourDishes];
+      let currentPoint = userCoords;
+
+      while (remaining.length > 0) {
+        let nearestIdx = 0;
+        let minDist = Infinity;
+
+        for (let i = 0; i < remaining.length; i++) {
+          const dist = getEffectiveDist(currentPoint, remaining[i]);
+          if (dist < minDist) {
+            minDist = dist;
+            nearestIdx = i;
+          }
+        }
+
+        const nextStop = remaining.splice(nearestIdx, 1)[0];
+        orderedStops.push(nextStop);
+        currentPoint = nextStop;
+      }
+
+      return orderedStops;
     }
 
     async function updateTourUiAndSolveTsp() {
@@ -2521,25 +2612,32 @@
         gmapsTourBtn.href = `https://www.google.com/maps/dir/?api=1&origin=${originStr}&destination=${destStr}${waypointsStr ? '&waypoints=' + waypointsStr : ''}&travelmode=${modeInfo.gmapsMode || 'walking'}`;
       }
 
-      // Lấy tọa độ đường bộ đi thực tế qua các trạm từ OSRM API (đường phố có thể đi được)
-      const osrmProfile = modeInfo.osrmProfile || 'foot';
-      const allCoords = [userCoords, ...optimalStops];
-      const osrmCoordsStr = allCoords.map(c => `${c.lng},${c.lat}`).join(';');
-      const osrmUrl = `https://router.project-osrm.org/route/v1/${osrmProfile}/${osrmCoordsStr}?overview=full&geometries=geojson`;
+      // Lấy lộ trình từng chặng kết hợp thông minh (đi bộ qua Chùa Cầu & đường phố thực tế)
+      const segments = [];
+      let currentFrom = userCoords;
+      for (const stop of optimalStops) {
+        segments.push({ from: currentFrom, to: stop });
+        currentFrom = stop;
+      }
 
-      let routeCoords = null;
-      let actualRoadDist = null;
+      let routeCoords = [];
+      let actualRoadDist = 0;
 
       try {
-        const res = await fetch(osrmUrl);
-        const data = await res.json();
-        if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
-          const route = data.routes[0];
-          actualRoadDist = Math.round(route.distance);
-          routeCoords = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
-        }
+        const legResults = await Promise.all(
+          segments.map(seg => getRouteSegment(seg.from, seg.to, currentTravelMode))
+        );
+
+        legResults.forEach((leg, idx) => {
+          actualRoadDist += leg.distance;
+          if (idx === 0) {
+            routeCoords.push(...leg.coords);
+          } else {
+            routeCoords.push(...leg.coords.slice(1));
+          }
+        });
       } catch (err) {
-        console.warn('Food Tour OSRM fetch error, fallback to road approximation:', err);
+        console.warn('Food Tour segment fetch error:', err);
       }
 
       // Nếu có thao tác chọn mới trong lúc đang tải, hủy kết quả cũ
