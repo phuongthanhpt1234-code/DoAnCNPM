@@ -40,3 +40,8 @@ npm run dev
 - Server mặc định chạy tại `http://localhost:4000`
 - Trang quản trị (Admin): `http://localhost:4000/admin`
 - Healthcheck API: `http://localhost:4000/api/health`
+
+## 3. triển khai Online
+
+web: `https://doancnpm-beta.vercel.app/?lang=vi`
+admin `https://doancnpm-backend.onrender.com/`
