@@ -104,9 +104,23 @@ export default function HomeScreen() {
     setIsSpeaking(false);
   }, []);
 
+  const flatListRef = useRef<FlatList<Dish> | null>(null);
+
   const handleCloseDishModal = useCallback(() => {
     handleStopSpeech();
     setSelectedDish(null);
+  }, [handleStopSpeech]);
+
+  const handleResetHome = useCallback(() => {
+    handleStopSpeech();
+    setActivityFilter("all");
+    setCat("all");
+    setSearch("");
+    setSelectedDish(null);
+    setQrVisible(false);
+    setCustomerMapVisible(false);
+    setTasteCardVisible(false);
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   }, [handleStopSpeech]);
 
   useEffect(() => {
@@ -133,7 +147,6 @@ export default function HomeScreen() {
     "all" | "favorites" | "checkins"
   >("all");
 
-  const [checkinHistoryIds, setCheckinHistoryIds] = useState<number[]>([]);
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
   const [toastMsg, setToastMsg] = useState<string>("");
 
@@ -392,30 +405,79 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     }, 2800);
   }, []);
 
+  const syncActivityLists = useCallback(async (signal?: AbortSignal) => {
+    const deviceId = encodeURIComponent(getClientDeviceId());
+    const options = signal ? { signal } : {};
+
+    let localFavs: number[] = [];
+    let localChecks: number[] = [];
+
+    try {
+      const rawFav = await AsyncStorage.getItem("favoritedDishIds");
+      if (rawFav) {
+        const parsed = JSON.parse(rawFav);
+        if (Array.isArray(parsed)) {
+          localFavs = parsed.map(Number).filter((n) => !isNaN(n) && n > 0);
+          if (!signal?.aborted) setFavoritedDishIds(localFavs);
+        }
+      }
+    } catch {}
+
+    try {
+      const rawCheck = await AsyncStorage.getItem("checkedDishIds");
+      if (rawCheck) {
+        const parsed = JSON.parse(rawCheck);
+        if (Array.isArray(parsed)) {
+          localChecks = parsed.map(Number).filter((n) => !isNaN(n) && n > 0);
+          if (!signal?.aborted) setCheckedDishIds(localChecks);
+        }
+      }
+    } catch {}
+
+    api<{ id?: number; dish_id?: number }[]>(
+      `/favorites?device_id=${deviceId}`,
+      options,
+    )
+      .then((favs) => {
+        if (!signal?.aborted && Array.isArray(favs)) {
+          const serverIds = favs
+            .map((f) => Number(f.id ?? f.dish_id))
+            .filter((n) => !isNaN(n) && n > 0);
+          const merged = Array.from(new Set([...localFavs, ...serverIds]));
+          setFavoritedDishIds(merged);
+          AsyncStorage.setItem(
+            "favoritedDishIds",
+            JSON.stringify(merged),
+          ).catch(() => {});
+        }
+      })
+      .catch(() => {});
+
+    api<{ dish_id?: number; id?: number }[]>(
+      `/checkins?device_id=${deviceId}`,
+      options,
+    )
+      .then((checks) => {
+        if (!signal?.aborted && Array.isArray(checks)) {
+          const serverIds = checks
+            .map((c) => Number(c.dish_id ?? c.id))
+            .filter((n) => !isNaN(n) && n > 0);
+          const merged = Array.from(new Set([...localChecks, ...serverIds]));
+          setCheckedDishIds(merged);
+          AsyncStorage.setItem("checkedDishIds", JSON.stringify(merged)).catch(
+            () => {},
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       const controller = new AbortController();
-      const deviceId = encodeURIComponent(getClientDeviceId());
-      const options = { signal: controller.signal };
-
-      api<{ id: number }[]>(`/favorites?device_id=${deviceId}`, options)
-        .then((favs) => {
-          if (!controller.signal.aborted && Array.isArray(favs)) {
-            setFavoritedDishIds(favs.map((f) => Number(f.id)));
-          }
-        })
-        .catch(() => {});
-
-      api<{ dish_id: number }[]>(`/checkins?device_id=${deviceId}`, options)
-        .then((checks) => {
-          if (!controller.signal.aborted && Array.isArray(checks)) {
-            setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
-          }
-        })
-        .catch(() => {});
-
+      syncActivityLists(controller.signal);
       return () => controller.abort();
-    }, []),
+    }, [syncActivityLists]),
   );
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
@@ -517,33 +579,21 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const isDesktop = width >= 900;
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
-  const loadCheckinHistory = useCallback(async () => {
-    try {
-      const deviceId = encodeURIComponent(getClientDeviceId());
-      const history = await api<{ items: { dish_id: number }[] }>(
-        `/checkins/history?device_id=${deviceId}&lang=${lang}`,
-      );
-      setCheckinHistoryIds(history.items.map((item) => Number(item.dish_id)));
-    } catch (error) {
-      console.warn("Load check-in history failed:", error);
-      showToast(activityHistoryText[lang].loadError);
-    }
-  }, [lang, showToast]);
-
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
 
     return apiDishes.filter((dish) => {
+      const dishId = Number(dish.id);
       if (
         activityFilter === "favorites" &&
-        !favoritedDishIds.includes(dish.id)
+        !favoritedDishIds.includes(dishId)
       ) {
         return false;
       }
 
       if (
         activityFilter === "checkins" &&
-        !checkinHistoryIds.includes(dish.id)
+        !checkedDishIds.includes(dishId)
       ) {
         return false;
       }
@@ -567,7 +617,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     lang,
     activityFilter,
     favoritedDishIds,
-    checkinHistoryIds,
+    checkedDishIds,
   ]);
 
   const speakText = useCallback(
@@ -599,10 +649,25 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     const nextChecked = !isAlreadyChecked;
     const deviceId = getClientDeviceId();
 
-    setCheckedDishIds((prev) =>
-      isAlreadyChecked
-        ? prev.filter((id) => id !== dish.id)
-        : [...prev, dish.id],
+    setCheckedDishIds((prev) => {
+      const updated = isAlreadyChecked
+        ? prev.filter((id) => id !== Number(dish.id))
+        : Array.from(new Set([...prev, Number(dish.id)]));
+      AsyncStorage.setItem("checkedDishIds", JSON.stringify(updated)).catch(
+        () => {},
+      );
+      return updated;
+    });
+
+    const dishTitle = dish.name[lang] || dish.name.vi || "";
+    showToast(
+      nextChecked
+        ? lang === "vi"
+          ? `Đã check-in thành công: ${dishTitle}`
+          : `Successfully checked in: ${dishTitle}`
+        : lang === "vi"
+          ? `Đã hủy check-in: ${dishTitle}`
+          : `Unchecked: ${dishTitle}`,
     );
 
     try {
@@ -611,57 +676,38 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           method: "POST",
           body: JSON.stringify({
             device_id: deviceId,
-            dish_id: dish.id,
+            dish_id: Number(dish.id),
             note: `Check-in món ${dish.name.vi}`,
           }),
         });
-        const dishTitle = dish.name[lang] || dish.name.vi || "";
-        showToast(
-          lang === "vi"
-            ? `Đã check-in thành công: ${dishTitle}`
-            : `Successfully checked in: ${dishTitle}`
-        );
       } else {
         await api(
-          `/checkins?device_id=${encodeURIComponent(deviceId)}&dish_id=${dish.id}`,
+          `/checkins?device_id=${encodeURIComponent(deviceId)}&dish_id=${Number(dish.id)}`,
           { method: "DELETE" },
-        );
-        const dishTitle = dish.name[lang] || dish.name.vi || "";
-        showToast(
-          lang === "vi"
-            ? `Đã hủy check-in: ${dishTitle}`
-            : `Unchecked: ${dishTitle}`
         );
       }
     } catch (e) {
-      console.warn("Check-in/out error:", e);
-      showToast(
-        lang === "vi"
-          ? "Không thể kết nối máy chủ để check-in."
-          : "Unable to connect to server for check-in."
-      );
-      setCheckedDishIds((prev) =>
-        isAlreadyChecked
-          ? [...prev, dish.id]
-          : prev.filter((id) => id !== dish.id),
-      );
+      console.warn("Check-in sync warning:", e);
     } finally {
       isCheckInBusyRef.current[dish.id] = false;
-
-      if (activityFilter === "checkins") {
-        void loadCheckinHistory();
-      }
     }
   };
 
   const handleToggleFavorite = async (dish: Dish) => {
-    const isFav = favoritedDishIds.includes(dish.id);
+    const dishId = Number(dish.id);
+    const isFav = favoritedDishIds.includes(dishId);
     const nextFav = !isFav;
     const deviceId = getClientDeviceId();
 
-    setFavoritedDishIds((prev) =>
-      isFav ? prev.filter((id) => id !== dish.id) : [...prev, dish.id],
-    );
+    setFavoritedDishIds((prev) => {
+      const updated = isFav
+        ? prev.filter((id) => id !== dishId)
+        : Array.from(new Set([...prev, dishId]));
+      AsyncStorage.setItem("favoritedDishIds", JSON.stringify(updated)).catch(
+        () => {},
+      );
+      return updated;
+    });
 
     try {
       if (nextFav) {
@@ -669,23 +715,17 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           method: "POST",
           body: JSON.stringify({
             device_id: deviceId,
-            dish_id: dish.id,
+            dish_id: dishId,
           }),
         });
       } else {
         await api(
-          `/favorites/${dish.id}?device_id=${encodeURIComponent(deviceId)}`,
+          `/favorites/${dishId}?device_id=${encodeURIComponent(deviceId)}`,
           { method: "DELETE" },
         );
       }
     } catch (e) {
-      console.warn("Toggle favorite error:", e);
-      setFavoritedDishIds((prev) =>
-        isFav ? [...prev, dish.id] : prev.filter((id) => id !== dish.id),
-      );
-      if (!nextFav) {
-        showToast(activityHistoryText[lang].removeError);
-      }
+      console.warn("Toggle favorite sync warning:", e);
     }
   };
 
@@ -747,15 +787,20 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       ) : null}
       <View style={styles.header}>
         <View style={styles.brandRow}>
-          <View>
+          <TouchableOpacity
+            activeOpacity={0.75}
+            onPress={handleResetHome}
+            accessibilityRole="button"
+          >
             <Text style={styles.brandTitle}>{ui.brandTitle}</Text>
             <Text style={styles.brandSub}>{ui.brandSub}</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={{ maxWidth: "100%" }}
           contentContainerStyle={styles.langBar}
         >
           {(Object.keys(LANGS) as LangKey[]).map((k) => (
@@ -773,11 +818,21 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           ))}
         </ScrollView>
 
-        <View style={styles.authRow}>
+        <View style={[styles.authRow, !isDesktop && { width: "100%" }]}>
           {(
             [
-              ["favorites", activityHistoryText[lang].favorite],
-              ["checkins", activityHistoryText[lang].checkins],
+              [
+                "favorites",
+                favoritedDishIds.length > 0
+                  ? `${activityHistoryText[lang].favorite} (${favoritedDishIds.length})`
+                  : activityHistoryText[lang].favorite,
+              ],
+              [
+                "checkins",
+                checkedDishIds.length > 0
+                  ? `${activityHistoryText[lang].checkins} (${checkedDishIds.length})`
+                  : activityHistoryText[lang].checkins,
+              ],
             ] as const
           ).map(([value, label]) => {
             const selected = activityFilter === value;
@@ -790,14 +845,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 style={selected ? styles.registerBtn : styles.loginBtn}
                 onPress={() => {
                   const nextFilter = selected ? "all" : value;
-
                   setActivityFilter(nextFilter);
                   setCat("all");
                   setSearch("");
-
-                  if (nextFilter === "checkins") {
-                    void loadCheckinHistory();
-                  }
                 }}
               >
                 <Text
@@ -829,6 +879,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       </View>
 
       <FlatList
+        ref={flatListRef}
         key={`dishes-${numColumns}`}
         data={filtered}
         extraData={{ lang, checkedDishIds, favoritedDishIds }}
@@ -859,7 +910,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 ].map(([key, label]) => (
                   <TouchableOpacity
                     key={key}
-                    onPress={() => setCat(key)}
+                    onPress={() => { setCat(key); if (key === "all") setActivityFilter("all"); }}
                     style={[
                       styles.catChip,
                       cat === key && styles.catChipActive,

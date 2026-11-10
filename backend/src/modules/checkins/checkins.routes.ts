@@ -56,7 +56,7 @@ r.get('/', ah(async (req, res) => {
               d.id AS dish_id, d.name AS dish_name
        FROM check_ins c
        JOIN dishes d ON d.id = c.dish_id
-       WHERE c.device_id = $1 AND c.created_at::date = CURRENT_DATE
+       WHERE c.device_id = $1
        ORDER BY c.created_at DESC
        LIMIT $2`,
       [deviceId, limit],
