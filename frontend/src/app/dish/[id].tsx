@@ -208,7 +208,6 @@ export default function DishDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Thanh chuyển đổi 5 ngôn ngữ */}
       <View style={styles.langRow}>
         {Object.entries(LANGS).map(([key, item]) => (
           <TouchableOpacity
@@ -237,7 +236,6 @@ export default function DishDetailScreen() {
           <Text style={styles.address}>📍 {dish.address}</Text>
         ) : null}
 
-        {/* Cụm nút Thuyết minh AI phát âm thanh thực tế */}
         <TouchableOpacity
           style={[styles.voiceBtn, isSpeaking && styles.voiceBtnActive]}
           onPress={handleToggleVoice}

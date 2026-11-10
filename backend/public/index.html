@@ -16,7 +16,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
     <style>
 
-      /* BẢN ĐỒ VÀ ĐỊNH VỊ GPS THEO PHONG CÁCH GOOGLE MAPS */
       #leafletMap {
         height: 480px;
         width: 100%;
@@ -37,7 +36,6 @@
         color: #ffffff !important;
         border-color: #b45309 !important;
       }
-      /* Nút chọn chế độ Google Maps */
       .gmap-mode-tab {
         padding: 6px 12px;
         font-size: 12px;
@@ -61,7 +59,6 @@
         border-color: #1a73e8;
         box-shadow: 0 1px 3px rgba(26,115,232,0.25);
       }
-      /* Nút chuyển đổi loại bản đồ (Bản đồ / Vệ tinh / Địa hình) */
       .gmap-type-btn {
         padding: 5px 10px;
         font-size: 11.5px;
@@ -81,7 +78,6 @@
         color: #ffffff;
         box-shadow: 0 1px 3px rgba(0,0,0,0.2);
       }
-      /* Nút điều khiển nhanh trên bản đồ */
       .gmap-ctrl-btn {
         background: #ffffff;
         color: #3c4043;
@@ -178,7 +174,6 @@
         min-height: 100vh;
       }
 
-      /* BỐ CỤC CHÍNH GỒM SIDEBAR (THANH BÊN) + NỘI DUNG */
       .app-shell {
         display: flex;
         min-height: 100vh;
@@ -290,11 +285,11 @@
         color: var(--gold);
         border: 1px solid var(--gold-border);
       }
-        .nav-btn[data-nav="map"] {
+      .nav-btn[data-nav="map"] {
         gap: 6px;
         font-size: 12.5px;
       }
-      
+
       .nav-btn[data-nav="map"] .nav-btn-left {
         display: block;
         min-width: 0;
@@ -302,7 +297,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      
+
       .nav-btn[data-nav="map"] .nav-badge {
         flex: 0 0 auto;
         white-space: nowrap;
@@ -412,7 +407,6 @@
         gap: 20px;
       }
 
-      /* BỘ 3 BIỂU ĐỒ TRỰC TIẾP: CỘT - TRÒN - ĐƯỜNG */
       .charts-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -485,7 +479,6 @@
         color: #fff;
       }
 
-      /* 1. BIỂU ĐỒ CỘT TRỰC TIẾP */
       .live-bars-box {
         display: flex;
         align-items: flex-end;
@@ -542,7 +535,6 @@
         text-align: center;
       }
 
-      /* 2. BIỂU ĐỒ TRÒN (DONUT SVG) */
       .pie-wrap {
         display: flex;
         align-items: center;
@@ -628,7 +620,6 @@
         white-space: nowrap;
       }
 
-      /* 3. BIỂU ĐỒ ĐƯỜNG (LINE SVG) */
       .line-box {
         height: 175px;
         padding: 10px 12px 6px;
@@ -699,7 +690,6 @@
         gap: 8px;
       }
 
-      /* CONTAINER CHÍNH */
       .wrap {
         max-width: 1280px;
         margin: 0 auto;
@@ -719,7 +709,6 @@
         display: block;
       }
 
-      /* THỐNG KÊ TỔNG QUAN */
       .strip {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -767,7 +756,6 @@
         flex-shrink: 0;
       }
 
-      /* BỐ CỤC 2 CỘT */
       .grid {
         display: grid;
         grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
@@ -935,7 +923,6 @@
         font-weight: 700;
       }
 
-      /* TÌM KIẾM & CHIP DANH MỤC */
       .tools {
         display: flex;
         flex-wrap: wrap;
@@ -1011,7 +998,6 @@
         color: var(--ink-white);
       }
 
-      /* NÚT BẤM PILL */
       button {
         cursor: pointer;
         border: 1px solid var(--gold-border-strong);
@@ -1074,7 +1060,6 @@
         color: var(--ink-white);
       }
 
-      /* CHẾ ĐỘ THẺ MÓN ĂN (CARD GRID GIỐNG HỆT FRONTEND) */
       .cards-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -1185,7 +1170,6 @@
         padding: 8px 10px;
       }
 
-      /* CHẾ ĐỘ BẢNG (TABLE) */
       .tablewrap {
         overflow-x: auto;
       }
@@ -1292,7 +1276,6 @@
         opacity: 0.55;
       }
 
-      /* BIỂU ĐỒ CỘT CHECK-IN 7 NGÀY */
       .bars {
         display: flex;
         align-items: flex-end;
@@ -1454,7 +1437,6 @@
         margin: 8px 0 0;
       }
 
-      /* MODAL CHỈNH SỬA ĐA NGÔN NGỮ (5 NGÔN NGỮ) */
       dialog {
         border: 1px solid var(--gold);
         border-radius: 24px;
@@ -1698,7 +1680,6 @@
         margin-top: 4px;
       }
     
-      /* TOOLTIP CHUYÊN NGHIỆP CHO CÁC BIỂU ĐỒ */
       .chart-tooltip {
         position: fixed;
         z-index: 999999;
@@ -1764,7 +1745,6 @@
         color: #fbbf24;
       }
 
-      /* Hover Effects cho các thành phần biểu đồ */
       .bar-col {
         cursor: pointer !important;
         padding: 4px 2px;
@@ -2444,7 +2424,6 @@
   
   
 
-  /* Food Tour Panel (TSP Multi-stop Route) */
   #secMap .qm-tour-panel {
     margin-bottom: 14px;
     padding: 12px 14px;
@@ -2606,7 +2585,6 @@
     color: #dc2626;
   }
 
-  /* Dish card metadata and tour button */
   
 
   #secMap .qm-btn-tour-add {
@@ -2707,14 +2685,12 @@
   overflow: hidden;
 }
 
-/* Tăng chiều cao bản đồ để còn đủ chỗ xem tuyến */
 #secMap #leafletMap {
   height: 720px;
   position: relative;
   z-index: 1;
 }
 
-/* Khung nổi sát phía dưới bản đồ */
 #secMap .qm-map > .qm-route-wrap {
   position: absolute;
   top: auto;
@@ -2739,7 +2715,6 @@
   box-shadow: 0 8px 24px rgba(72, 42, 45, 0.18);
 }
 
-/* Thu gọn nội dung trong khung */
 #secMap .qm-route-v2 .qm-route-icon {
   width: 36px;
   height: 36px;
@@ -2763,12 +2738,11 @@
 #secMap .qm-route-v2 .qm-road-message {
   margin-top: 7px;
   font-size: 11px;
-}/* Ẩn nút Mở bản đồ */
+}
 #secMap .qm-route-v2 #gmapExternalLink {
   display: none;
 }
 
-/* Bỏ cuộn, thu gọn khung */
 #secMap .qm-route.qm-route-v2 {
   padding: 10px 14px;
   overflow: hidden;
@@ -2833,7 +2807,6 @@
   line-height: 1.4;
 }
 
-/* Ẩn dòng thông báo lặp lại khi tải tuyến thành công */
 #secMap .qm-route-v2 .qm-road-message {
   margin-top: 4px;
   font-size: 10px;
@@ -3203,7 +3176,6 @@
 </style>
   </head>
   <body>
-    <!-- MÀN HÌNH ĐĂNG NHẬP ADMIN BẢO MẬT -->
     <div id="loginOverlay" style="position: fixed; inset: 0; background: #fafbfc; display: flex; align-items: center; justify-content: center; z-index: 999999; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;">
       <div style="width: 100%; max-width: 420px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 30px; padding: 42px 38px 38px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03); box-sizing: border-box;">
         <div style="text-align: center; margin-bottom: 28px;">
@@ -3240,7 +3212,6 @@
     </div>
 
     <div class="app-shell" id="appShell" style="display: none;">
-      <!-- SIDEBAR (THANH ĐIỀU HƯỚNG BÊN TRÁI) -->
       <aside class="sidebar">
         <div>
           <div class="sidebar-brand">
@@ -3311,7 +3282,6 @@
         </div>
       </aside>
 
-      <!-- KHU VỰC NỘI DUNG CHÍNH BÊN PHẢI -->
       <div class="main-area">
         <header class="topbar">
           <div class="topbar-inner">
@@ -3343,12 +3313,9 @@
         <div class="wrap" style="width: 100%">
           <p id="msg" role="alert"></p>
 
-          <!-- HÀNG THẺ THỐNG KÊ TỔNG QUAN -->
           <div class="strip" id="strip"></div>
 
-          <!-- BỘ 3 BIỂU ĐỒ HOẠT ĐỘNG TRỰC TIẾP TRÊN SỐ LIỆU: CỘT - TRÒN - ĐƯỜNG -->
           <div class="charts-grid" id="secCharts">
-            <!-- 1. BIỂU ĐỒ CỘT -->
             <div class="chart-card">
               <div>
                 <div class="chart-head">
@@ -3363,7 +3330,6 @@
               <div class="live-bars-box" id="liveBarChart"></div>
             </div>
 
-            <!-- 2. BIỂU ĐỒ TRÒN -->
             <div class="chart-card">
               <div>
                 <div class="chart-head">
@@ -3397,7 +3363,6 @@
               </div>
             </div>
 
-            <!-- 3. BIỂU ĐỒ ĐƯỜNG -->
             <div class="chart-card">
               <div>
                 <div class="chart-head">
@@ -3573,7 +3538,6 @@
                   </button>
                 </div>
 
-                <!-- Form Thêm Tài Khoản Mới (Ẩn/Hiện linh hoạt) -->
                 <div id="addUserBox" style="display: none; background: var(--card-item); border: 1px solid var(--gold-border-strong); border-radius: 16px; padding: 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--ink);">Thêm Tài Khoản Quản Trị Mới</h3>
@@ -3609,7 +3573,6 @@
         </form>
                 </div>
 
-                <!-- Bảng danh sách tài khoản -->
                 <div class="tablewrap" style="margin-bottom: 26px; border: 1px solid var(--gold-border); border-radius: 14px; overflow: hidden;">
                   <table>
                     <thead>
@@ -3630,7 +3593,6 @@
                   </table>
                 </div>
 
-                <!-- Đổi mật khẩu tài khoản đang đăng nhập -->
                 <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px; margin-bottom: 20px;">
                   <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 14px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
                     Đổi Mật Khẩu (Tài Khoản Đang Đăng Nhập)
@@ -3655,7 +3617,6 @@
         </form>
                 </div>
               </section>
-              <!-- QUẢN LÝ MÃ QR -->
               <section class="alt-panel" id="secQr" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
                 <div class="sec-head" style="margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                   <div class="sec-title-group" style="display: flex; align-items: center; gap: 10px;">
@@ -3672,7 +3633,6 @@
                   </div>
                 </div>
 
-                <!-- 2 TABS CON: QR ỨNG DỤNG vs QR TỪNG MÓN ĂN -->
                 <div style="display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--gold-border); padding-bottom: 12px;">
                   <button type="button" id="qrTabAppBtn" class="filter-chip active" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
                     Mã QR Toàn Ứng Dụng
@@ -3682,7 +3642,6 @@
                   </button>
                 </div>
 
-                <!-- NỘI DUNG 1: QR TOÀN ỨNG DỤNG -->
                 <div id="qrAppBox" style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
                   <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
                     <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
@@ -3741,7 +3700,6 @@
                     </div>
                   </div>
 
-                  <!-- Thẻ xem trước in ấn App -->
                   <div style="background: #ffffff; border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06);" id="qrCardPreview">
                     <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
                     <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">THEO DẤU VỊ HỘI</h4>
@@ -3755,7 +3713,6 @@
                   </div>
                 </div>
 
-                <!-- NỘI DUNG 2: QR TỪNG MÓN ĂN -->
                 <div id="qrDishesBox" hidden style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
                   <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
                     <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
@@ -3807,7 +3764,6 @@
                     </div>
                   </div>
 
-                  <!-- Thẻ để bàn mẫu in cho món ăn (Không ghi giá) -->
                   <div style="border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff;" id="qrDishCardPreview">
                     <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
                     <h4 id="qrDishCardTitle" style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">Món Ngon Hội An</h4>
@@ -3822,9 +3778,7 @@
                 </div>
               </section>
 
-              <!-- BẢN ĐỒ NHIỆT & MẬT ĐỘ TƯƠNG TÁC (SPATIAL ANALYTICS) -->
               <section class="alt-panel" id="secMap" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
-                <!-- Header -->
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--gold-border); flex-wrap: wrap; gap: 14px;">
                   <div style="display: flex; align-items: center; gap: 12px;">
                     
@@ -3843,9 +3797,7 @@
                   </div>
                 </div>
 
-                <!-- KPI Strip: 4 Metric Cards -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                  <!-- Card 1 -->
                   <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 16px 18px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                       <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Điểm Ẩm Thực GPS</span>
@@ -3854,7 +3806,6 @@
                     <div style="font-size: 26px; font-weight: 800; color: var(--ink); margin-top: 6px;" id="kpiMapTotalDishes">6 điểm</div>
                     <div style="font-size: 12px; color: #16a34a; margin-top: 2px; font-weight: 600;">● 100% đã định vị không gian</div>
                   </div>
-                  <!-- Card 2 -->
                   <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; padding: 16px 18px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                       <span style="font-size: 12px; font-weight: 700; color: #c2410c; text-transform: uppercase;">Điểm Nóng QR Số 1</span>
@@ -3863,7 +3814,6 @@
                     <div style="font-size: 18px; font-weight: 800; color: #9a3412; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="kpiMapTopHotspot">Bánh Mì Phượng</div>
                     <div style="font-size: 12px; color: #ea580c; margin-top: 2px; font-weight: 600;" id="kpiMapTopHotspotScans">42 lượt tương tác (Cực đại)</div>
                   </div>
-                  <!-- Card 3 -->
                   <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px 18px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                       <span style="font-size: 12px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Tổng Tương Tác Du Khách</span>
@@ -3872,7 +3822,6 @@
                     <div style="font-size: 26px; font-weight: 800; color: #1e40af; margin-top: 6px;" id="kpiMapTotalInteractions">102 lượt</div>
                     <div style="font-size: 12px; color: #2563eb; margin-top: 2px; font-weight: 600;">Quét QR & Lượt check-in thực tế</div>
                   </div>
-                  <!-- Card 4 -->
                   <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 14px; padding: 16px 18px;">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                       <span style="font-size: 12px; font-weight: 700; color: #a16207; text-transform: uppercase;">Mật Độ Vùng Lõi Di Sản</span>
@@ -3883,13 +3832,10 @@
                   </div>
                 </div>
 
-                <!-- Main Layout: Bản đồ (Trái) + Xếp hạng & Đề xuất (Phải) -->
                 <div style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start;" class="admin-heatmap-grid">
-                  <!-- Cột Trái: Canvas bản đồ nhiệt -->
                   <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold-border); box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
                     <div id="adminHeatmapCanvas" style="height: 560px; width: 100%; background: #e5e7eb;"></div>
 
-                    <!-- Chú thích Thang Đo Nhiệt (Bottom-Left) -->
                     <div id="adminHeatLegendOverlay" style="position: absolute; bottom: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px;">
                       <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
                         Mức độ tương tác quét QR
@@ -3906,7 +3852,6 @@
                       </div>
                     </div>
 
-                    <!-- Chú thích Vành Đai Mật Độ (Top-Left) -->
                     <div id="adminDensityLegendOverlay" style="position: absolute; top: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px; display: none;">
                       <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
                         Vành đai phân bổ ẩm thực
@@ -3926,9 +3871,7 @@
                     </div>
                   </div>
 
-                  <!-- Cột Phải: Bảng xếp hạng Hotspots & Đề xuất quản trị -->
                   <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <!-- Hộp 1: Top Hotspots quét QR -->
                     <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
                       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--gold-border); padding-bottom: 10px;">
                         <h3 style="font-size: 14px; font-weight: 800; color: var(--ink); margin: 0; display: flex; align-items: center; gap: 6px;">
@@ -3937,11 +3880,9 @@
                         <span style="font-size: 11px; color: var(--muted); background: #f1f5f9; padding: 2px 8px; border-radius: 12px; font-weight: 700;">Hội An</span>
                       </div>
                       <div id="adminHotspotList" style="display: flex; flex-direction: column; gap: 10px; max-height: 290px; overflow-y: auto; padding-right: 4px;">
-                        <!-- Rendered by JS -->
                       </div>
                     </div>
 
-                    <!-- Hộp 2: Đề Xuất Chiến Lược Quản Trị & Mở Rộng Hệ Thống -->
                     <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                       <h3 style="font-size: 14px; font-weight: 800; color: #92400e; margin: 0 0 10px; display: flex; align-items: center; gap: 6px;">
                         Phân Tích & Đề Xuất Kinh Doanh
@@ -3972,7 +3913,6 @@
       <form method="dialog" id="form">
         <h2 id="dlgTitle">Thêm món ăn mới (5 ngôn ngữ)</h2>
 
-        <!-- TAB 5 NGÔN NGỮ TRONG FORM -->
         <div class="form-lang-tabs" id="formLangTabs">
           <button type="button" class="form-lang-tab active" data-flang="vi">
             VI Tiếng Việt
@@ -5492,7 +5432,6 @@ if (nav === "map") renderMapSection();        }
           const topDishes = Array.isArray(statsData.top) ? statsData.top : [];
           const checkins = Array.isArray(checkinsData) ? checkinsData : [];
 
-          // 1. Dòng thống kê theo ngày (7 ngày gần nhất)
           let dailyRowsHtml = "";
           daily.forEach((d, idx) => {
             const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
@@ -5504,7 +5443,6 @@ if (nav === "map") renderMapSection();        }
               </tr>`;
           });
 
-          // 2. Dòng xếp hạng món ăn
           let topRowsHtml = "";
           topDishes.forEach((item, idx) => {
             const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
@@ -5521,7 +5459,6 @@ if (nav === "map") renderMapSection();        }
               </tr>`;
           });
 
-          // 3. Dòng chi tiết check-in gần đây
           let checkinRowsHtml = "";
           if (checkins.length === 0) {
             checkinRowsHtml = `<tr><td colspan="6" class="text-center" style="color:#64748b; font-style:italic;">Chưa có dữ liệu check-in thực tế nào được ghi nhận.</td></tr>`;
@@ -5541,26 +5478,11 @@ if (nav === "map") renderMapSection();        }
             });
           }
 
-          // Build Styled Excel XML/HTML Workbook
           const excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
 xmlns:x="urn:schemas-microsoft-com:office:excel"
 xmlns="http://www.w3.org/TR/REC-html40">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!--[if gte mso 9]>
-  <xml>
-    <x:ExcelWorkbook>
-      <x:ExcelWorksheets>
-        <x:ExcelWorksheet>
-          <x:Name>Báo Cáo Thống Kê</x:Name>
-          <x:WorksheetOptions>
-            <x:DisplayGridlines/>
-          </x:WorksheetOptions>
-        </x:ExcelWorksheet>
-      </x:ExcelWorksheets>
-    </x:ExcelWorkbook>
-  </xml>
-  <![endif]-->
   <style>
     body, table, td, th {
       font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
@@ -5636,7 +5558,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
   </style>
 </head>
 <body>
-  <!-- BANNER BÁO CÁO -->
   <table>
     <tr>
       <td colspan="7" class="banner-title">HỆ THỐNG QUẢN TRỊ ẨM THỰC HỘI AN – THEO DẤU VỊ HỘI</td>
@@ -5646,7 +5567,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
     </tr>
   </table>
 
-  <!-- PHẦN 1: TỔNG QUAN HỆ THỐNG -->
   <table>
     <tr>
       <td colspan="3" class="sec-title">1. SỐ LIỆU TỔNG QUAN HỆ THỐNG</td>
@@ -5688,7 +5608,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
     </tr>
   </table>
 
-  <!-- PHẦN 2: THỐNG KÊ 7 NGÀY -->
   <table>
     <tr>
       <td colspan="3" class="sec-title">2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY GẦN NHẤT)</td>
@@ -5705,7 +5624,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
     </tr>
   </table>
 
-  <!-- PHẦN 3: BẢNG XẾP HẠNG MÓN ĂN -->
   <table>
     <tr>
       <td colspan="7" class="sec-title">3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH &amp; CHECK-IN NHIỀU NHẤT</td>
@@ -5722,7 +5640,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
     ${topRowsHtml}
   </table>
 
-  <!-- PHẦN 4: CHI TIẾT CHECK-IN GẦN ĐÂY -->
   <table>
     <tr>
       <td colspan="6" class="sec-title">4. NHẬT KÝ CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)</td>
@@ -5738,7 +5655,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
     ${checkinRowsHtml}
   </table>
 
-  <!-- GHI CHÚ CHÂN TRANG -->
   <table>
     <tr>
       <td colspan="7" class="footer-note">
@@ -5746,7 +5662,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
       </td>
     </tr>
   </table>
-  <!-- FLOATING CHART TOOLTIP -->
   <div id="chartTooltip" class="chart-tooltip"></div>
 </body>
 </html>`;
@@ -5859,7 +5774,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
   body: JSON.stringify(body),
 });
 
-// Đóng form và nạp dữ liệu mới sau khi lưu thành công.
 $("#dlg").close();
 await refresh();
 
@@ -5930,14 +5844,12 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         }
       }
 
-      // Tự động làm mới ngay khi người dùng mở lại tab hoặc quay lại trang
       window.addEventListener("pageshow", () => refresh());
       window.addEventListener("focus", () => refresh());
       document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible") refresh();
       });
 
-      // Tự động cập nhật ngầm định kỳ mỗi 8 giây khi đang xem trang
       setInterval(() => {
         if (document.visibilityState === "visible") {
           refresh();
@@ -6074,7 +5986,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         }
       };
 
-      // Toggle form thêm tài khoản
       const toggleAddUserBtn = $("#toggleAddUserBtn");
       const addUserBox = $("#addUserBox");
       const closeAddUserBtn = $("#closeAddUserBtn");
@@ -6093,7 +6004,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         cancelAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
       }
 
-      // Xử lý submit tạo tài khoản mới
       const addUserForm = $("#addUserForm");
       if (addUserForm) {
         addUserForm.onsubmit = async (e) => {
@@ -6262,7 +6172,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         }
       })();
     
-      // UNIFIED CHART TOOLTIP ENGINE
       const chartTooltip = $("#chartTooltip");
 
       function formatTooltipHtml(el) {
@@ -6409,9 +6318,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
       });
 
     
-      // ==========================================
-      // QUẢN LÝ MÃ QR CODE (QR MANAGER)
-      // ==========================================
       let selectedQrDishId = null;
 
       function renderQrManager() {
@@ -6650,13 +6556,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
 
     
 
-      // ==========================================
-      // CHỨC NĂNG BẢN ĐỒ VÀ GPS: PHONG CÁCH GOOGLE MAPS
-      // =========================================================================
-      // LOẠI 2: BẢN ĐỒ NHIỆT & MẬT ĐỘ TƯƠNG TÁC (HEATMAP / SPATIAL ANALYTICS MAP)
-      // =========================================================================
 
-      // Hàm tạo TileLayer Google Maps
       function createGoogleMapsTileLayer(type) {
         const lyrs = type === "y" ? "y" : type === "p" ? "p" : "m";
         return L.tileLayer("https://mt1.google.com/vt/lyrs=" + lyrs + "&x={x}&y={y}&z={z}", {
@@ -6670,27 +6570,22 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
       let adminMarkersLayer = null;
       let adminDensityLayer = null;
       let adminFallbackHeatLayer = null;
-      let currentAdminMapMode = "hybrid"; // "hybrid", "heat", "density"
-      let currentHeatRadius = 38;
+      let currentAdminMapMode = "hybrid";      let currentHeatRadius = 38;
 
-      // Tọa độ trung tâm Phố Cổ Hội An (Chùa Cầu)
       const HOI_AN_CORE_COORDS = [15.8778, 108.3275];
 
       function renderMapSection() {
         const secMap = document.getElementById("secMap");
         if (!secMap || secMap.hidden) return;
 
-        // Cập nhật nhãn HEAT badge trên sidebar
         const mapBadge = document.getElementById("navMapBadge");
         if (mapBadge) {
           const validCount = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng))).length;
           mapBadge.textContent = validCount ? validCount + " GPS" : "HEAT";
         }
 
-        // Khởi tạo hoặc cập nhật bản đồ Leaflet
         initOrUpdateAdminHeatmap();
 
-        // Tính toán số liệu thống kê không gian & cập nhật KPI
         updateSpatialAnalyticsData();
       }
 
@@ -6711,31 +6606,25 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
             attributionControl: false,
           });
 
-          // Google Maps Roadmap tile
           createGoogleMapsTileLayer("m").addTo(adminHeatmapInstance);
 
-          // Tạo các layer nhóm
           adminDensityLayer = L.layerGroup().addTo(adminHeatmapInstance);
           adminMarkersLayer = L.layerGroup().addTo(adminHeatmapInstance);
           adminFallbackHeatLayer = L.layerGroup().addTo(adminHeatmapInstance);
 
-          // Gắn sự kiện điều khiển
           setupAdminMapControls();
         }
 
-        // Đảm bảo kích thước bản đồ hiển thị chuẩn khi tab vừa bật
         setTimeout(() => {
           if (adminHeatmapInstance) {
             adminHeatmapInstance.invalidateSize();
           }
         }, 120);
 
-        // Vẽ các layer theo chế độ hiện tại
         drawAdminMapLayers();
       }
 
       function setupAdminMapControls() {
-        // Nút Về trung tâm Phố cổ
         const btnCenter = document.getElementById("btnAdminMapHoiAnCenter");
         if (btnCenter) {
           btnCenter.onclick = () => {
@@ -6745,7 +6634,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           };
         }
 
-        // Nút Cập nhật dữ liệu
         const btnRefresh = document.getElementById("btnAdminMapRefresh");
         if (btnRefresh) {
           btnRefresh.onclick = async () => {
@@ -6761,7 +6649,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           };
         }
 
-        // Nút chuyển chế độ: Kết hợp / Nhiệt / Mật độ
         const btnHybrid = document.getElementById("btnAdminMapModeHybrid");
         const btnHeat = document.getElementById("btnAdminMapModeHeat");
         const btnDensity = document.getElementById("btnAdminMapModeDensity");
@@ -6784,7 +6671,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         if (btnHeat) btnHeat.onclick = () => setMode("heat");
         if (btnDensity) btnDensity.onclick = () => setMode("density");
 
-        // Slider bán kính quầng nhiệt
         const radiusSlider = document.getElementById("adminHeatRadiusSlider");
         const radiusLabel = document.getElementById("adminHeatRadiusLabel");
         if (radiusSlider) {
@@ -6800,13 +6686,11 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         const validDishes = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng)));
         const topStats = (lastStats && lastStats.top) || [];
 
-        // Gắn số liệu tương tác quét QR / checkin vào từng món
         let totalDishScans = 0;
         const enriched = validDishes.map(d => {
           const matched = topStats.find(t => String(t.id) === String(d.id));
           const checkins = matched ? Number(matched.check_ins ?? matched.checkins ?? 0) : Number(d.check_ins ?? d.checkins ?? 0);
           const favs = matched ? Number(matched.favorites ?? 0) : Number(d.favorites ?? 0);
-          // Tổng tương tác thực tế từ khách: check-in + yêu thích
           const scans = checkins + favs;
           totalDishScans += scans;
           return {
@@ -6819,13 +6703,11 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           };
         });
 
-        // Sắp xếp theo độ nóng (scans giảm dần)
         enriched.sort((a, b) => b.scans - a.scans);
 
         const topHotspot = enriched[0] || null;
         const maxScans = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 1;
 
-        // Tính khoảng cách tới Chùa Cầu (lõi di sản)
         let coreCount = 0;
         enriched.forEach(item => {
           const distKm = getHaversineDistKm(HOI_AN_CORE_COORDS[0], HOI_AN_CORE_COORDS[1], Number(item.lat), Number(item.lng));
@@ -6835,7 +6717,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
 
         const coreRatio = enriched.length ? Math.round((coreCount / enriched.length) * 1000) / 10 : 83.3;
 
-        // Cập nhật 4 thẻ KPI
         const kpiTotal = document.getElementById("kpiMapTotalDishes");
         if (kpiTotal) kpiTotal.textContent = enriched.length + " điểm";
 
@@ -6867,14 +6748,11 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         const kpiCoreSubEl = document.getElementById("kpiMapCoreSub");
         if (kpiCoreSubEl) kpiCoreSubEl.textContent = coreCount + "/" + enriched.length + " quán tập trung bán kính <1.0km";
 
-        // Render Bảng xếp hạng Hotspots ở cột phải
         renderHotspotRankingsList(enriched, maxScans);
 
-        // Lưu danh sách enriched để vẽ bản đồ
         window._adminEnrichedDishes = enriched;
         window._adminMaxScans = maxScans;
 
-        // Vẽ lại bản đồ
         drawAdminMapLayers();
       }
 
@@ -6915,7 +6793,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
                   Xem
                 </button>
               </div>
-              <!-- Progress bar % nhiệt lượng -->
               <div style="margin-top: 8px;">
                 <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
                   <span style="color: #64748b; font-weight: 600;">${item.scans} lượt quét</span>
@@ -6933,7 +6810,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
       window.focusAdminHotspot = function(lat, lng, id) {
         if (!adminHeatmapInstance) return;
         adminHeatmapInstance.flyTo([lat, lng], 17, { duration: 1.2 });
-        // Mở popup tương ứng nếu có
         if (adminMarkersLayer) {
           adminMarkersLayer.eachLayer(layer => {
             if (layer._dishId === id) {
@@ -6949,7 +6825,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         const items = window._adminEnrichedDishes || [];
         const maxScans = window._adminMaxScans || 1;
 
-        // Xóa các layer cũ
         if (adminHeatLayer) {
           adminHeatmapInstance.removeLayer(adminHeatLayer);
           adminHeatLayer = null;
@@ -6958,9 +6833,7 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
         if (adminDensityLayer) adminDensityLayer.clearLayers();
         if (adminFallbackHeatLayer) adminFallbackHeatLayer.clearLayers();
 
-        // 1. VẼ VÀNH ĐAI MẬT ĐỘ (Chế độ Density & Hybrid)
         if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
-          // Vành đai 1: Vùng lõi di sản (500m)
           L.circle(HOI_AN_CORE_COORDS, {
             radius: 500,
             color: "#dc2626",
@@ -6970,7 +6843,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
             fillOpacity: 0.12,
           }).bindTooltip("Vùng lõi Di sản Phố Cổ (<500m)", { sticky: true }).addTo(adminDensityLayer);
 
-          // Vành đai 2: Vùng đệm phố cổ (1500m)
           L.circle(HOI_AN_CORE_COORDS, {
             radius: 1500,
             color: "#f59e0b",
@@ -6980,7 +6852,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
             fillOpacity: 0.06,
           }).bindTooltip("Vùng đệm Phố Cổ (<1.5km)", { sticky: true }).addTo(adminDensityLayer);
 
-          // Vành đai 3: Vùng mở rộng sinh thái & ven biển (3500m)
           L.circle(HOI_AN_CORE_COORDS, {
             radius: 3500,
             color: "#3b82f6",
@@ -6991,7 +6862,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           }).bindTooltip("Vùng mở rộng Làng rau Trà Quế & Biển An Bàng (<3.5km)", { sticky: true }).addTo(adminDensityLayer);
         }
 
-        // 2. VẼ BẢN ĐỒ NHIỆT (Chế độ Heat & Hybrid)
         if (currentAdminMapMode === "heat" || currentAdminMapMode === "hybrid") {
           const heatPoints = items.map(item => {
             const intensity = Math.max(0.35, Math.min(1.0, item.scans / (maxScans || 1)));
@@ -7006,15 +6876,9 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
               max: 1.0,
               minOpacity: 0.35,
               gradient: {
-                0.2: "#2563eb", // Xanh dương (thấp)
-                0.4: "#10b981", // Xanh lá
-                0.6: "#f59e0b", // Vàng cam
-                0.8: "#f97316", // Cam đậm
-                1.0: "#dc2626", // Đỏ rực (cực đại)
-              },
+                0.2: "#2563eb",                0.4: "#10b981",                0.6: "#f59e0b",                0.8: "#f97316",                1.0: "#dc2626",              },
             }).addTo(adminHeatmapInstance);
           } else {
-            // Radial heat circle fallback nếu không có leaflet-heat
             items.forEach(item => {
               const weight = Math.max(0.3, item.scans / (maxScans || 1));
               const r = currentHeatRadius * 5;
@@ -7029,7 +6893,6 @@ if (document.getElementById("secMap") && !document.getElementById("secMap").hidd
           }
         }
 
-        // 3. VẼ MARKERS & POI BADGES (Chế độ Density & Hybrid)
         if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
           items.forEach((item, idx) => {
             const isTop1 = idx === 0;

@@ -18,7 +18,6 @@ export function useDishes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Tải dữ liệu khi mở trang.
   useEffect(() => {
     let cancelled = false;
 
@@ -47,7 +46,6 @@ export function useDishes() {
     };
   }, []);
 
-  // Tải lại khi người dùng yêu cầu.
   const reload = useCallback(async () => {
     setLoading(true);
     setError("");

@@ -88,7 +88,6 @@ export async function playSpeech(
     return;
   }
 
-  // Trên thiết bị Mobile (iOS & Android): Sử dụng expo-av phát âm thanh TTS
   try {
     onStatusChange?.(true);
     await Audio.setAudioModeAsync({

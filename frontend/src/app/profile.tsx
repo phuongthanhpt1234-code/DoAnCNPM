@@ -244,7 +244,6 @@ export default function RegisterScreen() {
 
   const syncLanguage = useCallback(async () => {
     try {
-      // 1. Ưu tiên đọc trực tiếp từ thanh URL trên Web (?lang=zh)
       if (Platform.OS === 'web' && typeof window !== 'undefined') {
         const urlLang = new URLSearchParams(window.location.search).get('lang');
         if (urlLang) {
@@ -254,7 +253,6 @@ export default function RegisterScreen() {
           return;
         }
       }
-      // 2. Đọc từ params của Expo Router
       const paramLang = localParams.lang || globalParams.lang;
       if (paramLang) {
         const norm = normalizeLang(String(paramLang));
@@ -262,7 +260,6 @@ export default function RegisterScreen() {
         await AsyncStorage.setItem('appLanguage', norm);
         return;
       }
-      // 3. Đọc từ bộ nhớ AsyncStorage
       const savedLang = await AsyncStorage.getItem('appLanguage');
       if (savedLang) {
         setLang(normalizeLang(savedLang));

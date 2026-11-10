@@ -21,7 +21,6 @@ const historyQuery = z.object({
   lang: z.enum(['vi', 'en', 'zh', 'ko', 'ja']).default('vi'),
 });
 
-// Lịch sử của thiết bị. Mỗi món lấy lượt check-in gần nhất.
 r.get('/history', ah(async (req, res) => {
   const { device_id, lang } = historyQuery.parse(req.query);
 
@@ -45,8 +44,6 @@ r.get('/history', ah(async (req, res) => {
   res.json({ items: rows });
 }));
 
-// Có device_id thì lấy check-in hôm nay của thiết bị.
-// Truy vấn toàn hệ thống yêu cầu quyền quản trị.
 r.get('/', ah(async (req, res) => {
   const limit = Math.min(Number(req.query.limit) || 20, 100);
   const deviceId = req.query.device_id
@@ -81,7 +78,6 @@ r.get('/', ah(async (req, res) => {
   });
 }));
 
-// Tạo check-in hoặc trả lại bản ghi đã có của món trong ngày.
 r.post('/', ah(async (req, res) => {
   const b = schema.parse(req.body);
 
@@ -143,7 +139,6 @@ r.post('/', ah(async (req, res) => {
   res.status(201).json(rows[0]);
 }));
 
-// Quản trị viên xóa lượt check-in mới nhất của một ngày.
 r.delete('/day/:day', requireAdminAuth, ah(async (req, res) => {
   const day = String(req.params.day || '');
 

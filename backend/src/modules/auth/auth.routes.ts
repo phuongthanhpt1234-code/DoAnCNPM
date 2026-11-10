@@ -15,7 +15,6 @@ import {
 
 const r = Router();
 
-// 1. Đăng nhập
 r.post(
   "/login",
   ah(async (req, res) => {
@@ -30,7 +29,6 @@ r.post(
     const cleanUser = String(username).trim();
     const cleanPass = String(password).trim();
 
-    // 1.1 Kiểm tra trong database PostgreSQL
     try {
       const q = await pool.query(
         `SELECT id, username, password_hash, role, full_name FROM admin_users WHERE LOWER(username) = LOWER($1)`,
@@ -40,7 +38,6 @@ r.post(
         const u = q.rows[0];
         const isMatch = comparePassword(cleanPass, u.password_hash);
         if (isMatch) {
-          // Cơ chế tự động nâng cấp hash mật khẩu nếu tài khoản đang dùng hash cũ/yếu
           if (needsRehash(u.password_hash)) {
             try {
               const upgradedHash = hashPassword(cleanPass);
@@ -80,7 +77,6 @@ r.post(
       });
     }
 
-    // 1.2 Fallback kiểm tra thông qua biến môi trường .env (chỉ khi tài khoản chưa có trong DB)
     if (checkAdminCredentials(cleanUser, cleanPass)) {
       const token = generateAdminToken(cleanUser, "super_admin");
       return res.json({
@@ -102,7 +98,6 @@ r.post(
   })
 );
 
-// 2. Lấy thông tin tài khoản đang đăng nhập
 r.get(
   "/me",
   ah(async (req, res) => {
@@ -132,7 +127,6 @@ r.get(
   })
 );
 
-// 3. Danh sách tài khoản quản trị
 r.get(
   "/users",
   requireAdminAuth,
@@ -148,7 +142,6 @@ r.get(
       console.warn("[AUTH] Cannot fetch users from DB:", e.message);
     }
 
-    // Fallback: Nếu bảng trống hoặc DB offline, trả về tài khoản admin mặc định
     const defaultUser = process.env.ADMIN_USERNAME || "admin";
     return res.json({
       ok: true,
@@ -165,7 +158,6 @@ r.get(
   })
 );
 
-// 4. Thêm tài khoản quản trị mới
 r.post(
   "/users",
   requireAdminAuth,
@@ -193,7 +185,6 @@ r.post(
     const passwordHash = hashPassword(cleanPass);
 
     try {
-      // Đảm bảo bảng tồn tại
       await pool.query(`
         CREATE TABLE IF NOT EXISTS admin_users (
           id SERIAL PRIMARY KEY,
@@ -235,7 +226,6 @@ r.post(
   })
 );
 
-// 5. Xoá tài khoản quản trị
 r.delete(
   "/users/:id",
   requireAdminAuth,
@@ -262,7 +252,6 @@ r.delete(
 
       const targetUser = userRes.rows[0];
 
-      // 1. BẢO VỆ TUYỆT ĐỐI: Không tài khoản nào được phép xoá Quản Trị Viên Cấp Cao (super_admin)
       if (targetUser.role === "super_admin") {
         return res.status(403).json({
           ok: false,
@@ -271,7 +260,6 @@ r.delete(
         });
       }
 
-      // 2. Không thể tự xoá chính mình
       if (
         currentUser &&
         currentUser.username?.toLowerCase() === targetUser.username.toLowerCase()
@@ -282,7 +270,6 @@ r.delete(
         });
       }
 
-      // 3. Tài khoản vai trò editor không được xoá tài khoản quản trị khác
       if (currentUser && currentUser.role === "editor") {
         return res.status(403).json({
           ok: false,
@@ -318,7 +305,6 @@ r.delete(
   })
 );
 
-// 6. Đổi mật khẩu tài khoản hiện tại
 r.post(
   "/change-password",
   requireAdminAuth,
@@ -339,7 +325,6 @@ r.post(
         .json({ ok: false, message: "Mật khẩu mới phải có ít nhất 4 ký tự!" });
     }
 
-    // Kiểm tra mật khẩu trong DB
     let isDbUpdated = false;
     try {
       const q = await pool.query(
@@ -365,7 +350,6 @@ r.post(
       console.warn("[AUTH] DB check for password change failed:", err.message);
     }
 
-    // Nếu là admin mặc định và chưa update trong DB thì cập nhật fallback env
     if (!isDbUpdated) {
       if (!checkAdminCredentials(username, String(currentPassword).trim())) {
         return res
@@ -397,7 +381,6 @@ r.post(
   })
 );
 
-// 7. Đăng xuất
 r.post(
   "/logout",
   ah(async (_req, res) => {

@@ -8,7 +8,6 @@ import { syncDishTranslations, ensureAllDishesSynced } from './modules/dishes/di
 const port = Number(process.env.PORT) || 4000;
 
 async function bootstrap() {
-  // Tự động kiểm tra và chạy migration/seed nếu có database kết nối (Render, Neon, Local)
   if (process.env.DATABASE_URL) {
     try {
       console.log('🔄 Đang đồng bộ cấu trúc cơ sở dữ liệu (Neon / Postgres)...');

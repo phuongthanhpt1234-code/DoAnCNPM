@@ -202,7 +202,6 @@ const EXPLORE_I18N: Record<LangCode, {
   }
 };
 
-// DỮ LIỆU 3 MẬT THƯ HẺM SÂU ĐỒNG BỘ ĐA NGÔN NGỮ
 const SECRET_CLUES_LIST = [
   {
     id: 'c1',
@@ -342,7 +341,6 @@ const SECRET_CLUES_LIST = [
   }
 ];
 
-// DỮ LIỆU 3 TUYẾN FOOD-TRAIL GẮN ĐÚNG ID MÓN ĂN (ĐỂ BẤM CHỈ ĐƯỜNG LUÔN RA ĐÚNG MÓN ĐÓ)
 const TRAILS_MULTILINGUAL = [
   {
     id: 't1',
@@ -393,7 +391,6 @@ export default function ExploreScreen() {
   const [showRewardModal, setShowRewardModal] = useState(false);
   const [claimedVoucher, setClaimedVoucher] = useState(false);
 
-  // State cho Hộp Thư Mật Agent AI
   const [showLetterModal, setShowLetterModal] = useState(false);
   const [currentClueIndex, setCurrentClueIndex] = useState(0);
   const [isEnvelopeOpened, setIsEnvelopeOpened] = useState(false);
@@ -555,7 +552,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.bg }]}>
       
-      {/* HEADER ĐỒNG BỘ ĐA NGÔN NGỮ */}
       <View style={[styles.header, { borderBottomColor: theme.border }]}>
         <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/' as any)}>
           <Ionicons name="chevron-back" size={24} color={theme.accent} />
@@ -568,7 +564,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
 
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
         
-        {/* BẢNG TIẾN ĐỘ TỔNG GỌN GÀNG */}
         <View style={[styles.masterCard, { backgroundColor: theme.cardBg, borderColor: isAllCompleted ? theme.green : theme.border }]}>
           <View style={styles.masterTopRow}>
             <View style={{ flex: 1, paddingRight: 10 }}>
@@ -593,7 +588,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
           </View>
         </View>
 
-        {/* THANH CHUYỂN TAB TINH GỌN (KHÔNG CÒN BỊ RỐI MẮT) */}
         <View style={[styles.segmentBar, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
           <TouchableOpacity 
             style={[styles.segmentBtn, activeSectionTab === 'trails' && { backgroundColor: '#8B2E2E' }]}
@@ -614,7 +608,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
           </TouchableOpacity>
         </View>
 
-        {/* TAB 1: 3 TUYẾN THỬ THÁCH FOOD-TRAIL (GỌN GÀNG & DẪN ĐÚNG TỌA ĐỘ MÓN ĂN) */}
         {activeSectionTab === 'trails' && (
           <View>
             {trailList.map((trail) => {
@@ -656,7 +649,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
                             </Text>
                           </TouchableOpacity>
 
-                          {/* Nút mở đúng tọa độ món ăn đó trên Map (Không bị nhảy về Cơm Gà Bà Buội) */}
                           <TouchableOpacity 
                             style={[styles.gpsMiniBtn, { borderColor: theme.accent }]}
                             onPress={() => router.push({
@@ -677,7 +669,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
           </View>
         )}
 
-        {/* TAB 2: HỘP THƯ MẬT AGENT AI & BÍ MẬT HẺM SÂU (DẪN ĐÚNG TỌA ĐỘ HẺM) */}
         {activeSectionTab === 'secret' && (
           <View style={[styles.secretContainerCard, { backgroundColor: theme.cardBg, borderColor: theme.accent }]}>
             <Text style={[styles.secretSectionSub, { color: theme.textSub }]}>{ui.secretIntro}</Text>
@@ -730,7 +721,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
         <View style={{ height: 40 }} />
       </ScrollView>
 
-      {/* MODAL HIỆU ỨNG ĐỘNG LÁ THƯ MẬT AGENT AI */}
       <Modal visible={showLetterModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <Animated.View
@@ -804,7 +794,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
 
                   {showEmbeddedAlleyMap && Platform.OS === 'web' && (
                     <View style={styles.embeddedMapContainer}>
-                      {/* @ts-ignore */}
                       <iframe
                         width="100%"
                         height="145"
@@ -820,7 +809,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
                       <Text style={styles.solveBtnText}>{ui.solveAndMapBtn}</Text>
                     </TouchableOpacity>
 
-                    {/* TRUYỀN ĐÚNG clueId SANG MAP ĐỂ MỞ ĐÚNG GÁNH HÀNG TRONG HẺM */}
                     <TouchableOpacity
                       style={styles.goFullMapBtn}
                       onPress={() => {
@@ -855,7 +843,6 @@ const [sealRotateAnim] = useState(() => new Animated.Value(0));
         </View>
       </Modal>
 
-      {/* POPUP PHẦN THƯỞNG ĐẠI SỨ */}
       <Modal visible={showRewardModal} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: theme.cardBg, borderColor: theme.accent }]}>

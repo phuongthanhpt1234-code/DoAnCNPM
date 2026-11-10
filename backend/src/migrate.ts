@@ -3,7 +3,6 @@ import path from 'path';
 import { pool } from './config/db';
 
 export async function runMigrations() {
-  // Tìm thư mục migrations ở cả dev (src/../migrations) và dist (dist/../migrations)
   let dir = path.join(__dirname, '..', 'migrations');
   if (!fs.existsSync(dir)) {
     dir = path.join(process.cwd(), 'migrations');

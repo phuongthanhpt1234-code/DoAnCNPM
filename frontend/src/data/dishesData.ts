@@ -27,7 +27,6 @@ export interface Dish {
   tag?: Record<LangKey, string>;
 }
 
-// Đồng bộ 100% hình ảnh và dữ liệu 6 món ăn theo Backend
 export const DISHES: Dish[] = [
   {
     "id": 4,

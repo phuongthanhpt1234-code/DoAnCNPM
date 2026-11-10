@@ -10,7 +10,6 @@ import { playSpeech, stopSpeech } from '../services/speech';
 
 const { height } = Dimensions.get('window');
 
-// @ts-ignore
 let MapView: any = View; let Marker: any = View; let Circle: any = View;
 if (Platform.OS !== 'web') {
   const Maps = require('react-native-maps');
@@ -403,7 +402,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
   const isInside20m = distanceMeters <= 20;
 
   const handleDistanceChange = (valStr: string) => {
-    // Loại bỏ hoàn toàn dấu âm (-) và các ký tự không phải số, đảm bảo ô nhập không được âm
     const cleanStr = valStr.replace(/[^0-9]/g, '');
     const num = parseInt(cleanStr, 10);
     const safeVal = isNaN(num) ? 0 : Math.max(0, num);
@@ -523,7 +521,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
       setToastMsg(`${uiLabels.checkedInBtn} (+${earnedXp} XP)`);
       setTimeout(() => setToastMsg(''), 3000);
 
-      // Đồng bộ check-in lên máy chủ Backend
       if (numericDishId && !isNaN(numericDishId)) {
         const deviceId = getClientDeviceId();
         api('/checkins', {
@@ -538,7 +535,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
     } catch (e) {}
   };
 
-  // MẶC ĐỊNH TRẠM 1 LÀ ĐIỂM KHỞI ĐẦU (saddr) -> ĐI QUA TRẠM 2 -> KẾT THÚC Ở TRẠM 3 (daddr)
   const getEmbeddedMapUrl = () => {
     const satParam = mapMode === 'sat' ? '&t=k' : '';
     if (isMultiStopMode && parsedRouteStops.length >= 2) {
@@ -574,7 +570,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
         </View>
       ) : null}
       
-      {/* THANH TOP BAR */}
       <View style={[styles.topBar, { backgroundColor: theme.cardBg, borderColor: isInside20m ? theme.green : theme.border }]}>
         <View style={styles.topBarRow}>
           <TouchableOpacity style={[styles.backBtn, { backgroundColor: theme.subBox }]} onPress={() => { stopDishNarration(); router.back(); }}>
@@ -634,10 +629,8 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
         </View>
       </View>
 
-      {/* KHUNG BẢN ĐỒ */}
       {Platform.OS === 'web' ? (
         <View style={styles.mapBase}>
-          {/* @ts-ignore */}
           <iframe width="100%" height="100%" style={{ border: 0 }} src={getEmbeddedMapUrl()} allowFullScreen />
         </View>
       ) : (
@@ -647,7 +640,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
         </MapView>
       )}
 
-      {/* BẢNG THUYẾT MINH MÓN ĂN */}
       <View style={[styles.bottomSheet, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingTop: 6, paddingBottom: 16 }}>
           
@@ -659,7 +651,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
           </Text>
           <Text style={[styles.dishTag, { color: theme.green }]}>{displayContent.tag}</Text>
 
-          {/* PHÒNG THU GIỌNG ĐỌC AI 7 NGÔN NGỮ */}
           <View style={[styles.aiBox, { backgroundColor: theme.subBox, borderColor: isSpeaking ? theme.green : theme.border }]}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
               {VOICE_LANGS.map((vl) => {
@@ -730,7 +721,6 @@ const [waveAnim] = useState(() => new Animated.Value(0.3));
             </View>
           </View>
 
-          {/* NÚT CHECK-IN & CHỈ ĐƯỜNG */}
           <View style={styles.bottomActions}>
             <TouchableOpacity 
               style={[styles.checkInBtn, { backgroundColor: isCheckedIn ? theme.green : (isInside20m ? '#059669' : theme.accent) }]} 

@@ -1,4 +1,3 @@
--- 1. Đồng bộ 4 danh mục chuẩn (main, snack, street, sweet) kèm 5 ngôn ngữ
 INSERT INTO categories (name, slug, translations) VALUES
   ('Món chính', 'main', '{"vi":"Món chính","en":"Main Dishes","zh":"主菜","ko":"메인 요리","ja":"メイン料理"}'::jsonb),
   ('Bánh & Ăn vặt', 'snack', '{"vi":"Bánh & Ăn vặt","en":"Snacks & Cakes","zh":"糕点与小吃","ko":"떡 & 간식","ja":"軽食・餅"}'::jsonb),
@@ -10,7 +9,6 @@ ON CONFLICT (slug) DO UPDATE SET
 
 DELETE FROM categories WHERE slug NOT IN ('main', 'snack', 'street', 'sweet');
 
--- 2. Đồng bộ 6 món ăn chuẩn Hội An đồng nhất với Frontend và Web
 DO $$
 DECLARE
   v_cat_sweet INT;
@@ -21,7 +19,6 @@ BEGIN
   SELECT id INTO v_cat_main FROM categories WHERE slug = 'main';
   SELECT id INTO v_cat_street FROM categories WHERE slug = 'street';
 
-  -- Món ID 4: Quán Cao lầu Bá Le
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     4,
@@ -59,7 +56,6 @@ BEGIN
   VALUES (4, 'ja', 'ホイアン伝統カオラウ（伊勢うどん風麺）', 'チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。')
   ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
-  -- Món ID 6: Bánh Mì Phượng
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     6,
@@ -97,7 +93,6 @@ BEGIN
   VALUES (6, 'ja', 'ホイアン炭火焼きバインミー', '両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。')
   ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
-  -- Món ID 7: Bánh Bèo Bà Bảy
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     7,
@@ -151,7 +146,6 @@ Những món như bánh bèo giúp định hình cảm giác rất riêng của 
   VALUES (7, 'ja', 'カリカリ焼き豚の発酵魚醤ビーフン', '皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。')
   ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
-  -- Món ID 8: Bánh đập Ni Bà Già
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     8,
@@ -205,7 +199,6 @@ Nếu bạn muốn ăn như người địa phương, đây là một lựa ch�
   VALUES (8, 'ja', 'バインダップ（割れせんべい）とシジミ炒め', '焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。')
   ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
-  -- Món ID 9: Bánh Ướt Ban Mê Giang Vương
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     9,
@@ -259,7 +252,6 @@ Món ăn này rất giản dị, nhưng đó cũng chính là sức hút của n
   VALUES (9, 'ja', 'カムナム島の若トウモロコシとココナッツのチェー', 'カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。')
   ON CONFLICT (dish_id, lang) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description;
 
-  -- Món ID 11: Trà mót
   INSERT INTO dishes (id, category_id, name, description, address, image_url, lat, lng, is_active)
   VALUES (
     11,

@@ -25,7 +25,6 @@ export function hashPassword(password: string): string {
 export function comparePassword(password: string, stored: string): boolean {
   if (!stored) return false;
 
-  // Chuẩn hiện hành: pbkdf2:sha256:iterations:salt:hash
   if (stored.startsWith("pbkdf2:")) {
     const parts = stored.split(":");
     if (parts.length !== 5) return false;
@@ -38,7 +37,6 @@ export function comparePassword(password: string, stored: string): boolean {
     return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(verifyHash));
   }
 
-  // Tương thích ngược với hash cũ: salt:hash (1000 iterations)
   const parts = stored.split(":");
   if (parts.length === 2) {
     const [salt, hash] = parts;
@@ -101,8 +99,7 @@ export function generateAdminToken(username: string, role = "admin"): string {
   const payload = {
     username,
     role,
-    exp: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 ngày
-  };
+    exp: Date.now() + 7 * 24 * 60 * 60 * 1000,  };
   const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = crypto
     .createHmac("sha256", SECRET)
@@ -178,7 +175,6 @@ export function requireAdminAuth(
 export function checkAdminCredentials(u: string, p: string): boolean {
   const currentAdminUser = process.env.ADMIN_USERNAME;
   const currentAdminPass = process.env.ADMIN_PASSWORD;
-  // Bắt buộc cấu hình thông tin an toàn trong .env (không chấp nhận mật khẩu mặc định admin/admin123)
   if (!currentAdminUser || !currentAdminPass) return false;
   if (currentAdminPass === "admin123" || currentAdminPass === "admin") return false;
   return u === currentAdminUser && p === currentAdminPass;

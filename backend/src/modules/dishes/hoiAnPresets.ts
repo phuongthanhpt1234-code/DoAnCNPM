@@ -54,7 +54,6 @@ export function findHoiAnPreset(nameOrShop: string, dishId?: string | number): H
 
   let raw: any = null;
 
-  // Chỉ đối chiếu CHÍNH XÁC theo tên món / tên quán (không đối chiếu mập mờ một phần từ khóa)
   for (const alias of ALIASES) {
     if (alias.keywords.some((k) => norm === k)) {
       raw = (HOI_AN_DISHES_PRESETS as readonly any[]).find((d) => String(d.id) === alias.targetId);

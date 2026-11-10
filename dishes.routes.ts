@@ -19,7 +19,6 @@ const LANG_TARGET_MAP: Record<Exclude<SupportedLang, 'vi'>, string> = {
   ja: 'ja',
 };
 
-// Chuẩn hoá thuật ngữ ẩm thực Hội An bằng regex Unicode an toàn (lookaround Unicode \p{L}\p{N})
 const CULINARY_GLOSSARY: Array<{
   pattern: RegExp;
   replacement: Record<Exclude<SupportedLang, 'vi'>, string>;
@@ -161,7 +160,6 @@ async function translateSingleChunk(
     return TRANSLATION_CACHE.get(cacheKey)!;
   }
 
-  // 1. Thử Google Translate GTX
   try {
     const gUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&tl=${tl}&dt=t&q=${encodeURIComponent(chunk)}`;
     const gRes = await fetch(gUrl, {
@@ -185,10 +183,8 @@ async function translateSingleChunk(
       }
     }
   } catch {
-    // Chuyển sang provider dự phòng bên dưới
   }
 
-  // 2. Thử Google Translate Client Dict-Chrome-Ex
   try {
     const cUrl = `https://clients5.google.com/translate_a/t?client=dict-chrome-ex&sl=vi&tl=${tl}&q=${encodeURIComponent(chunk)}`;
     const cRes = await fetch(cUrl, { signal: AbortSignal.timeout(2500) });
@@ -201,10 +197,8 @@ async function translateSingleChunk(
       }
     }
   } catch {
-    // Chuyển sang MyMemory
   }
 
-  // 3. Dự phòng MyMemory Neural MT
   try {
     const emailParam = `hoian_culinary_${Math.floor(Math.random() * 900000 + 100000)}@gmail.com`;
     const mUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=vi|${tl}&de=${emailParam}`;
@@ -222,7 +216,6 @@ async function translateSingleChunk(
       }
     }
   } catch {
-    // Fallback cuối
   }
 
   return chunk;
@@ -235,7 +228,6 @@ export async function autoTranslateFromVi(
   const clean = (textVi || '').normalize('NFC').trim();
   if (!clean) return null;
 
-  // 1. Kiểm tra khớp từ điển đặc sản Hội An chuẩn
   const preset = findHoiAnPreset(clean);
   if (preset) {
     if (clean.length < 60 && preset.name[targetLang]) {
@@ -243,7 +235,6 @@ export async function autoTranslateFromVi(
     }
   }
 
-  // 2. Kiểm tra danh mục thuật ngữ regex Unicode
   for (const item of CULINARY_GLOSSARY) {
     if (item.pattern.test(clean)) {
       item.pattern.lastIndex = 0;
@@ -254,7 +245,6 @@ export async function autoTranslateFromVi(
     item.pattern.lastIndex = 0;
   }
 
-  // 3. Tách theo đoạn xuống dòng (\n) để giữ nguyên bố cục đoạn văn
   const paragraphs = clean.split(/\n+/);
   const translatedParagraphs: string[] = [];
 
@@ -286,8 +276,7 @@ const dishSchema = z.object({
   image_url: z.string().nullable().optional(),
   emoji: z.string().min(1).optional().default('🍜'),
   rating: z.number().min(0).max(5).optional().default(4.8),
-  lat: z.number().optional().default(15.877),  // tọa độ 
-  lng: z.number().optional().default(108.327),
+  lat: z.number().optional().default(15.877),  lng: z.number().optional().default(108.327),
   is_active: z.boolean().default(true),
   translations: z
     .object({
@@ -424,7 +413,6 @@ async function upsertTranslations(
       description: finalDesc,
     };
 
-    // Nếu chưa có bản dịch tuỳ chỉnh và cũng không có preset chuẩn, đưa vào hàng đợi dịch ngầm
     if (!hasCustomName && !presetName) {
       needsBackgroundTranslation.push(lang);
     } else if (!hasCustomDesc && !presetDesc && baseViDesc) {
@@ -434,7 +422,6 @@ async function upsertTranslations(
     }
   }
 
-  // 1. Lưu ngay lập tức toàn bộ 5 ngôn ngữ vào database chỉ với 1 câu lệnh BATCH SQL duy nhất (<15ms)
   const placeholders: string[] = [];
   const params: any[] = [];
   let pIdx = 1;
@@ -453,7 +440,6 @@ async function upsertTranslations(
     params,
   );
 
-  // 2. Chạy dịch tự động ở background (bất đồng bộ) nếu cần mà không chặn phản hồi của người dùng
   if (needsBackgroundTranslation.length > 0) {
     setImmediate(async () => {
       try {
@@ -485,16 +471,12 @@ async function upsertTranslations(
 
 
 
-// Danh sách các món ăn chính thức đồng bộ từ Frontend
-// Chỉ seed khi bảng dishes rỗng.
-// Không ghi đè hoặc xóa dữ liệu admin đã nhập.
 export async function seedDishesIfEmpty() {
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-    // Tránh hai lần khởi động cùng seed vào bảng rỗng.
     await client.query(
       "LOCK TABLE dishes IN SHARE ROW EXCLUSIVE MODE"
     );
@@ -573,7 +555,6 @@ export async function seedDishesIfEmpty() {
       }
     }
 
-    // Seed dùng ID cố định: cập nhật sequence cho lần thêm món sau.
     if (dishesList.length > 0) {
       await client.query(`
         SELECT setval(
@@ -594,7 +575,6 @@ export async function seedDishesIfEmpty() {
   }
 }
 
-// Đồng bộ và tự động vá bản dịch 5 ngôn ngữ cho tất cả món ăn trong cơ sở dữ liệu
 export async function syncDishTranslations() {
   try {
     const { rows: dishes } = await pool.query<{ id: number; name: string; description: string | null; image_url: string | null }>(
@@ -605,7 +585,6 @@ export async function syncDishTranslations() {
     for (const dish of dishes) {
       const preset = findHoiAnPreset(dish.name);
 
-      // Chỉ tự động gán ảnh preset nếu món ăn hoàn toàn chưa có ảnh (null hoặc rỗng)
       if (preset?.image && !dish.image_url) {
         await pool.query('UPDATE dishes SET image_url = $1 WHERE id = $2', [preset.image, dish.id]);
       }
@@ -654,7 +633,6 @@ export async function syncDishTranslations() {
   }
 }
 
-// Endpoint cập nhật/đồng bộ lại bản dịch toàn hệ thống
 r.post(
   '/sync-translations',
   requireAdminAuth,
@@ -664,7 +642,6 @@ r.post(
   }),
 );
 
-// Danh sách món ăn (hỗ trợ tìm kiếm đa ngôn ngữ ?q=..., lọc ?category_id=..., ?category_slug=..., ?lang=...)
 r.get(
   '/',
   ah(async (req, res) => {
@@ -695,7 +672,6 @@ r.get(
   }),
 );
 
-// Chi tiết 1 món ăn kèm đủ 5 ngôn ngữ
 r.get(
   '/:id',
   ah(async (req, res) => {
@@ -707,7 +683,6 @@ r.get(
   }),
 );
 
-// Thêm món ăn mới (tự động dịch sang 5 ngôn ngữ nếu chỉ nhập Tiếng Việt)
 r.post(
   '/',
   requireAdminAuth,
@@ -739,7 +714,6 @@ r.post(
   }),
 );
 
-// Cập nhật món ăn (tự động dịch sang 5 ngôn ngữ nếu chưa nhập bản dịch)
 r.put(
   '/:id',
   requireAdminAuth,
@@ -775,7 +749,6 @@ r.put(
   }),
 );
 
-// Xoá món ăn
 r.delete(
   '/:id',
   requireAdminAuth,
@@ -787,7 +760,6 @@ r.delete(
   }),
 );
 
-// Cập nhật riêng lẻ 1 bản dịch ngôn ngữ (vi | en | zh | ko | ja)
 r.put(
   '/:id/translations/:lang',
   requireAdminAuth,

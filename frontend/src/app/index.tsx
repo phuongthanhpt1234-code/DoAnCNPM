@@ -96,7 +96,6 @@ interface DietaryOption {
   voiceText: string;
 }
 
-// TỪ ĐIỂN ẨM THỰC TỨC THÌ (ĐẢM BẢO DỊCH NGAY LẬP TỨC KHI BẤM PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT)
 const QUICK_CULINARY_DICT: { patterns: string[]; vi: string }[] = [
   {
     patterns: [
@@ -329,7 +328,7 @@ const PAGE_UI: Record<
   vi: {
     mapTriggerBtn: "Bản Đồ & GPS",
     mapModalTitle: "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS",
-    mapModalSubtitle: "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP",
+    mapModalSubtitle: "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM",
     closeModalBtn: "✕ Đóng",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Thuyết Minh Tự Động Đa Ngôn Ngữ",
@@ -383,7 +382,7 @@ const PAGE_UI: Record<
   en: {
     mapTriggerBtn: "Map & GPS",
     mapModalTitle: "FLAVORS OF HOI AN — GPS MAP & DIRECTIONS",
-    mapModalSubtitle: "Real-time GPS · Radius Scanner · Turn-by-turn OSRM · Optimized Food Tour TSP",
+    mapModalSubtitle: "Real-time GPS · Radius Scanner · Turn-by-turn OSRM",
     closeModalBtn: "✕ Close",
     brandTitle: "THEO DẤU VỊ HỘI",
     brandSub: "Multilingual Automated Audio Guide",
@@ -894,8 +893,8 @@ export default function HomeScreen() {
 
   const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
   const [activityFilter, setActivityFilter] = useState<
-  "all" | "favorites" | "checkins"
->("all");
+    "all" | "favorites" | "checkins"
+  >("all");
 
   const [checkinHistoryIds, setCheckinHistoryIds] = useState<number[]>([]);
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
@@ -1117,12 +1116,10 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
     loadDishes();
 
-    // Lắng nghe tín hiệu SSE thời gian thực từ Backend khi Admin sửa món
     const unsub = onDishesUpdated(() => {
       loadDishes();
     });
 
-    // Tự động đồng bộ lại khi quay lại tab trình duyệt
     let handleFocus: (() => void) | null = null;
     let handleVisibility: (() => void) | null = null;
     if (Platform.OS === "web" && typeof window !== "undefined") {
@@ -1134,7 +1131,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       document.addEventListener("visibilitychange", handleVisibility);
     }
 
-    // Polling định kỳ mỗi 8 giây đảm bảo dữ liệu và ảnh luôn mới nhất
     const pollTimer = setInterval(() => {
       loadDishes();
     }, 8000);
@@ -1149,7 +1145,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     };
   }, []);
 
-// states moved to top
   const toastTimerRef = useRef<any>(null);
   const lastCheckInActionRef = useRef<Record<number, number>>({});
   const isCheckInBusyRef = useRef<Record<number, boolean>>({});
@@ -1162,36 +1157,37 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     }, 2800);
   }, []);
 
-  useFocusEffect(useCallback(() => {
-  const controller = new AbortController();
-  const deviceId = encodeURIComponent(getClientDeviceId());
-  const options = { signal: controller.signal };
+  useFocusEffect(
+    useCallback(() => {
+      const controller = new AbortController();
+      const deviceId = encodeURIComponent(getClientDeviceId());
+      const options = { signal: controller.signal };
 
-  api<{ id: number }[]>(`/favorites?device_id=${deviceId}`, options)
-    .then((favs) => {
-      if (!controller.signal.aborted && Array.isArray(favs)) {
-        setFavoritedDishIds(favs.map((f) => Number(f.id)));
-      }
-    })
-    .catch(() => {});
+      api<{ id: number }[]>(`/favorites?device_id=${deviceId}`, options)
+        .then((favs) => {
+          if (!controller.signal.aborted && Array.isArray(favs)) {
+            setFavoritedDishIds(favs.map((f) => Number(f.id)));
+          }
+        })
+        .catch(() => {});
 
-  api<{ dish_id: number }[]>(`/checkins?device_id=${deviceId}`, options)
-    .then((checks) => {
-      if (!controller.signal.aborted && Array.isArray(checks)) {
-        setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
-      }
-    })
-    .catch(() => {});
+      api<{ dish_id: number }[]>(`/checkins?device_id=${deviceId}`, options)
+        .then((checks) => {
+          if (!controller.signal.aborted && Array.isArray(checks)) {
+            setCheckedDishIds(checks.map((c) => Number(c.dish_id)));
+          }
+        })
+        .catch(() => {});
 
-  return () => controller.abort();
-}, []));
+      return () => controller.abort();
+    }, []),
+  );
   const [selectedDietary, setSelectedDietary] = useState<string[]>([
     "no_peanut",
     "no_spicy",
   ]);
   const [tasteCardVisible, setTasteCardVisible] = useState<boolean>(false);
 
-  // STATE CHO MỤC (THÊM): NHẬP GHI CHÚ BẰNG BẤT KỲ NGÔN NGỮ NÀO -> DỊCH & ĐỌC TIẾNG VIỆT
   const [showCustomNoteBox, setShowCustomNoteBox] = useState<boolean>(false);
   const [customDietaryNote, setCustomDietaryNote] = useState<string>("");
   const [remoteTranslation, setRemoteTranslation] = useState({ source: "", text: "" });
@@ -1202,7 +1198,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const ui = PAGE_UI[lang] || PAGE_UI.vi;
 
-  // Kết nối đếm thiết bị đang truy cập thời gian thực (tự động giảm khi đóng tab/app)
   useEffect(() => {
     const cleanup = startPresenceSession(() => lang);
     return cleanup;
@@ -1287,57 +1282,58 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
   const isDesktop = width >= 900;
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
-async function loadCheckinHistory() {
-  try {
-    const deviceId = encodeURIComponent(getClientDeviceId());
+  const loadCheckinHistory = useCallback(async () => {
+    try {
+      const deviceId = encodeURIComponent(getClientDeviceId());
+      const history = await api<{ items: { dish_id: number }[] }>(
+        `/checkins/history?device_id=${deviceId}&lang=${lang}`,
+      );
+      setCheckinHistoryIds(history.items.map((item) => Number(item.dish_id)));
+    } catch (error) {
+      console.warn("Load check-in history failed:", error);
+      showToast(activityHistoryText[lang].loadError);
+    }
+  }, [lang, showToast]);
 
-    const history = await api<{ items: { dish_id: number }[] }>(
-      `/checkins/history?device_id=${deviceId}&lang=${lang}`,
-    );
-
-    setCheckinHistoryIds(history.items.map((item) => Number(item.dish_id)));
-  } catch (error) {
-    console.warn("Load check-in history failed:", error);
-    showToast(activityHistoryText[lang].loadError);
-  }
-}
   const filtered = useMemo(() => {
-  const query = search.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
 
-  return apiDishes.filter((dish) => {
-    if (
-      activityFilter === "favorites" &&
-      !favoritedDishIds.includes(dish.id)
-    ) {
-      return false;
-    }
+    return apiDishes.filter((dish) => {
+      if (
+        activityFilter === "favorites" &&
+        !favoritedDishIds.includes(dish.id)
+      ) {
+        return false;
+      }
 
-    if (
-      activityFilter === "checkins" &&
-      !checkinHistoryIds.includes(dish.id)
-    ) {
-      return false;
-    }
+      if (
+        activityFilter === "checkins" &&
+        !checkinHistoryIds.includes(dish.id)
+      ) {
+        return false;
+      }
 
-    const matchCat = cat === "all" || dish.cat === cat;
-    const searchableText = [
-      dish.name?.[lang],
-      dish.name?.vi,
-      dish.desc?.[lang],
-      dish.desc?.vi,
-    ].join(" ").toLowerCase();
+      const matchCat = cat === "all" || dish.cat === cat;
+      const searchableText = [
+        dish.name?.[lang],
+        dish.name?.vi,
+        dish.desc?.[lang],
+        dish.desc?.vi,
+      ]
+        .join(" ")
+        .toLowerCase();
 
-    return matchCat && searchableText.includes(query);
-  });
-}, [
-  apiDishes,
-  cat,
-  search,
-  lang,
-  activityFilter,
-  favoritedDishIds,
-  checkinHistoryIds,
-]);
+      return matchCat && searchableText.includes(query);
+    });
+  }, [
+    apiDishes,
+    cat,
+    search,
+    lang,
+    activityFilter,
+    favoritedDishIds,
+    checkinHistoryIds,
+  ]);
 
   const speakText = useCallback(
     (text: string, customSpeechCode?: string) => {
@@ -1356,7 +1352,6 @@ async function loadCheckinHistory() {
     const lastTime = lastCheckInActionRef.current[dish.id] || 0;
     const isBusy = isCheckInBusyRef.current[dish.id];
 
-    // Phát hiện spam: nếu bấm liên tục trong vòng 2 giây hoặc request trước đang xử lý
     if (isBusy || (now - lastTime < 2000)) {
       showToast(ui.spamCheckInWarning);
       return;
@@ -1415,13 +1410,13 @@ async function loadCheckinHistory() {
           ? [...prev, dish.id]
           : prev.filter((id) => id !== dish.id),
       );
-        } finally {
-          isCheckInBusyRef.current[dish.id] = false;
+    } finally {
+      isCheckInBusyRef.current[dish.id] = false;
 
-          if (activityFilter === "checkins") {
-            void loadCheckinHistory();
-          }
-        }
+      if (activityFilter === "checkins") {
+        void loadCheckinHistory();
+      }
+    }
   };
 
   const handleToggleFavorite = async (dish: Dish) => {
@@ -1450,6 +1445,12 @@ async function loadCheckinHistory() {
       }
     } catch (e) {
       console.warn("Toggle favorite error:", e);
+      setFavoritedDishIds((prev) =>
+        isFav ? [...prev, dish.id] : prev.filter((id) => id !== dish.id),
+      );
+      if (!nextFav) {
+        showToast(activityHistoryText[lang].removeError);
+      }
     }
   };
 
@@ -1478,7 +1479,6 @@ async function loadCheckinHistory() {
     return `Xin chào cô chú chủ quán Hội An! Nhờ quán lưu ý giúp tôi: ${voiceParts.join(". ")}. Xin cảm ơn rất nhiều!`;
   };
 
-  // GỌI ĐỒNG BỘ TRỰC TIẾP ĐỂ TRÌNH DUYỆT PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT NGAY LẬP TỨC
   const handleOpenAndSpeakTasteCard = () => {
     setTasteCardVisible(true);
     speakText(buildChefVoiceMessage(), "vi-VN");
@@ -1539,37 +1539,42 @@ async function loadCheckinHistory() {
         </ScrollView>
 
         <View style={styles.authRow}>
-          {([
-  ["favorites", activityHistoryText[lang].favorite],
-  ["checkins", activityHistoryText[lang].checkins],
-] as const).map(([value, label]) => {
-  const selected = activityFilter === value;
+          {(
+            [
+              ["favorites", activityHistoryText[lang].favorite],
+              ["checkins", activityHistoryText[lang].checkins],
+            ] as const
+          ).map(([value, label]) => {
+            const selected = activityFilter === value;
 
-  return (
-    <TouchableOpacity
-      key={value}
-      accessibilityRole="button"
-      accessibilityState={{ selected }}
-      style={selected ? styles.registerBtn : styles.loginBtn}
-      onPress={() => {
-        const nextFilter = selected ? "all" : value;
+            return (
+              <TouchableOpacity
+                key={value}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                style={selected ? styles.registerBtn : styles.loginBtn}
+                onPress={() => {
+                  const nextFilter = selected ? "all" : value;
 
-        setActivityFilter(nextFilter);
-        setCat("all");
-        setSearch("");
+                  setActivityFilter(nextFilter);
+                  setCat("all");
+                  setSearch("");
 
-        if (nextFilter === "checkins") {
-          void loadCheckinHistory();
-        }
-      }}
-    >
-      <Text style={selected ? styles.registerBtnText : styles.loginBtnText}>
-        {label}
-      </Text>
-    </TouchableOpacity>
-    
-  );
-})}
+                  if (nextFilter === "checkins") {
+                    void loadCheckinHistory();
+                  }
+                }}
+              >
+                <Text
+                  style={
+                    selected ? styles.registerBtnText : styles.loginBtnText
+                  }
+                >
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
           <TouchableOpacity
             style={styles.mapTriggerBtn}
             onPress={() => setCustomerMapVisible(true)}
@@ -1638,6 +1643,26 @@ async function loadCheckinHistory() {
               </ScrollView>
             </View>
           </View>
+        }
+        ListEmptyComponent={
+          activityFilter !== "all" ? (
+            <View style={styles.emptyActivityBox}>
+              <Ionicons
+                name={
+                  activityFilter === "favorites"
+                    ? "heart-outline"
+                    : "checkmark-circle-outline"
+                }
+                size={36}
+                color="#9ca3af"
+              />
+              <Text style={styles.emptyActivityText}>
+                {activityFilter === "favorites"
+                  ? activityHistoryText[lang].emptyFavorite
+                  : activityHistoryText[lang].emptyCheckins}
+              </Text>
+            </View>
+          ) : null
         }
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -1809,7 +1834,6 @@ async function loadCheckinHistory() {
                     );
                   })}
 
-                  {/* MỤC (THÊM): NHẬP GHI CHÚ BẰNG 1 TRONG 5 NGÔN NGỮ -> DỊCH & PHÁT GIỌNG ĐỌC AI TIẾNG VIỆT */}
                   <TouchableOpacity
                     activeOpacity={0.85}
                     onPress={() => setShowCustomNoteBox(!showCustomNoteBox)}
@@ -2188,7 +2212,6 @@ async function loadCheckinHistory() {
         </View>
       </Modal>
 
-      {/* MODAL PHÂN HỆ KHÁCH HÀNG: BẢN ĐỒ & GPS HỘI AN */}
       <Modal
         visible={customerMapVisible}
         transparent={false}
@@ -2196,14 +2219,13 @@ async function loadCheckinHistory() {
         onRequestClose={() => setCustomerMapVisible(false)}
       >
         <View style={{ flex: 1, backgroundColor: "#fdfbf7" }}>
-          {/* Modal Header */}
           <View style={styles.customerMapHeader}>
             <View style={{ flex: 1, marginRight: 10 }}>
               <Text style={styles.customerMapTitle} numberOfLines={1}>
                   {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
                 </Text>
               <Text style={styles.customerMapSubtitle} numberOfLines={1}>
-                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM · Lộ trình Food Tour tối ưu TSP"}
+                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM"}
                 </Text>
             </View>
 
@@ -2219,10 +2241,8 @@ async function loadCheckinHistory() {
             </View>
           </View>
 
-          {/* Modal Body: Embedded Interactive Customer Map */}
           <View style={{ flex: 1 }}>
             {Platform.OS === "web" ? (
-              // @ts-ignore
               <iframe
                 key={`customer-map-iframe-${lang}`}
                 src={getCustomerMapUrl(lang)}
@@ -2241,7 +2261,7 @@ async function loadCheckinHistory() {
                   Bản Đồ Ẩm Thực Du Khách Hội An
                 </Text>
                 <Text style={{ fontSize: 13, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
-                  Trải nghiệm khám phá quán ăn với radar GPS, định tuyến OSRM và Food Tour tối ưu TSP.
+                  Trải nghiệm khám phá quán ăn với radar GPS và định tuyến đường bộ OSRM.
                 </Text>
                 <TouchableOpacity
                   style={styles.qrTriggerBtn}
@@ -3007,5 +3027,23 @@ const styles = StyleSheet.create({
     color: "#991b1b",
     fontWeight: "700",
     fontSize: 12,
+  },
+  emptyActivityBox: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    marginVertical: 12,
+    backgroundColor: "#ffffff",
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: "#f3e8d2",
+    gap: 10,
+  },
+  emptyActivityText: {
+    color: "#6b7280",
+    fontSize: 15,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });

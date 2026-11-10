@@ -4,11 +4,9 @@ import { LangKey } from "../data/dishesData";
 
 const RENDER_API_URL = "https://doancnpm-backend.onrender.com";
 
-// Tự động nhận diện backend URL linh hoạt cho cả Local, Render và Vercel
 const resolveApiUrl = () => {
   if (Platform.OS === "web" && typeof window !== "undefined") {
     const host = window.location.hostname;
-    // Nếu đang chạy web local (localhost hoặc IP mạng LAN), ưu tiên gọi port 4000 cùng host
     if (
       host === "localhost" ||
       host === "127.0.0.1" ||
@@ -19,9 +17,8 @@ const resolveApiUrl = () => {
       return `http://${host}:4000`;
     }
     if (host === "vercel.app" || host.endsWith(".vercel.app")) {
-  return RENDER_API_URL;
-}
-    // Trên Vercel hoặc tên miền HTTPS công khai: tuyệt đối không dùng IP LAN http://192.168...
+      return RENDER_API_URL;
+    }
     const envUrl = (process.env.EXPO_PUBLIC_API_URL || "").trim();
     if (
       envUrl &&
@@ -35,7 +32,6 @@ const resolveApiUrl = () => {
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
   }
-  // Mặc định gọi đến Backend triển khai trên Render
   return RENDER_API_URL;
 };
 
@@ -44,7 +40,6 @@ export const API_URL = resolveApiUrl().replace(/\/+$/, "");
 const SESSION_TAB_ID = `tab_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 let cachedDeviceId: string | null = null;
 
-// Khởi tạo và nạp trước Device ID từ AsyncStorage trên nền tảng Mobile
 if (Platform.OS !== "web") {
   AsyncStorage.getItem("hoian_device_id")
     .then((saved) => {
@@ -73,7 +68,6 @@ export function getClientDeviceId(): string {
     return created;
   }
 
-  // Mobile: tạo ID bền vững và lưu vào AsyncStorage
   cachedDeviceId = `mob_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
   AsyncStorage.setItem("hoian_device_id", cachedDeviceId).catch(() => {});
   return cachedDeviceId;
@@ -205,9 +199,9 @@ export function notifyPresenceLangChange(lang: LangKey) {
 
 export async function api<T>(path: string, options?: RequestInit): Promise<T> {
   const candidates =
-  Platform.OS === "web"
-    ? [API_URL]
-    : Array.from(new Set(["http://localhost:4000", API_URL, RENDER_API_URL]));
+    Platform.OS === "web"
+      ? [API_URL]
+      : Array.from(new Set(["http://localhost:4000", API_URL, RENDER_API_URL]));
 
   let lastError: unknown = null;
   for (const baseUrl of candidates) {

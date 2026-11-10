@@ -25,7 +25,6 @@ export async function runMigrations() {
   try {
     await client.query("BEGIN");
 
-    // Tránh hai tiến trình chạy migration cùng lúc.
     await client.query("SELECT pg_advisory_xact_lock(741302)");
 
     await client.query(`

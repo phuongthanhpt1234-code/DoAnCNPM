@@ -16,10 +16,8 @@ export interface ActiveDeviceSession {
   has_sse: boolean;
 }
 
-// Danh sách thiết bị đang truy cập thực tế trong bộ nhớ thời gian thực
 const activeSessions = new Map<string, ActiveDeviceSession>();
 
-// Danh sách kết nối SSE đang lắng nghe để cập nhật giao diện Admin tức thì
 interface SseClient {
   res: Response;
   role: 'admin' | 'client';
@@ -27,7 +25,6 @@ interface SseClient {
 
 const sseClients = new Set<SseClient>();
 
-// Cấu hình điều khiển hiện hành (khởi tạo từ file presence.config.ts)
 const runtimeConfig: PresenceControlConfig = { ...PRESENCE_CONFIG };
 
 function detectPlatform(req: Request, provided?: string): string {
@@ -52,7 +49,6 @@ function pruneExpiredSessions(): boolean {
   const now = Date.now();
   let changed = false;
   for (const [key, session] of activeSessions.entries()) {
-    // Nếu không có kết nối SSE trực tiếp và quá thời gian timeout -> xoá thiết bị
     if (!session.has_sse && now - session.last_seen > runtimeConfig.HEARTBEAT_TIMEOUT_MS) {
       activeSessions.delete(key);
       changed = true;
@@ -108,14 +104,12 @@ export function broadcastAdminRefresh() {
   broadcastPresence({ stats_updated: true });
 }
 
-// Quét định kỳ mỗi 3 giây để dọn thiết bị mất kết nối đột ngột
 setInterval(() => {
   if (pruneExpiredSessions()) {
     broadcastPresence();
   }
 }, 3000).unref();
 
-// 1. Lấy trạng thái số lượng thiết bị đang truy cập hiện tại
 r.get('/', (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : (req.query.token as string);
@@ -126,16 +120,12 @@ r.get('/', (req, res) => {
     return res.json(summary);
   }
 
-  // Khách truy cập công khai: Chỉ trả về số lượng, giấu chi tiết thiết bị & địa chỉ IP
   return res.json({
     online_count: summary.online_count,
     real_online: summary.real_online,
   });
 });
 
-// 2. Kết nối thời gian thực (SSE):
-// - Nếu role=client (Frontend mở trang): Tăng số lượng ngay lập tức; khi đóng tab/cửa sổ -> giảm ngay lập tức!
-// - Nếu role=admin (Trang quản trị): Yêu cầu token xác thực; nhận dữ liệu chi tiết thiết bị vào/ra.
 r.get('/stream', (req, res) => {
   const role = String(req.query.role || 'client');
 
@@ -182,7 +172,6 @@ r.get('/stream', (req, res) => {
   const sseClient: SseClient = { res, role: role === 'admin' ? 'admin' : 'client' };
   sseClients.add(sseClient);
 
-  // Gửi ngay trạng thái mới nhất cho listener
   broadcastPresence();
 
   const keepAliveTimer = setInterval(() => {
@@ -207,7 +196,6 @@ r.get('/stream', (req, res) => {
   });
 });
 
-// 3. Nhịp tim (Heartbeat) từ thiết bị Frontend (cập nhật ngôn ngữ đang xem hoặc giữ kết nối trên Mobile)
 r.post('/heartbeat', (req, res) => {
   const body = req.body || {};
   const deviceId = String(body.device_id || '').trim();
@@ -236,7 +224,6 @@ r.post('/heartbeat', (req, res) => {
   return res.json(getPresenceSummary());
 });
 
-// 4. Ngắt kết nối tức thì khi người dùng đóng tab / thoát ứng dụng (sendBeacon / fetch keepalive)
 r.post('/leave', (req, res) => {
   let body = req.body;
   if (typeof body === 'string') {
@@ -252,7 +239,6 @@ r.post('/leave', (req, res) => {
   if (deviceId) {
     const key = getSessionKey(deviceId, tabId || deviceId);
     activeSessions.delete(key);
-    // Nếu không truyền tab_id, xoá mọi phiên thuộc device_id đó
     if (!tabId) {
       for (const k of activeSessions.keys()) {
         if (k.startsWith(`${deviceId}::`)) {
@@ -265,7 +251,6 @@ r.post('/leave', (req, res) => {
   return res.status(204).end();
 });
 
-// 5. Điều khiển (Control) số liệu hiển thị trực tiếp từ Admin hoặc API
 r.post("/control", requireAdminAuth, (_req, res) => {
   return res.status(410).json({
     message: "Đã bỏ chức năng chỉnh số online. Hệ thống dùng số liệu thực.",

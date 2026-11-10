@@ -6,7 +6,6 @@ import { requireAdminAuth } from "../../middlewares/auth";
 
 const r = Router();
 
-// Khởi tạo bảng qr_codes và nạp dữ liệu mẫu ban đầu
 export async function ensureQrCodesTable() {
   try {
    
@@ -46,7 +45,6 @@ WHERE seed.target_type <> 'dish'
   }
 }
 
-// 1. Lấy danh sách toàn bộ mã QR
 r.get(
   "/",
   ah(async (req, res) => {
@@ -70,7 +68,6 @@ r.get(
 
     sql += ` ORDER BY id ASC`;
     const { rows } = await pool.query(sql, params);
-    // Bổ sung các alias để frontend hiển thị dễ dàng
     const mapped = rows.map((r: any) => ({
       ...r,
       qr_type: r.target_type,
@@ -81,7 +78,6 @@ r.get(
   })
 );
 
-// 2. Thống kê dữ liệu QR
 r.get(
   "/stats",
   ah(async (_req, res) => {
@@ -126,9 +122,6 @@ r.get(
   })
 );
 
-// 3. Quét mã QR (Scan tracking endpoint)
-// Khi du khách quét link: https://doancnpm-backend.onrender.com/api/qrcodes/scan/QR-DISH-18
-// Server tự động tăng lượt quét scan_count và chuyển hướng (redirect) tới trang ứng dụng
 r.get(
   "/scan/:code",
   ah(async (req, res) => {
@@ -142,7 +135,6 @@ r.get(
     );
 
     if (result.rows.length === 0) {
-      // Nếu mã bị khoá hoặc không tồn tại, chuyển về trang chủ app
       return res.redirect("https://doancnpm-beta.vercel.app");
     }
 
@@ -166,7 +158,6 @@ const qrSchema = z.object({
   is_active: z.boolean().default(true),
 });
 
-// 4. Thêm mã QR mới vào Data
 r.post(
   "/",
   requireAdminAuth,
@@ -192,7 +183,6 @@ r.post(
   })
 );
 
-// 5. Cập nhật mã QR
 r.put(
   "/:id",
   requireAdminAuth,
@@ -220,7 +210,6 @@ r.put(
   })
 );
 
-// 6. Bật / Tắt trạng thái mã QR
 r.patch(
   "/:id/toggle",
   requireAdminAuth,
@@ -239,7 +228,6 @@ r.patch(
   })
 );
 
-// 7. Xoá mã QR khỏi cơ sở dữ liệu
 r.delete(
   "/:id",
   requireAdminAuth,

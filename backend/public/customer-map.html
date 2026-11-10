@@ -35,7 +35,6 @@
       flex-direction: column;
     }
 
-    /* HEADER */
     .top-header {
       background: #ffffff;
       border-bottom: 1px solid var(--border);
@@ -100,7 +99,6 @@
       100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
-    /* LANGUAGE BAR (SYNCS WITH MAIN WEB) */
     .map-lang-bar {
       display: flex;
       align-items: center;
@@ -148,7 +146,6 @@
       box-shadow: 0 2px 8px rgba(139, 29, 36, 0.3);
     }
 
-    /* MAIN CONTAINER */
     .app-body {
       flex: 1;
       max-width: 1400px;
@@ -160,7 +157,6 @@
       gap: 16px;
     }
 
-    /* CONTROLS CARD */
     .controls-card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -323,7 +319,6 @@
       background: #dbeafe;
     }
 
-    /* KHỐI LỘ TRÌNH FOOD TOUR TSP ĐẸP MẮT & DỄ NHÌN */
     .tsp-tour-box {
       margin-top: 14px;
       background: #fffcf8;
@@ -450,7 +445,6 @@
       line-height: 1.5;
     }
 
-    /* WORKSPACE: MAP + NEARBY DISHES */
     .workspace-grid {
       display: grid;
       grid-template-columns: 1fr 370px;
@@ -480,7 +474,6 @@
       z-index: 1;
     }
 
-    /* ĐỊNH DẠNG GHIM MÓN ĂN RÕ RÀNG & DỄ NHÌN */
     .dish-marker-pin {
       display: flex;
       flex-direction: column;
@@ -534,7 +527,6 @@
       border-bottom-color: #fcd34d !important;
     }
 
-    /* ĐỊNH DẠNG VỊ TRÍ DU KHÁCH */
     .user-marker-pin {
       display: flex;
       align-items: center;
@@ -563,7 +555,6 @@
       0% { transform: scale(0.6); opacity: 1; }
       100% { transform: scale(1.6); opacity: 0; }
     }
-/* SIDE DISHES LIST */
     .dishes-panel {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -683,7 +674,6 @@
       margin-left: auto;
     }
 
-    /* ẨN HEADER TRÙNG LẶP KHI ĐƯỢC NHÚNG TRONG MODAL IFRAME */
     html.is-embedded .top-header,
     body.is-embedded .top-header {
       display: none !important;
@@ -692,7 +682,6 @@
       padding-top: 10px;
     }
 
-    /* LEAFLET POPUP STYLING (CLEAN: NO 4.8 RATING, NO BADGE, EXACT ADDRESS) */
     .leaflet-popup-content-wrapper {
       border-radius: 14px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
@@ -771,7 +760,6 @@
       border: 1px solid #bfdbfe;
     }
 
-    /* TRAVEL MODES SELECTOR */
     .travel-modes-bar {
       margin-top: 14px;
       padding-top: 12px;
@@ -837,7 +825,6 @@
       font-weight: 600;
     }
 
-    /* GPS NOTICE BANNER */
     .gps-notice-banner {
       margin-top: 12px;
       padding: 10px 14px;
@@ -896,7 +883,6 @@
       background: rgba(0, 0, 0, 0.08);
     }
 
-    /* ROUTE DETAIL CARD */
     .route-detail-card {
       margin-top: 12px;
       background: #ffffff;
@@ -1017,7 +1003,6 @@
       background: #1d4ed8;
     }
 
-    /* POPUP TRAVEL MODE CHIPS */
     .popup-mode-chips {
       display: flex;
       gap: 4px;
@@ -1054,7 +1039,6 @@
 </head>
 <body>
 
-  <!-- TOP HEADER -->
   <header class="top-header">
     <div class="brand-wrap">
       
@@ -1070,9 +1054,7 @@
   </header>
 
   <main class="app-body">
-    <!-- CONTROLS CARD -->
     <section class="controls-card">
-      <!-- THANH CHỌN ĐA NGÔN NGỮ (5 NGÔN NGỮ ĐỒNG BỘ VỚI WEB CHÍNH) -->
       <div class="map-lang-bar">
         <div class="map-lang-title" id="mapLangTitle">
            Ngôn ngữ bản đồ / Language:
@@ -1087,7 +1069,6 @@
       </div>
 
       <div class="route-grid">
-        <!-- Điểm xuất phát -->
         <div class="form-group form-group-origin">
           <label class="form-label" for="cOriginSelect">
             Điểm xuất phát
@@ -1101,7 +1082,6 @@
           </select>
         </div>
 
-        <!-- Quán muốn đến -->
         <div class="form-group form-group-dest">
           <label class="form-label" for="cDestSelect">
             Chọn quán muốn đến
@@ -1111,7 +1091,6 @@
           </select>
         </div>
 
-        <!-- Bán kính Radar -->
         <div class="form-group form-group-radius">
           <label class="form-label" for="cRadiusSelect">
             Bán kính tìm kiếm
@@ -1124,7 +1103,6 @@
           </select>
         </div>
 
-        <!-- Nút hành động -->
         <div class="form-group-actions">
           <button id="btnRadarScan" class="btn btn-primary" title="Quét tìm quán ăn xung quanh">
             Quét tìm quán
@@ -1135,7 +1113,6 @@
         </div>
       </div>
 
-      <!-- BỘ CHỌN PHƯƠNG TIỆN CHỈ ĐƯỜNG: ĐƯỜNG BỘ, ĐƯỜNG XE MÁY, ĐƯỜNG Ô TÔ -->
       <div class="travel-modes-bar" id="travelModesBar">
         <span class="travel-modes-label">
            Phương tiện chỉ đường:
@@ -1159,7 +1136,6 @@
         </div>
       </div>
 
-      <!-- THÔNG BÁO QUYỀN GPS / TRẠNG THÁI ĐỊNH VỊ -->
       <div id="gpsNoticeBanner" class="gps-notice-banner" style="display: none;">
         <div class="gps-notice-content">
           <span class="gps-notice-icon" id="gpsNoticeIcon"></span>
@@ -1168,7 +1144,6 @@
         <button type="button" class="gps-notice-close" onclick="document.getElementById('gpsNoticeBanner').style.display='none'">✕</button>
       </div>
 
-      <!-- HỘP THÔNG TIN LỘ TRÌNH CHỈ ĐƯỜNG CHI TIẾT -->
       <div id="routeDetailCard" class="route-detail-card" style="display: none;">
         <div class="route-detail-header">
           <div class="route-target-info">
@@ -1206,14 +1181,11 @@
 
     </section>
 
-    <!-- MAP & DISHES LIST WORKSPACE -->
     <div class="workspace-grid">
-      <!-- LEAFLET MAP -->
       <div class="map-wrapper">
         <div id="customerLeafletMap"></div>
       </div>
 
-      <!-- NEARBY DISHES LIST -->
       <aside class="dishes-panel">
         <div class="dishes-panel-head">
           <h3 class="dishes-panel-title">
@@ -1230,10 +1202,8 @@
     </div>
   </main>
 
-  <!-- LEAFLET JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // --- 0. MULTILINGUAL SUPPORT (VI, EN, ZH, KO, JA) ---
     const urlParams = new URLSearchParams(window.location.search);
     let currentMapLang = urlParams.get('lang') || localStorage.getItem('customer_map_lang') || 'vi';
     if (!['vi', 'en', 'zh', 'ko', 'ja'].includes(currentMapLang)) currentMapLang = 'vi';
@@ -1571,7 +1541,6 @@
       }
     };
 
-    // DEFAULT DISHES IN HOI AN WITH MULTILINGUAL TRANSLATIONS
     const DEFAULT_DISHES = [
       {
             "id": 4,
@@ -1745,8 +1714,7 @@
 
         let allDishes = [];
     let mapInstance = null;
-    let userCoords = { lat: 15.8773, lng: 108.3259 }; // Mặc định Chùa Cầu Hội An // Default Hoi An Ancient Town
-    let userMarker = null;
+    let userCoords = { lat: 15.8773, lng: 108.3259 };    let userMarker = null;
     let radiusCircle = null;
     let dishMarkers = [];
     let selectedDestDish = null;
@@ -1757,18 +1725,15 @@
       currentMapLang = lang;
       localStorage.setItem('customer_map_lang', lang);
 
-      // 1. Update language pills active state
       document.querySelectorAll('.map-lang-pill').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
       });
 
       const t = I18N[lang];
 
-      // 2. Update brand subtitle
       const subEl = document.querySelector('.brand-subtitle');
       if (subEl) subEl.textContent = t.brand_sub;
 
-      // 3. Update form labels
       const langTitleEl = document.getElementById('mapLangTitle');
       if (langTitleEl) langTitleEl.textContent = t.lang_title;
 
@@ -1781,7 +1746,6 @@
       const radiusLabel = document.querySelector('.form-group-radius .form-label');
       if (radiusLabel) radiusLabel.textContent = t.radius_label;
 
-      // 4. Update origin options
       const origSel = document.getElementById('cOriginSelect');
       if (origSel) {
         const gpsOpt = origSel.querySelector('option[value="gps"]');
@@ -1808,7 +1772,6 @@
         if (optAnBang) optAnBang.textContent = t.origin_an_bang || 'Bãi biển An Bàng';
       }
 
-      // 5. Update radius options
       const radSel = document.getElementById('cRadiusSelect');
       if (radSel && radSel.options && radSel.options.length >= 4) {
         radSel.options[0].textContent = t.radius_500;
@@ -1817,14 +1780,12 @@
         radSel.options[3].textContent = t.radius_5000;
       }
 
-      // 6. Update action buttons
       const btnScan = document.getElementById('btnRadarScan');
       if (btnScan) btnScan.textContent = t.btn_scan;
 
       const btnGps = document.getElementById('btnGetGps');
       if (btnGps) btnGps.textContent = t.btn_my_loc;
 
-      // 7. Update travel mode buttons
       const tmTitle = document.querySelector('.travel-modes-label');
       if (tmTitle) tmTitle.textContent = t.travel_mode_title;
 
@@ -1841,7 +1802,6 @@
         btnDrive.innerHTML = '<span>' + t.mode_driving + '</span><span class="mode-speed">' + t.mode_driving_speed + '</span>';
       }
 
-      // 8. Update metrics labels
       const etaLabel = document.querySelector('.eta-pill .metric-label');
       if (etaLabel) etaLabel.textContent = t.metric_eta;
 
@@ -1854,37 +1814,30 @@
       const btnGmapsDirect = document.getElementById('btnGmapsDirect');
       if (btnGmapsDirect) btnGmapsDirect.textContent = t.btn_gmaps_direct;
 
-      // 9. Update nearby panel
       const nearbyTitleEl = document.querySelector('.dishes-panel-title');
       if (nearbyTitleEl) nearbyTitleEl.textContent = t.nearby_title;
 
-      // Refresh destination selection or tour if active
       if (selectedDestDish) {
         selectDestinationById(selectedDestDish.id);
       }
 
-      // Notify parent window
       try {
         if (window.parent && window.parent !== window) {
           window.parent.postMessage({ type: 'MAP_LANG_CHANGED', lang }, '*');
         }
       } catch (e) {}
 
-      // Reload dishes with translated names and re-render
       loadDishesData();
     }
 
-    // Listen to parent window message
     window.addEventListener('message', (event) => {
       if (event.data && (event.data.type === 'CHANGE_LANG' || event.data.type === 'SET_LANG') && event.data.lang) {
         setMapLanguage(event.data.lang);
       }
     });
 
-        // --- 1. HAVERSINE FORMULA ---
     function calcHaversine(lat1, lon1, lat2, lon2) {
-      const R = 6371000; // meters
-      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const R = 6371000;      const dLat = (lat2 - lat1) * Math.PI / 180;
       const dLon = (lon2 - lon1) * Math.PI / 180;
       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
@@ -1899,29 +1852,24 @@
       return (meters / 1000).toFixed(2) + " km";
     }
 
-    // --- 2. INITIALIZE LEAFLET MAP (GOOGLE MAPS ROADMAP & SATELLITE CHUẨN ĐẸP) ---
     function initMap() {
       mapInstance = L.map('customerLeafletMap', {
         zoomControl: true,
         scrollWheelZoom: true
       }).setView([userCoords.lat, userCoords.lng], 16);
 
-      // Bản đồ Google Maps đường phố (rõ nét đường phố Hội An)
       const googleRoadmap = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         attribution: '© Google Maps | Hội An'
       });
 
-      // Bản đồ Google Maps vệ tinh
       const googleSatellite = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
         maxZoom: 20,
         attribution: '© Google Maps Vệ Tinh'
       });
 
-      // Mặc định hiển thị Google Maps đường phố
       googleRoadmap.addTo(mapInstance);
 
-      // Trình chuyển đổi lớp bản đồ trực quan
       L.control.layers({
         "Bản đồ đường phố": googleRoadmap,
         "Ảnh vệ tinh": googleSatellite
@@ -1930,7 +1878,6 @@
       updateUserMarker(userCoords.lat, userCoords.lng, 'Vị trí của bạn');
     }
 
-    // --- 3. USER MARKER & RADAR PULSE ---
     function updateUserMarker(lat, lng, label) {
       userCoords = { lat, lng };
       if (!mapInstance) return;
@@ -1948,7 +1895,6 @@
       }
       userMarker.bindTooltip(label || 'Vị trí của bạn', { permanent: false, direction: 'top' });
 
-      // Update radar circle
       const radiusMeters = parseInt(document.getElementById('cRadiusSelect').value) || 1000;
       if (radiusCircle) {
         radiusCircle.setLatLng([lat, lng]);
@@ -1965,7 +1911,6 @@
       }
     }
 
-    // --- 4. GPS INSTANT LOCATOR & NOTIFICATIONS ---
     function showGpsNotice(msg, type = 'warning', alsoAlert = true) {
       const banner = document.getElementById('gpsNoticeBanner');
       const msgEl = document.getElementById('gpsNoticeMsg');
@@ -2017,7 +1962,6 @@
           mapInstance.setView([lat, lng], 16);
           if (statusEl) statusEl.textContent = 'GPS chính xác (±' + Math.round(pos.coords.accuracy) + 'm)';
 
-          // Cập nhật hoặc thêm option GPS vào select và chọn nó
           if (origSel) {
             let gpsOpt = origSel.querySelector('option[value="gps"]');
             if (!gpsOpt) {
@@ -2029,7 +1973,6 @@
             origSel.value = 'gps';
           }
 
-          // Kiểm tra khoảng cách tới trung tâm Hội An (Chùa Cầu: 15.8773, 108.3259)
           const distToHoiAn = calcHaversine(lat, lng, 15.8773, 108.3259);
           if (distToHoiAn > 20000) {
             const distKm = Math.round(distToHoiAn / 1000);
@@ -2040,8 +1983,7 @@
           }
 
           runRadarScan();
-          if (selectedDestDish) selectDestinationById(selectedDestDish.id); // cOriginSelect_TourUpdated
-        },
+          if (selectedDestDish) selectDestinationById(selectedDestDish.id);        },
         (err) => {
           console.warn('GPS error handled safely, avoiding app crash:', err);
           if (btnGps) {
@@ -2049,7 +1991,6 @@
           }
 
           let errMsg = '';
-          // err.code === 1: PERMISSION_DENIED (User clicks Block / Don't allow)
           if (err && err.code === 1) {
             errMsg = t.gps_permission_denied || 'Ứng dụng không có quyền định vị. Vui lòng cấp quyền truy cập vị trí trong cài đặt trình duyệt để sử dụng tính năng này.';
             if (statusEl) statusEl.textContent = t.gps_permission_denied_status || 'Không có quyền định vị';
@@ -2061,10 +2002,8 @@
             if (statusEl) statusEl.textContent = 'Không lấy được GPS';
           }
 
-          // Thông báo rõ ràng về quyền định vị, an toàn và không bị crash
           showGpsNotice(errMsg, 'warning', true);
 
-          // Giữ an toàn trạng thái bản đồ và toạ độ mặc định
           try {
             if (!userCoords) {
               userCoords = { lat: 15.8773, lng: 108.3259, isRealGps: false };
@@ -2078,11 +2017,9 @@
       );
     }
 
-    // --- 5. RENDER DISHES ON MAP & LIST ---
     function renderDishes(dishesToRender) {
       const t = I18N[currentMapLang] || I18N.vi;
 
-      // Clear old dish markers
       dishMarkers.forEach(m => mapInstance.removeLayer(m));
       dishMarkers = [];
 
@@ -2103,7 +2040,6 @@
         const dist = calcHaversine(userCoords.lat, userCoords.lng, d.lat, d.lng);
         d._dist = dist;
 
-        // Leaflet Marker (Clean popup: NO ⭐ 4.8, NO meta badges)
         const dishIcon = L.divIcon({
           className: 'custom-dish-marker',
           html: '<div class="dish-marker-pin"><div class="dish-marker-bubble"></div><div class="dish-marker-tip"></div></div>',
@@ -2114,7 +2050,6 @@
 
         const marker = L.marker([d.lat, d.lng], { icon: dishIcon }).addTo(mapInstance);
         
-        // Hiện nhãn tên món ăn ngay dưới điểm ghim giúp dễ nhìn, dễ chọn
         marker.bindTooltip(d.name, {
           permanent: true,
           direction: 'bottom',
@@ -2122,7 +2057,6 @@
           offset: [0, 4]
         });
         
-        // Popup content cleanly styled with dynamic i18n
         const popupHtml = `
           <div class="popup-box">
             <img class="popup-img" src="${d.image || 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400'}" alt="${d.name}" />
@@ -2130,7 +2064,6 @@
               <h4 class="popup-title">${d.name}</h4>
               <p class="popup-addr">${d.address || 'Hội An, Quảng Nam'}</p>
               <p class="popup-dist">${t.distance_label || 'Khoảng cách:'} ${formatDistance(dist)}</p>
-              <!-- 3 Chế độ chỉ đường -->
               <div class="popup-mode-chips">
                 <button type="button" class="popup-mode-chip ${currentTravelMode === 'walking' ? 'active' : ''}" data-mode="walking" onclick="setTravelModeAndRoute('walking', ${d.id})">${t.mode_walking}</button>
                 <button type="button" class="popup-mode-chip ${currentTravelMode === 'motorbike' ? 'active' : ''}" data-mode="motorbike" onclick="setTravelModeAndRoute('motorbike', ${d.id})">${t.mode_motorbike}</button>
@@ -2146,7 +2079,6 @@
         marker.bindPopup(popupHtml, { maxWidth: 260 });
         dishMarkers.push(marker);
 
-        // Sidebar Card
         const card = document.createElement('div');
         card.className = 'dish-card';
         card.innerHTML = `
@@ -2170,21 +2102,18 @@
       });
     }
 
-    // --- 6. RADAR SCANNER ---
     function runRadarScan() {
       const radiusMeters = parseInt(document.getElementById('cRadiusSelect').value) || 1000;
       const origSel = document.getElementById('cOriginSelect');
       const originLabel = (origSel && origSel.options[origSel.selectedIndex]?.textContent) || 'Điểm xuất phát';
       updateUserMarker(userCoords.lat, userCoords.lng, originLabel);
 
-      // Filter dishes within radius
       const filtered = allDishes.filter(d => {
         if (!d.lat || !d.lng) return false;
         const dist = calcHaversine(userCoords.lat, userCoords.lng, d.lat, d.lng);
         return dist <= radiusMeters;
       });
 
-      // Sort by distance
       filtered.sort((a, b) => {
         const da = calcHaversine(userCoords.lat, userCoords.lng, a.lat, a.lng);
         const db = calcHaversine(userCoords.lat, userCoords.lng, b.lat, b.lng);
@@ -2193,15 +2122,12 @@
 
       renderDishes(filtered);
 
-      // Fit map bounds to show radar circle
       if (radiusCircle) {
         mapInstance.fitBounds(radiusCircle.getBounds(), { padding: [30, 30] });
       }
     }
 
-    // --- 7. MULTI-MODE ROUTING (ĐƯỜNG BỘ, ĐƯỜNG XE MÁY, ĐƯỜNG Ô TÔ) ---
-    let currentTravelMode = 'walking'; // 'walking' | 'motorbike' | 'driving'
-
+    let currentTravelMode = 'walking';
     const TRAVEL_MODES = {
       walking: {
         label: 'Đường bộ (Đi bộ)',
@@ -2209,8 +2135,7 @@
         osrmProfile: 'foot',
         gmapsMode: 'walking',
         speedKmH: 4.5,
-        color: '#059669', // Xanh lá
-        weight: 6,
+        color: '#059669',        weight: 6,
         note: 'Đi bộ thuận tiện qua các tuyến phố đi bộ (Trần Phú, Nguyễn Thái Học, Chùa Cầu).'
       },
       motorbike: {
@@ -2219,8 +2144,7 @@
         osrmProfile: 'driving',
         gmapsMode: 'two_wheeler',
         speedKmH: 25,
-        color: '#ea580c', // Cam đậm
-        weight: 6,
+        color: '#ea580c',        weight: 6,
         note: 'Xe máy linh hoạt qua các ngõ hẻm phố cổ và trục đường ven sông.'
       },
       driving: {
@@ -2229,8 +2153,7 @@
         osrmProfile: 'driving',
         gmapsMode: 'driving',
         speedKmH: 35,
-        color: '#8b1d24', // Đỏ đô Hội An
-        weight: 7,
+        color: '#8b1d24',        weight: 7,
         note: 'Ô tô ưu tiên các trục đường chính (Trần Hưng Đạo, Phan Châu Trinh, Hai Bà Trưng, Lý Thường Kiệt).'
       }
     };
@@ -2239,17 +2162,14 @@
       if (!TRAVEL_MODES[mode]) return;
       currentTravelMode = mode;
 
-      // Update mode buttons in control card
       document.querySelectorAll('.travel-mode-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.mode === mode);
       });
 
-      // Update popup chips if open
       document.querySelectorAll('.popup-mode-chip').forEach(chip => {
         chip.classList.toggle('active', chip.dataset.mode === mode);
       });
 
-      // Re-calculate route if destination is selected
       if (selectedDestDish) {
         selectDestinationById(selectedDestDish.id);
       }
@@ -2260,7 +2180,6 @@
       selectDestinationById(dishId);
     };
 
-    // Attach mode tab events
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.travel-mode-btn').forEach(btn => {
         btn.addEventListener('click', () => setTravelMode(btn.dataset.mode));
@@ -2268,9 +2187,6 @@
     });
 
     
-    // --- BỘ ĐỊNH TUYẾN CHUYÊN DỤNG CHO NGƯỜI ĐI BỘ & CÁC PHƯƠNG TIỆN PHỐ CỔ ---
-    // Sử dụng OpenStreetMap Foot Router (routed-foot) chuyên biệt cho người đi bộ
-    // nhận diện chính xác các phố đi bộ: Trần Phú, Nguyễn Thái Học, Bạch Đằng, Chùa Cầu
     function getRouterUrlsForPoints(coordsStr, travelMode) {
       if (travelMode === 'walking') {
         return [
@@ -2291,7 +2207,6 @@
       }
     }
 
-    // Lấy lộ trình đường bộ thực tế giữa 2 điểm (ưu tiên đường bộ hành)
     async function getRouteSegment(fromPt, toPt, travelMode) {
       const coordsStr = `${fromPt.lng},${fromPt.lat};${toPt.lng},${toPt.lat}`;
       const urls = getRouterUrlsForPoints(coordsStr, travelMode);
@@ -2310,11 +2225,9 @@
             }
           }
         } catch (e) {
-          // Thử router tiếp theo
         }
       }
 
-      // Fallback nếu mất mạng
       const directDist = calcHaversine(fromPt.lat, fromPt.lng, toPt.lat, toPt.lng);
       return {
         coords: [[fromPt.lat, fromPt.lng], [toPt.lat, toPt.lng]],
@@ -2327,15 +2240,12 @@
       if (!dish) return;
       selectedDestDish = dish;
 
-      // Update select element
       document.getElementById('cDestSelect').value = dish.id;
 
       const modeInfo = TRAVEL_MODES[currentTravelMode] || TRAVEL_MODES.walking;
 
-      // Calculate distance
       const haversineMeters = calcHaversine(userCoords.lat, userCoords.lng, dish.lat, dish.lng);
 
-      // Google Maps URLs
       const gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lng}&destination=${dish.lat},${dish.lng}&travelmode=${modeInfo.gmapsMode}`;
 
       const gmapsBtn = document.getElementById('btnOpenGoogleMaps');
@@ -2344,7 +2254,6 @@
       const gmapsDirectBtn = document.getElementById('btnGmapsDirect');
       if (gmapsDirectBtn) gmapsDirectBtn.href = gmapsUrl;
 
-      // Show route detail card
       const routeCard = document.getElementById('routeDetailCard');
       if (routeCard) routeCard.style.display = 'block';
 
@@ -2354,7 +2263,6 @@
       document.getElementById('routeHaversineVal').textContent = formatDistance(haversineMeters);
       document.getElementById('routeModeNote').innerHTML = '<span>ℹ️</span> ' + modeInfo.note;
 
-      // Try fetching road geometry (smart pedestrian bridge & street routing)
       let routeDistance = Math.round(haversineMeters * (currentTravelMode === 'walking' ? 1.2 : 1.35));
       let routeCoords = null;
 
@@ -2368,19 +2276,15 @@
         console.warn('Route segment error, using road fallback:', err);
       }
 
-      // Calculate estimated time (ETA)
-      // Speed in m/min = speedKmH * 1000 / 60
       const speedMPerMin = (modeInfo.speedKmH * 1000) / 60;
       const etaMinutes = Math.max(1, Math.round(routeDistance / speedMPerMin));
 
       document.getElementById('routeEtaVal').textContent = '~' + etaMinutes + ' phút';
       document.getElementById('routeDistanceVal').textContent = formatDistance(routeDistance);
 
-      // Draw polyline on map
       if (routePolyline) mapInstance.removeLayer(routePolyline);
 
       if (routeCoords && routeCoords.length > 1) {
-        // Vẽ đường bộ uốn lượn thực tế
         routePolyline = L.polyline(routeCoords, {
           color: modeInfo.color,
           weight: modeInfo.weight,
@@ -2389,7 +2293,6 @@
           lineCap: 'round'
         }).addTo(mapInstance);
       } else {
-        // Fallback đường nét đứt theo màu phương tiện
         routePolyline = L.polyline([[userCoords.lat, userCoords.lng], [dish.lat, dish.lng]], {
           color: modeInfo.color,
           dashArray: '8, 8',
@@ -2401,7 +2304,6 @@
       mapInstance.fitBounds(routePolyline.getBounds(), { padding: [40, 40] });
     }
 
-    // --- 9. POPULATE SELECT OPTIONS & FETCH DISHES ---
     async function loadDishesData() {
       const t = I18N[currentMapLang] || I18N.vi;
       try {
@@ -2451,7 +2353,6 @@
         });
       }
 
-      // Populate destination select
       const destSelect = document.getElementById('cDestSelect');
       if (destSelect) {
         const currentVal = destSelect.value;
@@ -2468,12 +2369,10 @@
       runRadarScan();
     }
 
-    // --- 10. EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
       initMap();
       setMapLanguage(currentMapLang);
 
-      // Điểm xuất phát mặc định cố định tại Chùa Cầu Hội An
 
       document.getElementById('btnRadarScan').onclick = runRadarScan;
       document.getElementById('cRadiusSelect').onchange = runRadarScan;

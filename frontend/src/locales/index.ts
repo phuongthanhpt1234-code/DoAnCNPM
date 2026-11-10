@@ -24,9 +24,7 @@ export interface DishItem {
   translations: Record<SupportedLang, LocalizedDishText>;
 }
 
-// KHO DỮ LIỆU 25 MÓN ĂN ĐẶC SẢN HỘI AN (5 MÓN / DANH MỤC) - ĐỒNG BỘ 7 NGÔN NGỮ
 export const ALL_DISHES_DATA: DishItem[] = [
-  // ================= 1. ĐẶC SẢN (5 MÓN: ID 1, 2, 3, 4, 21) =================
   {
     id: '1', shopVi: 'Cơm Gà Bà Buội', rating: '4.8', categoryKey: 'specialty', hours: '10:30 - 20:00', isCalm: false,
     image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop', lat: 15.8782, lng: 108.3265,
@@ -93,7 +91,6 @@ export const ALL_DISHES_DATA: DishItem[] = [
     }
   },
 
-  // ================= 2. MÓN NƯỚC (5 MÓN: ID 5, 6, 7, 8, 22) =================
   {
     id: '5', shopVi: 'Không Gian Xanh', rating: '4.7', categoryKey: 'noodle', hours: '09:00 - 21:00', isCalm: true,
     image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=800&auto=format&fit=crop', lat: 15.87815, lng: 108.32655,
@@ -160,7 +157,6 @@ export const ALL_DISHES_DATA: DishItem[] = [
     }
   },
 
-  // ================= 3. MÓN CHAY (5 MÓN: ID 9, 10, 11, 12, 23) =================
   {
     id: '9', shopVi: 'Chè Cẩm Nam', rating: '4.4', categoryKey: 'vegan', hours: '09:00 - 22:00', isCalm: true,
     image: 'https://images.unsplash.com/photo-1563805042-7684c8a9e9cb?q=80&w=800&auto=format&fit=crop', lat: 15.8760, lng: 108.3300,
@@ -227,7 +223,6 @@ export const ALL_DISHES_DATA: DishItem[] = [
     }
   },
 
-  // ================= 4. ĂN VẶT (5 MÓN: ID 13, 14, 15, 16, 24) =================
   {
     id: '13', shopVi: 'Phố Ẩm Thực', rating: '4.3', categoryKey: 'snack', hours: '10:00 - 22:00', isCalm: true,
     image: 'https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?q=80&w=800&auto=format&fit=crop', lat: 15.8785, lng: 108.3255,
@@ -294,7 +289,6 @@ export const ALL_DISHES_DATA: DishItem[] = [
     }
   },
 
-  // ================= 5. THỨC UỐNG (5 MÓN: ID 17, 18, 19, 20, 25) =================
   {
     id: '17', shopVi: 'Nước Mót Hội An', rating: '4.9', categoryKey: 'drink', hours: '08:00 - 21:30', isCalm: false,
     image: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?q=80&w=800&auto=format&fit=crop', lat: 15.87818, lng: 108.32648,

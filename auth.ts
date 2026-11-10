@@ -31,7 +31,6 @@ export async function ensureDefaultAdminUser() {
     "SELECT count(*)::int AS n FROM admin_users"
   );
 
-  // Đã có tài khoản thì giữ nguyên.
   if (rows[0].n > 0) {
     console.log("[AUTH] Đã có tài khoản admin, không tạo lại.");
     return;
@@ -65,8 +64,7 @@ export function generateAdminToken(username: string, role = "admin"): string {
   const payload = {
     username,
     role,
-    exp: Date.now() + 7 * 24 * 60 * 60 * 1000, // 7 ngày
-  };
+    exp: Date.now() + 7 * 24 * 60 * 60 * 1000,  };
   const b64Payload = Buffer.from(JSON.stringify(payload)).toString("base64url");
   const signature = crypto
     .createHmac("sha256", SECRET)
