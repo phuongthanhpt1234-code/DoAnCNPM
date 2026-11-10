@@ -775,12 +775,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             style={styles.toastCard}
             onPress={() => setToastMsg("")}
           >
-            <Ionicons
-              name="alert-circle"
-              size={22}
-              color="#DC2626"
-              style={{ marginRight: 8 }}
-            />
             <Text style={styles.toastText}>{toastMsg}</Text>
           </TouchableOpacity>
         </View>

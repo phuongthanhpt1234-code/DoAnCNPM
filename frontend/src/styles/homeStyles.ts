@@ -12,8 +12,8 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
   },
   toastCard: {
-    backgroundColor: "#FEF2F2",
-    borderColor: "#F87171",
+    backgroundColor: "#ECFDF5",
+    borderColor: "#34D399",
     borderWidth: 1.5,
     borderRadius: 14,
     paddingVertical: 12,
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     elevation: 10,
   },
   toastText: {
-    color: "#991B1B",
+    color: "#065F46",
     fontSize: 14,
     fontWeight: "700",
     flexShrink: 1,
