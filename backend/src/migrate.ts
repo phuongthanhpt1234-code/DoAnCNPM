@@ -9,7 +9,7 @@ export async function runMigrations() {
   }
 
   if (!fs.existsSync(dir)) {
-    console.warn('⚠️ Không tìm thấy thư mục migrations:', dir);
+    console.warn('Không tìm thấy thư mục migrations:', dir);
     return;
   }
 
@@ -17,7 +17,7 @@ export async function runMigrations() {
   for (const f of files) {
     const sql = fs.readFileSync(path.join(dir, f), 'utf8');
     await pool.query(sql);
-    console.log('✔ Migrated:', f);
+    console.log('Migrated:', f);
   }
 }
 

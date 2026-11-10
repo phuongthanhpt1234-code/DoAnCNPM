@@ -353,10 +353,8 @@ function formatDishRow(row: any, requestedLang?: string) {
     name: rowName,
     description: rowDesc,
     address: row.address ? nfc(row.address) : row.address,
-    rating: Number(row.rating ?? 4.8),
     lat: Number(row.lat ?? 15.877),
     lng: Number(row.lng ?? 108.327),
-    emoji: row.emoji || '🍜',
     category_slug: row.category_slug || 'main',
     localized_name: name_i18n[lang],
     localized_description: desc_i18n[lang],
@@ -477,9 +475,9 @@ export async function syncFeDishesDataJson() {
     const formatted = rows.map((row) => formatDishRow(row));
     const jsonPath = path.join(__dirname, '../../data/feDishesData.json');
     fs.writeFileSync(jsonPath, JSON.stringify(formatted, null, 2), 'utf-8');
-    console.log('📁 Đã cập nhật file feDishesData.json khớp 100% với SQL database (' + formatted.length + ' món)!');
+    console.log('Đã cập nhật feDishesData.json (' + formatted.length + ' món)!');
   } catch (err) {
-    console.warn('⚠️ Lỗi khi cập nhật feDishesData.json:', err);
+    console.warn('Lỗi cập nhật feDishesData.json:', err);
   }
 }
 
@@ -493,7 +491,6 @@ export async function ensureAllDishesSynced() {
 
     for (const item of dishesList) {
       const catId = catMap[item.category_slug] || item.category_id || 4;
-      const rating = item.rating ? Number(item.rating) : 4.8;
       const lat = item.lat ? Number(item.lat) : 15.877;
       const lng = item.lng ? Number(item.lng) : 108.327;
 
@@ -531,10 +528,10 @@ export async function ensureAllDishesSynced() {
       `SELECT setval(pg_get_serial_sequence('dishes', 'id'), COALESCE((SELECT MAX(id) FROM dishes), 1))`
     );
 
-    console.log('✅ Đã đồng bộ chính xác các món ăn từ Frontend vào SQL database!');
+    console.log('Đã đồng bộ dữ liệu món ăn vào database.');
     await syncFeDishesDataJson();
   } catch (err) {
-    console.error('⚠️ Lỗi khi đồng bộ món ăn từ Frontend:', err);
+    console.error('Lỗi đồng bộ món ăn:', err);
   }
 }
 
@@ -590,9 +587,9 @@ export async function syncDishTranslations() {
         }
       }
     }
-    console.log('✅ Đã đồng bộ bản dịch đa ngôn ngữ cho toàn bộ món ăn!');
+    console.log('Đã đồng bộ bản dịch đa ngôn ngữ.');
   } catch (err) {
-    console.error('⚠️ Lỗi khi đồng bộ bản dịch món ăn:', err);
+    console.error('Lỗi đồng bộ bản dịch:', err);
   }
 }
 

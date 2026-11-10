@@ -1,4189 +1,76 @@
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>THEO DẤU VỊ HỘI – Bảng Quản Trị Đa Ngôn Ngữ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-    <style>
-
-      #leafletMap {
-        height: 480px;
-        width: 100%;
-        border-radius: 16px;
-        border: 1px solid var(--gold-border);
-        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-        z-index: 1;
-      }
-      .quick-dist-btn {
-        transition: all 0.2s ease;
-      }
-      .quick-dist-btn:hover {
-        background: #f1f5f9 !important;
-        border-color: #94a3b8 !important;
-      }
-      .quick-dist-btn.active {
-        background: #d97706 !important;
-        color: #ffffff !important;
-        border-color: #b45309 !important;
-      }
-      .gmap-mode-tab {
-        padding: 6px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        border-radius: 20px;
-        border: 1px solid #dadce0;
-        background: #ffffff;
-        color: #3c4043;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .gmap-mode-tab:hover {
-        background: #f1f3f4;
-      }
-      .gmap-mode-tab.active {
-        background: #e8f0fe;
-        color: #1a73e8;
-        border-color: #1a73e8;
-        box-shadow: 0 1px 3px rgba(26,115,232,0.25);
-      }
-      .gmap-type-btn {
-        padding: 5px 10px;
-        font-size: 11.5px;
-        font-weight: 700;
-        border-radius: 6px;
-        border: 1px solid transparent;
-        background: transparent;
-        color: #3c4043;
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-      .gmap-type-btn:hover {
-        background: #f1f3f4;
-      }
-      .gmap-type-btn.active {
-        background: #1a73e8;
-        color: #ffffff;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      }
-      .gmap-ctrl-btn {
-        background: #ffffff;
-        color: #3c4043;
-        border: 1px solid #dadce0;
-        padding: 6px 10px;
-        font-size: 11.5px;
-        font-weight: 700;
-        border-radius: 8px;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        box-shadow: 0 2px 6px rgba(60,64,67,0.2);
-        transition: all 0.18s ease;
-      }
-      .gmap-ctrl-btn:hover {
-        background: #f8f9fa;
-        color: #1a73e8;
-        box-shadow: 0 3px 8px rgba(60,64,67,0.3);
-      }
-      @keyframes gmapPulse {
-        0% { transform: scale(0.6); opacity: 1; }
-        100% { transform: scale(1.6); opacity: 0; }
-      }
-      .map-stat-card {
-        background: var(--card-item);
-        border: 1px solid var(--gold-border);
-        border-radius: 14px;
-        padding: 12px 16px;
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-      }
-      .map-stat-card .label {
-        font-size: 11px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--muted);
-      }
-      .map-stat-card .val {
-        font-size: 19px;
-        font-weight: 800;
-        color: var(--ink);
-      }
-      .map-stat-card .desc {
-        font-size: 11.5px;
-        color: var(--muted);
-      }
-
-      :root {
-        --bg: #f4f6f9;
-        --header-bg: #ffffff;
-        --panel: #ffffff;
-        --panel-alt: #ffffff;
-        --card-item: #f8fafc;
-        --input-bg: #ffffff;
-        --ink: #1e293b;
-        --ink-white: #0f172a;
-        --muted: #64748b;
-        --desc: #475569;
-        --gold: #d97706;
-        --gold-border: #e2e8f0;
-        --gold-border-strong: #cbd5e1;
-        --dark-border: #e2e8f0;
-        --crimson: #e54d42;
-        --crimson-hover: #dc2626;
-        --emerald: #10b981;
-        --emerald-bg: #ecfdf5;
-        --emerald-badge: #15803d;
-        --amber: #f59e0b;
-        --danger: #ef4444;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      [hidden] {
-        display: none !important;
-      }
-
-      body {
-        margin: 0;
-        background: var(--bg);
-        color: var(--ink);
-        font:
-          14px/1.5 "Be Vietnam Pro",
-          "Segoe UI",
-          Roboto,
-          system-ui,
-          -apple-system,
-          sans-serif;
-        min-height: 100vh;
-      }
-
-      .app-shell {
-        display: flex;
-        min-height: 100vh;
-      }
-
-      .sidebar {
-        width: 268px;
-        background: var(--header-bg);
-        border-right: 1px solid var(--gold-border);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        padding: 20px 14px;
-        flex-shrink: 0;
-        z-index: 40;
-      }
-
-      .sidebar-brand {
-        padding: 4px 10px 16px;
-        border-bottom: 1px solid var(--gold-border);
-        margin-bottom: 14px;
-      }
-
-      .sidebar-brand h1 {
-        margin: 0;
-        color: var(--gold);
-        font-size: 19px;
-        font-weight: 800;
-        letter-spacing: 0.6px;
-        text-transform: uppercase;
-      }
-
-      .sidebar-brand p {
-        margin: 4px 0 0;
-        color: var(--muted);
-        font-size: 11.5px;
-        line-height: 1.4;
-      }
-
-      .sidebar-label {
-        font-size: 10.5px;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.8px;
-        color: var(--muted);
-        padding: 0 12px;
-        margin: 6px 0 8px;
-      }
-
-      .nav-list {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-      }
-
-      .nav-btn {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        padding: 11px 14px;
-        border-radius: 14px;
-        border: 1px solid transparent;
-        background: transparent;
-        color: var(--desc);
-        font-size: 13.5px;
-        font-weight: 600;
-        text-align: left;
-        cursor: pointer;
-        transition: all 0.16s ease;
-      }
-
-      .nav-btn:hover {
-        background: rgba(233, 194, 107, 0.09);
-        border-color: var(--gold-border);
-        color: var(--ink-white);
-      }
-
-      .nav-btn.active {
-        background: linear-gradient(90deg, var(--crimson), #9e0f23);
-        border-color: var(--gold);
-        color: #ffffff;
-        font-weight: 700;
-        box-shadow: 0 6px 18px rgba(212, 21, 47, 0.32);
-      }
-
-      .nav-btn-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      .nav-icon {
-        font-size: 16px;
-        width: 22px;
-        text-align: center;
-      }
-
-      .nav-badge {
-        font-size: 11px;
-        font-weight: 800;
-        padding: 2px 8px;
-        border-radius: 10px;
-        background: rgba(233, 194, 107, 0.15);
-        color: var(--gold);
-        border: 1px solid var(--gold-border);
-      }
-
-      .nav-btn.active .nav-badge {
-        background: rgba(0, 0, 0, 0.3);
-        color: #fff;
-        border-color: rgba(255, 255, 255, 0.35);
-      }
-
-      .nav-badge.live {
-        background: rgba(16, 185, 129, 0.2);
-        color: #34d399;
-        border-color: rgba(16, 185, 129, 0.45);
-      }
-
-      .sidebar-foot {
-        padding-top: 14px;
-        border-top: 1px solid var(--gold-border);
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-
-      .sidebar-foot button {
-        width: 100%;
-        justify-content: center;
-        padding: 10px 14px;
-      }
-
-      .sidebar-status {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 11.5px;
-        color: var(--muted);
-        padding: 6px 8px 0;
-      }
-
-      .main-area {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .topbar {
-        background: var(--header-bg);
-        border-bottom: 1px solid var(--gold-border);
-        padding: 14px 24px;
-        position: sticky;
-        top: 0;
-        z-index: 30;
-      }
-
-      .topbar-inner {
-        max-width: 1320px;
-        margin: 0 auto;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .page-heading h1 {
-        margin: 0;
-        color: var(--ink-white);
-        font-size: 19px;
-        font-weight: 800;
-      }
-
-      .page-heading p {
-        margin: 2px 0 0;
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      @media (max-width: 960px) {
-        .app-shell {
-          flex-direction: column;
-        }
-        .sidebar {
-          width: 100%;
-          height: auto;
-          position: static;
-          border-right: 0;
-          border-bottom: 1px solid var(--gold-border);
-        }
-        .nav-list {
-          flex-direction: row;
-          flex-wrap: wrap;
-        }
-        .nav-btn {
-          flex: 1 1 auto;
-          width: auto;
-        }
-      }
-
-      .grid.single-col {
-        grid-template-columns: 1fr;
-      }
-
-      .sub-grid-2 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 20px;
-      }
-
-      .charts-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 18px;
-        margin-bottom: 22px;
-      }
-
-      @media (max-width: 1080px) {
-        .charts-grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .chart-card {
-        background: var(--panel);
-        border: 1px solid var(--gold-border);
-        border-radius: 20px;
-        padding: 16px 18px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 280px;
-      }
-
-      .chart-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .chart-title-wrap {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .chart-title-wrap h3 {
-        margin: 0;
-        font-size: 15.5px;
-        font-weight: 700;
-        color: var(--ink-white);
-      }
-
-      .chart-sub {
-        font-size: 11.5px;
-        color: var(--muted);
-        margin-top: 2px;
-      }
-
-      .mini-tabs {
-        display: inline-flex;
-        background: var(--bg);
-        border: 1px solid var(--gold-border);
-        border-radius: 14px;
-        padding: 2px;
-      }
-
-      .mini-tabs button {
-        border: 0;
-        padding: 4px 9px;
-        font-size: 11px;
-        border-radius: 12px;
-        color: var(--muted);
-      }
-
-      .mini-tabs button.active {
-        background: var(--crimson);
-        color: #fff;
-      }
-
-      .live-bars-box {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-around;
-        gap: 10px;
-        height: 175px;
-        padding: 18px 10px 8px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-      }
-
-      .bar-col {
-        flex: 1;
-        min-width: 0;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 5px;
-        cursor: default;
-        transition: transform 0.15s ease;
-      }
-
-      .bar-col:hover {
-        transform: translateY(-2px);
-      }
-
-      .bar-val {
-        font-size: 11px;
-        font-weight: 800;
-        color: var(--gold);
-        white-space: nowrap;
-      }
-
-      .bar-fill {
-        width: 100%;
-        max-width: 38px;
-        background: linear-gradient(180deg, #e8a838 0%, #e54d42 100%);
-        border-radius: 8px 8px 3px 3px;
-        min-height: 6px;
-        transition: height 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 0 4px 12px rgba(229, 77, 66, 0.2);
-      }
-
-      .bar-lbl {
-        font-size: 11px;
-        color: var(--desc);
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-align: center;
-      }
-
-      .pie-wrap {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-        height: 175px;
-        padding: 12px 14px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-      }
-
-      .pie-svg-box {
-        position: relative;
-        width: 136px;
-        height: 136px;
-        flex-shrink: 0;
-      }
-
-      .pie-center {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        pointer-events: none;
-      }
-
-      .pie-center b {
-        font-size: 22px;
-        font-weight: 800;
-        color: var(--gold);
-        line-height: 1;
-      }
-
-      .pie-center span {
-        font-size: 10.5px;
-        color: var(--muted);
-        margin-top: 3px;
-      }
-
-      .pie-legend {
-        flex: 1;
-        min-width: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-      }
-
-      .pie-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        font-size: 12px;
-      }
-
-      .pie-item-left {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        min-width: 0;
-      }
-
-      .pie-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 3px;
-        flex-shrink: 0;
-      }
-
-      .pie-name {
-        color: var(--ink);
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .pie-pct {
-        color: var(--gold);
-        font-weight: 700;
-        white-space: nowrap;
-      }
-
-      .line-box {
-        height: 175px;
-        padding: 10px 12px 6px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .line-svg {
-        width: 100%;
-        height: 130px;
-        overflow: visible;
-      }
-
-      .line-x-labels {
-        display: flex;
-        justify-content: space-between;
-        gap: 4px;
-        font-size: 10.5px;
-        color: var(--muted);
-        padding-top: 2px;
-      }
-
-      .line-x-labels span {
-        flex: 1;
-        text-align: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .quick-metric-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: var(--card-item);
-        border: 1px solid var(--gold-border);
-        padding: 4px 9px;
-        border-radius: 12px;
-        font-size: 11.5px;
-        font-weight: 700;
-        color: var(--ink);
-        cursor: pointer;
-      }
-
-      .quick-metric-btn:hover {
-        border-color: var(--gold);
-        background: rgba(233, 194, 107, 0.16);
-      }
-
-      .lang-mini {
-        cursor: pointer;
-      }
-
-      .lang-mini.active-mini {
-        background: var(--crimson);
-        border-color: var(--gold);
-        color: #fff;
-      }
-
-      .topbar-actions {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .wrap {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: 20px 18px 56px;
-      }
-
-      #msg {
-        color: var(--danger);
-        background: rgba(212, 21, 47, 0.14);
-        border: 1px solid rgba(248, 113, 113, 0.4);
-        border-radius: 14px;
-        padding: 10px 14px;
-        margin: 0 0 16px;
-        display: none;
-      }
-      #msg:not(:empty) {
-        display: block;
-      }
-
-      .strip {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-        gap: 14px;
-        margin-bottom: 22px;
-      }
-
-      .stat-card {
-        background: var(--panel);
-        border: 1px solid var(--gold-border);
-        border-radius: 20px;
-        padding: 16px 18px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .stat-info span {
-        display: block;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-      .stat-info b {
-        display: block;
-        color: var(--gold);
-        font-size: 28px;
-        font-weight: 800;
-        line-height: 1.1;
-      }
-
-      .stat-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 14px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-        flex-shrink: 0;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
-        gap: 20px;
-        align-items: start;
-      }
-
-      @media (max-width: 960px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      section {
-        background: var(--panel);
-        border: 1px solid var(--gold-border);
-        border-radius: 20px;
-        padding: 18px;
-        margin-bottom: 20px;
-      }
-
-      section.alt-panel {
-        background: var(--panel-alt);
-        border-color: #2e2621;
-      }
-
-      .sec-head {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 14px;
-      }
-
-      .sec-title-group {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-
-      h2 {
-        margin: 0;
-        color: var(--ink-white);
-        font-size: 18px;
-        font-weight: 700;
-        font-family:
-          "Be Vietnam Pro",
-          "Segoe UI",
-          Roboto,
-          system-ui,
-          -apple-system,
-          sans-serif;
-      }
-
-      .live-dot {
-        display: inline-block;
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: #10b981;
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-        animation: pulseLive 1.8s infinite;
-      }
-
-      @keyframes pulseLive {
-        0% {
-          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-        }
-        70% {
-          box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-        }
-        100% {
-          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-        }
-      }
-
-      .stat-card.live-card {
-        border-color: var(--gold-border);
-        background: var(--panel);
-      }
-
-      .stat-card.live-card b {
-        color: #10b981;
-      }
-
-      .presence-box {
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-        padding: 12px 14px;
-        margin-bottom: 12px;
-      }
-
-      .presence-big-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 10px;
-      }
-
-      .presence-big-num {
-        font-size: 32px;
-        font-weight: 800;
-        color: #34d399;
-        line-height: 1;
-      }
-
-      .presence-meta {
-        font-size: 12px;
-        color: var(--muted);
-      }
-
-      .presence-ctrl-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        align-items: center;
-        margin-top: 8px;
-      }
-
-      .presence-ctrl-row input {
-        width: 82px;
-        padding: 6px 10px;
-        font-size: 12px;
-        border-radius: 10px;
-      }
-
-      .presence-ctrl-row button {
-        padding: 6px 10px;
-        font-size: 11.5px;
-      }
-
-      .code-path-hint {
-        display: block;
-        font-size: 11px;
-        color: var(--gold);
-        background: rgba(233, 194, 107, 0.08);
-        border: 1px dashed var(--gold-border);
-        border-radius: 10px;
-        padding: 7px 10px;
-        margin-top: 8px;
-        word-break: break-all;
-      }
-
-      .badge-emerald {
-        background: var(--emerald-badge);
-        color: var(--ink-white);
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 10px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-      }
-
-      .badge-gold {
-        background: rgba(233, 194, 107, 0.14);
-        border: 1px solid var(--gold-border-strong);
-        color: var(--gold);
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 700;
-      }
-
-      .tools {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-bottom: 12px;
-      }
-
-      input,
-      select,
-      textarea,
-      button {
-        font: inherit;
-        color: inherit;
-      }
-
-      input,
-      select,
-      textarea {
-        background: var(--input-bg);
-        border: 1px solid var(--gold-border-strong);
-        border-radius: 14px;
-        padding: 10px 14px;
-        color: var(--ink);
-        width: 100%;
-      }
-
-      input::placeholder,
-      textarea::placeholder {
-        color: var(--muted);
-      }
-
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: var(--gold);
-      }
-
-      .tools input[type="search"] {
-        flex: 1 1 240px;
-        width: auto;
-        border-radius: 24px;
-        padding-left: 16px;
-      }
-
-      .tools select {
-        flex: 0 1 190px;
-        width: auto;
-        border-radius: 24px;
-      }
-
-      .cat-chips {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 16px;
-      }
-
-      .cat-chip {
-        padding: 7px 14px;
-        border-radius: 20px;
-        background: var(--bg);
-        border: 1px solid var(--gold-border);
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-      }
-
-      .cat-chip.active {
-        background: var(--crimson);
-        border-color: var(--gold);
-        color: var(--ink-white);
-      }
-
-      button {
-        cursor: pointer;
-        border: 1px solid var(--gold-border-strong);
-        background: transparent;
-        color: var(--gold);
-        border-radius: 20px;
-        padding: 8px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        transition: all 0.15s ease;
-      }
-
-      button:hover {
-        background: rgba(233, 194, 107, 0.12);
-      }
-
-      button.primary {
-        background: var(--crimson);
-        color: var(--ink-white);
-        border-color: var(--crimson);
-      }
-
-      button.primary:hover {
-        background: var(--crimson-hover);
-      }
-
-      button.gold-btn {
-        background: var(--gold);
-        color: var(--bg);
-        border-color: var(--gold);
-      }
-
-      button.danger {
-        color: var(--danger);
-        border-color: rgba(248, 113, 113, 0.35);
-      }
-
-      button.danger:hover {
-        background: rgba(248, 113, 113, 0.12);
-        border-color: var(--danger);
-      }
-
-      .view-switch {
-        display: inline-flex;
-        background: var(--bg);
-        border: 1px solid var(--gold-border);
-        border-radius: 20px;
-        padding: 2px;
-      }
-
-      .view-switch button {
-        border: 0;
-        padding: 6px 12px;
-        color: var(--muted);
-        border-radius: 18px;
-      }
-
-      .view-switch button.active {
-        background: var(--crimson);
-        color: var(--ink-white);
-      }
-
-      .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 14px;
-      }
-
-      .dish-card {
-        background: var(--bg);
-        border: 1px solid var(--gold-border);
-        border-radius: 20px;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 410px;
-        height: 100%;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-      }
-
-      .dish-card.off {
-        opacity: 0.55;
-      }
-
-      .dish-card-img {
-        width: 100%;
-        height: 155px;
-        object-fit: cover;
-        background: #f1f5f9;
-        display: block;
-      }
-
-      .dish-card-fallback {
-        width: 100%;
-        height: 155px;
-        background: #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 42px;
-        border-bottom: 1px solid var(--gold-border);
-      }
-
-      .dish-card-body {
-        padding: 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        flex: 1;
-      }
-
-      .dish-card-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .dish-card-price {
-        color: var(--gold);
-        font-size: 12px;
-        font-weight: 800;
-      }
-
-      .dish-card-cat {
-        color: var(--gold);
-        font-size: 11px;
-        background: rgba(233, 194, 107, 0.12);
-        border: 1px solid var(--gold-border);
-        padding: 2px 8px;
-        border-radius: 12px;
-        font-weight: 600;
-      }
-
-      .dish-card-title {
-        color: var(--ink);
-        font-size: 18px;
-        font-weight: 700;
-        margin: 2px 0 0;
-      }
-
-      .dish-card-sub {
-        color: var(--muted);
-        font-size: 12px;
-      }
-
-      .dish-card-desc {
-        color: var(--desc);
-        font-size: 12.5px;
-        line-height: 1.45;
-        min-height: 38px;
-        margin-bottom: auto;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .dish-card-foot {
-        display: flex;
-        gap: 8px;
-        margin-top: auto;
-        padding-top: 10px;
-        border-top: 1px solid rgba(233, 194, 107, 0.12);
-      }
-
-      .dish-card-foot button {
-        flex: 1;
-        padding: 8px 10px;
-      }
-
-      .tablewrap {
-        overflow-x: auto;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 580px;
-      }
-
-      th,
-      td {
-        text-align: left;
-        padding: 12px 10px;
-        border-bottom: 1px solid rgba(233, 194, 107, 0.14);
-        vertical-align: middle;
-      }
-
-      th {
-        font-weight: 700;
-        color: var(--gold);
-        font-size: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      tr:hover td {
-        background: rgba(233, 194, 107, 0.04);
-      }
-
-      .dish-row-cell {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .dish-thumb {
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        object-fit: cover;
-        border: 1px solid var(--gold-border);
-        background: #f1f5f9;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-      }
-
-      td b {
-        color: var(--ink);
-        font-size: 15px;
-      }
-
-      td small {
-        display: block;
-        color: var(--muted);
-        font-size: 12px;
-        margin-top: 2px;
-      }
-
-      .lang-badges {
-        display: flex;
-        gap: 4px;
-        margin-top: 4px;
-      }
-
-      .lang-mini {
-        font-size: 10px;
-        padding: 1px 6px;
-        border-radius: 8px;
-        background: rgba(16, 185, 129, 0.15);
-        border: 1px solid rgba(16, 185, 129, 0.4);
-        color: #34d399;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-
-      td.act {
-        white-space: nowrap;
-        text-align: right;
-      }
-
-      .price-tag {
-        color: var(--gold);
-        font-weight: 700;
-      }
-
-      .fav-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--ink);
-      }
-
-      .off {
-        opacity: 0.55;
-      }
-
-      .bars {
-        display: flex;
-        align-items: flex-end;
-        gap: 10px;
-        height: 175px;
-        padding: 14px 12px 10px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-      }
-
-      .bars .day-col {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-        height: 100%;
-        font-size: 11px;
-        color: var(--muted);
-        gap: 5px;
-        cursor: pointer;
-        padding: 4px 2px;
-        border-radius: 10px;
-        transition:
-          background 0.15s ease,
-          transform 0.15s ease;
-        user-select: none;
-      }
-
-      .bars .day-col:hover {
-        background: rgba(233, 194, 107, 0.08);
-        transform: translateY(-2px);
-      }
-
-      .bars .day-track {
-        flex: 1;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
-        align-items: center;
-      }
-
-      .bars i {
-        display: block;
-        width: 100%;
-        max-width: 34px;
-        background: linear-gradient(180deg, var(--gold), var(--crimson));
-        border-radius: 6px 6px 2px 2px;
-        min-height: 6px;
-        transition: height 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-        box-shadow: 0 4px 12px rgba(212, 21, 47, 0.28);
-      }
-
-      .bars b {
-        color: var(--gold);
-        font-weight: 800;
-        font-size: 13px;
-        line-height: 1;
-      }
-
-      .day-actions {
-        display: flex;
-        gap: 4px;
-        margin-top: 2px;
-      }
-
-      .day-act-btn {
-        padding: 1px 6px;
-        font-size: 10px;
-        font-weight: 800;
-        border-radius: 6px;
-        background: rgba(233, 194, 107, 0.12);
-        border: 1px solid var(--gold-border);
-        color: var(--gold);
-        line-height: 1.3;
-      }
-
-      .day-act-btn:hover {
-        background: var(--crimson);
-        color: #fff;
-        border-color: var(--gold);
-      }
-
-      ol,
-      ul {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      .stop-item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 12px 14px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 14px;
-      }
-
-      .stop-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 0;
-      }
-
-      .stop-badge {
-        width: 30px;
-        height: 30px;
-        border-radius: 15px;
-        background: var(--amber);
-        color: #120f0d;
-        font-weight: 900;
-        font-size: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-
-      .stop-badge.done {
-        background: var(--emerald);
-      }
-
-      .stop-title {
-        color: var(--ink-white);
-        font-weight: 700;
-        font-size: 14px;
-      }
-
-      .stop-sub {
-        color: var(--muted);
-        font-size: 12px;
-        display: block;
-        margin-top: 2px;
-      }
-
-      .stop-right {
-        color: var(--gold);
-        font-weight: 800;
-        font-size: 13px;
-        white-space: nowrap;
-      }
-
-      .empty {
-        color: var(--muted);
-        text-align: center;
-        padding: 20px 12px;
-        background: var(--card-item);
-        border: 1px dashed var(--dark-border);
-        border-radius: 14px;
-        margin: 8px 0 0;
-      }
-
-      dialog {
-        border: 1px solid var(--gold);
-        border-radius: 24px;
-        background: var(--panel);
-        color: var(--ink);
-        padding: 22px;
-        width: min(600px, 95vw);
-        max-height: 92vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-      }
-
-      dialog::backdrop {
-        background: rgba(0, 0, 0, 0.82);
-        backdrop-filter: blur(4px);
-      }
-
-      dialog h2 {
-        color: var(--gold);
-        font-size: 21px;
-        margin-bottom: 12px;
-      }
-
-      .form-lang-tabs {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 12px;
-        padding: 8px;
-        background: var(--bg);
-        border: 1px solid var(--gold-border);
-        border-radius: 16px;
-      }
-
-      .form-lang-tab {
-        flex: 1 1 auto;
-        text-align: center;
-        padding: 7px 10px;
-        border-radius: 12px;
-        border: 1px solid transparent;
-        background: transparent;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 700;
-      }
-
-      .form-lang-tab.active {
-        background: var(--crimson);
-        border-color: var(--gold);
-        color: #fff;
-      }
-
-      .lang-pane {
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        border-radius: 16px;
-        padding: 12px 14px;
-        margin-bottom: 14px;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 10px;
-        font-size: 12.5px;
-        font-weight: 600;
-        color: var(--muted);
-      }
-
-      label:last-child {
-        margin-bottom: 0;
-      }
-
-      label input,
-      label select,
-      label textarea {
-        margin-top: 5px;
-      }
-
-      .row {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 10px;
-      }
-
-      .row label {
-        flex: 1;
-        margin-bottom: 0;
-      }
-
-      .check {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: var(--ink);
-        font-size: 13.5px;
-        background: var(--card-item);
-        border: 1px solid var(--dark-border);
-        padding: 10px 14px;
-        border-radius: 14px;
-        cursor: pointer;
-        margin-top: 8px;
-      }
-
-      .check input {
-        width: 18px;
-        height: 18px;
-        margin: 0;
-        accent-color: var(--emerald);
-      }
-
-      .foot {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
-        margin-top: 16px;
-      }
-
-      .foot button {
-        padding: 10px 20px;
-        font-size: 13px;
-      }
-
-      .upload-box {
-        background: var(--card-item);
-        border: 1.5px dashed var(--gold-border-strong);
-        border-radius: 18px;
-        padding: 14px 16px;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        transition: all 0.2s ease;
-      }
-
-      .upload-box:hover {
-        border-color: var(--gold);
-        background: rgba(217, 119, 6, 0.03);
-      }
-
-      .upload-preview {
-        width: 82px;
-        height: 82px;
-        border-radius: 14px;
-        background: var(--input-bg);
-        border: 1.5px solid var(--gold-border);
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 30px;
-        overflow: hidden;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-      }
-
-      .upload-preview img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .upload-controls {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .file-upload-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 8px;
-      }
-
-      .btn-custom-upload {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
-        color: #ffffff !important;
-        font-size: 13px;
-        font-weight: 700;
-        padding: 9px 18px;
-        border-radius: 12px;
-        cursor: pointer;
-        box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
-        transition: all 0.2s ease;
-        user-select: none;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        margin: 0 !important;
-      }
-
-      .btn-custom-upload:hover {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 5px 14px rgba(217, 119, 6, 0.35);
-      }
-
-      .btn-custom-upload:active {
-        transform: translateY(0);
-      }
-
-      .upload-file-name {
-        font-size: 12px;
-        color: var(--muted);
-        font-weight: 500;
-        max-width: 220px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        background: var(--bg);
-        border: 1px solid var(--dark-border);
-        padding: 6px 12px;
-        border-radius: 8px;
-      }
-
-      .btn-clear-img {
-        padding: 7px 14px;
-        font-size: 12px;
-        font-weight: 600;
-        border-radius: 10px;
-        background: rgba(239, 68, 68, 0.08);
-        border: 1px solid rgba(239, 68, 68, 0.25);
-        color: #ef4444;
-        cursor: pointer;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.2s ease;
-      }
-
-      .btn-clear-img:hover {
-        background: rgba(239, 68, 68, 0.16);
-        border-color: #ef4444;
-      }
-
-      .upload-status {
-        display: block;
-        color: var(--muted);
-        font-size: 11.5px;
-        margin-top: 4px;
-      }
-    
-      .chart-tooltip {
-        position: fixed;
-        z-index: 999999;
-        pointer-events: none;
-        opacity: 0;
-        transform: translate(-50%, -100%);
-        transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
-        background: rgba(15, 23, 42, 0.94);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(217, 119, 6, 0.45);
-        border-radius: 14px;
-        padding: 10px 14px;
-        color: #f8fafc;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
-        font-family: 'Be Vietnam Pro', sans-serif;
-        font-size: 12px;
-        line-height: 1.45;
-        min-width: 140px;
-        max-width: 280px;
-        white-space: normal;
-        word-break: break-word;
-      }
-
-      .chart-tooltip.visible {
-        opacity: 1;
-      }
-
-      .chart-tooltip-header {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-weight: 700;
-        font-size: 13px;
-        color: #ffffff;
-        margin-bottom: 6px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 5px;
-      }
-
-      .chart-tooltip-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        font-size: 12px;
-        color: #cbd5e1;
-        margin-top: 3px;
-      }
-
-      .chart-tooltip-val {
-        font-weight: 700;
-        color: #f59e0b;
-      }
-
-      .chart-tooltip-badge {
-        display: inline-block;
-        font-size: 11px;
-        font-weight: 700;
-        padding: 2px 8px;
-        border-radius: 6px;
-        background: rgba(217, 119, 6, 0.2);
-        color: #fbbf24;
-      }
-
-      .bar-col {
-        cursor: pointer !important;
-        padding: 4px 2px;
-        border-radius: 8px;
-        transition: background 0.15s ease, transform 0.15s ease;
-      }
-
-      .bar-col:hover {
-        background: rgba(217, 119, 6, 0.08) !important;
-        transform: translateY(-3px) !important;
-      }
-
-      .bar-col:hover .bar-fill {
-        filter: brightness(1.18);
-        box-shadow: 0 6px 16px rgba(229, 77, 66, 0.45);
-      }
-
-      .pie-slice {
-        cursor: pointer !important;
-        transition: stroke-width 0.25s cubic-bezier(0.16, 1, 0.3, 1), filter 0.25s ease !important;
-      }
-
-      .pie-slice:hover {
-        stroke-width: 7.2 !important;
-        filter: drop-shadow(0 0 5px rgba(217, 119, 6, 0.75)) !important;
-      }
-
-      .line-point-group {
-        cursor: pointer !important;
-      }
-
-      .line-point-group:hover .line-point-outer {
-        opacity: 1 !important;
-        r: 10 !important;
-      }
-
-      .line-point-group:hover .line-point-inner {
-        r: 5.8 !important;
-        stroke: #ffffff !important;
-        stroke-width: 2.5 !important;
-      }
-
-      .bars .day-col {
-        cursor: pointer !important;
-      }
-
-      .bars .day-col:hover {
-        background: rgba(16, 185, 129, 0.08) !important;
-      }
-
-      .bars .day-col:hover .day-track i {
-        filter: brightness(1.25);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-      }
-
-      #secMap .qm-route.qm-route-v2 {
-  display: block;
-  padding: 20px;
-  background: #fffdf8;
-  border: 1px solid #ffffff;
-  border-top: 3px solid #dfb348;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(72, 42, 45, 0.15);
-}
-
-#secMap .qm-route-v2 .qm-route-heading {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-}
-
-#secMap .qm-route-v2 .qm-route-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 47px;
-  height: 47px;
-  border-radius: 12px;
-  background: #fae9df;
-  color: #a52629;
-  font-size: 30px;
-}
-
-#secMap .qm-route-v2 .qm-route-content small {
-  color: #b28a43;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-#secMap .qm-route-v2 .qm-route-content h3 {
-  margin: 6px 0 0;
-  color: #482a2d;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-#secMap .qm-transport {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 9px;
-  margin: 18px 0;
-}
-
-#secMap .qm-transport button {
-  min-height: 44px;
-  padding: 10px 6px;
-  background: #fffaf1;
-  color: #9b7b66;
-  border: 1px solid #ecd8c7;
-  border-radius: 10px;
-  font: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-#secMap .qm-transport button.active {
-  background: #a52629;
-  color: #ffe9bd;
-  border-color: #a52629;
-  font-weight: 700;
-}
-
-#secMap .qm-route-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  padding-top: 17px;
-  border-top: 1px solid #efdfd2;
-}
-
-#secMap .qm-route-metrics {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-#secMap .qm-route-metrics span {
-  display: block;
-  margin-bottom: 7px;
-  color: #967e73;
-  font-size: 11px;
-}
-
-#secMap .qm-route-metrics strong {
-  display: block;
-  color: #a52629;
-  font-size: 22px;
-  font-weight: 600;
-}
-
-#secMap .qm-metric-divider {
-  width: 1px;
-  height: 38px;
-  background: #ead8c8;
-}
-
-#secMap .qm-route-v2 #gmapExternalLink {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 46px;
-  padding: 12px 15px;
-  background: #a52629;
-  color: #fff0d5;
-  border: 0;
-  border-radius: 11px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-#secMap .qm-route-v2 .qm-preview-note,
-#secMap .qm-route-v2 .qm-road-message {
-  margin: 12px 0 0;
-  color: #a08a77;
-  font-size: 11px;
-  line-height: 1.7;
-}
-
-#secMap .qm-transport button:focus-visible {
-  outline: 3px solid #dfb348;
-  outline-offset: 3px;
-}
-
-@media (max-width: 600px) {
-  #secMap .qm-route.qm-route-v2 {
-    padding: 14px;
-  }
-
-  #secMap .qm-transport {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #secMap .qm-route-summary {
-    flex-wrap: wrap;
-  }
-
-  #secMap .qm-route-v2 #gmapExternalLink {
-    width: 100%;
-  }
-
-  #secMap .qm-route-metrics {
-    gap: 12px;
-  }
-
-  #secMap .qm-route-metrics strong {
-    font-size: 19px;
-  }
-}
-
-    </style>
-    <style>
-  @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap");
-
-  #secMap {
-    --qm-red: #a52629;
-    --qm-deep: #761c22;
-    --qm-gold: #e5b84e;
-    --qm-ink: #40282a;
-    --qm-muted: #967d75;
-    --qm-line: #efdfd2;
-
-    padding: 27px 32px;
-    border: 0;
-    border-radius: 15px;
-    background: #f8f2e9;
-    color: var(--qm-ink);
-    font: 13px "Be Vietnam Pro", sans-serif;
-  }
-
-  #secMap [hidden] {
-    display: none !important;
-  }
-
-  #secMap * {
-    box-sizing: border-box;
-  }
-
-  #secMap button,
-  #secMap select,
-  #secMap input {
-    font: inherit;
-  }
-
-  #secMap button,
-  #secMap a,
-  #secMap select {
-    cursor: pointer;
-  }
-
-  #secMap button:focus-visible,
-  #secMap a:focus-visible,
-  #secMap select:focus-visible {
-    outline: 3px solid var(--qm-gold);
-    outline-offset: 3px;
-  }
-
-  #secMap .qm-toolbar {
-    margin-bottom: 22px;
-    overflow: hidden;
-    background: #fffdf8;
-    border: 1px solid var(--qm-line);
-    border-radius: 15px;
-    box-shadow: 0 7px 25px #82262b06;
-  }
-
-  #secMap .qm-toolbar-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 17px 21px;
-    border-bottom: 1px solid #f1e8db;
-  }
-
-  #secMap .qm-title {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  #secMap .qm-title-icon {
-    display: grid;
-    place-items: center;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 9px;
-    background: #faeae1;
-    color: var(--qm-red);
-    font-size: 21px;
-  }
-
-  #secMap .qm-title h2 {
-    margin: 0;
-    font-size: 15px;
-    letter-spacing: -0.4px;
-  }
-
-  #secMap .qm-status {
-    padding: 7px 10px;
-    background: #fff5dc;
-    border: 1px solid #f0dfb5;
-    border-radius: 20px;
-    color: #8a6520;
-    font-size: 10px;
-    white-space: nowrap;
-  }
-
-  #secMap .qm-filters {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 19px;
-    padding: 18px 21px;
-  }
-
-  #secMap .qm-field {
-    flex: 1 1 220px;
-    min-width: 0;
-  }
-
-  #secMap .qm-field label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--qm-muted);
-    font-size: 11px;
-  }
-
-  #secMap .qm-field input,
-  #secMap .qm-field select {
-    width: 100%;
-    min-height: 32px;
-    padding: 4px 0;
-    border: 0;
-    background: transparent;
-    color: #573539;
-    font-size: 12px;
-    font-weight: 500;
-  }
-
-  #secMap .qm-radius {
-    flex: 0 1 165px;
-  }
-
-  #secMap .qm-divider {
-    width: 1px;
-    height: 34px;
-    background: var(--qm-line);
-  }
-
-  #secMap .qm-secondary {
-    padding: 11px 13px;
-    border: 1px solid #f0dfb1;
-    border-radius: 9px;
-    background: #fff6df;
-    color: #8a6520;
-    font-size: 11px;
-  }
-
-  #secMap .qm-primary {
-    padding: 14px 19px;
-    border: 1px solid #9e262b;
-    border-radius: 9px;
-    background: linear-gradient(135deg, #b73030, #8a2028);
-    color: #fff7e4;
-    font-size: 12px;
-    font-weight: 600;
-    box-shadow: 0 4px 10px #a526291a;
-  }
-
-  #secMap .qm-primary span {
-    margin-left: 14px;
-    color: #f6d77d;
-  }
-
-  #secMap .qm-workspace {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 345px;
-    align-items: start;
-    gap: 22px;
-  }
-
-  #secMap .qm-map-panel {
-    min-width: 0;
-    overflow: hidden;
-    border: 1px solid var(--qm-line);
-    border-radius: 15px;
-    background: #fffdf8;
-  }
-
-  #secMap .qm-map-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 16px 19px;
-  }
-
-  #secMap .qm-map-head h3 {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  #secMap .qm-legend {
-    display: flex;
-    gap: 13px;
-    color: var(--qm-muted);
-    font-size: 10px;
-  }
-
-  #secMap .qm-legend i {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    margin-right: 5px;
-    border-radius: 50%;
-    background: #d97706;
-  }
-
-  #secMap .qm-legend i.qm-blue {
-    background: #2563eb;
-  }
-
-  #secMap .qm-map {
-    position: relative;
-    background: #eee7d1;
-  }
-
-  #secMap #leafletMap,
-  #secMap #mapFallbackContainer {
-    width: 100%;
-    height: 560px;
-    border: 0;
-    border-radius: 0;
-  }
-
-  #secMap #mapFallbackContainer {
-    display: none;
-  }
-
-  #secMap #mapFallbackFrame {
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-
-  #secMap .qm-map-label {
-    position: absolute;
-    top: 17px;
-    left: 55px;
-    z-index: 500;
-    max-width: calc(100% - 75px);
-    padding: 11px 13px;
-    border: 1px solid #fff;
-    border-radius: 8px;
-    background: #fffdf7f5;
-    color: var(--qm-ink);
-    font-size: 11px;
-    box-shadow: 0 3px 14px #5c37221a;
-    pointer-events: none;
-  }
-
-  #secMap .qm-route {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    margin: 0;
-    padding: 16px;
-    border: 1px solid #fff;
-    border-top: 3px solid var(--qm-gold);
-    border-radius: 12px;
-    background: #fffdf8f7;
-    box-shadow: 0 8px 28px #46201622;
-    backdrop-filter: blur(10px);
-  }
-
-  #secMap .qm-route-wrap {
-    position: absolute;
-    right: 19px;
-    bottom: 30px;
-    left: 19px;
-    z-index: 500;
-  }
-
-  #secMap .qm-route-icon {
-    display: grid;
-    place-items: center;
-    width: 42px;
-    height: 42px;
-    flex-shrink: 0;
-    border-radius: 10px;
-    background: #fae9df;
-    color: var(--qm-red);
-    font-size: 25px;
-  }
-
-  #secMap .qm-route-content {
-    flex: 1;
-    min-width: 0;
-  }
-
-  #secMap .qm-route-content small {
-    color: #af8c50;
-    font-size: 9px;
-    letter-spacing: 1px;
-  }
-
-  #secMap .qm-route-content h3 {
-    margin: 6px 0;
-    color: var(--qm-ink);
-    font-size: 13px;
-    overflow-wrap: anywhere;
-  }
-
-  #secMap .qm-route-content p {
-    margin: 0;
-    color: var(--qm-muted);
-    font-size: 11px;
-    line-height: 1.6;
-  }
-
-  #secMap .qm-route a {
-    padding: 12px;
-    border-radius: 8px;
-    background: var(--qm-red);
-    color: #fff3d2;
-    font-size: 11px;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-
-  #secMap .qm-map-foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 13px 18px;
-    color: #a18b7e;
-    font-size: 10px;
-  }
-
-  #secMap .qm-map-foot button {
-    padding: 6px 9px;
-    border: 1px solid var(--qm-line);
-    border-radius: 7px;
-    background: transparent;
-    color: var(--qm-muted);
-    font-size: 10px;
-  }
-
-  #secMap .qm-aside-head {
-    margin: 4px 0 14px;
-  }
-
-  #secMap .qm-aside-head h3 {
-    margin: 0 0 7px;
-    color: var(--qm-ink);
-    font-size: 14px;
-  }
-
-  #secMap #mapCounterText {
-    color: var(--qm-red);
-    font-size: 11px;
-    line-height: 1.7;
-  }
-
-  #secMap .qm-cards {
-    display: grid;
-    gap: 12px;
-    max-height: 610px;
-    padding: 2px;
-    overflow-y: auto;
-  }
-
-  #secMap .qm-card {
-    padding: 16px;
-    border: 1px solid var(--qm-line);
-    border-radius: 13px;
-    background: #fffdf8;
-  }
-
-  #secMap .qm-card.active {
-    border-color: #bb5c4d;
-    box-shadow: 0 0 0 2px #a5262905;
-  }
-
-  #secMap .qm-card-top {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  #secMap .qm-art {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    min-width: 52px;
-    flex-shrink: 0;
-    border: 1px solid #f0dfbb;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #f1d6a1, #fff0cb);
-    overflow: hidden;
-    padding: 0;
-  }
-
-  #secMap .qm-art img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 9px;
-  }
-
-  #secMap .qm-category {
-    color: #b38e4e;
-    font-size: 9px;
-    letter-spacing: 0.5px;
-  }
-
-  #secMap .qm-card h4 {
-    margin: 5px 0 0;
-    color: var(--qm-ink);
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  #secMap .qm-address {
-    margin: 13px 0;
-    color: var(--qm-muted);
-    font-size: 11px;
-    line-height: 1.9;
-  }
-
-  #secMap .qm-card-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-top: 11px;
-    border-top: 1px solid #f1e7da;
-  }
-
-  #secMap .qm-distance {
-    color: #9a7040;
-    font-size: 10px;
-  }
-
-  #secMap .qm-choose {
-    padding: 9px 11px;
-    border: 0;
-    border-radius: 7px;
-    background: #faede3;
-    color: var(--qm-red);
-    font-size: 10px;
-  }
-
-  #secMap .qm-card.active .qm-choose {
-    background: var(--qm-red);
-    color: #ffe6a2;
-  }
-
-  #secMap .qm-note {
-    margin: 15px 3px 0;
-    color: #a48d7b;
-    font-size: 11px;
-    line-height: 1.9;
-  }
-
-  
-  
-
-  #secMap .qm-tour-panel {
-    margin-bottom: 14px;
-    padding: 12px 14px;
-    border: 1.5px solid #d97706;
-    border-radius: 12px;
-    background: linear-gradient(180deg, #fffcf5 0%, #fff7eb 100%);
-    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.12);
-  }
-
-  #secMap .qm-tour-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 8px;
-  }
-
-  #secMap .qm-tour-head h4 {
-    margin: 0;
-    font-size: 12px;
-    font-weight: 700;
-    color: #92400e;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  #secMap .qm-tour-badge {
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: #fef3c7;
-    color: #b45309;
-    font-size: 10px;
-    font-weight: 700;
-    border: 1px solid #fde68a;
-  }
-
-  #secMap .qm-tour-empty {
-    font-size: 11px;
-    color: #78716c;
-    line-height: 1.5;
-    margin: 4px 0 0;
-  }
-
-  #secMap .qm-tour-steps {
-    list-style: none;
-    margin: 8px 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  #secMap .qm-tour-step {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 11px;
-    color: #44403c;
-    background: #ffffff;
-    padding: 6px 9px;
-    border-radius: 7px;
-    border: 1px solid #fed7aa;
-  }
-
-  #secMap .qm-tour-step-num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: #ea580c;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 11px;
-    flex-shrink: 0;
-  }
-
-  #secMap .qm-tour-step-name {
-    flex: 1;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  #secMap .qm-tour-step-dist {
-    font-size: 10px;
-    color: #9a3412;
-    font-weight: 600;
-  }
-
-  #secMap .qm-tour-step-del {
-    background: transparent;
-    border: none;
-    color: #9ca3af;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 0 4px;
-    line-height: 1;
-  }
-  #secMap .qm-tour-step-del:hover {
-    color: #ef4444;
-  }
-
-  #secMap .qm-tour-metrics {
-    margin: 8px 0 10px;
-    padding: 7px 9px;
-    border-radius: 7px;
-    background: #fef3c7;
-    border: 1px solid #fde68a;
-    font-size: 11px;
-    color: #78350f;
-    display: flex;
-    justify-content: space-between;
-    font-weight: 600;
-  }
-
-  #secMap .qm-tour-actions {
-    display: flex;
-    gap: 6px;
-  }
-
-  #secMap .qm-tour-btn-open {
-    flex: 1;
-    padding: 8px 10px;
-    background: linear-gradient(135deg, #ea580c, #c2410c);
-    color: #ffffff !important;
-    font-size: 11px;
-    font-weight: 700;
-    border: none;
-    border-radius: 7px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(194, 65, 12, 0.25);
-  }
-
-  #secMap .qm-tour-btn-open:hover {
-    background: linear-gradient(135deg, #c2410c, #9a3412);
-  }
-
-  #secMap .qm-tour-btn-clear {
-    padding: 8px 10px;
-    background: #ffffff;
-    color: #78716c;
-    border: 1px solid #d6d3d1;
-    border-radius: 7px;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-
-  #secMap .qm-tour-btn-clear:hover {
-    background: #f5f5f4;
-    color: #dc2626;
-  }
-
-  
-
-  #secMap .qm-btn-tour-add {
-    padding: 8px 10px;
-    border-radius: 7px;
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid #fed7aa;
-    background: #fff7ed;
-    color: #c2410c;
-    transition: all 0.15s ease;
-  }
-
-  #secMap .qm-btn-tour-add:hover {
-    background: #ffedd5;
-  }
-
-  #secMap .qm-btn-tour-add.in-tour {
-    background: #ea580c;
-    color: #ffffff;
-    border-color: #c2410c;
-  }
-
-  @media (max-width: 1050px) {
-    #secMap {
-      padding: 20px;
+const LANG_KEYS = ["vi", "en", "zh", "ko", "ja"];
+const LANG_LABELS = {
+  vi: "VI Tiếng Việt",
+  en: "EN English",
+  zh: "ZH 中文",
+  ko: "KO 한국어",
+  ja: "JA 日本語",
+};
+
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => Array.from(document.querySelectorAll(s));
+const esc = (s) =>
+  String(s ?? "")
+    .normalize("NFC")
+    .replace(
+      /[&<>"']/g,
+      (c) =>
+        ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[c],
+    );
+const vnd = (n) =>
+  n == null ? "Đang cập nhật" : Number(n).toLocaleString("vi-VN") + "đ";
+const dmy = (d) =>
+  new Date(d).toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+function getDishImageUrl(dish) {
+  if (!dish) return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+  let url = (dish.image_url || dish.img || dish.image || "").trim();
+  if (url) {
+    if (url.startsWith("http://doancnpm-backend.onrender.com")) {
+      url = url.replace("http://doancnpm-backend.onrender.com", "https://doancnpm-backend.onrender.com");
     }
-
-    #secMap .qm-workspace {
-      grid-template-columns: minmax(0, 1fr) 300px;
-      gap: 17px;
-    }
-
-    #secMap .qm-route-icon {
-      display: none;
-    }
+    return url;
   }
-
-  @media (max-width: 760px) {
-    #secMap {
-      padding: 12px;
-    }
-
-    #secMap .qm-toolbar-title {
-      flex-wrap: wrap;
-      padding: 14px;
-    }
-
-    #secMap .qm-filters {
-      padding: 15px;
-      gap: 14px;
-    }
-
-    #secMap .qm-field {
-      flex-basis: 100%;
-    }
-
-    #secMap .qm-radius {
-      flex: 1 1 140px;
-    }
-
-    #secMap .qm-divider {
-      display: none;
-    }
-
-    #secMap .qm-primary {
-      flex: 1;
-    }
-
-    #secMap .qm-workspace {
-      grid-template-columns: 1fr;
-    }
-
-    #secMap #leafletMap,
-    #secMap #mapFallbackContainer {
-      height: 450px;
-    }
-
-    #secMap .qm-route-wrap {
-      right: 12px;
-      left: 12px;
-    }
-
-    #secMap .qm-route {
-      flex-wrap: wrap;
-      padding: 12px;
-    }
-
-    #secMap .qm-cards {
-      max-height: 450px;
-    }
+  const name = (dish.translations?.vi?.name || dish.name || dish.shopVi || "").toLowerCase();
+  if (name.includes("cao lầu") || name.includes("cao lau")) {
+    return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
   }
-  #secMap .qm-map {
-  display: block;
-  position: relative;
-  height: auto;
-  overflow: hidden;
-}
-
-#secMap #leafletMap {
-  height: 720px;
-  position: relative;
-  z-index: 1;
-}
-
-#secMap .qm-map > .qm-route-wrap {
-  position: absolute;
-  top: auto;
-  bottom: 32px;
-  left: 16px;
-  right: 16px;
-  width: auto;
-  height: 33.333%;
-  margin: 0;
-  padding: 0;
-  transform: none;
-  z-index: 500;
-}
-
-#secMap .qm-route.qm-route-v2 {
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 14px 18px;
-  overflow-y: auto;
-  box-shadow: 0 8px 24px rgba(72, 42, 45, 0.18);
-}
-
-#secMap .qm-route-v2 .qm-route-icon {
-  width: 36px;
-  height: 36px;
-  font-size: 24px;
-}
-
-#secMap .qm-route-v2 .qm-transport {
-  margin: 10px 0;
-}
-
-#secMap .qm-route-v2 .qm-transport button {
-  min-height: 36px;
-  padding: 7px;
-}
-
-#secMap .qm-route-v2 .qm-route-summary {
-  padding-top: 10px;
-}
-
-#secMap .qm-route-v2 .qm-preview-note,
-#secMap .qm-route-v2 .qm-road-message {
-  margin-top: 7px;
-  font-size: 11px;
-}
-#secMap .qm-route-v2 #gmapExternalLink {
-  display: none;
-}
-
-#secMap .qm-route.qm-route-v2 {
-  padding: 10px 14px;
-  overflow: hidden;
-}
-
-#secMap .qm-route-v2 .qm-route-heading {
-  gap: 8px;
-}
-
-#secMap .qm-route-v2 .qm-route-icon {
-  width: 30px;
-  height: 30px;
-  font-size: 21px;
-}
-
-#secMap .qm-route-v2 .qm-route-content small {
-  font-size: 9px;
-}
-
-#secMap .qm-route-v2 .qm-route-content h3 {
-  margin-top: 3px;
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-#secMap .qm-route-v2 .qm-transport {
-  gap: 6px;
-  margin: 8px 0;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-#secMap .qm-route-v2 .qm-transport button {
-  min-height: 30px;
-  padding: 5px;
-  font-size: 11px;
-}
-
-#secMap .qm-route-v2 .qm-route-summary {
-  padding-top: 8px;
-}
-
-#secMap .qm-route-v2 .qm-route-metrics {
-  gap: 16px;
-}
-
-#secMap .qm-route-v2 .qm-route-metrics span {
-  margin-bottom: 3px;
-  font-size: 10px;
-}
-
-#secMap .qm-route-v2 .qm-route-metrics strong {
-  font-size: 18px;
-}
-
-#secMap .qm-route-v2 .qm-metric-divider {
-  height: 28px;
-}
-
-#secMap .qm-route-v2 .qm-preview-note {
-  margin-top: 7px;
-  font-size: 10px;
-  line-height: 1.4;
-}
-
-#secMap .qm-route-v2 .qm-road-message {
-  margin-top: 4px;
-  font-size: 10px;
-  line-height: 1.3;
-}
-
-#secMap #mapRadarView[hidden],
-#secMap #mapManageView[hidden] {
-  display: none !important;
-}
-
-#secMap .am-view-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eadbcd;
-}
-
-#secMap .am-view-tabs button {
-  padding: 11px 17px;
-  border: 1px solid #eadbcd;
-  border-radius: 9px;
-  background: #fffaf1;
-  color: #927c70;
-  font: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-#secMap .am-view-tabs button.active {
-  background: #a52629;
-  border-color: #a52629;
-  color: #fff0d5;
-}
-
-#secMap .am-view-tabs button:focus-visible {
-  outline: 3px solid #dfb348;
-  outline-offset: 3px;
-}
-
-#secMap .am-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-#secMap .am-eyebrow {
-  color: #ae8541;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-#secMap .am-header h2 {
-  margin: 7px 0;
-  color: #482a2d;
-  font-size: 23px;
-}
-
-#secMap .am-header p,
-#secMap .am-editor p {
-  color: #927c70;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-#secMap .am-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-#secMap .am-stats > div {
-  padding: 17px;
-  background: #fffdf8;
-  border: 1px solid #eadbcd;
-  border-radius: 12px;
-}
-
-#secMap .am-stats span,
-#secMap .am-coordinates span {
-  display: block;
-  margin-bottom: 7px;
-  color: #927c70;
-  font-size: 12px;
-}
-
-#secMap .am-stats strong {
-  color: #a52629;
-  font-size: 26px;
-}
-
-#secMap .am-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-#secMap .am-toolbar input,
-#secMap .am-toolbar select {
-  min-height: 43px;
-  padding: 10px 12px;
-  border: 1px solid #eadbcd;
-  border-radius: 9px;
-  background: #fffdf8;
-  color: #482a2d;
-  font: inherit;
-  font-size: 13px;
-}
-
-#secMap .am-toolbar input {
-  flex: 1;
-  min-width: 200px;
-}
-
-#secMap .am-workspace {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 310px;
-  align-items: start;
-  gap: 18px;
-}
-
-#secMap .am-map-panel,
-#secMap .am-sidebar {
-  min-width: 0;
-  overflow: hidden;
-  border: 1px solid #eadbcd;
-  border-radius: 13px;
-  background: #fffdf8;
-}
-
-#secMap .am-map-heading,
-#secMap .am-list-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  padding: 16px;
-}
-
-#secMap .am-map-heading span,
-#secMap .am-list-heading span {
-  color: #927c70;
-  font-size: 11px;
-}
-
-#secMap .am-list-heading h3 {
-  margin: 0;
-  font-size: 14px;
-}
-
-#secMap #adminLocationMap {
-  height: 470px;
-  width: 100%;
-  z-index: 1;
-}
-
-#secMap .am-message {
-  margin: 0;
-  padding: 12px 16px;
-  background: #fff5df;
-  color: #89672d;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-#secMap .am-editor {
-  padding: 18px;
-  border-top: 1px solid #eadbcd;
-}
-
-#secMap .am-editor h3 {
-  margin: 8px 0;
-  font-size: 18px;
-}
-
-#secMap .am-coordinates {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  margin: 16px 0;
-}
-
-#secMap .am-coordinates strong {
-  font-size: 15px;
-}
-
-#secMap .am-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-#secMap .am-actions button,
-#secMap #amShowAll {
-  padding: 10px 13px;
-  border: 1px solid #eadbcd;
-  border-radius: 8px;
-  background: #fffaf1;
-  color: #a52629;
-  font: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-#secMap #amEdit,
-#secMap #amApply {
-  background: #a52629;
-  border-color: #a52629;
-  color: white;
-}
-
-#secMap .am-actions button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-#secMap #amList {
-  padding: 0 12px 12px;
-}
-
-#secMap .am-place {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  padding: 14px;
-  border: 1px solid #eadbcd;
-  border-radius: 10px;
-  background: #fffdf8;
-  color: #482a2d;
-  text-align: left;
-  cursor: pointer;
-}
-
-#secMap .am-place.active {
-  border-color: #a52629;
-  background: #fff4ed;
-}
-
-#secMap .am-place strong,
-#secMap .am-place span,
-#secMap .am-place small {
-  display: block;
-  line-height: 1.6;
-}
-
-#secMap .am-place strong {
-  font-size: 14px;
-}
-
-#secMap .am-place span {
-  margin: 7px 0;
-  color: #927c70;
-  font-size: 12px;
-}
-
-#secMap .am-place small {
-  color: #977131;
-  font-size: 11px;
-}
-
-@media (max-width: 900px) {
-  #secMap .am-workspace {
-    grid-template-columns: 1fr;
+  if (name.includes("bánh mì") || name.includes("banh mi")) {
+    return "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800";
   }
-
-  #secMap .am-map-heading {
-    flex-wrap: wrap;
+  if (name.includes("bánh bèo") || name.includes("banh beo")) {
+    return "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
   }
+  if (name.includes("mót") || name.includes("mot") || name.includes("trà") || name.includes("tra")) {
+    return "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=800";
+  }
+  if (name.includes("bánh đập") || name.includes("banh dap")) {
+    return "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800";
+  }
+  if (name.includes("bánh ướt") || name.includes("banh uot")) {
+    return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800";
+  }
+  if (name.includes("cơm gà") || name.includes("com ga")) {
+    return "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&q=80&w=800";
+  }
+  if (name.includes("mì quảng") || name.includes("mi quang")) {
+    return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
+  }
+  return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
 }
 
-#secMap .gm-directions-inputs {
-  position: relative;
-  flex: 1 1 420px;
-  min-width: 0;
-  padding: 14px;
-  background: #fffdf8;
-  border: 1px solid #eadbcd;
-  border-radius: 14px;
-}
-
-#secMap .gm-direction-row {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  position: relative;
-  z-index: 1;
-}
-
-#secMap .gm-direction-row + .gm-direction-row {
-  margin-top: 12px;
-}
-
-#secMap .gm-origin-dot,
-#secMap .gm-destination-dot {
-  display: block;
-  box-sizing: border-box;
-  width: 14px;
-  height: 14px;
-  flex: 0 0 14px;
-  background: #fffdf8;
-}
-
-#secMap .gm-origin-dot {
-  border: 3px solid #2563eb;
-  border-radius: 50%;
-}
-
-#secMap .gm-destination-dot {
-  border: 3px solid #a52629;
-  border-radius: 4px;
-}
-
-#secMap .gm-direction-connector {
-  height: 14px;
-  margin: 3px 0 3px 6px;
-  border-left: 2px dotted #b9afa7;
-}
-
-#secMap .gm-direction-field {
-  flex: 1;
-  min-width: 0;
-  padding: 9px 12px;
-  border: 1px solid #e5d9ce;
-  border-radius: 9px;
-  background: #ffffff;
-}
-
-#secMap .gm-direction-field:focus-within {
-  border-color: #b58a42;
-  box-shadow: 0 0 0 2px rgba(223, 179, 72, 0.15);
-}
-
-#secMap .gm-direction-field label {
-  display: block;
-  margin-bottom: 4px;
-  color: #927c70;
-  font-size: 11px;
-}
-
-#secMap .gm-direction-field input {
-  display: block;
-  width: 100%;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: #482a2d;
-  font: inherit;
-  font-size: 14px;
-}
-
-#secMap #gmDirectionsStatus {
-  margin: 10px 0 0 27px;
-  color: #927c70;
-  font-size: 11px;
-  line-height: 1.5;
-}
-</style>
-  </head>
-  <body>
-    <div id="loginOverlay" style="position: fixed; inset: 0; background: #fafbfc; display: flex; align-items: center; justify-content: center; z-index: 999999; padding: 20px; font-family: 'Be Vietnam Pro', sans-serif;">
-      <div style="width: 100%; max-width: 420px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 30px; padding: 42px 38px 38px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.03); box-sizing: border-box;">
-        <div style="text-align: center; margin-bottom: 28px;">
-          <h2 style="font-size: 24px; font-weight: 800; color: #1e293b; margin: 0 0 8px; letter-spacing: -0.3px;">THEO DẤU VỊ HỘI</h2>
-          <p style="color: #64748b; font-size: 13px; margin: 0; font-weight: 400;">Khu Vực Quản Trị Viên Ẩm Thực Phố Cổ</p>
-        </div>
-
-        <form id="loginForm" style="display: flex; flex-direction: column; gap: 18px;">
-          <div>
-            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px;">Tên đăng nhập</label>
-            <input type="text" id="loginUsername" required autocomplete="username" placeholder="Nhập tên đăng nhập..." style="width: 100%; padding: 12px 16px; background: #eef4fa; border: 1px solid #d8e2ec; border-radius: 12px; color: #0f172a; font-size: 14px; font-weight: 500; box-sizing: border-box; outline: none; transition: all 0.2s;" onfocus="this.style.background='#ffffff'; this.style.borderColor='#ea580c';" onblur="this.style.background='#eef4fa'; this.style.borderColor='#d8e2ec';" />
-          </div>
-
-          <div>
-            <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 7px;">Mật khẩu</label>
-            <div style="position: relative;">
-              <input type="password" id="loginPassword" required autocomplete="current-password" placeholder="Nhập mật khẩu..." style="width: 100%; padding: 12px 42px 12px 16px; background: #eef4fa; border: 1px solid #d8e2ec; border-radius: 12px; color: #0f172a; font-size: 14px; font-weight: 500; box-sizing: border-box; outline: none; transition: all 0.2s;" onfocus="this.style.background='#ffffff'; this.style.borderColor='#ea580c';" onblur="this.style.background='#eef4fa'; this.style.borderColor='#d8e2ec';" />
-              <button type="button" id="togglePasswordBtn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center;">
-                <svg id="eyeIconSvg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <div id="loginErr" style="background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-size: 13px; padding: 11px 14px; border-radius: 12px; font-weight: 500; display: none;"></div>
-
-          <button type="submit" id="loginSubmitBtn" style="width: 100%; padding: 13px 16px; background: linear-gradient(90deg, #ea580c 0%, #dc2626 100%); color: #ffffff; border: none; border-radius: 12px; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: all 0.2s; box-shadow: 0 10px 22px rgba(220, 38, 38, 0.35); margin-top: 4px;">
-            Đăng Nhập Quản Trị
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <div class="app-shell" id="appShell" style="display: none;">
-      <aside class="sidebar">
-        <div>
-          <div class="sidebar-brand">
-            <h1>THEO DẤU VỊ HỘI</h1>
-            <p>Hệ Thống Quản Trị Ẩm Thực Hội An</p>
-          </div>
-
-          <nav
-            class="nav-list"
-            id="sidebarNav"
-            aria-label="Menu điều hướng chính"
-          >
-            <button type="button" class="nav-btn active" data-nav="overview">
-              <span class="nav-btn-left">
-                <span>Tổng Quan Chung</span>
-              </span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="dishes">
-              <span class="nav-btn-left">
-                <span>Quản Lý Món Ăn</span>
-              </span>
-              <span class="nav-badge" id="navDishCount">6</span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="devices">
-              <span class="nav-btn-left">
-                <span>Thiết Bị Truy Cập</span>
-              </span>
-              <span class="nav-badge live" id="navOnlineCount">1</span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="checkins">
-              <span class="nav-btn-left">
-                <span>Check-in & Yêu Thích</span>
-              </span>
-              <span class="nav-badge" id="navCheckinCount">102</span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="account">
-              <span class="nav-btn-left">
-                <span>Quản Lý Tài Khoản</span>
-              </span>
-              <span class="nav-badge" id="navAccountBadge">1</span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="qrcode">
-              <span class="nav-btn-left">
-                <span>Quản Lý Mã QR</span>
-              </span>
-              <span class="nav-badge" style="background: rgba(233,194,107,0.2); color: var(--gold); border-color: var(--gold-border);">QR</span>
-            </button>
-
-            <button type="button" class="nav-btn" data-nav="map">
-              <span class="nav-btn-left">
-                <span>Bản Đồ Nhiệt & Mật Độ</span>
-              </span>
-              <span class="nav-badge" id="navMapBadge" style="background: #fee2e2; color: #dc2626; border-color: #fca5a5;">HEAT</span>
-            </button>
-          </nav>
-        </div>
-
-        <div class="sidebar-foot">
-          <div class="sidebar-status">
-            <span class="live-dot"></span>
-            <span>Máy chủ & CSDL trực tuyến</span>
-          </div>
-        </div>
-      </aside>
-
-      <div class="main-area">
-        <header class="topbar">
-          <div class="topbar-inner">
-            <div class="page-heading">
-              <h1 id="pageTitle">Tổng Quan Hệ Thống</h1>
-              <p id="pageSub">
-                Theo dõi trực tiếp số liệu món ăn, thiết bị truy cập và biểu đồ
-                thời gian thực
-              </p>
-            </div>
-
-            <div class="topbar-actions">
-              <button type="button" id="exportReportBtn" style="background:#e8a838; color:#ffffff; border:none; border-radius:20px; padding: 9px 16px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
-                Xuất báo cáo lượt check-in & thống kê
-              </button>
-              <div style="display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; padding-left: 12px; border-left: 1px solid var(--gold-border);">
-                <span id="adminNameDisplay" style="font-size: 12.5px; font-weight: 600; color: var(--muted); display: inline-flex; align-items: center; gap: 5px;">
-                  <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #10b981;"></span>
-                  <span>Admin</span>
-                </span>
-                <button type="button" id="logoutBtn" style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.25); color: #ef4444; border-radius: 16px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer;">
-                  Đăng xuất
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div class="wrap" style="width: 100%">
-          <p id="msg" role="alert"></p>
-
-          <div class="strip" id="strip"></div>
-
-          <div class="charts-grid" id="secCharts">
-            <div class="chart-card">
-              <div>
-                <div class="chart-head">
-                  <div class="chart-title-wrap">
-                    <h3>Biểu Đồ Cột</h3>
-                  </div>
-                </div>
-                <div class="chart-sub" id="barChartSub">
-                  Tổng lượt tương tác và check-in thực tế của từng món
-                </div>
-              </div>
-              <div class="live-bars-box" id="liveBarChart"></div>
-            </div>
-
-            <div class="chart-card">
-              <div>
-                <div class="chart-head">
-                  <div class="chart-title-wrap">
-                    <h3>Biểu Đồ Tròn</h3>
-                  </div>
-                  <div class="mini-tabs" id="pieModeTabs" style="display: none">
-                    <button type="button" class="active" data-pmode="cat">
-                      Danh mục
-                    </button>
-                  </div>
-                </div>
-                <div class="chart-sub" id="pieChartSub">
-                  Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực
-                </div>
-              </div>
-              <div class="pie-wrap">
-                <div class="pie-svg-box">
-                  <svg
-                    viewBox="0 0 42 42"
-                    width="136"
-                    height="136"
-                    id="livePieSvg"
-                  ></svg>
-                  <div class="pie-center">
-                    <b id="pieCenterVal">0</b>
-                    <span id="pieCenterLbl">tổng món</span>
-                  </div>
-                </div>
-                <div class="pie-legend" id="livePieLegend"></div>
-              </div>
-            </div>
-
-            <div class="chart-card">
-              <div>
-                <div class="chart-head">
-                  <div class="chart-title-wrap">
-                    <h3>Biểu Đồ Đường</h3>
-                  </div>
-                  <div class="mini-tabs" id="lineModeTabs">
-                    <button type="button" class="active" data-lmode="dish">
-                      Lượt tương tác
-                    </button>
-                    <button type="button" data-lmode="online">
-                      Thiết bị Live
-                    </button>
-                  </div>
-                </div>
-                <div class="chart-sub" id="lineChartSub">
-                  Đường biến thiên trực tiếp theo số liệu thực tế của hệ thống
-                </div>
-              </div>
-              <div class="line-box">
-                <svg
-                  viewBox="0 0 320 125"
-                  class="line-svg"
-                  id="liveLineSvg"
-                ></svg>
-                <div class="line-x-labels" id="liveLineLabels"></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid" id="mainGrid">
-            <div id="colLeft">
-              <section id="secDishes">
-                <div class="sec-head">
-                  <div class="sec-title-group">
-                    <h2>Danh Sách Món Ăn Hội An</h2>
-                    <span class="badge-gold" id="dishCountBadge">0 món</span>
-                  </div>
-                  <div
-                    style="
-                      display: flex;
-                      align-items: center;
-                      gap: 10px;
-                      flex-wrap: wrap;
-                    "
-                  >
-                    <div
-                      class="view-switch"
-                      role="group"
-                      aria-label="Chế độ hiển thị"
-                    >
-                      <button type="button" id="viewTableBtn" class="active">
-                        Dạng bảng
-                      </button>
-                      <button type="button" id="viewCardBtn">
-                        Dạng thẻ (App)
-                      </button>
-                    </div>
-                    <button type="button" class="gold-btn" id="add">
-                      + Thêm món mới
-                    </button>
-                  </div>
-                </div>
-
-                <div class="tools">
-                  <input
-                    id="q"
-                    type="search"
-                    placeholder="Tìm món"
-                    aria-label="Tìm theo tên món"
-                  />
-                  <select id="cat" aria-label="Lọc theo danh mục">
-                    <option value="">Tất cả danh mục</option>
-                  </select>
-                </div>
-
-                <div class="cat-chips" id="catChips"></div>
-
-                <div id="tableView" class="tablewrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Món ăn & Bản dịch</th>
-                        <th>Danh mục</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody id="dishes"></tbody>
-                  </table>
-                </div>
-
-                <div id="cardView" class="cards-grid" hidden></div>
-
-                <p class="empty" id="noDish" hidden>
-                  Chưa có món ăn nào khớp bộ lọc. Bấm “+ Thêm món mới” để tạo
-                  món đầu tiên.
-                </p>
-              </section>
-            </div>
-
-            <div id="colRight">
-              <section class="alt-panel" id="secDevices">
-                <div class="sec-head">
-                  <div class="sec-title-group">
-                    <span class="live-dot"></span>
-                    <h2>Thiết Bị Đang Truy Cập</h2>
-                    <span class="badge-emerald">TRỰC TIẾP (LIVE)</span>
-                  </div>
-                </div>
-                <div class="presence-box">
-                  <div class="presence-big-row" style="margin-bottom: 0">
-                    <div>
-                      <span class="presence-meta"
-                        >Số thiết bị đang mở ứng dụng</span
-                      >
-                      <div class="presence-big-num" id="liveOnlineNum">0</div>
-                    </div>
-                    <div style="text-align: right">
-                      <span class="presence-meta">Trạng thái kết nối</span>
-                      <br />
-                      
-                    </div>
-                  </div>
-                </div>
-                <ul id="activeDevicesList"></ul>
-                <p class="empty" id="noActiveDevice">
-                  Hiện chưa có thiết bị nào mở trang giao diện. Khi mở tab/app
-                  mới số lượng sẽ tăng ngay và khi đóng sẽ giảm ngay lập tức.
-                </p>
-              </section>
-
-              <section class="alt-panel" id="secDailyCheckin">
-                <div class="sec-head">
-                  <div class="sec-title-group">
-                    <h2>Check-in 7 Ngày Gần Nhất</h2>
-                    <span class="badge-emerald" id="dailyTotalBadge"
-                      >THỰC TIỄN</span
-                    >
-                  </div>
-                </div>
-                <div class="bars" id="bars"></div>
-              </section>
-
-              <section class="alt-panel" id="secTopFav">
-                <div class="sec-head">
-                  <div class="sec-title-group">
-                    <h2>Món Được Yêu Thích Nhất</h2>
-                  </div>
-                </div>
-                <ol id="top"></ol>
-              </section>
-
-              <section class="alt-panel" id="secRecentCheckin">
-                <div class="sec-head">
-                  <div class="sec-title-group">
-                    <h2>Lượt Check-in Mới Nhất</h2>
-                  </div>
-                </div>
-                <ul id="recent"></ul>
-                <p class="empty" id="noCheck" hidden>
-                  Chưa có lượt check-in nào.
-                </p>
-              </section>
-
-              <section class="alt-panel" id="secAccount" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
-                <div class="sec-head" style="margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                  <div class="sec-title-group">
-                    
-                    <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Danh Sách Tài Khoản Quản Trị</h2>
-                  </div>
-                  <button type="button" id="toggleAddUserBtn" style="background: linear-gradient(135deg, #d97706 0%, #b91c1c 100%); color: #ffffff; border: none; border-radius: 12px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 3px 10px rgba(217,119,6,0.3);">
-                    <span>+</span> Thêm Tài Khoản Mới
-                  </button>
-                </div>
-
-                <div id="addUserBox" style="display: none; background: var(--card-item); border: 1px solid var(--gold-border-strong); border-radius: 16px; padding: 22px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.04);">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                    <h3 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--ink);">Thêm Tài Khoản Quản Trị Mới</h3>
-                    <button type="button" id="closeAddUserBtn" style="background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; font-weight: 700;">&times;</button>
-                  </div>
-                  <form id="addUserForm" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px;">
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Tên đăng nhập *</label>
-                      <input type="text" id="newAdminUser" required minlength="3" placeholder="Ví dụ: admin_ketoan..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu khởi tạo *</label>
-                      <input type="password" id="newAdminPass" required minlength="4" placeholder="Tối thiểu 4 ký tự..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Họ và tên / Biệt danh</label>
-                      <input type="text" id="newAdminFullName" placeholder="Ví dụ: Nguyễn Văn A..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Phân quyền vai trò</label>
-                      <select id="newAdminRole" style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;">
-                        <option value="admin">Quản Trị Viên (Admin)</option>
-                        <option value="editor">Biên Tập Viên Ẩm Thực</option>
-                      </select>
-                    </div>
-                    <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px;">
-                      <div id="addUserMsg" style="font-size: 12.5px; font-weight: 600; display: none; padding: 6px 12px; border-radius: 8px;"></div>
-                      <div style="display: flex; gap: 8px; margin-left: auto;">
-                        <button type="button" id="cancelAddUserBtn" style="padding: 9px 16px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">Huỷ</button>
-                        <button type="submit" id="submitAddUserBtn" style="padding: 9px 20px; background: #10b981; border: none; color: #ffffff; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">Lưu Tài Khoản</button>
-                      </div>
-                    </div>
-        </form>
-                </div>
-
-                <div class="tablewrap" style="margin-bottom: 26px; border: 1px solid var(--gold-border); border-radius: 14px; overflow: hidden;">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th style="width: 50px; text-align: center;">STT</th>
-                        <th>Tên Tài Khoản</th>
-                        <th>Họ Và Tên</th>
-                        <th>Vai Trò</th>
-                        <th>Ngày Tạo</th>
-                        <th style="text-align: right; width: 120px;">Thao Tác</th>
-                      </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                      <tr>
-                        <td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">Đang tải danh sách tài khoản...</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-
-                <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px; margin-bottom: 20px;">
-                  <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 14px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                    Đổi Mật Khẩu (Tài Khoản Đang Đăng Nhập)
-                  </h3>
-                  <form id="changePasswordForm" style="display: flex; flex-direction: column; gap: 14px; max-width: 480px;">
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu hiện tại</label>
-                      <input type="password" id="currentPassInput" required placeholder="Nhập mật khẩu hiện tại..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Mật khẩu mới</label>
-                      <input type="password" id="newPassInput" required minlength="4" placeholder="Nhập mật khẩu mới..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 5px;">Xác nhận mật khẩu mới</label>
-                      <input type="password" id="confirmPassInput" required minlength="4" placeholder="Nhập lại mật khẩu mới..." style="width: 100%; padding: 10px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                    </div>
-                    <div id="changePassMsg" style="font-size: 12.5px; font-weight: 600; display: none; padding: 8px 12px; border-radius: 8px;"></div>
-                    <button type="submit" id="changePassSubmitBtn" style="width: fit-content; padding: 9px 20px; background: #e54d42; color: #fff; font-size: 13.5px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer;">
-                      Cập Nhật Mật Khẩu
-                    </button>
-        </form>
-                </div>
-              </section>
-              <section class="alt-panel" id="secQr" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
-                <div class="sec-head" style="margin-bottom: 22px; padding-bottom: 14px; border-bottom: 1px solid var(--gold-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                  <div class="sec-title-group" style="display: flex; align-items: center; gap: 10px;">
-                    
-                    <div>
-                      <h2 style="font-size: 18px; margin: 0; color: var(--ink);">Quản Lý & Tạo Mã QR Code Ẩm Thực</h2>
-                      <p style="margin: 3px 0 0; font-size: 12px; color: var(--muted);">Tạo mã QR cho toàn bộ ứng dụng hoặc mã QR riêng cho từng món ăn, hỗ trợ tải ảnh và in thẻ để bàn</p>
-                    </div>
-                  </div>
-                  <div style="display: flex; gap: 8px;">
-                    <button type="button" id="qrPrintAllBtn" style="padding: 8px 16px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;">
-                      In Thẻ / Mã QR
-                    </button>
-                  </div>
-                </div>
-
-                <div style="display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--gold-border); padding-bottom: 12px;">
-                  <button type="button" id="qrTabAppBtn" class="filter-chip active" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
-                    Mã QR Toàn Ứng Dụng
-                  </button>
-                  <button type="button" id="qrTabDishesBtn" class="filter-chip" style="font-weight: 700; padding: 8px 18px; border-radius: 12px; cursor: pointer;">
-                    Mã QR Riêng Từng Món Ăn
-                  </button>
-                </div>
-
-                <div id="qrAppBox" style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
-                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
-                    <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                      Cấu Hình Liên Kết QR Ứng Dụng
-                    </h3>
-
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                      <div>
-                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">URL Đích (Đường dẫn du khách quét vào)</label>
-                        <input type="text" id="qrAppUrlInput" value="https://doancnpm-beta.vercel.app" style="width: 100%; padding: 11px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; box-sizing: border-box; outline: none;" />
-                        <div style="display: flex; gap: 8px; margin-top: 8px;">
-                          <button type="button" id="qrSetVercelBtn" style="padding: 4px 10px; background: rgba(233,194,107,0.12); border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11.5px; color: var(--ink); cursor: pointer;">Vercel App</button>
-                          <button type="button" id="qrSetBackendBtn" style="padding: 4px 10px; background: rgba(233,194,107,0.12); border: 1px solid var(--gold-border); border-radius: 6px; font-size: 11.5px; color: var(--ink); cursor: pointer;">Backend Server</button>
-                        </div>
-                      </div>
-
-                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                        <div>
-                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Ngôn ngữ mặc định</label>
-                          <select id="qrAppLangSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
-                            <option value="vi">Tiếng Việt (vi)</option>
-                            <option value="en">English (en)</option>
-                            <option value="zh">中文 (zh)</option>
-                            <option value="ko">한국어 (ko)</option>
-                            <option value="ja">日本語 (ja)</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Màu sắc mã QR</label>
-                          <select id="qrAppColorSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
-                            <option value="0f172a">Đen Cổ Điển (#0f172a)</option>
-                            <option value="d4152f">Đỏ Hội An (#d4152f)</option>
-                            <option value="e5a83b">Vàng Phố Cổ (#e5a83b)</option>
-                            <option value="10b981">Xanh Ngọc (#10b981)</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Kích thước xuất ảnh</label>
-                        <select id="qrAppSizeSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
-                          <option value="300x300">300 x 300 px (Tiêu chuẩn hiển thị & in nhỏ)</option>
-                          <option value="600x600" selected>600 x 600 px (Sắc nét cho ấn phẩm / Standee)</option>
-                          <option value="1000x1000">1000 x 1000 px (Chất lượng cao Poster lớn)</option>
-                        </select>
-                      </div>
-
-                      <div style="display: flex; gap: 10px; margin-top: 6px;">
-                        <button type="button" id="qrAppDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #ea580c, #dc2626); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                          Tải Ảnh QR (PNG)
-                        </button>
-                        <button type="button" id="qrAppCopyBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                          Sao chép Link
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="background: #ffffff; border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06);" id="qrCardPreview">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
-                    <h4 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">THEO DẤU VỊ HỘI</h4>
-                    <div style="display: inline-block; padding: 12px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-bottom: 14px;">
-                      <img id="qrAppImgPreview" src="" alt="Mã QR" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
-                    </div>
-                    <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
-                    <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
-                      5 Ngôn Ngữ: VI • EN • ZH • KO • JA
-                    </div>
-                  </div>
-                </div>
-
-                <div id="qrDishesBox" hidden style="display: grid; grid-template-columns: minmax(320px, 1fr) 340px; gap: 24px; align-items: start;">
-                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 22px;">
-                    <h3 style="font-size: 15px; font-weight: 700; margin: 0 0 16px; color: var(--ink); display: flex; align-items: center; gap: 8px;">
-                      Chọn Món Ăn Cần Tạo Mã QR
-                    </h3>
-
-                    <div style="display: flex; flex-direction: column; gap: 16px;">
-                      <div>
-                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Món ăn</label>
-                        <select id="qrDishSelect" style="width: 100%; padding: 11px 14px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13.5px; outline: none; font-weight: 600;">
-                          <option value="">Đang tải danh sách món ăn...</option>
-                        </select>
-                      </div>
-
-                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                        <div>
-                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Ngôn ngữ khi quét</label>
-                          <select id="qrDishLangSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
-                            <option value="vi">Tiếng Việt (vi)</option>
-                            <option value="en">English (en)</option>
-                            <option value="zh">中文 (zh)</option>
-                            <option value="ko">한국어 (ko)</option>
-                            <option value="ja">日本語 (ja)</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Màu sắc thẻ</label>
-                          <select id="qrDishColorSelect" style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--input-bg); color: var(--ink); font-size: 13px; outline: none;">
-                            <option value="d4152f">Đỏ Hội An (#d4152f)</option>
-                            <option value="0f172a">Đen Cổ Điển (#0f172a)</option>
-                            <option value="e5a83b">Vàng Phố Cổ (#e5a83b)</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label style="display: block; font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 6px;">Link chi tiết món ăn tạo ra</label>
-                        <input type="text" id="qrDishLinkInput" readonly style="width: 100%; padding: 10px 12px; border: 1px solid var(--gold-border); border-radius: 10px; background: rgba(0,0,0,0.03); color: var(--muted); font-size: 12px; box-sizing: border-box;" />
-                      </div>
-
-                      <div style="display: flex; gap: 10px; margin-top: 6px;">
-                        <button type="button" id="qrDishDownloadBtn" style="flex: 1; padding: 12px; background: linear-gradient(90deg, #10b981, #059669); color: #fff; border: none; border-radius: 10px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                          Tải Thẻ Bàn Món Ăn (PNG)
-                        </button>
-                        <button type="button" id="qrDishPrintBtn" style="padding: 12px 18px; background: var(--panel); border: 1px solid var(--gold-border); color: var(--ink); border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;">
-                          In Thẻ
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="border: 2px dashed #e2e8f0; border-radius: 20px; padding: 26px 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.06); background: #ffffff;" id="qrDishCardPreview">
-                    <div style="font-size: 11px; font-weight: 800; letter-spacing: 1.5px; color: #d4152f; text-transform: uppercase; margin-bottom: 4px;">Ẩm Thực Phố Cổ Hội An</div>
-                    <h4 id="qrDishCardTitle" style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 14px;">Món Ngon Hội An</h4>
-                    <div style="display: inline-block; padding: 12px; background: #ffffff; border: 1px solid #edf2f7; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05); margin-bottom: 14px;">
-                      <img id="qrDishImgPreview" src="" alt="Mã QR Món Ăn" style="width: 200px; height: 200px; display: block; border-radius: 8px;" />
-                    </div>
-                    <p style="font-size: 12px; color: #64748b; margin: 0 0 4px; font-weight: 500;">Quét mã để nghe thuyết minh tự động</p>
-                    <div style="display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #059669; background: #ecfdf5; padding: 3px 10px; border-radius: 20px; font-weight: 600;">
-                      5 Ngôn Ngữ: VI • EN • ZH • KO • JA
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section class="alt-panel" id="secMap" hidden style="background: var(--panel); border: 1px solid var(--gold-border); border-radius: 20px; padding: 24px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--gold-border); flex-wrap: wrap; gap: 14px;">
-                  <div style="display: flex; align-items: center; gap: 12px;">
-                    
-                    <div>
-                      <h2 style="font-size: 19px; font-weight: 800; margin: 0; color: var(--ink);">Bản Đồ Nhiệt & Mật Độ Tương Tác (Spatial Analytics)</h2>
-                      <p style="margin: 4px 0 0; font-size: 13px; color: var(--muted);">Phân tích không gian: Điểm nóng du khách quét mã QR & Mật độ phân bổ mạng lưới ẩm thực Hội An</p>
-                    </div>
-                  </div>
-                  <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                    <button type="button" id="btnAdminMapHoiAnCenter" style="cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: var(--card-item); border: 1px solid var(--gold-border); color: var(--ink); display: inline-flex; align-items: center; gap: 6px;">
-                      Về Trung Tâm Phố Cổ
-                    </button>
-                    <button type="button" id="btnAdminMapRefresh" style="cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 10px; background: var(--maroon); border: none; color: #ffffff; display: inline-flex; align-items: center; gap: 6px;">
-                      Cập Nhật Dữ Liệu
-                    </button>
-                  </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                  <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 16px 18px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                      <span style="font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase;">Điểm Ẩm Thực GPS</span>
-                      
-                    </div>
-                    <div style="font-size: 26px; font-weight: 800; color: var(--ink); margin-top: 6px;" id="kpiMapTotalDishes">6 điểm</div>
-                    <div style="font-size: 12px; color: #16a34a; margin-top: 2px; font-weight: 600;">● 100% đã định vị không gian</div>
-                  </div>
-                  <div style="background: #fff7ed; border: 1px solid #fed7aa; border-radius: 14px; padding: 16px 18px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                      <span style="font-size: 12px; font-weight: 700; color: #c2410c; text-transform: uppercase;">Điểm Nóng QR Số 1</span>
-                      
-                    </div>
-                    <div style="font-size: 18px; font-weight: 800; color: #9a3412; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="kpiMapTopHotspot">Bánh Mì Phượng</div>
-                    <div style="font-size: 12px; color: #ea580c; margin-top: 2px; font-weight: 600;" id="kpiMapTopHotspotScans">42 lượt tương tác (Cực đại)</div>
-                  </div>
-                  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 14px; padding: 16px 18px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                      <span style="font-size: 12px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Tổng Tương Tác Du Khách</span>
-                      
-                    </div>
-                    <div style="font-size: 26px; font-weight: 800; color: #1e40af; margin-top: 6px;" id="kpiMapTotalInteractions">102 lượt</div>
-                    <div style="font-size: 12px; color: #2563eb; margin-top: 2px; font-weight: 600;">Quét QR & Lượt check-in thực tế</div>
-                  </div>
-                  <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 14px; padding: 16px 18px;">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                      <span style="font-size: 12px; font-weight: 700; color: #a16207; text-transform: uppercase;">Mật Độ Vùng Lõi Di Sản</span>
-                      
-                    </div>
-                    <div style="font-size: 26px; font-weight: 800; color: #854d0e; margin-top: 6px;" id="kpiMapCoreRatio">83.3%</div>
-                    <div style="font-size: 12px; color: #ca8a04; margin-top: 2px; font-weight: 600;" id="kpiMapCoreSub">Bán kính &lt;1.0km Phố Cổ Hội An</div>
-                  </div>
-                </div>
-
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 14px; padding: 12px 18px;">
-                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                    <span style="font-size: 13px; font-weight: 700; color: var(--ink); margin-right: 4px;">Chế độ trực quan:</span>
-                    <button type="button" class="filter-chip active" id="btnAdminMapModeHybrid" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Kết Hợp (Heatmap + Vị Trí)
-                    </button>
-                    <button type="button" class="filter-chip" id="btnAdminMapModeHeat" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Bản Đồ Nhiệt Quét QR
-                    </button>
-                    <button type="button" class="filter-chip" id="btnAdminMapModeDensity" style="font-size: 12px; font-weight: 700; padding: 7px 15px; border-radius: 20px; cursor: pointer;">
-                      Mật Độ & Vành Đai Phân Bổ
-                    </button>
-                  </div>
-                  <div style="display: flex; align-items: center; gap: 10px;">
-                    <label for="adminHeatRadiusSlider" style="font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;">Bán kính quầng nhiệt:</label>
-                    <input type="range" id="adminHeatRadiusSlider" min="20" max="60" value="38" style="cursor: pointer; width: 100px; accent-color: var(--maroon);" />
-                    <span id="adminHeatRadiusLabel" style="font-size: 12px; font-weight: 700; color: var(--ink); min-width: 32px;">38px</span>
-                  </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start;" class="admin-heatmap-grid">
-                  <div style="position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold-border); box-shadow: 0 4px 18px rgba(0,0,0,0.06);">
-                    <div id="adminHeatmapCanvas" style="height: 560px; width: 100%; background: #e5e7eb;"></div>
-
-                    <div id="adminHeatLegendOverlay" style="position: absolute; bottom: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px;">
-                      <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-                        Mức độ tương tác quét QR
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="color: #64748b; font-weight: 600;">Ít</span>
-                        <div style="width: 130px; height: 10px; border-radius: 6px; background: linear-gradient(to right, #3b82f6, #10b981, #fbbf24, #f97316, #dc2626);"></div>
-                        <span style="font-weight: 800; color: #dc2626;">Cực đại</span>
-                      </div>
-                      <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; margin-top: 3px;">
-                        <span>1-5 lượt</span>
-                        <span>15-25 lượt</span>
-                        <span>40+ lượt</span>
-                      </div>
-                    </div>
-
-                    <div id="adminDensityLegendOverlay" style="position: absolute; top: 18px; left: 18px; z-index: 1000; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px 14px; box-shadow: 0 4px 14px rgba(0,0,0,0.12); font-size: 11px; display: none;">
-                      <div style="font-weight: 700; color: #1e293b; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
-                        Vành đai phân bổ ẩm thực
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(220, 38, 38, 0.4); border: 1.5px solid #dc2626;"></span>
-                        <span style="font-weight: 600; color: #1e293b;">Vùng lõi Di sản (&lt;500m)</span>
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(245, 158, 11, 0.25); border: 1.5px solid #f59e0b;"></span>
-                        <span style="font-weight: 600; color: #1e293b;">Vùng đệm phố cổ (&lt;1.5km)</span>
-                      </div>
-                      <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); border: 1.5px dashed #3b82f6;"></span>
-                        <span style="font-weight: 600; color: #1e293b;">Vùng mở rộng ngoại ô (&lt;3.5km)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="background: var(--card-item); border: 1px solid var(--gold-border); border-radius: 16px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
-                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--gold-border); padding-bottom: 10px;">
-                        <h3 style="font-size: 14px; font-weight: 800; color: var(--ink); margin: 0; display: flex; align-items: center; gap: 6px;">
-                          Xếp Hạng Điểm Nóng Quét QR
-                        </h3>
-                        <span style="font-size: 11px; color: var(--muted); background: #f1f5f9; padding: 2px 8px; border-radius: 12px; font-weight: 700;">Hội An</span>
-                      </div>
-                      <div id="adminHotspotList" style="display: flex; flex-direction: column; gap: 10px; max-height: 290px; overflow-y: auto; padding-right: 4px;">
-                      </div>
-                    </div>
-
-                    <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                      <h3 style="font-size: 14px; font-weight: 800; color: #92400e; margin: 0 0 10px; display: flex; align-items: center; gap: 6px;">
-                        Phân Tích & Đề Xuất Kinh Doanh
-                      </h3>
-                      <div style="font-size: 12px; line-height: 1.6; color: #78350f;">
-                        <p style="margin: 0 0 8px;">
-                          <strong>Mật độ hiện tại:</strong> <span id="adminMapInsightDensity">Phần lớn dữ liệu ẩm thực đang tập trung dày đặc tại trục đường Trần Phú, Phan Châu Trinh và khu vực Chùa Cầu. Điểm quét QR có nhiệt lượng cao nhất vào khung giờ 16:00 - 20:30.</span>
-                        </p>
-                        <p style="margin: 0;">
-                          <strong>Định hướng mở rộng:</strong> <span id="adminMapInsightStrategy">Khu vực ngoại ô như <em>Làng rau Trà Quế</em>, <em>Cẩm Hà</em> và bãi biển <em>An Bàng</em> hiện tại còn trống dữ liệu. Admin nên đẩy mạnh liên kết thêm các quán ăn vườn và ẩm thực hải sản tại các khu vực này nhằm phân bổ đồng đều lưu lượng khách du lịch và tăng giá trị toàn hệ thống.</span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <dialog id="dlg">
-      <form method="dialog" id="form">
-        <h2 id="dlgTitle">Thêm món ăn mới (5 ngôn ngữ)</h2>
-
-        <div class="form-lang-tabs" id="formLangTabs">
-          <button type="button" class="form-lang-tab active" data-flang="vi">
-            VI Tiếng Việt
-          </button>
-          <button type="button" class="form-lang-tab" data-flang="en">
-            EN English
-          </button>
-          <button type="button" class="form-lang-tab" data-flang="zh">
-            ZH 中文
-          </button>
-          <button type="button" class="form-lang-tab" data-flang="ko">
-            KO 한국어
-          </button>
-          <button type="button" class="form-lang-tab" data-flang="ja">
-            JA 日本語
-          </button>
-        </div>
-
-        <div class="lang-pane" data-pane="vi">
-          <label
-            >Tên món (Tiếng Việt - Bắt buộc)<input
-              name="name_vi"
-              placeholder="VD: Cao lầu Hội An"
-              required
-          /></label>
-          <label
-            >Thuyết minh món ăn (Tiếng Việt)<textarea
-              name="desc_vi"
-              rows="3"
-              placeholder="Nội dung thuyết minh Tiếng Việt..."
-            ></textarea>
-          </label>
-        </div>
-        <div class="lang-pane" data-pane="en" hidden>
-          <label
-            >Dish Name (English)<input
-              name="name_en"
-              placeholder="e.g. Cao Lau"
-          /></label>
-          <label
-            >Narration / Description (English)<textarea
-              name="desc_en"
-              rows="3"
-              placeholder="English audio narration text..."
-            ></textarea>
-          </label>
-        </div>
-        <div class="lang-pane" data-pane="zh" hidden>
-          <label
-            >菜品名称 (中文)<input name="name_zh" placeholder="例如：高楼面"
-          /></label>
-          <label
-            >语音讲解内容 (中文)<textarea
-              name="desc_zh"
-              rows="3"
-              placeholder="中文介绍与讲解..."
-            ></textarea>
-          </label>
-        </div>
-        <div class="lang-pane" data-pane="ko" hidden>
-          <label
-            >음식 이름 (한국어)<input name="name_ko" placeholder="예: 까오러우"
-          /></label>
-          <label
-            >오디오 가이드 설명 (한국어)<textarea
-              name="desc_ko"
-              rows="3"
-              placeholder="한국어 음식 설명..."
-            ></textarea>
-          </label>
-        </div>
-        <div class="lang-pane" data-pane="ja" hidden>
-          <label
-            >料理名 (日本語)<input name="name_ja" placeholder="例：カオラウ"
-          /></label>
-          <label
-            >音声ガイド解説 (日本語)<textarea
-              name="desc_ja"
-              rows="3"
-              placeholder="日本語の料理解説..."
-            ></textarea>
-          </label>
-        </div>
-
-        <div class="row">
-          <label>Danh mục<select name="category_id"></select></label>
-        </div>
-
-        <div class="row">
-          <input type="hidden" name="emoji" value="" />
-          <label
-            >Địa chỉ quán tại Hội An<input
-              name="address"
-              placeholder="VD: 687 Hai Bà Trưng, Hội An"
-          /></label>
-        </div>
-
-        <div class="row">
-          <label
-            >Vĩ độ GPS (Lat)<input
-              name="lat"
-              type="number"
-              step="any"
-              value="15.878"
-          /></label>
-          <label
-            >Kinh độ GPS (Lng)<input
-              name="lng"
-              type="number"
-              step="any"
-              value="108.327"
-          /></label>
-        </div>
-        <div style="margin: 2px 0 14px;">
-          <button
-            type="button"
-            id="dishMapOpen"
-            style="width: 100%; padding: 10px 14px; background: #fff8eb; border: 1.5px dashed #d97706; border-radius: 9px; color: #b45309; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;"
-            onmouseover="this.style.background='#fef3c7'"
-            onmouseout="this.style.background='#fff8eb'"
-          >
-            
-            <span>Ghim tọa độ quán ăn trên bản đồ (Coordinate Picker)</span>
-          </button>
-        </div>
-
-        <label
-          >Ảnh món ăn (Dán link ảnh web hoặc chọn file tải lên từ máy
-          tính)</label
-        >
-        <div class="upload-box">
-          <div class="upload-preview" id="imgPreviewBox" style="font-size:12px; color:var(--muted); text-align:center;">Chưa có ảnh</div>
-          <div class="upload-controls">
-            <div style="display: flex; gap: 8px; margin-bottom: 10px">
-              <input
-                type="text"
-                name="image_url"
-                id="imageUrlInput"
-                placeholder="Dán link ảnh URL (https://...)"
-                style="flex: 1"
-              />
-              <button
-                type="button"
-                id="btnClearImage"
-                class="btn-clear-img"
-                title="Xóa ảnh hiện tại"
-              >
-                Xóa ảnh
-              </button>
-            </div>
-            <div class="file-upload-row">
-              <input
-                type="file"
-                id="imageFile"
-                accept="image/*"
-                style="display: none;"
-              />
-              <label for="imageFile" class="btn-custom-upload" id="uploadLabelBtn">
-                
-                <span>Tải ảnh từ máy tính</span>
-              </label>
-              <span class="upload-file-name" id="uploadFileName">Chưa chọn tệp</span>
-            </div>
-            <small class="upload-status" id="uploadStatus"
-              >Hỗ trợ dán trực tiếp link ảnh (HTTPS) hoặc chọn file từ máy tính (JPG, PNG, WEBP)</small
-            >
-          </div>
-        </div>
-
-        <label class="check">
-          <input type="checkbox" name="is_active" checked />
-          Hiển thị món ăn này trên trang chủ
-        </label>
-        <div style="margin:16px 0;">
-  <div id="dishMapPanel" hidden style="margin-top:12px;border:1px solid #eadbcd;border-radius:10px;overflow:hidden;">
-    <div id="dishMapCanvas" style="height:300px;width:100%;"></div>
-    <p id="dishMapStatus" role="status" style="margin:0;padding:12px;font-size:13px;color:#927c70;">Bấm trên bản đồ hoặc kéo ghim đến vị trí quán.</p>
-    <div style="display:flex;justify-content:flex-end;gap:8px;padding:12px;">
-      <button type="button" id="dishMapCancel">Hủy chọn</button>
-      <button type="button" id="dishMapApply">Dùng tọa độ này</button>
-    </div>
-  </div>
-</div>
-        <p id="formErr" style="color: var(--danger); margin: 8px 0 0"></p>
-        <div class="foot">
-          <button type="button" id="cancel">Đóng</button>
-          <button class="primary" type="submit">Lưu món ăn (5 ngôn ngữ)</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-    <script>
-      const LANG_KEYS = ["vi", "en", "zh", "ko", "ja"];
-      const LANG_LABELS = {
-        vi: "VI Tiếng Việt",
-        en: "EN English",
-        zh: "ZH 中文",
-        ko: "KO 한국어",
-        ja: "JA 日本語",
-      };
-
-      const $ = (s) => document.querySelector(s);
-      const $$ = (s) => Array.from(document.querySelectorAll(s));
-      const esc = (s) =>
-        String(s ?? "")
-          .normalize("NFC")
-          .replace(
-            /[&<>"']/g,
-            (c) =>
-              ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;",
-              })[c],
-          );
-      const vnd = (n) =>
-        n == null ? "Đang cập nhật" : Number(n).toLocaleString("vi-VN") + "đ";
-      const dmy = (d) =>
-        new Date(d).toLocaleString("vi-VN", {
-          day: "2-digit",
-          month: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        });
-
-      function getDishImageUrl(dish) {
-        if (!dish) return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-        let url = (dish.image_url || dish.img || dish.image || "").trim();
-        if (url) {
-          if (url.startsWith("http://doancnpm-backend.onrender.com")) {
-            url = url.replace("http://doancnpm-backend.onrender.com", "https://doancnpm-backend.onrender.com");
-          }
-          return url;
-        }
-        const name = (dish.translations?.vi?.name || dish.name || dish.shopVi || "").toLowerCase();
-        if (name.includes("cao lầu") || name.includes("cao lau")) {
-          return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("bánh mì") || name.includes("banh mi")) {
-          return "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("bánh bèo") || name.includes("banh beo")) {
-          return "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("mót") || name.includes("mot") || name.includes("trà") || name.includes("tra")) {
-          return "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("bánh đập") || name.includes("banh dap")) {
-          return "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("bánh ướt") || name.includes("banh uot")) {
-          return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("cơm gà") || name.includes("com ga")) {
-          return "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&q=80&w=800";
-        }
-        if (name.includes("mì quảng") || name.includes("mi quang")) {
-          return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-        }
-        return "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800";
-      }
-
-      const DEFAULT_HOI_AN_DISHES = [
+const DEFAULT_HOI_AN_DISHES = [
   {
     "id": 4,
     "category_id": 4,
@@ -4199,52 +86,50 @@
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-      "en": "Main Dishes",
-      "ja": "メイン料理",
-      "ko": "메인 요리",
-      "vi": "Món chính",
-      "zh": "主菜"
+"en": "Main Dishes",
+"ja": "メイン料理",
+"ko": "메인 요리",
+"vi": "Món chính",
+"zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Quán Cao lầu Bá Le",
-        "description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế."
-      },
-      "en": {
-        "name": "Traditional Hoi An Cao Lau Noodles",
-        "description": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares."
-      },
-      "zh": {
-        "name": "会安传统高楼面 (Cao Lầu)",
-        "description": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。"
-      },
-      "ko": {
-        "name": "호이안 전통 까오러우 (Cao Lầu)",
-        "description": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다."
-      },
-      "ja": {
-        "name": "ホイアン伝統カオラウ（伊勢うどん風麺）",
-        "description": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
-      }
+"vi": {
+  "name": "Quán Cao lầu Bá Le",
+  "description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế."
+},
+"en": {
+  "name": "Traditional Hoi An Cao Lau Noodles",
+  "description": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares."
+},
+"zh": {
+  "name": "会安传统高楼面 (Cao Lầu)",
+  "description": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。"
+},
+"ko": {
+  "name": "호이안 전통 까오러우 (Cao Lầu)",
+  "description": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다."
+},
+"ja": {
+  "name": "ホイアン伝統カオラウ（伊勢うどん風麺）",
+  "description": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Quán Cao lầu Bá Le",
     "localized_description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
     "name_i18n": {
-      "vi": "Quán Cao lầu Bá Le",
-      "en": "Traditional Hoi An Cao Lau Noodles",
-      "zh": "会安传统高楼面 (Cao Lầu)",
-      "ko": "호이안 전통 까오러우 (Cao Lầu)",
-      "ja": "ホイアン伝統カオラウ（伊勢うどん風麺）"
+"vi": "Quán Cao lầu Bá Le",
+"en": "Traditional Hoi An Cao Lau Noodles",
+"zh": "会安传统高楼面 (Cao Lầu)",
+"ko": "호이안 전통 까오러우 (Cao Lầu)",
+"ja": "ホイアン伝統カオラウ（伊勢うどん風麺）"
     },
     "desc_i18n": {
-      "vi": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
-      "en": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares.",
-      "zh": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。",
-      "ko": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다.",
-      "ja": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
+"vi": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
+"en": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares.",
+"zh": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。",
+"ko": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다.",
+"ja": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
     }
   },
   {
@@ -4262,52 +147,50 @@
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-      "en": "Main Dishes",
-      "ja": "メイン料理",
-      "ko": "메인 요리",
-      "vi": "Món chính",
-      "zh": "主菜"
+"en": "Main Dishes",
+"ja": "メイン料理",
+"ko": "메인 요리",
+"vi": "Món chính",
+"zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Bánh Mì Phượng",
-        "description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt."
-      },
-      "en": {
-        "name": "Hoi An Crispy Baguette (Banh Mi)",
-        "description": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce."
-      },
-      "zh": {
-        "name": "会安炭烤法棍三明治",
-        "description": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。"
-      },
-      "ko": {
-        "name": "호이안 크리스피 반미",
-        "description": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다."
-      },
-      "ja": {
-        "name": "ホイアン炭火焼きバインミー",
-        "description": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
-      }
+"vi": {
+  "name": "Bánh Mì Phượng",
+  "description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt."
+},
+"en": {
+  "name": "Hoi An Crispy Baguette (Banh Mi)",
+  "description": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce."
+},
+"zh": {
+  "name": "会安炭烤法棍三明治",
+  "description": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。"
+},
+"ko": {
+  "name": "호이안 크리스피 반미",
+  "description": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다."
+},
+"ja": {
+  "name": "ホイアン炭火焼きバインミー",
+  "description": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Bánh Mì Phượng",
     "localized_description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
     "name_i18n": {
-      "vi": "Bánh Mì Phượng",
-      "en": "Hoi An Crispy Baguette (Banh Mi)",
-      "zh": "会安炭烤法棍三明治",
-      "ko": "호이안 크리스피 반미",
-      "ja": "ホイアン炭火焼きバインミー"
+"vi": "Bánh Mì Phượng",
+"en": "Hoi An Crispy Baguette (Banh Mi)",
+"zh": "会安炭烤法棍三明治",
+"ko": "호이안 크리스피 반미",
+"ja": "ホイアン炭火焼きバインミー"
     },
     "desc_i18n": {
-      "vi": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
-      "en": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce.",
-      "zh": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。",
-      "ko": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다.",
-      "ja": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
+"vi": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
+"en": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce.",
+"zh": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。",
+"ko": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다.",
+"ja": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
     }
   },
   {
@@ -4325,52 +208,50 @@
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-      "en": "Main Dishes",
-      "ja": "メイン料理",
-      "ko": "메인 요리",
-      "vi": "Món chính",
-      "zh": "主菜"
+"en": "Main Dishes",
+"ja": "メイン料理",
+"ko": "메인 요리",
+"vi": "Món chính",
+"zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Bánh Bèo Bà Bảy",
-        "description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ."
-      },
-      "en": {
-        "name": "Crispy Roast Pork Vermicelli",
-        "description": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce."
-      },
-      "zh": {
-        "name": "脆皮烧肉菠萝鱼露拌米粉",
-        "description": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。"
-      },
-      "ko": {
-        "name": "바삭한 구운 삼겹살 비빔 쌀국수",
-        "description": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다."
-      },
-      "ja": {
-        "name": "カリカリ焼き豚の発酵魚醤ビーフン",
-        "description": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
-      }
+"vi": {
+  "name": "Bánh Bèo Bà Bảy",
+  "description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ."
+},
+"en": {
+  "name": "Crispy Roast Pork Vermicelli",
+  "description": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce."
+},
+"zh": {
+  "name": "脆皮烧肉菠萝鱼露拌米粉",
+  "description": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。"
+},
+"ko": {
+  "name": "바삭한 구운 삼겹살 비빔 쌀국수",
+  "description": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다."
+},
+"ja": {
+  "name": "カリカリ焼き豚の発酵魚醤ビーフン",
+  "description": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Bánh Bèo Bà Bảy",
     "localized_description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
     "name_i18n": {
-      "vi": "Bánh Bèo Bà Bảy",
-      "en": "Crispy Roast Pork Vermicelli",
-      "zh": "脆皮烧肉菠萝鱼露拌米粉",
-      "ko": "바삭한 구운 삼겹살 비빔 쌀국수",
-      "ja": "カリカリ焼き豚の発酵魚醤ビーフン"
+"vi": "Bánh Bèo Bà Bảy",
+"en": "Crispy Roast Pork Vermicelli",
+"zh": "脆皮烧肉菠萝鱼露拌米粉",
+"ko": "바삭한 구운 삼겹살 비빔 쌀국수",
+"ja": "カリカリ焼き豚の発酵魚醤ビーフン"
     },
     "desc_i18n": {
-      "vi": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
-      "en": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce.",
-      "zh": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。",
-      "ko": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다.",
-      "ja": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
+"vi": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
+"en": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce.",
+"zh": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。",
+"ko": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다.",
+"ja": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
     }
   },
   {
@@ -4388,52 +269,50 @@
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-      "en": "Main Dishes",
-      "ja": "メイン料理",
-      "ko": "메인 요리",
-      "vi": "Món chính",
-      "zh": "主菜"
+"en": "Main Dishes",
+"ja": "メイン料理",
+"ko": "메인 요리",
+"vi": "Món chính",
+"zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Bánh đập Ni Bà Già",
-        "description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu."
-      },
-      "en": {
-        "name": "Cracked Rice Paper & Stir-Fried Baby Clams",
-        "description": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams."
-      },
-      "zh": {
-        "name": "锦南香炒河蚬配脆拍米饼",
-        "description": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。"
-      },
-      "ko": {
-        "name": "바삭한 반답 크래커와 깜남 재첩 볶음",
-        "description": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다."
-      },
-      "ja": {
-        "name": "バインダップ（割れせんべい）とシジミ炒め",
-        "description": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
-      }
+"vi": {
+  "name": "Bánh đập Ni Bà Già",
+  "description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu."
+},
+"en": {
+  "name": "Cracked Rice Paper & Stir-Fried Baby Clams",
+  "description": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams."
+},
+"zh": {
+  "name": "锦南香炒河蚬配脆拍米饼",
+  "description": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。"
+},
+"ko": {
+  "name": "바삭한 반답 크래커와 깜남 재첩 볶음",
+  "description": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다."
+},
+"ja": {
+  "name": "バインダップ（割れせんべい）とシジミ炒め",
+  "description": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Bánh đập Ni Bà Già",
     "localized_description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
     "name_i18n": {
-      "vi": "Bánh đập Ni Bà Già",
-      "en": "Cracked Rice Paper & Stir-Fried Baby Clams",
-      "zh": "锦南香炒河蚬配脆拍米饼",
-      "ko": "바삭한 반답 크래커와 깜남 재첩 볶음",
-      "ja": "バインダップ（割れせんべい）とシジミ炒め"
+"vi": "Bánh đập Ni Bà Già",
+"en": "Cracked Rice Paper & Stir-Fried Baby Clams",
+"zh": "锦南香炒河蚬配脆拍米饼",
+"ko": "바삭한 반답 크래커와 깜남 재첩 볶음",
+"ja": "バインダップ（割れせんべい）とシジミ炒め"
     },
     "desc_i18n": {
-      "vi": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
-      "en": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams.",
-      "zh": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。",
-      "ko": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다.",
-      "ja": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
+"vi": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
+"en": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams.",
+"zh": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。",
+"ko": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다.",
+"ja": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
     }
   },
   {
@@ -4451,52 +330,50 @@
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-      "en": "Main Dishes",
-      "ja": "メイン料理",
-      "ko": "메인 요리",
-      "vi": "Món chính",
-      "zh": "主菜"
+"en": "Main Dishes",
+"ja": "メイン料理",
+"ko": "메인 요리",
+"vi": "Món chính",
+"zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Bánh Ướt Ban Mê Giang Vương",
-        "description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch."
-      },
-      "en": {
-        "name": "Cam Nam Baby Corn Sweet Soup",
-        "description": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream."
-      },
-      "zh": {
-        "name": "锦南岛椰香嫩玉米甜羹",
-        "description": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。"
-      },
-      "ko": {
-        "name": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
-        "description": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다."
-      },
-      "ja": {
-        "name": "カムナム島の若トウモロコシとココナッツのチェー",
-        "description": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
-      }
+"vi": {
+  "name": "Bánh Ướt Ban Mê Giang Vương",
+  "description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch."
+},
+"en": {
+  "name": "Cam Nam Baby Corn Sweet Soup",
+  "description": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream."
+},
+"zh": {
+  "name": "锦南岛椰香嫩玉米甜羹",
+  "description": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。"
+},
+"ko": {
+  "name": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
+  "description": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다."
+},
+"ja": {
+  "name": "カムナム島の若トウモロコシとココナッツのチェー",
+  "description": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Bánh Ướt Ban Mê Giang Vương",
     "localized_description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
     "name_i18n": {
-      "vi": "Bánh Ướt Ban Mê Giang Vương",
-      "en": "Cam Nam Baby Corn Sweet Soup",
-      "zh": "锦南岛椰香嫩玉米甜羹",
-      "ko": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
-      "ja": "カムナム島の若トウモロコシとココナッツのチェー"
+"vi": "Bánh Ướt Ban Mê Giang Vương",
+"en": "Cam Nam Baby Corn Sweet Soup",
+"zh": "锦南岛椰香嫩玉米甜羹",
+"ko": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
+"ja": "カムナム島の若トウモロコシとココナッツのチェー"
     },
     "desc_i18n": {
-      "vi": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
-      "en": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream.",
-      "zh": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。",
-      "ko": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다.",
-      "ja": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
+"vi": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
+"en": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream.",
+"zh": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。",
+"ko": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다.",
+"ja": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
     }
   },
   {
@@ -4514,1030 +391,1027 @@
     "category_name": "Chè & Đồ uống",
     "category_slug": "sweet",
     "category_translations": {
-      "en": "Sweet Soups & Drinks",
-      "ja": "チェー・飲み物",
-      "ko": "디저트 & 음료",
-      "vi": "Chè & Đồ uống",
-      "zh": "甜品与饮品"
+"en": "Sweet Soups & Drinks",
+"ja": "チェー・飲み物",
+"ko": "디저트 & 음료",
+"vi": "Chè & Đồ uống",
+"zh": "甜品与饮品"
     },
     "favorite_count": 0,
     "translations": {
-      "vi": {
-        "name": "Trà mót",
-        "description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An."
-      },
-      "en": {
-        "name": "Mot Lotus Petal Herbal Lemongrass Tea",
-        "description": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal."
-      },
-      "zh": {
-        "name": "会安荷花瓣九味草本柠檬香茅茶",
-        "description": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。"
-      },
-      "ko": {
-        "name": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
-        "description": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다."
-      },
-      "ja": {
-        "name": "蓮の花びら添え・9種ハーブのレモングラス茶",
-        "description": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
-      }
+"vi": {
+  "name": "Trà mót",
+  "description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An."
+},
+"en": {
+  "name": "Mot Lotus Petal Herbal Lemongrass Tea",
+  "description": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal."
+},
+"zh": {
+  "name": "会安荷花瓣九味草本柠檬香茅茶",
+  "description": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。"
+},
+"ko": {
+  "name": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
+  "description": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다."
+},
+"ja": {
+  "name": "蓮の花びら添え・9種ハーブのレモングラス茶",
+  "description": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
+}
     },
-    "rating": 4.8,
-    "emoji": "🍜",
     "localized_name": "Trà mót",
     "localized_description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
     "name_i18n": {
-      "vi": "Trà mót",
-      "en": "Mot Lotus Petal Herbal Lemongrass Tea",
-      "zh": "会安荷花瓣九味草本柠檬香茅茶",
-      "ko": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
-      "ja": "蓮の花びら添え・9種ハーブのレモングラス茶"
+"vi": "Trà mót",
+"en": "Mot Lotus Petal Herbal Lemongrass Tea",
+"zh": "会安荷花瓣九味草本柠檬香茅茶",
+"ko": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
+"ja": "蓮の花びら添え・9種ハーブのレモングラス茶"
     },
     "desc_i18n": {
-      "vi": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
-      "en": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal.",
-      "zh": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。",
-      "ko": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다.",
-      "ja": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
+"vi": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
+"en": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal.",
+"zh": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。",
+"ko": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다.",
+"ja": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
     }
   }
 ];
 
-      let dishes = DEFAULT_HOI_AN_DISHES.slice(),
-        cats = [],
-        editing = null,
-        viewMode = "table",
-        currentLang = "vi",
-        dishLangMap = {},
-        barMode = "engage",
-        pieMode = "cat",
-        lineMode = "dish",
-        lastStats = { totals: {}, daily: [], top: [], by_category: [] },
-        onlineHistory = [],
-        latestPresence = {
-          online_count: 0,
-          real_online: 0,
-          config: { OFFSET_ONLINE_COUNT: 0, FIXED_ONLINE_COUNT: null },
-          devices: [],
-        };
+let dishes = DEFAULT_HOI_AN_DISHES.slice(),
+  cats = [],
+  editing = null,
+  viewMode = "table",
+  currentLang = "vi",
+  dishLangMap = {},
+  barMode = "engage",
+  pieMode = "cat",
+  lineMode = "dish",
+  lastStats = { totals: {}, daily: [], top: [], by_category: [] },
+  onlineHistory = [],
+  latestPresence = {
+    online_count: 0,
+    real_online: 0,
+    config: { OFFSET_ONLINE_COUNT: 0, FIXED_ONLINE_COUNT: null },
+    devices: [],
+  };
 
-      const PIE_COLORS = [
-        "#d4152f",
-        "#e9c26b",
-        "#10b981",
-        "#3b82f6",
-        "#a855f7",
-        "#f97316",
-      ];
+const PIE_COLORS = [
+  "#d4152f",
+  "#e9c26b",
+  "#10b981",
+  "#3b82f6",
+  "#a855f7",
+  "#f97316",
+];
 
-      let authToken = localStorage.getItem("hoian_admin_token") || "";
+let authToken = localStorage.getItem("hoian_admin_token") || "";
 
-      const API_BASE = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "4000"))
-        ? "http://localhost:4000/api"
-        : "/api";
+const API_BASE = (window.location.protocol === "file:" || (window.location.port && window.location.port !== "4000"))
+  ? "http://localhost:4000/api"
+  : "/api";
 
-      async function api(path, opts = {}) {
-        const sep = path.includes("?") ? "&" : "?";
-        const url =
-          API_BASE +
-          path +
-          (opts.method && opts.method !== "GET" ? "" : sep + "_t=" + Date.now());
-        const headers = {
-          "Content-Type": "application/json",
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          ...(opts.headers || {}),
-        };
-        if (authToken) {
-          headers["Authorization"] = "Bearer " + authToken;
-        }
-        const r = await fetch(url, {
-          cache: "no-store",
-          ...opts,
-          headers,
-        });
-        if (r.status === 401 && !path.startsWith("/auth/")) {
-          doLogout("Phiên đăng nhập quản trị đã hết hạn. Vui lòng đăng nhập lại.");
-          throw new Error("Yêu cầu đăng nhập tài khoản quản trị");
-        }
-        if (!r.ok) {
-          const e = await r.json().catch(() => ({}));
-          throw new Error(e.message || "Lỗi " + r.status);
-        }
-        return r.status === 204 ? null : r.json();
-      }
+async function api(path, opts = {}) {
+  const sep = path.includes("?") ? "&" : "?";
+  const url =
+    API_BASE +
+    path +
+    (opts.method && opts.method !== "GET" ? "" : sep + "_t=" + Date.now());
+  const headers = {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache, no-store, must-revalidate",
+    "Pragma": "no-cache",
+    ...(opts.headers || {}),
+  };
+  if (authToken) {
+    headers["Authorization"] = "Bearer " + authToken;
+  }
+  const r = await fetch(url, {
+    cache: "no-store",
+    ...opts,
+    headers,
+  });
+  if (r.status === 401 && !path.startsWith("/auth/")) {
+    doLogout("Phiên đăng nhập quản trị đã hết hạn. Vui lòng đăng nhập lại.");
+    throw new Error("Yêu cầu đăng nhập tài khoản quản trị");
+  }
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.message || "Lỗi " + r.status);
+  }
+  return r.status === 204 ? null : r.json();
+}
 
-      function getCatLabel(catId, fallbackName) {
-        const c = cats.find((x) => String(x.id) === String(catId));
-        if (!c) return fallbackName || "Món Hội An";
-        return c.translations?.vi || c.name;
-      }
+function getCatLabel(catId, fallbackName) {
+  const c = cats.find((x) => String(x.id) === String(catId));
+  if (!c) return fallbackName || "Món Hội An";
+  return c.translations?.vi || c.name;
+}
 
-      function pushOnlinePoint(count) {
-        const timeStr = new Date().toLocaleTimeString("vi-VN", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-        });
-        onlineHistory.push({ label: timeStr, val: Number(count || 0) });
-        if (onlineHistory.length > 7) onlineHistory.shift();
-      }
+function pushOnlinePoint(count) {
+  const timeStr = new Date().toLocaleTimeString("vi-VN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+  onlineHistory.push({ label: timeStr, val: Number(count || 0) });
+  if (onlineHistory.length > 7) onlineHistory.shift();
+}
 
-      function renderBarChart() {
-        const box = $("#liveBarChart");
-        if (!box) return;
-        const source = dishes.length ? dishes : lastStats.top || [];
-        if (!source.length) {
-          box.innerHTML = `<div class="empty" style="width:100%;margin:0">Chưa có dữ liệu món ăn</div>`;
-          return;
-        }
+function renderBarChart() {
+  const box = $("#liveBarChart");
+  if (!box) return;
+  const source = dishes.length ? dishes : lastStats.top || [];
+  if (!source.length) {
+    box.innerHTML = `<div class="empty" style="width:100%;margin:0">Chưa có dữ liệu món ăn</div>`;
+    return;
+  }
 
-        const topMetrics = {};
-        for (const item of lastStats.top || []) {
-          topMetrics[item.id] = item;
-        }
+  const topMetrics = {};
+  for (const item of lastStats.top || []) {
+    topMetrics[item.id] = item;
+  }
 
-        const items = source.slice(0, 7).map((d) => {
-          const m = topMetrics[d.id] || {};
-          const favs = Number(d.favorite_count ?? m.favorites ?? 0);
-          const checks = Number(m.check_ins ?? 0);
-          const val = favs + checks;
-          const unit = `${val} lượt`;
-          const shortName = (d.name || "")
-            .replace(/^(Quán|Tiệm)\s+/i, "")
-            .slice(0, 11);
-          return { id: d.id, name: d.name, shortName, val, favs, checks, unit };
-        });
+  const items = source.slice(0, 7).map((d) => {
+    const m = topMetrics[d.id] || {};
+    const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+    const checks = Number(m.check_ins ?? 0);
+    const val = favs + checks;
+    const unit = `${val} lượt`;
+    const shortName = (d.name || "")
+      .replace(/^(Quán|Tiệm)\s+/i, "")
+      .slice(0, 11);
+    return { id: d.id, name: d.name, shortName, val, favs, checks, unit };
+  });
 
-        const maxVal = Math.max(1, ...items.map((x) => x.val));
-        box.innerHTML = items
-          .map(
-            (x) => `
-          <div class="bar-col" data-tt-type="bar" data-tt-title="${esc(x.name)}" data-tt-val="${esc(x.unit)}" data-tt-favs="${x.favs}" data-tt-checks="${x.checks}">
-            <span class="bar-val">${esc(x.unit)}</span>
-            <i class="bar-fill" style="height:${Math.max(8, Math.round((x.val / maxVal) * 84))}%"></i>
-            <span class="bar-lbl">${esc(x.shortName)}</span>
-          </div>`,
-          )
-          .join("");
-      }
+  const maxVal = Math.max(1, ...items.map((x) => x.val));
+  box.innerHTML = items
+    .map(
+      (x) => `
+    <div class="bar-col" data-tt-type="bar" data-tt-title="${esc(x.name)}" data-tt-val="${esc(x.unit)}" data-tt-favs="${x.favs}" data-tt-checks="${x.checks}">
+      <span class="bar-val">${esc(x.unit)}</span>
+      <i class="bar-fill" style="height:${Math.max(8, Math.round((x.val / maxVal) * 84))}%"></i>
+      <span class="bar-lbl">${esc(x.shortName)}</span>
+    </div>`,
+    )
+    .join("");
+}
 
-      function renderPieChart() {
-        const svg = $("#livePieSvg");
-        const legend = $("#livePieLegend");
-        if (!svg || !legend) return;
+function renderPieChart() {
+  const svg = $("#livePieSvg");
+  const legend = $("#livePieLegend");
+  if (!svg || !legend) return;
 
-        let segments = [];
-        if (pieMode === "cat") {
-          const catCounts = cats.map((c) => {
-            const cnt = dishes.filter(
-              (d) => String(d.category_id) === String(c.id),
-            ).length;
-            return {
-              label: c.translations?.vi || c.name,
-              val: cnt,
-              catId: c.id,
-            };
-          });
-          const uncat = dishes.filter((d) => !d.category_id).length;
-          if (uncat > 0)
-            catCounts.push({ label: "Khác", val: uncat, catId: "" });
-          segments = catCounts.filter((x) => x.val > 0);
-          $("#pieCenterVal").textContent = dishes.length;
-          $("#pieCenterLbl").textContent = "tổng món";
-        } else {
-          const topMetrics = {};
-          for (const item of lastStats.top || []) topMetrics[item.id] = item;
-          segments = dishes.slice(0, 6).map((d) => {
-            const m = topMetrics[d.id] || {};
-            const favs = Number(d.favorite_count ?? m.favorites ?? 0);
-            const checks = Number(m.check_ins ?? 0);
-            return {
-              label: (d.name || "")
-                .replace(/^(Quán|Tiệm)\s+/i, "")
-                .slice(0, 14),
-              val: Math.max(1, favs + checks),
-              catId: d.category_id || "",
-            };
-          });
-          const totalEngage = segments.reduce((s, x) => s + x.val, 0);
-          $("#pieCenterVal").textContent = totalEngage;
-          $("#pieCenterLbl").textContent = "lượt tương tác";
-        }
+  let segments = [];
+  if (pieMode === "cat") {
+    const catCounts = cats.map((c) => {
+      const cnt = dishes.filter(
+        (d) => String(d.category_id) === String(c.id),
+      ).length;
+      return {
+        label: c.translations?.vi || c.name,
+        val: cnt,
+        catId: c.id,
+      };
+    });
+    const uncat = dishes.filter((d) => !d.category_id).length;
+    if (uncat > 0)
+      catCounts.push({ label: "Khác", val: uncat, catId: "" });
+    segments = catCounts.filter((x) => x.val > 0);
+    $("#pieCenterVal").textContent = dishes.length;
+    $("#pieCenterLbl").textContent = "tổng món";
+  } else {
+    const topMetrics = {};
+    for (const item of lastStats.top || []) topMetrics[item.id] = item;
+    segments = dishes.slice(0, 6).map((d) => {
+      const m = topMetrics[d.id] || {};
+      const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+      const checks = Number(m.check_ins ?? 0);
+      return {
+        label: (d.name || "")
+          .replace(/^(Quán|Tiệm)\s+/i, "")
+          .slice(0, 14),
+        val: Math.max(1, favs + checks),
+        catId: d.category_id || "",
+      };
+    });
+    const totalEngage = segments.reduce((s, x) => s + x.val, 0);
+    $("#pieCenterVal").textContent = totalEngage;
+    $("#pieCenterLbl").textContent = "lượt tương tác";
+  }
 
-        const total = segments.reduce((acc, s) => acc + s.val, 0);
-        if (total === 0) {
-          svg.innerHTML = `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5"></circle>`;
-          legend.innerHTML = `<small style="color:var(--muted)">Chưa có số liệu</small>`;
-          return;
-        }
+  const total = segments.reduce((acc, s) => acc + s.val, 0);
+  if (total === 0) {
+    svg.innerHTML = `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5"></circle>`;
+    legend.innerHTML = `<small style="color:var(--muted)">Chưa có số liệu</small>`;
+    return;
+  }
 
-        let offset = 25;
-        const circles = [
-          `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5.5"></circle>`,
-        ];
+  let offset = 25;
+  const circles = [
+    `<circle cx="21" cy="21" r="15.915" fill="transparent" stroke="#e2e8f0" stroke-width="5.5"></circle>`,
+  ];
 
-        segments.forEach((seg, idx) => {
-          const pct = (seg.val / total) * 100;
-          const color = PIE_COLORS[idx % PIE_COLORS.length];
-          circles.push(
-            `<circle class="pie-slice" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct.toFixed(1)}%" data-tt-mode="${pieMode}" cx="21" cy="21" r="15.915" fill="transparent" stroke="${color}" stroke-width="5.5" stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="${offset}" style="transition: stroke-dasharray 0.35s ease"></circle>`,
-          );
-          offset -= pct;
-        });
+  segments.forEach((seg, idx) => {
+    const pct = (seg.val / total) * 100;
+    const color = PIE_COLORS[idx % PIE_COLORS.length];
+    circles.push(
+      `<circle class="pie-slice" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct.toFixed(1)}%" data-tt-mode="${pieMode}" cx="21" cy="21" r="15.915" fill="transparent" stroke="${color}" stroke-width="5.5" stroke-dasharray="${pct} ${100 - pct}" stroke-dashoffset="${offset}" style="transition: stroke-dasharray 0.35s ease"></circle>`,
+    );
+    offset -= pct;
+  });
 
-        svg.innerHTML = circles.join("");
-        legend.innerHTML = segments
-          .map((seg, idx) => {
-            const pct = Math.round((seg.val / total) * 100);
-            const color = PIE_COLORS[idx % PIE_COLORS.length];
-            const unitTxt =
-              pieMode === "cat"
-                ? `${seg.val} món (${pct}%)`
-                : `${seg.val} lượt (${pct}%)`;
-            return `
-            <div class="pie-item" style="cursor:pointer" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct}%" data-tt-mode="${pieMode}" data-filter-cat="${esc(seg.catId ?? "")}">
-              <div class="pie-item-left">
-                <span class="pie-dot" style="background:${color}"></span>
-                <span class="pie-name">${esc(seg.label)}</span>
-              </div>
-              <span class="pie-pct">${unitTxt}</span>
-            </div>`;
-          })
-          .join("");
-      }
+  svg.innerHTML = circles.join("");
+  legend.innerHTML = segments
+    .map((seg, idx) => {
+      const pct = Math.round((seg.val / total) * 100);
+      const color = PIE_COLORS[idx % PIE_COLORS.length];
+      const unitTxt =
+        pieMode === "cat"
+          ? `${seg.val} món (${pct}%)`
+          : `${seg.val} lượt (${pct}%)`;
+      return `
+      <div class="pie-item" style="cursor:pointer" data-tt-type="pie" data-tt-title="${esc(seg.label)}" data-tt-val="${seg.val}" data-tt-pct="${pct}%" data-tt-mode="${pieMode}" data-filter-cat="${esc(seg.catId ?? "")}">
+        <div class="pie-item-left">
+          <span class="pie-dot" style="background:${color}"></span>
+          <span class="pie-name">${esc(seg.label)}</span>
+        </div>
+        <span class="pie-pct">${unitTxt}</span>
+      </div>`;
+    })
+    .join("");
+}
 
-      function renderLineChart() {
-        const svg = $("#liveLineSvg");
-        const labelsEl = $("#liveLineLabels");
-        if (!svg || !labelsEl) return;
+function renderLineChart() {
+  const svg = $("#liveLineSvg");
+  const labelsEl = $("#liveLineLabels");
+  if (!svg || !labelsEl) return;
 
-        let pointsData = [];
-        if (lineMode === "online") {
-          if (onlineHistory.length === 0) {
-            pushOnlinePoint(latestPresence.online_count || 0);
+  let pointsData = [];
+  if (lineMode === "online") {
+    if (onlineHistory.length === 0) {
+      pushOnlinePoint(latestPresence.online_count || 0);
+    }
+    pointsData = onlineHistory.map((p) => ({
+      label: p.label.slice(0, 5),
+      val: p.val,
+      display: `${p.val}`,
+    }));
+  } else {
+    const topMetrics = {};
+    for (const item of lastStats.top || []) topMetrics[item.id] = item;
+    pointsData = dishes.slice(0, 7).map((d) => {
+      const m = topMetrics[d.id] || {};
+      const favs = Number(d.favorite_count ?? m.favorites ?? 0);
+      const checks = Number(m.check_ins ?? 0);
+      const val = favs + checks;
+      return {
+        label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 9),
+        val,
+        display: `${val} lượt`,
+      };
+    });
+  }
+
+  if (pointsData.length === 0) {
+    svg.innerHTML = "";
+    labelsEl.innerHTML = `<span style="color:var(--muted)">Chưa có dữ liệu</span>`;
+    return;
+  }
+
+  if (pointsData.length === 1) {
+    pointsData = [pointsData[0], { ...pointsData[0] }];
+  }
+
+  const W = 320;
+  const H = 120;
+  const padX = 24;
+  const padTop = 22;
+  const padBot = 12;
+  const usableW = W - padX * 2;
+  const usableH = H - padTop - padBot;
+  const maxVal = Math.max(1, ...pointsData.map((p) => p.val));
+
+  const coords = pointsData.map((p, i) => {
+    const x = padX + (i / (pointsData.length - 1)) * usableW;
+    const y = padTop + usableH - (p.val / maxVal) * usableH;
+    return {
+      x: Math.round(x * 10) / 10,
+      y: Math.round(y * 10) / 10,
+      ...p,
+    };
+  });
+
+  const polyPoints = coords.map((c) => `${c.x},${c.y}`).join(" ");
+  const areaPoints = `${coords[0].x},${H - padBot} ${polyPoints} ${coords[coords.length - 1].x},${H - padBot}`;
+
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e9c26b" stop-opacity="0.42" />
+        <stop offset="100%" stop-color="#d4152f" stop-opacity="0.02" />
+      </linearGradient>
+    </defs>
+    <line x1="${padX}" y1="${H - padBot}" x2="${W - padX}" y2="${H - padBot}" stroke="#e2e8f0" stroke-width="1" />
+    <polygon points="${areaPoints}" fill="url(#lineGrad)" />
+    <polyline fill="none" stroke="#e8a838" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />
+    ${coords
+      .map(
+        (c) => `
+      <g class="line-point-group" data-tt-type="line" data-tt-title="${esc(c.name || c.label)}" data-tt-val="${esc(c.display)}" data-tt-time="${esc(c.label)}" data-tt-mode="${lineMode}">
+        <circle cx="${c.x}" cy="${c.y}" r="15" fill="transparent" />
+        <circle class="line-point-outer" cx="${c.x}" cy="${c.y}" r="7" fill="rgba(233, 194, 107, 0.25)" style="transition: all 0.2s ease; opacity: 0;" />
+        <circle class="line-point-inner" cx="${c.x}" cy="${c.y}" r="4.2" fill="#d4152f" stroke="#e9c26b" stroke-width="2" style="transition: all 0.2s ease;" />
+        <text x="${c.x}" y="${c.y - 8}" fill="#f5ead4" font-size="9.5" font-weight="700" text-anchor="middle">${esc(c.display)}</text>
+      </g>
+    `,
+      )
+      .join("")}
+  `;
+
+  labelsEl.innerHTML = coords
+    .map((c) => `<span>${esc(c.label)}</span>`)
+    .join("");
+}
+
+function renderAllCharts() {
+  renderBarChart();
+  renderPieChart();
+  renderLineChart();
+}
+
+function renderPresence(p) {
+  if (!p) return;
+  latestPresence = p;
+  const onlineCount = p.online_count ?? 0;
+
+  const stripOnlineEl = $("#stripOnlineVal");
+  if (stripOnlineEl) stripOnlineEl.textContent = onlineCount;
+  const navOnlineEl = $("#navOnlineCount");
+  if (navOnlineEl) navOnlineEl.textContent = onlineCount;
+
+  $("#liveOnlineNum").textContent = onlineCount;
+
+  pushOnlinePoint(onlineCount);
+  if (lineMode === "online") {
+    renderLineChart();
+  }
+
+  const list = p.devices || [];
+  $("#noActiveDevice").hidden = list.length > 0;
+  $("#activeDevicesList").innerHTML = list
+    .map(
+      (dev, idx) => `
+      <li class="stop-item">
+        <div class="stop-left">
+          <span class="stop-badge done">${idx + 1}</span>
+          <div>
+            <span class="stop-title">${esc(dev.platform || "Thiết bị")} • <span class="lang-mini">${esc((dev.lang || "vi").toUpperCase())}</span></span>
+            <small class="stop-sub">Mã phiên: ${esc(dev.tab_id?.slice(-8) || dev.device_id?.slice(-8))} • Vào lúc ${dmy(dev.connected_at)}</small>
+          </div>
+        </div>
+        <span class="stop-right" style="color: #34d399">Online</span>
+      </li>`,
+    )
+    .join("");
+}
+
+async function loadStats() {
+  const [s, c] = await Promise.all([
+    api("/stats"),
+    api("/checkins?limit=8"),
+  ]);
+  lastStats = s;
+  if (typeof updateSpatialAnalyticsData === "function") {
+    updateSpatialAnalyticsData();
+  }
+  const t = s.totals;
+  if (s.presence) {
+    renderPresence(s.presence);
+  }
+  const statItems = [
+    [
+      "Thiết bị đang truy cập",
+      t.online_devices ?? latestPresence.online_count,
+      true,
+    ],
+    ["Món ăn Hội An", t.dishes, false],
+    ["Danh mục ẩm thực", t.categories, false],
+    ["Lượt yêu thích", t.favorites, false],
+    ["Lượt check-in", t.check_ins, false],
+  ];
+  $("#strip").innerHTML = statItems
+    .map(
+      ([label, val, isLive]) => `
+      <div class="stat-card ${isLive ? "live-card" : ""}">
+        <div class="stat-info">
+          <span>${label}</span>
+          <b ${isLive ? 'id="stripOnlineVal"' : ""}>${val}</b>
+        </div>
+      </div>`,
+    )
+    .join("");
+
+  const navCheckEl = $("#navCheckinCount");
+  if (navCheckEl)
+    navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
+
+  const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
+  const dailyBadge = $("#dailyTotalBadge");
+  if (dailyBadge) dailyBadge.textContent = `${dailySum} LƯỢT / 7 NGÀY`;
+
+  const max = Math.max(1, ...s.daily.map((d) => d.n));
+  $("#bars").innerHTML = s.daily
+    .map((d) => {
+      const label = `${esc(d.day.slice(8))}/${esc(d.day.slice(5, 7))}`;
+      const pct =
+        d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
+      return `
+        <div class="day-col" data-tt-type="daily" data-tt-date="${label}" data-tt-day="${esc(d.day)}" data-tt-count="${d.n}">
+          <b>${d.n}</b>
+          <div class="day-track">
+            <i style="height:${pct}%"></i>
+          </div>
+          <span>${label}</span>
+        </div>`;
+    })
+    .join("");
+
+  $("#top").innerHTML = s.top
+    .slice(0, 5)
+    .map(
+      (d, idx) => `
+      <li class="stop-item">
+        <div class="stop-left">
+          <span class="stop-badge">${idx + 1}</span>
+          <div>
+            <span class="stop-title">${esc(d.name)}</span>
+            <small class="stop-sub">${d.favorites} lượt yêu thích từ thực khách</small>
+          </div>
+        </div>
+        <span class="stop-right">${d.favorites} yêu thích</span>
+      </li>`,
+    )
+    .join("");
+
+  $("#recent").innerHTML = c
+    .map(
+      (x) => `
+      <li class="stop-item">
+        <div class="stop-left">
+          <span class="stop-badge done">✓</span>
+          <div>
+            <span class="stop-title">${esc(x.dish_name)}</span>
+            <small class="stop-sub">${esc(x.note || "Đã check-in tại điểm ẩm thực")}</small>
+          </div>
+        </div>
+        <small style="color: var(--muted); white-space: nowrap">${dmy(x.created_at)}</small>
+      </li>`,
+    )
+    .join("");
+  $("#noCheck").hidden = c.length > 0;
+  renderAllCharts();
+}
+
+function renderDishes() {
+  $("#dishCountBadge").textContent = `${dishes.length} món`;
+  const navDishEl = $("#navDishCount");
+  if (navDishEl) navDishEl.textContent = dishes.length;
+
+  $("#dishes").innerHTML = dishes
+    .map((d) => {
+      const dLang = dishLangMap[d.id] || "vi";
+      const localName = d.name_i18n?.[dLang] || d.name;
+      const localDesc = d.desc_i18n?.[dLang] || d.description || "";
+      const catLabel = getCatLabel(d.category_id, d.category_name);
+      const badges = LANG_KEYS.filter((k) => d.translations?.[k]?.name)
+        .map(
+          (k) =>
+            `<span class="lang-mini ${dLang === k ? "active-mini" : ""}" data-dish-lang="${d.id}:${k}" title="Bấm để xem nội dung món này bằng tiếng ${k.toUpperCase()}">${k}</span>`,
+        )
+        .join("");
+
+      return `
+    <tr class="${d.is_active ? "" : "off"}">
+      <td>
+        <div class="dish-row-cell">
+          ${
+            d.image_url
+              ? `<img class="dish-thumb" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender\.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
+              : `<img class="dish-thumb" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
           }
-          pointsData = onlineHistory.map((p) => ({
-            label: p.label.slice(0, 5),
-            val: p.val,
-            display: `${p.val}`,
-          }));
-        } else {
-          const topMetrics = {};
-          for (const item of lastStats.top || []) topMetrics[item.id] = item;
-          pointsData = dishes.slice(0, 7).map((d) => {
-            const m = topMetrics[d.id] || {};
-            const favs = Number(d.favorite_count ?? m.favorites ?? 0);
-            const checks = Number(m.check_ins ?? 0);
-            const val = favs + checks;
-            return {
-              label: (d.name || "").replace(/^(Quán|Tiệm)\s+/i, "").slice(0, 9),
-              val,
-              display: `${val} lượt`,
-            };
-          });
+          <div>
+            <b>${esc(localName)}</b>
+            <small>${esc(localDesc.slice(0, 78))}${localDesc.length > 78 ? "..." : ""}</small>
+            <small>${esc(d.address || "Phố cổ Hội An")}${d.is_active ? "" : " • (Đang ẩn)"}</small>
+            <div class="lang-badges">${badges}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="dish-card-cat">${esc(catLabel)}</span></td>
+      <td class="act">
+        <button data-edit="${d.id}">Sửa</button>
+        <button class="danger" data-del="${d.id}">Xoá</button>
+      </td>
+    </tr>`;
+    })
+    .join("");
+
+  $("#cardView").innerHTML = dishes
+    .map((d) => {
+      const dLang = dishLangMap[d.id] || "vi";
+      const localName = d.name_i18n?.[dLang] || d.name;
+      const localDesc = d.desc_i18n?.[dLang] || d.description || "";
+      const catLabel = getCatLabel(d.category_id, d.category_name);
+      return `
+    <div class="dish-card ${d.is_active ? "" : "off"}">
+      ${
+          d.image_url
+            ? `<img class="dish-card-img" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
+            : `<img class="dish-card-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
         }
+      <div class="dish-card-body">
+        <div class="dish-card-meta">
+          <span class="dish-card-cat">${esc(catLabel)}</span>
+        </div>
+        <h3 class="dish-card-title">${esc(localName)}</h3>
+        <div class="dish-card-sub">${esc(d.address || "Phố cổ Hội An")}</div>
+        <p class="dish-card-desc">${esc(localDesc)}</p>
+        <div class="dish-card-foot">
+          <button data-edit="${d.id}">Sửa (5 ngôn ngữ)</button>
+          <button class="danger" data-del="${d.id}">Xoá</button>
+        </div>
+      </div>
+    </div>`;
+    })
+    .join("");
 
-        if (pointsData.length === 0) {
-          svg.innerHTML = "";
-          labelsEl.innerHTML = `<span style="color:var(--muted)">Chưa có dữ liệu</span>`;
-          return;
+  $("#noDish").hidden = dishes.length > 0;
+  renderAllCharts();
+}
+
+async function loadDishes() {
+  const p = new URLSearchParams();
+  if ($("#q").value) p.set("q", $("#q").value);
+  if ($("#cat").value) p.set("category_id", $("#cat").value);
+  p.set("lang", "vi");
+  try {
+    const res = await api("/dishes?" + p);
+    if (Array.isArray(res)) dishes = res;
+  } catch (e) {
+    console.error("Lỗi tải món:", e);
+  }
+  renderDishes();
+  if (typeof renderQrManager === "function") renderQrManager();
+  if (typeof updateSpatialAnalyticsData === "function") updateSpatialAnalyticsData();
+}
+
+function renderCatChips() {
+  const current = $("#cat").value;
+  $("#catChips").innerHTML =
+    `<button type="button" class="cat-chip ${current === "" ? "active" : ""}" data-cat="">Tất cả (${dishes.length})</button>` +
+    cats
+      .map((c) => {
+        const label = c.translations?.vi || c.name;
+        return `<button type="button" class="cat-chip ${String(current) === String(c.id) ? "active" : ""}" data-cat="${c.id}">${esc(label)}</button>`;
+      })
+      .join("");
+}
+
+async function loadCats() {
+  cats = await api("/categories?lang=vi");
+  $("#cat").innerHTML =
+    '<option value="">Tất cả danh mục</option>' +
+    cats
+      .map((c) => `<option value="${c.id}">${esc(c.name)}</option>`)
+      .join("");
+  document.querySelector("[name=category_id]").innerHTML =
+    '<option value="">Chưa phân loại</option>' +
+    cats
+      .map((c) => `<option value="${c.id}">${esc(c.name)}</option>`)
+      .join("");
+  renderCatChips();
+}
+
+function switchFormLangTab(flang) {
+  $$("#formLangTabs .form-lang-tab").forEach((btn) =>
+    btn.classList.toggle("active", btn.dataset.flang === flang),
+  );
+  $$("[data-pane]").forEach((pane) => {
+    pane.hidden = pane.dataset.pane !== flang;
+  });
+}
+
+function openForm(d) {
+  editing = d;
+  const f = $("#form");
+  $("#dlgTitle").textContent = d
+    ? "Chỉnh sửa món ăn (5 ngôn ngữ)"
+    : "Thêm món ăn mới (5 ngôn ngữ)";
+
+  const baseViName = (d?.translations?.vi?.name ?? d?.name ?? "").trim();
+  const baseViDesc = (
+    d?.translations?.vi?.description ??
+    d?.description ??
+    ""
+  ).trim();
+  for (const k of LANG_KEYS) {
+    const tName = (
+      d?.translations?.[k]?.name ?? (k === "vi" ? baseViName : "")
+    ).trim();
+    const tDesc = (
+      d?.translations?.[k]?.description ?? (k === "vi" ? baseViDesc : "")
+    ).trim();
+    f[`name_${k}`].value =
+      k !== "vi" && tName === baseViName ? "" : tName;
+    f[`desc_${k}`].value =
+      k !== "vi" && tDesc === baseViDesc ? "" : tDesc;
+  }
+
+  f.category_id.value = d?.category_id ?? cats[0]?.id ?? "";
+  if (f.price_vnd) f.price_vnd.value = d?.price_vnd ?? "";
+  f.lat.value = d?.lat ?? 15.878;
+  f.lng.value = d?.lng ?? 108.327;
+  f.address.value = d?.address ?? "";
+  f.image_url.value = d?.image_url ?? "";
+  $("#imageFile").value = "";
+  const fnEl = $("#uploadFileName");
+  if (fnEl) fnEl.textContent = "Chưa chọn tệp";
+  updateImgPreview(d?.image_url);
+  f.is_active.checked = d ? d.is_active : true;
+  $("#formErr").textContent = "";
+  switchFormLangTab(currentLang);
+  $("#dlg").showModal();
+}
+
+function updateImgPreview(url) {
+  const previewBox = $("#imgPreviewBox");
+  const statusEl = $("#uploadStatus");
+  const cleanUrl = (url || "").trim();
+  if (cleanUrl) {
+    previewBox.innerHTML = `<img src="${esc(cleanUrl)}" alt="preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:11px;color:var(--danger);text-align:center;line-height:1.2;padding:2px;\\'>Lỗi link ảnh</span>';" />`;
+    statusEl.textContent =
+      "Đang dùng ảnh: " +
+      (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
+  } else {
+    previewBox.textContent = "Chưa có ảnh";
+    statusEl.textContent =
+      "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
+  }
+}
+
+$("#imageUrlInput").oninput = (e) => {
+  updateImgPreview(e.target.value);
+};
+
+$("#btnClearImage").onclick = () => {
+  $("#imageUrlInput").value = "";
+  $("#imageFile").value = "";
+  updateImgPreview("");
+};
+
+function compressImage(file, maxWidth = 800, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
         }
-
-        if (pointsData.length === 1) {
-          pointsData = [pointsData[0], { ...pointsData[0] }];
-        }
-
-        const W = 320;
-        const H = 120;
-        const padX = 24;
-        const padTop = 22;
-        const padBot = 12;
-        const usableW = W - padX * 2;
-        const usableH = H - padTop - padBot;
-        const maxVal = Math.max(1, ...pointsData.map((p) => p.val));
-
-        const coords = pointsData.map((p, i) => {
-          const x = padX + (i / (pointsData.length - 1)) * usableW;
-          const y = padTop + usableH - (p.val / maxVal) * usableH;
-          return {
-            x: Math.round(x * 10) / 10,
-            y: Math.round(y * 10) / 10,
-            ...p,
-          };
-        });
-
-        const polyPoints = coords.map((c) => `${c.x},${c.y}`).join(" ");
-        const areaPoints = `${coords[0].x},${H - padBot} ${polyPoints} ${coords[coords.length - 1].x},${H - padBot}`;
-
-        svg.innerHTML = `
-          <defs>
-            <linearGradient id="lineGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#e9c26b" stop-opacity="0.42" />
-              <stop offset="100%" stop-color="#d4152f" stop-opacity="0.02" />
-            </linearGradient>
-          </defs>
-          <line x1="${padX}" y1="${H - padBot}" x2="${W - padX}" y2="${H - padBot}" stroke="#e2e8f0" stroke-width="1" />
-          <polygon points="${areaPoints}" fill="url(#lineGrad)" />
-          <polyline fill="none" stroke="#e8a838" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${polyPoints}" />
-          ${coords
-            .map(
-              (c) => `
-            <g class="line-point-group" data-tt-type="line" data-tt-title="${esc(c.name || c.label)}" data-tt-val="${esc(c.display)}" data-tt-time="${esc(c.label)}" data-tt-mode="${lineMode}">
-              <circle cx="${c.x}" cy="${c.y}" r="15" fill="transparent" />
-              <circle class="line-point-outer" cx="${c.x}" cy="${c.y}" r="7" fill="rgba(233, 194, 107, 0.25)" style="transition: all 0.2s ease; opacity: 0;" />
-              <circle class="line-point-inner" cx="${c.x}" cy="${c.y}" r="4.2" fill="#d4152f" stroke="#e9c26b" stroke-width="2" style="transition: all 0.2s ease;" />
-              <text x="${c.x}" y="${c.y - 8}" fill="#f5ead4" font-size="9.5" font-weight="700" text-anchor="middle">${esc(c.display)}</text>
-            </g>
-          `,
-            )
-            .join("")}
-        `;
-
-        labelsEl.innerHTML = coords
-          .map((c) => `<span>${esc(c.label)}</span>`)
-          .join("");
-      }
-
-      function renderAllCharts() {
-        renderBarChart();
-        renderPieChart();
-        renderLineChart();
-      }
-
-      function renderPresence(p) {
-        if (!p) return;
-        latestPresence = p;
-        const onlineCount = p.online_count ?? 0;
-
-        const stripOnlineEl = $("#stripOnlineVal");
-        if (stripOnlineEl) stripOnlineEl.textContent = onlineCount;
-        const navOnlineEl = $("#navOnlineCount");
-        if (navOnlineEl) navOnlineEl.textContent = onlineCount;
-
-        $("#liveOnlineNum").textContent = onlineCount;
-
-        pushOnlinePoint(onlineCount);
-        if (lineMode === "online") {
-          renderLineChart();
-        }
-
-        const list = p.devices || [];
-        $("#noActiveDevice").hidden = list.length > 0;
-        $("#activeDevicesList").innerHTML = list
-          .map(
-            (dev, idx) => `
-            <li class="stop-item">
-              <div class="stop-left">
-                <span class="stop-badge done">${idx + 1}</span>
-                <div>
-                  <span class="stop-title">${esc(dev.platform || "Thiết bị")} • <span class="lang-mini">${esc((dev.lang || "vi").toUpperCase())}</span></span>
-                  <small class="stop-sub">Mã phiên: ${esc(dev.tab_id?.slice(-8) || dev.device_id?.slice(-8))} • Vào lúc ${dmy(dev.connected_at)}</small>
-                </div>
-              </div>
-              <span class="stop-right" style="color: #34d399">Online</span>
-            </li>`,
-          )
-          .join("");
-      }
-
-      async function loadStats() {
-        const [s, c] = await Promise.all([
-          api("/stats"),
-          api("/checkins?limit=8"),
-        ]);
-        lastStats = s;
-        if (typeof updateSpatialAnalyticsData === "function") {
-          updateSpatialAnalyticsData();
-        }
-        const t = s.totals;
-        if (s.presence) {
-          renderPresence(s.presence);
-        }
-        const statItems = [
-          [
-            "Thiết bị đang truy cập",
-            t.online_devices ?? latestPresence.online_count,
-            true,
-          ],
-          ["Món ăn Hội An", t.dishes, false],
-          ["Danh mục ẩm thực", t.categories, false],
-          ["Lượt yêu thích", t.favorites, false],
-          ["Lượt check-in", t.check_ins, false],
-        ];
-        $("#strip").innerHTML = statItems
-          .map(
-            ([label, val, isLive]) => `
-            <div class="stat-card ${isLive ? "live-card" : ""}">
-              <div class="stat-info">
-                <span>${label}</span>
-                <b ${isLive ? 'id="stripOnlineVal"' : ""}>${val}</b>
-              </div>
-            </div>`,
-          )
-          .join("");
-
-        const navCheckEl = $("#navCheckinCount");
-        if (navCheckEl)
-          navCheckEl.textContent = (t.favorites || 0) + (t.check_ins || 0);
-
-        const dailySum = s.daily.reduce((acc, d) => acc + (d.n || 0), 0);
-        const dailyBadge = $("#dailyTotalBadge");
-        if (dailyBadge) dailyBadge.textContent = `${dailySum} LƯỢT / 7 NGÀY`;
-
-        const max = Math.max(1, ...s.daily.map((d) => d.n));
-        $("#bars").innerHTML = s.daily
-          .map((d) => {
-            const label = `${esc(d.day.slice(8))}/${esc(d.day.slice(5, 7))}`;
-            const pct =
-              d.n > 0 ? Math.max(14, Math.round((d.n / max) * 92)) : 6;
-            return `
-              <div class="day-col" data-tt-type="daily" data-tt-date="${label}" data-tt-day="${esc(d.day)}" data-tt-count="${d.n}">
-                <b>${d.n}</b>
-                <div class="day-track">
-                  <i style="height:${pct}%"></i>
-                </div>
-                <span>${label}</span>
-              </div>`;
-          })
-          .join("");
-
-        $("#top").innerHTML = s.top
-          .slice(0, 5)
-          .map(
-            (d, idx) => `
-            <li class="stop-item">
-              <div class="stop-left">
-                <span class="stop-badge">${idx + 1}</span>
-                <div>
-                  <span class="stop-title">${esc(d.name)}</span>
-                  <small class="stop-sub">${d.favorites} lượt yêu thích từ thực khách</small>
-                </div>
-              </div>
-              <span class="stop-right">${d.favorites} yêu thích</span>
-            </li>`,
-          )
-          .join("");
-
-        $("#recent").innerHTML = c
-          .map(
-            (x) => `
-            <li class="stop-item">
-              <div class="stop-left">
-                <span class="stop-badge done">✓</span>
-                <div>
-                  <span class="stop-title">${esc(x.dish_name)}</span>
-                  <small class="stop-sub">${esc(x.note || "Đã check-in tại điểm ẩm thực")}</small>
-                </div>
-              </div>
-              <small style="color: var(--muted); white-space: nowrap">${dmy(x.created_at)}</small>
-            </li>`,
-          )
-          .join("");
-        $("#noCheck").hidden = c.length > 0;
-        renderAllCharts();
-      }
-
-      function renderDishes() {
-        $("#dishCountBadge").textContent = `${dishes.length} món`;
-        const navDishEl = $("#navDishCount");
-        if (navDishEl) navDishEl.textContent = dishes.length;
-
-        $("#dishes").innerHTML = dishes
-          .map((d) => {
-            const dLang = dishLangMap[d.id] || "vi";
-            const localName = d.name_i18n?.[dLang] || d.name;
-            const localDesc = d.desc_i18n?.[dLang] || d.description || "";
-            const catLabel = getCatLabel(d.category_id, d.category_name);
-            const badges = LANG_KEYS.filter((k) => d.translations?.[k]?.name)
-              .map(
-                (k) =>
-                  `<span class="lang-mini ${dLang === k ? "active-mini" : ""}" data-dish-lang="${d.id}:${k}" title="Bấm để xem nội dung món này bằng tiếng ${k.toUpperCase()}">${k}</span>`,
-              )
-              .join("");
-
-            return `
-          <tr class="${d.is_active ? "" : "off"}">
-            <td>
-              <div class="dish-row-cell">
-                ${
-                  d.image_url
-                    ? `<img class="dish-thumb" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender\.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
-                    : `<img class="dish-thumb" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
-                }
-                <div>
-                  <b>${esc(localName)}</b>
-                  <small>${esc(localDesc.slice(0, 78))}${localDesc.length > 78 ? "..." : ""}</small>
-                  <small>${esc(d.address || "Phố cổ Hội An")}${d.is_active ? "" : " • (Đang ẩn)"}</small>
-                  <div class="lang-badges">${badges}</div>
-                </div>
-              </div>
-            </td>
-            <td><span class="dish-card-cat">${esc(catLabel)}</span></td>
-            <td class="act">
-              <button data-edit="${d.id}">Sửa</button>
-              <button class="danger" data-del="${d.id}">Xoá</button>
-            </td>
-          </tr>`;
-          })
-          .join("");
-
-        $("#cardView").innerHTML = dishes
-          .map((d) => {
-            const dLang = dishLangMap[d.id] || "vi";
-            const localName = d.name_i18n?.[dLang] || d.name;
-            const localDesc = d.desc_i18n?.[dLang] || d.description || "";
-            const catLabel = getCatLabel(d.category_id, d.category_name);
-            return `
-          <div class="dish-card ${d.is_active ? "" : "off"}">
-            ${
-                d.image_url
-                  ? `<img class="dish-card-img" src="${esc(d.image_url.replace(/^http:\/\/doancnpm-backend\.onrender.com/, "https://doancnpm-backend.onrender.com"))}" alt="${esc(localName)}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800';" />`
-                  : `<img class="dish-card-img" src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800" alt="${esc(localName)}" loading="lazy" />`
-              }
-            <div class="dish-card-body">
-              <div class="dish-card-meta">
-                <span class="dish-card-cat">${esc(catLabel)}</span>
-              </div>
-              <h3 class="dish-card-title">${esc(localName)}</h3>
-              <div class="dish-card-sub">${esc(d.address || "Phố cổ Hội An")}</div>
-              <p class="dish-card-desc">${esc(localDesc)}</p>
-              <div class="dish-card-foot">
-                <button data-edit="${d.id}">Sửa (5 ngôn ngữ)</button>
-                <button class="danger" data-del="${d.id}">Xoá</button>
-              </div>
-            </div>
-          </div>`;
-          })
-          .join("");
-
-        $("#noDish").hidden = dishes.length > 0;
-        renderAllCharts();
-      }
-
-      async function loadDishes() {
-        const p = new URLSearchParams();
-        if ($("#q").value) p.set("q", $("#q").value);
-        if ($("#cat").value) p.set("category_id", $("#cat").value);
-        p.set("lang", "vi");
-        try {
-          const res = await api("/dishes?" + p);
-          if (Array.isArray(res)) dishes = res;
-        } catch (e) {
-          console.error("Lỗi tải món:", e);
-        }
-        renderDishes();
-        if (typeof renderQrManager === "function") renderQrManager();
-        if (typeof updateSpatialAnalyticsData === "function") updateSpatialAnalyticsData();
-      }
-
-      function renderCatChips() {
-        const current = $("#cat").value;
-        $("#catChips").innerHTML =
-          `<button type="button" class="cat-chip ${current === "" ? "active" : ""}" data-cat="">Tất cả (${dishes.length})</button>` +
-          cats
-            .map((c) => {
-              const label = c.translations?.vi || c.name;
-              return `<button type="button" class="cat-chip ${String(current) === String(c.id) ? "active" : ""}" data-cat="${c.id}">${esc(label)}</button>`;
-            })
-            .join("");
-      }
-
-      async function loadCats() {
-        cats = await api("/categories?lang=vi");
-        $("#cat").innerHTML =
-          '<option value="">Tất cả danh mục</option>' +
-          cats
-            .map((c) => `<option value="${c.id}">${esc(c.name)}</option>`)
-            .join("");
-        document.querySelector("[name=category_id]").innerHTML =
-          '<option value="">Chưa phân loại</option>' +
-          cats
-            .map((c) => `<option value="${c.id}">${esc(c.name)}</option>`)
-            .join("");
-        renderCatChips();
-      }
-
-      function switchFormLangTab(flang) {
-        $$("#formLangTabs .form-lang-tab").forEach((btn) =>
-          btn.classList.toggle("active", btn.dataset.flang === flang),
-        );
-        $$("[data-pane]").forEach((pane) => {
-          pane.hidden = pane.dataset.pane !== flang;
-        });
-      }
-
-      function openForm(d) {
-        editing = d;
-        const f = $("#form");
-        $("#dlgTitle").textContent = d
-          ? "Chỉnh sửa món ăn (5 ngôn ngữ)"
-          : "Thêm món ăn mới (5 ngôn ngữ)";
-
-        const baseViName = (d?.translations?.vi?.name ?? d?.name ?? "").trim();
-        const baseViDesc = (
-          d?.translations?.vi?.description ??
-          d?.description ??
-          ""
-        ).trim();
-        for (const k of LANG_KEYS) {
-          const tName = (
-            d?.translations?.[k]?.name ?? (k === "vi" ? baseViName : "")
-          ).trim();
-          const tDesc = (
-            d?.translations?.[k]?.description ?? (k === "vi" ? baseViDesc : "")
-          ).trim();
-          f[`name_${k}`].value =
-            k !== "vi" && tName === baseViName ? "" : tName;
-          f[`desc_${k}`].value =
-            k !== "vi" && tDesc === baseViDesc ? "" : tDesc;
-        }
-
-        f.category_id.value = d?.category_id ?? cats[0]?.id ?? "";
-        if (f.price_vnd) f.price_vnd.value = d?.price_vnd ?? "";
-        f.emoji.value = d?.emoji ?? "";
-        f.lat.value = d?.lat ?? 15.878;
-        f.lng.value = d?.lng ?? 108.327;
-        f.address.value = d?.address ?? "";
-        f.image_url.value = d?.image_url ?? "";
-        $("#imageFile").value = "";
-        const fnEl = $("#uploadFileName");
-        if (fnEl) fnEl.textContent = "Chưa chọn tệp";
-        updateImgPreview(d?.image_url);
-        f.is_active.checked = d ? d.is_active : true;
-        $("#formErr").textContent = "";
-        switchFormLangTab(currentLang);
-        $("#dlg").showModal();
-      }
-
-      function updateImgPreview(url) {
-        const previewBox = $("#imgPreviewBox");
-        const statusEl = $("#uploadStatus");
-        const cleanUrl = (url || "").trim();
-        if (cleanUrl) {
-          previewBox.innerHTML = `<img src="${esc(cleanUrl)}" alt="preview" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\\'font-size:11px;color:var(--danger);text-align:center;line-height:1.2;padding:2px;\\'>Lỗi link ảnh</span>';" />`;
-          statusEl.textContent =
-            "Đang dùng ảnh: " +
-            (cleanUrl.length > 55 ? cleanUrl.slice(0, 52) + "..." : cleanUrl);
-        } else {
-          previewBox.textContent = "Chưa có ảnh";
-          statusEl.textContent =
-            "Chưa có ảnh (Dán link URL hoặc chọn file ảnh từ máy tính)";
-        }
-      }
-
-      $("#imageUrlInput").oninput = (e) => {
-        updateImgPreview(e.target.value);
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
       };
+      img.onerror = () => reject(new Error("Không thể xử lý định dạng ảnh này"));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error("Không thể đọc file ảnh"));
+    reader.readAsDataURL(file);
+  });
+}
 
-      $("#btnClearImage").onclick = () => {
-        $("#imageUrlInput").value = "";
-        $("#imageFile").value = "";
-        updateImgPreview("");
-      };
+$("#imageFile").onchange = async (e) => {
+  const file = e.target.files?.[0];
+  const fnEl = $("#uploadFileName");
+  if (!file) {
+    if (fnEl) fnEl.textContent = "Chưa chọn tệp";
+    return;
+  }
+  if (fnEl) fnEl.textContent = file.name;
+  $("#uploadStatus").textContent = "Đang nén và xử lý ảnh...";
+  try {
+    const compressedDataUrl = await compressImage(file, 800, 0.75);
+    $("#imageUrlInput").value = compressedDataUrl;
+    updateImgPreview(compressedDataUrl);
+    $("#uploadStatus").textContent =
+      "Đã nạp ảnh: " + file.name + " (sẽ lưu trực tiếp vào cơ sở dữ liệu khi bấm Lưu)";
+  } catch (err) {
+    $("#uploadStatus").textContent = "Lỗi xử lý ảnh: " + err.message;
+  }
+};
 
-      function compressImage(file, maxWidth = 800, quality = 0.75) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              let width = img.width;
-              let height = img.height;
-              if (width > maxWidth) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-              }
-              const canvas = document.createElement("canvas");
-              canvas.width = width;
-              canvas.height = height;
-              const ctx = canvas.getContext("2d");
-              ctx.drawImage(img, 0, 0, width, height);
-              resolve(canvas.toDataURL("image/jpeg", quality));
-            };
-            img.onerror = () => reject(new Error("Không thể xử lý định dạng ảnh này"));
-            img.src = e.target.result;
-          };
-          reader.onerror = () => reject(new Error("Không thể đọc file ảnh"));
-          reader.readAsDataURL(file);
-        });
-      }
+function setViewMode(mode) {
+  viewMode = mode;
+  $("#tableView").hidden = mode !== "table";
+  $("#cardView").hidden = mode !== "card";
+  $("#viewTableBtn").classList.toggle("active", mode === "table");
+  $("#viewCardBtn").classList.toggle("active", mode === "card");
+}
 
-      $("#imageFile").onchange = async (e) => {
-        const file = e.target.files?.[0];
-        const fnEl = $("#uploadFileName");
-        if (!file) {
-          if (fnEl) fnEl.textContent = "Chưa chọn tệp";
-          return;
-        }
-        if (fnEl) fnEl.textContent = file.name;
-        $("#uploadStatus").textContent = "Đang nén và xử lý ảnh...";
-        try {
-          const compressedDataUrl = await compressImage(file, 800, 0.75);
-          $("#imageUrlInput").value = compressedDataUrl;
-          updateImgPreview(compressedDataUrl);
-          $("#uploadStatus").textContent =
-            "Đã nạp ảnh: " + file.name + " (sẽ lưu trực tiếp vào cơ sở dữ liệu khi bấm Lưu)";
-        } catch (err) {
-          $("#uploadStatus").textContent = "Lỗi xử lý ảnh: " + err.message;
-        }
-      };
+const barModeTabsEl = $("#barModeTabs");
+if (barModeTabsEl) {
+  barModeTabsEl.onclick = (e) => {
+    const btn = e.target.closest("[data-bmode]");
+    if (!btn) return;
+    barMode = btn.dataset.bmode;
+    $("#barModeTabs button").forEach((b) =>
+      b.classList.toggle("active", b.dataset.bmode === barMode),
+    );
+    $("#barChartSub").textContent =
+      "Tổng lượt tương tác và check-in thực tế của từng món";
+    renderBarChart();
+  };
+}
 
-      function setViewMode(mode) {
-        viewMode = mode;
-        $("#tableView").hidden = mode !== "table";
-        $("#cardView").hidden = mode !== "card";
-        $("#viewTableBtn").classList.toggle("active", mode === "table");
-        $("#viewCardBtn").classList.toggle("active", mode === "card");
-      }
+$("#pieModeTabs").onclick = (e) => {
+  const btn = e.target.closest("[data-pmode]");
+  if (!btn) return;
+  pieMode = btn.dataset.pmode;
+  $$("#pieModeTabs button").forEach((b) =>
+    b.classList.toggle("active", b.dataset.pmode === pieMode),
+  );
+  $("#pieChartSub").textContent =
+    pieMode === "cat"
+      ? "Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực"
+      : "Tỷ trọng (%) mức độ tương tác giữa các món ăn Hội An";
+  renderPieChart();
+};
 
-      const barModeTabsEl = $("#barModeTabs");
-      if (barModeTabsEl) {
-        barModeTabsEl.onclick = (e) => {
-          const btn = e.target.closest("[data-bmode]");
-          if (!btn) return;
-          barMode = btn.dataset.bmode;
-          $("#barModeTabs button").forEach((b) =>
-            b.classList.toggle("active", b.dataset.bmode === barMode),
-          );
-          $("#barChartSub").textContent =
-            "Tổng lượt tương tác và check-in thực tế của từng món";
-          renderBarChart();
-        };
-      }
+$("#lineModeTabs").onclick = (e) => {
+  const btn = e.target.closest("[data-lmode]");
+  if (!btn) return;
+  lineMode = btn.dataset.lmode;
+  $$("#lineModeTabs button").forEach((b) =>
+    b.classList.toggle("active", b.dataset.lmode === lineMode),
+  );
+  $("#lineChartSub").textContent =
+    lineMode === "dish"
+      ? "Đường biến thiên mức độ tương tác và check-in của các món ăn"
+      : "Đường biến thiên số lượng thiết bị truy cập theo thời gian thực";
+  renderLineChart();
+};
 
-      $("#pieModeTabs").onclick = (e) => {
-        const btn = e.target.closest("[data-pmode]");
-        if (!btn) return;
-        pieMode = btn.dataset.pmode;
-        $$("#pieModeTabs button").forEach((b) =>
-          b.classList.toggle("active", b.dataset.pmode === pieMode),
-        );
-        $("#pieChartSub").textContent =
-          pieMode === "cat"
-            ? "Cơ cấu tỷ lệ (%) số lượng món ăn theo từng danh mục ẩm thực"
-            : "Tỷ trọng (%) mức độ tương tác giữa các món ăn Hội An";
-        renderPieChart();
-      };
+$("#livePieLegend").onclick = (e) => {
+  const item = e.target.closest("[data-filter-cat]");
+  if (!item) return;
+  const catId = item.dataset.filterCat;
+  $("#cat").value =
+    $("#cat").value === String(catId) ? "" : String(catId);
+  renderCatChips();
+  loadDishes();
+};
 
-      $("#lineModeTabs").onclick = (e) => {
-        const btn = e.target.closest("[data-lmode]");
-        if (!btn) return;
-        lineMode = btn.dataset.lmode;
-        $$("#lineModeTabs button").forEach((b) =>
-          b.classList.toggle("active", b.dataset.lmode === lineMode),
-        );
-        $("#lineChartSub").textContent =
-          lineMode === "dish"
-            ? "Đường biến thiên mức độ tương tác và check-in của các món ăn"
-            : "Đường biến thiên số lượng thiết bị truy cập theo thời gian thực";
-        renderLineChart();
-      };
+$("#formLangTabs").onclick = (e) => {
+  const btn = e.target.closest("[data-flang]");
+  if (!btn) return;
+  switchFormLangTab(btn.dataset.flang);
+};
 
-      $("#livePieLegend").onclick = (e) => {
-        const item = e.target.closest("[data-filter-cat]");
-        if (!item) return;
-        const catId = item.dataset.filterCat;
-        $("#cat").value =
-          $("#cat").value === String(catId) ? "" : String(catId);
-        renderCatChips();
-        loadDishes();
-      };
+const NAV_META = {
+  overview: [
+    "Tổng Quan Chung",
+    "Theo dõi số liệu món ăn, thiết bị truy cập, lượt check-in và biểu đồ thời gian thực",
+  ],
+  dishes: [
+    "Quản Lý Món Ăn",
+    "Quản lý thực đơn, giá cả, giờ mở cửa và tọa độ vị trí món ăn",
+  ],
+  devices: [
+    "Thiết Bị Truy Cập",
+    "Danh sách các thiết bị người dùng đang trực tuyến và truy cập hệ thống",
+  ],
+  checkins: [
+    "Check-in & Yêu Thích",
+    "Thống kê lịch sử check-in và số lượt yêu thích món ăn của du khách",
+  ],
+  account: [
+    "Quản Lý Tài Khoản",
+    "Thông tin tài khoản quản trị viên và quyền hạn sử dụng",
+  ],
+  qrcode: [
+    "Quản Lý Mã QR",
+    "Tạo mã QR thông minh cho từng món ăn & ứng dụng, in thẻ bàn",
+  ],
+  map: [
+    "Bản Đồ Nhiệt & Mật Độ Tương Tác",
+    "Phân tích dữ liệu không gian: Điểm nóng du khách quét QR & Mật độ phân bổ ẩm thực Hội An",
+  ],
+};
 
-      $("#formLangTabs").onclick = (e) => {
-        const btn = e.target.closest("[data-flang]");
-        if (!btn) return;
-        switchFormLangTab(btn.dataset.flang);
-      };
+function switchNavSection(nav) {
+  $$("#sidebarNav .nav-btn").forEach((b) =>
+    b.classList.toggle("active", b.dataset.nav === nav),
+  );
+  const [title, sub] = NAV_META[nav] || NAV_META.overview;
+  $("#pageTitle").textContent = title;
+  $("#pageSub").textContent = sub;
 
-      const NAV_META = {
-        overview: [
-          "Tổng Quan Chung",
-          "Theo dõi số liệu món ăn, thiết bị truy cập, lượt check-in và biểu đồ thời gian thực",
-        ],
-        dishes: [
-          "Quản Lý Món Ăn",
-          "Quản lý thực đơn, giá cả, giờ mở cửa và tọa độ vị trí món ăn",
-        ],
-        devices: [
-          "Thiết Bị Truy Cập",
-          "Danh sách các thiết bị người dùng đang trực tuyến và truy cập hệ thống",
-        ],
-        checkins: [
-          "Check-in & Yêu Thích",
-          "Thống kê lịch sử check-in và số lượt yêu thích món ăn của du khách",
-        ],
-        account: [
-          "Quản Lý Tài Khoản",
-          "Thông tin tài khoản quản trị viên và quyền hạn sử dụng",
-        ],
-        qrcode: [
-          "Quản Lý Mã QR",
-          "Tạo mã QR thông minh cho từng món ăn & ứng dụng, in thẻ bàn",
-        ],
-        map: [
-          "Bản Đồ Nhiệt & Mật Độ Tương Tác",
-          "Phân tích dữ liệu không gian: Điểm nóng du khách quét QR & Mật độ phân bổ ẩm thực Hội An",
-        ],
-      };
+  const showOverview = nav === "overview";
+  $("#strip").hidden = !showOverview;
+  $("#secCharts").hidden = !showOverview;
 
-      function switchNavSection(nav) {
-        $$("#sidebarNav .nav-btn").forEach((b) =>
-          b.classList.toggle("active", b.dataset.nav === nav),
-        );
-        const [title, sub] = NAV_META[nav] || NAV_META.overview;
-        $("#pageTitle").textContent = title;
-        $("#pageSub").textContent = sub;
+  const colLeft = $("#colLeft");
+  const colRight = $("#colRight");
+  const mainGrid = $("#mainGrid");
 
-        const showOverview = nav === "overview";
-        $("#strip").hidden = !showOverview;
-        $("#secCharts").hidden = !showOverview;
+  colLeft.hidden = nav !== "dishes";
+  colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account" || nav === "qrcode" || nav === "map");
+  mainGrid.hidden = showOverview;
 
-        const colLeft = $("#colLeft");
-        const colRight = $("#colRight");
-        const mainGrid = $("#mainGrid");
-
-        colLeft.hidden = nav !== "dishes";
-        colRight.hidden = !(nav === "devices" || nav === "checkins" || nav === "account" || nav === "qrcode" || nav === "map");
-        mainGrid.hidden = showOverview;
-
-        $("#secDevices").hidden = nav !== "devices";
-        $("#secDailyCheckin").hidden = nav !== "checkins";
-        $("#secTopFav").hidden = nav !== "checkins";
-        $("#secRecentCheckin").hidden = nav !== "checkins";
-        const secAccountEl = $("#secAccount");
-        if (secAccountEl) {
-          secAccountEl.hidden = nav !== "account";
-          if (nav === "account") loadAdminUsers();
-        }
-        const secQrEl = $("#secQr");
-        if (secQrEl) {
-          secQrEl.hidden = nav !== "qrcode";
-          if (nav === "qrcode") renderQrManager();
-        }
-        const secMapEl = $("#secMap");
-        if (secMapEl) {
-          secMapEl.hidden = nav !== "map";
+  $("#secDevices").hidden = nav !== "devices";
+  $("#secDailyCheckin").hidden = nav !== "checkins";
+  $("#secTopFav").hidden = nav !== "checkins";
+  $("#secRecentCheckin").hidden = nav !== "checkins";
+  const secAccountEl = $("#secAccount");
+  if (secAccountEl) {
+    secAccountEl.hidden = nav !== "account";
+    if (nav === "account") loadAdminUsers();
+  }
+  const secQrEl = $("#secQr");
+  if (secQrEl) {
+    secQrEl.hidden = nav !== "qrcode";
+    if (nav === "qrcode") renderQrManager();
+  }
+  const secMapEl = $("#secMap");
+  if (secMapEl) {
+    secMapEl.hidden = nav !== "map";
 if (nav === "map") renderMapSection();        }
 
-        mainGrid.classList.toggle("single-col", true);
-        refresh();
-      }
+  mainGrid.classList.toggle("single-col", true);
+  refresh();
+}
 
-      $("#sidebarNav").onclick = (e) => {
-        const btn = e.target.closest("[data-nav]");
-        if (!btn) return;
-        switchNavSection(btn.dataset.nav);
-      };
+$("#sidebarNav").onclick = (e) => {
+  const btn = e.target.closest("[data-nav]");
+  if (!btn) return;
+  switchNavSection(btn.dataset.nav);
+};
 
-      $("#viewTableBtn").onclick = () => setViewMode("table");
-      $("#viewCardBtn").onclick = () => setViewMode("card");
-      $("#add").onclick = () => openForm(null);
-      $("#cancel").onclick = () => $("#dlg").close();
-      async function exportReportToExcel() {
-        const btn = $("#exportReportBtn");
-        const oldText = btn ? btn.innerHTML : "";
-        if (btn) {
-          btn.disabled = true;
-          btn.textContent = "⏳ Đang tạo bảng báo cáo Excel...";
-        }
+$("#viewTableBtn").onclick = () => setViewMode("table");
+$("#viewCardBtn").onclick = () => setViewMode("card");
+$("#add").onclick = () => openForm(null);
+$("#cancel").onclick = () => $("#dlg").close();
+async function exportReportToExcel() {
+  const btn = $("#exportReportBtn");
+  const oldText = btn ? btn.innerHTML : "";
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "⏳ Đang tạo bảng báo cáo Excel...";
+  }
 
-        try {
-          const [statsData, checkinsData, dishesData] = await Promise.all([
-            api("/stats"),
-            api("/checkins?limit=100"),
-            api("/dishes"),
-          ]);
+  try {
+    const [statsData, checkinsData, dishesData] = await Promise.all([
+      api("/stats"),
+      api("/checkins?limit=100"),
+      api("/dishes"),
+    ]);
 
-          const now = new Date();
-          const timestampStr = now.toLocaleString("vi-VN");
-          const fileDate =
-            now.toISOString().slice(0, 10).replace(/-/g, "") +
-            "_" +
-            String(now.getHours()).padStart(2, "0") +
-            String(now.getMinutes()).padStart(2, "0");
+    const now = new Date();
+    const timestampStr = now.toLocaleString("vi-VN");
+    const fileDate =
+      now.toISOString().slice(0, 10).replace(/-/g, "") +
+      "_" +
+      String(now.getHours()).padStart(2, "0") +
+      String(now.getMinutes()).padStart(2, "0");
 
-          const escH = (val) => {
-            if (val === null || val === undefined) return "";
-            return String(val)
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;");
-          };
+    const escH = (val) => {
+      if (val === null || val === undefined) return "";
+      return String(val)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    };
 
-          const fmtNum = (v) => Number(v || 0).toLocaleString("vi-VN");
-          const fmtVnd = (v) => v ? Number(v).toLocaleString("vi-VN") + " VNĐ" : "0 VNĐ";
+    const fmtNum = (v) => Number(v || 0).toLocaleString("vi-VN");
+    const fmtVnd = (v) => v ? Number(v).toLocaleString("vi-VN") + " VNĐ" : "0 VNĐ";
 
-          const t = statsData.totals || {};
-          const daily = Array.isArray(statsData.daily) ? statsData.daily : [];
-          const dailySum = daily.reduce((acc, d) => acc + (d.n || 0), 0);
-          const topDishes = Array.isArray(statsData.top) ? statsData.top : [];
-          const checkins = Array.isArray(checkinsData) ? checkinsData : [];
+    const t = statsData.totals || {};
+    const daily = Array.isArray(statsData.daily) ? statsData.daily : [];
+    const dailySum = daily.reduce((acc, d) => acc + (d.n || 0), 0);
+    const topDishes = Array.isArray(statsData.top) ? statsData.top : [];
+    const checkins = Array.isArray(checkinsData) ? checkinsData : [];
 
-          let dailyRowsHtml = "";
-          daily.forEach((d, idx) => {
-            const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
-            dailyRowsHtml += `
-              <tr${isZebra}>
-                <td class="text-center">${idx + 1}</td>
-                <td class="text-left font-semibold">${escH(d.day)}</td>
-                <td class="text-right val-strong">${fmtNum(d.n)} lượt</td>
-              </tr>`;
-          });
+    let dailyRowsHtml = "";
+    daily.forEach((d, idx) => {
+      const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
+      dailyRowsHtml += `
+        <tr${isZebra}>
+          <td class="text-center">${idx + 1}</td>
+          <td class="text-left font-semibold">${escH(d.day)}</td>
+          <td class="text-right val-strong">${fmtNum(d.n)} lượt</td>
+        </tr>`;
+    });
 
-          let topRowsHtml = "";
-          topDishes.forEach((item, idx) => {
-            const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
-            const totalInteraction = (item.favorites || 0) + (item.check_ins || 0);
-            topRowsHtml += `
-              <tr${isZebra}>
-                <td class="text-center font-bold" style="color: ${idx < 3 ? '#b91c1c' : '#475569'}">${idx + 1}</td>
-                <td class="text-center">${escH(item.id)}</td>
-                <td class="text-left font-semibold">${escH(item.name)}</td>
-                <td class="text-right">${fmtVnd(item.price_vnd)}</td>
-                <td class="text-center" style="color: #d97706; font-weight: bold;">${fmtNum(item.favorites)}</td>
-                <td class="text-center" style="color: #047857; font-weight: bold;">${fmtNum(item.check_ins)}</td>
-                <td class="text-right font-bold" style="color: #b91c1c;">${fmtNum(totalInteraction)}</td>
-              </tr>`;
-          });
+    let topRowsHtml = "";
+    topDishes.forEach((item, idx) => {
+      const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
+      const totalInteraction = (item.favorites || 0) + (item.check_ins || 0);
+      topRowsHtml += `
+        <tr${isZebra}>
+          <td class="text-center font-bold" style="color: ${idx < 3 ? '#b91c1c' : '#475569'}">${idx + 1}</td>
+          <td class="text-center">${escH(item.id)}</td>
+          <td class="text-left font-semibold">${escH(item.name)}</td>
+          <td class="text-right">${fmtVnd(item.price_vnd)}</td>
+          <td class="text-center" style="color: #d97706; font-weight: bold;">${fmtNum(item.favorites)}</td>
+          <td class="text-center" style="color: #047857; font-weight: bold;">${fmtNum(item.check_ins)}</td>
+          <td class="text-right font-bold" style="color: #b91c1c;">${fmtNum(totalInteraction)}</td>
+        </tr>`;
+    });
 
-          let checkinRowsHtml = "";
-          if (checkins.length === 0) {
-            checkinRowsHtml = `<tr><td colspan="6" class="text-center" style="color:#64748b; font-style:italic;">Chưa có dữ liệu check-in thực tế nào được ghi nhận.</td></tr>`;
-          } else {
-            checkins.forEach((c, idx) => {
-              const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
-              const timeStr = c.created_at ? new Date(c.created_at).toLocaleString("vi-VN") : "";
-              checkinRowsHtml += `
-                <tr${isZebra}>
-                  <td class="text-center">${idx + 1}</td>
-                  <td class="text-center" style="color:#475569;">${escH(timeStr)}</td>
-                  <td class="text-center">${escH(c.dish_id)}</td>
-                  <td class="text-left font-semibold">${escH(c.dish_name || "Món ăn Hội An")}</td>
-                  <td class="text-left" style="font-family: Consolas, monospace; color:#0284c7;">${escH(c.device_id || "")}</td>
-                  <td class="text-left">${escH(c.note || "Đã check-in món ăn")}</td>
-                </tr>`;
-            });
-          }
+    let checkinRowsHtml = "";
+    if (checkins.length === 0) {
+      checkinRowsHtml = `<tr><td colspan="6" class="text-center" style="color:#64748b; font-style:italic;">Chưa có dữ liệu check-in thực tế nào được ghi nhận.</td></tr>`;
+    } else {
+      checkins.forEach((c, idx) => {
+        const isZebra = idx % 2 === 1 ? ' class="bg-zebra"' : "";
+        const timeStr = c.created_at ? new Date(c.created_at).toLocaleString("vi-VN") : "";
+        checkinRowsHtml += `
+          <tr${isZebra}>
+            <td class="text-center">${idx + 1}</td>
+            <td class="text-center" style="color:#475569;">${escH(timeStr)}</td>
+            <td class="text-center">${escH(c.dish_id)}</td>
+            <td class="text-left font-semibold">${escH(c.dish_name || "Món ăn Hội An")}</td>
+            <td class="text-left" style="font-family: Consolas, monospace; color:#0284c7;">${escH(c.device_id || "")}</td>
+            <td class="text-left">${escH(c.note || "Đã check-in món ăn")}</td>
+          </tr>`;
+      });
+    }
 
-          const excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    const excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
 xmlns:x="urn:schemas-microsoft-com:office:excel"
 xmlns="http://www.w3.org/TR/REC-html40">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <style>
     body, table, td, th {
-      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
     }
     table {
-      border-collapse: collapse;
-      width: 100%;
-      margin-bottom: 22px;
+border-collapse: collapse;
+width: 100%;
+margin-bottom: 22px;
     }
     .banner-title {
-      background-color: #b91c1c;
-      color: #ffffff;
-      font-size: 16pt;
-      font-weight: bold;
-      text-align: center;
-      height: 44px;
-      vertical-align: middle;
-      border: 1px solid #991b1b;
+background-color: #b91c1c;
+color: #ffffff;
+font-size: 16pt;
+font-weight: bold;
+text-align: center;
+height: 44px;
+vertical-align: middle;
+border: 1px solid #991b1b;
     }
     .banner-sub {
-      background-color: #fef3c7;
-      color: #92400e;
-      font-size: 10.5pt;
-      font-style: italic;
-      text-align: center;
-      height: 28px;
-      vertical-align: middle;
-      border: 1px solid #fde68a;
+background-color: #fef3c7;
+color: #92400e;
+font-size: 10.5pt;
+font-style: italic;
+text-align: center;
+height: 28px;
+vertical-align: middle;
+border: 1px solid #fde68a;
     }
     .sec-title {
-      background-color: #1e293b;
-      color: #ffffff;
-      font-size: 12pt;
-      font-weight: bold;
-      padding: 9px 12px;
-      height: 32px;
-      vertical-align: middle;
-      border: 1px solid #0f172a;
+background-color: #1e293b;
+color: #ffffff;
+font-size: 12pt;
+font-weight: bold;
+padding: 9px 12px;
+height: 32px;
+vertical-align: middle;
+border: 1px solid #0f172a;
     }
     th {
-      font-size: 10.5pt;
-      font-weight: bold;
-      padding: 9px 10px;
-      border: 1px solid #cbd5e1;
-      vertical-align: middle;
+font-size: 10.5pt;
+font-weight: bold;
+padding: 9px 10px;
+border: 1px solid #cbd5e1;
+vertical-align: middle;
     }
     td {
-      font-size: 10pt;
-      padding: 8px 10px;
-      border: 1px solid #e2e8f0;
-      vertical-align: middle;
+font-size: 10pt;
+padding: 8px 10px;
+border: 1px solid #e2e8f0;
+vertical-align: middle;
     }
     .th-kpi { background-color: #334155; color: #ffffff; }
     .th-checkin { background-color: #d97706; color: #ffffff; }
@@ -5552,228 +1426,227 @@ xmlns="http://www.w3.org/TR/REC-html40">
     .font-semibold { font-weight: 600; }
     .val-strong { font-size: 10.5pt; font-weight: bold; color: #b91c1c; }
     .footer-note {
-      font-size: 9pt;
-      color: #64748b;
-      font-style: italic;
-      text-align: center;
-      padding: 12px;
-      border: none;
+font-size: 9pt;
+color: #64748b;
+font-style: italic;
+text-align: center;
+padding: 12px;
+border: none;
     }
   </style>
 </head>
 <body>
   <table>
     <tr>
-      <td colspan="7" class="banner-title">HỆ THỐNG QUẢN TRỊ ẨM THỰC HỘI AN – THEO DẤU VỊ HỘI</td>
+<td colspan="7" class="banner-title">HỆ THỐNG QUẢN TRỊ ẨM THỰC HỘI AN – THEO DẤU VỊ HỘI</td>
     </tr>
     <tr>
-      <td colspan="7" class="banner-sub">BÁO CÁO TỔNG HỢP LƯỢT CHECK-IN &amp; THỐNG KÊ CHI TIẾT (Xuất lúc: ${escH(timestampStr)})</td>
+<td colspan="7" class="banner-sub">BÁO CÁO TỔNG HỢP LƯỢT CHECK-IN &amp; THỐNG KÊ CHI TIẾT (Xuất lúc: ${escH(timestampStr)})</td>
     </tr>
   </table>
 
   <table>
     <tr>
-      <td colspan="3" class="sec-title">1. SỐ LIỆU TỔNG QUAN HỆ THỐNG</td>
+<td colspan="3" class="sec-title">1. SỐ LIỆU TỔNG QUAN HỆ THỐNG</td>
     </tr>
     <tr>
-      <th class="th-kpi text-center" style="width: 60px;">STT</th>
-      <th class="th-kpi text-left">Chỉ Số Hoạt Động Hệ Thống</th>
-      <th class="th-kpi text-right" style="width: 180px;">Số Liệu Thống Kê</th>
+<th class="th-kpi text-center" style="width: 60px;">STT</th>
+<th class="th-kpi text-left">Chỉ Số Hoạt Động Hệ Thống</th>
+<th class="th-kpi text-right" style="width: 180px;">Số Liệu Thống Kê</th>
     </tr>
     <tr>
-      <td class="text-center">1</td>
-      <td>Tổng số món ăn ẩm thực Hội An</td>
-      <td class="text-right val-strong">${fmtNum(t.dishes)} món</td>
+<td class="text-center">1</td>
+<td>Tổng số món ăn ẩm thực Hội An</td>
+<td class="text-right val-strong">${fmtNum(t.dishes)} món</td>
     </tr>
     <tr class="bg-zebra">
-      <td class="text-center">2</td>
-      <td>Tổng số danh mục ẩm thực</td>
-      <td class="text-right val-strong">${fmtNum(t.categories)} danh mục</td>
+<td class="text-center">2</td>
+<td>Tổng số danh mục ẩm thực</td>
+<td class="text-right val-strong">${fmtNum(t.categories)} danh mục</td>
     </tr>
     <tr>
-      <td class="text-center">3</td>
-      <td>Tổng lượt check-in từ du khách</td>
-      <td class="text-right val-strong">${fmtNum(t.check_ins)} lượt</td>
+<td class="text-center">3</td>
+<td>Tổng lượt check-in từ du khách</td>
+<td class="text-right val-strong">${fmtNum(t.check_ins)} lượt</td>
     </tr>
     <tr class="bg-zebra">
-      <td class="text-center">4</td>
-      <td>Tổng lượt yêu thích món ăn</td>
-      <td class="text-right val-strong">${fmtNum(t.favorites)} lượt</td>
+<td class="text-center">4</td>
+<td>Tổng lượt yêu thích món ăn</td>
+<td class="text-right val-strong">${fmtNum(t.favorites)} lượt</td>
     </tr>
     <tr>
-      <td class="text-center">5</td>
-      <td>Tổng số thiết bị từng tương tác</td>
-      <td class="text-right val-strong">${fmtNum(t.devices)} thiết bị</td>
+<td class="text-center">5</td>
+<td>Tổng số thiết bị từng tương tác</td>
+<td class="text-right val-strong">${fmtNum(t.devices)} thiết bị</td>
     </tr>
     <tr class="bg-zebra">
-      <td class="text-center">6</td>
-      <td>Thiết bị đang trực tuyến (Live Presence)</td>
-      <td class="text-right val-strong" style="color: #047857;">${fmtNum(t.online_devices || 0)} thiết bị</td>
+<td class="text-center">6</td>
+<td>Thiết bị đang trực tuyến (Live Presence)</td>
+<td class="text-right val-strong" style="color: #047857;">${fmtNum(t.online_devices || 0)} thiết bị</td>
     </tr>
   </table>
 
   <table>
     <tr>
-      <td colspan="3" class="sec-title">2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY GẦN NHẤT)</td>
+<td colspan="3" class="sec-title">2. THỐNG KÊ LƯỢT CHECK-IN THEO NGÀY (7 NGÀY GẦN NHẤT)</td>
     </tr>
     <tr>
-      <th class="th-checkin text-center" style="width: 60px;">STT</th>
-      <th class="th-checkin text-left">Ngày (Năm-Tháng-Ngày)</th>
-      <th class="th-checkin text-right" style="width: 180px;">Số Lượt Check-in</th>
+<th class="th-checkin text-center" style="width: 60px;">STT</th>
+<th class="th-checkin text-left">Ngày (Năm-Tháng-Ngày)</th>
+<th class="th-checkin text-right" style="width: 180px;">Số Lượt Check-in</th>
     </tr>
     ${dailyRowsHtml}
     <tr class="bg-total">
-      <td colspan="2" class="text-right font-bold">TỔNG CỘNG 7 NGÀY:</td>
-      <td class="text-right val-strong">${fmtNum(dailySum)} lượt</td>
+<td colspan="2" class="text-right font-bold">TỔNG CỘNG 7 NGÀY:</td>
+<td class="text-right val-strong">${fmtNum(dailySum)} lượt</td>
     </tr>
   </table>
 
   <table>
     <tr>
-      <td colspan="7" class="sec-title">3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH &amp; CHECK-IN NHIỀU NHẤT</td>
+<td colspan="7" class="sec-title">3. BẢNG XẾP HẠNG MÓN ĂN ĐƯỢC YÊU THÍCH &amp; CHECK-IN NHIỀU NHẤT</td>
     </tr>
     <tr>
-      <th class="th-dishes text-center" style="width: 50px;">Hạng</th>
-      <th class="th-dishes text-center" style="width: 75px;">Mã Món</th>
-      <th class="th-dishes text-left">Tên Món Ăn Đặc Sản</th>
-      <th class="th-dishes text-right" style="width: 130px;">Giá Bán</th>
-      <th class="th-dishes text-center" style="width: 120px;">Lượt Yêu Thích</th>
-      <th class="th-dishes text-center" style="width: 120px;">Lượt Check-in</th>
-      <th class="th-dishes text-right" style="width: 130px;">Tổng Tương Tác</th>
+<th class="th-dishes text-center" style="width: 50px;">Hạng</th>
+<th class="th-dishes text-center" style="width: 75px;">Mã Món</th>
+<th class="th-dishes text-left">Tên Món Ăn Đặc Sản</th>
+<th class="th-dishes text-right" style="width: 130px;">Giá Bán</th>
+<th class="th-dishes text-center" style="width: 120px;">Lượt Yêu Thích</th>
+<th class="th-dishes text-center" style="width: 120px;">Lượt Check-in</th>
+<th class="th-dishes text-right" style="width: 130px;">Tổng Tương Tác</th>
     </tr>
     ${topRowsHtml}
   </table>
 
   <table>
     <tr>
-      <td colspan="6" class="sec-title">4. NHẬT KÝ CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)</td>
+<td colspan="6" class="sec-title">4. NHẬT KÝ CHI TIẾT CÁC LƯỢT CHECK-IN THỰC TẾ (MỚI NHẤT)</td>
     </tr>
     <tr>
-      <th class="th-logs text-center" style="width: 50px;">STT</th>
-      <th class="th-logs text-center" style="width: 160px;">Thời Gian Check-in</th>
-      <th class="th-logs text-center" style="width: 75px;">Mã Món</th>
-      <th class="th-logs text-left">Tên Món Ăn Check-in</th>
-      <th class="th-logs text-left" style="width: 200px;">Mã Thiết Bị (Device ID)</th>
-      <th class="th-logs text-left">Ghi Chú Chi Tiết</th>
+<th class="th-logs text-center" style="width: 50px;">STT</th>
+<th class="th-logs text-center" style="width: 160px;">Thời Gian Check-in</th>
+<th class="th-logs text-center" style="width: 75px;">Mã Món</th>
+<th class="th-logs text-left">Tên Món Ăn Check-in</th>
+<th class="th-logs text-left" style="width: 200px;">Mã Thiết Bị (Device ID)</th>
+<th class="th-logs text-left">Ghi Chú Chi Tiết</th>
     </tr>
     ${checkinRowsHtml}
   </table>
 
   <table>
     <tr>
-      <td colspan="7" class="footer-note">
-        Báo cáo được trích xuất tự động từ Hệ Thống Quản Trị Ẩm Thực Hội An – Theo Dấu Vị Hội vào lúc ${escH(timestampStr)}.
-      </td>
+<td colspan="7" class="footer-note">
+  Báo cáo được trích xuất tự động từ Hệ Thống Quản Trị Ẩm Thực Hội An – Theo Dấu Vị Hội vào lúc ${escH(timestampStr)}.
+</td>
     </tr>
   </table>
   <div id="chartTooltip" class="chart-tooltip"></div>
 </body>
 </html>`;
 
-          const blob = new Blob(["\uFEFF" + excelHtml], {
-            type: "application/vnd.ms-excel;charset=utf-8;",
-          });
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.setAttribute("href", url);
-          link.setAttribute("download", `Bao_Cao_Checkin_HoiAn_${fileDate}.xls`);
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
+    const blob = new Blob(["\uFEFF" + excelHtml], {
+      type: "application/vnd.ms-excel;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Bao_Cao_Checkin_HoiAn_${fileDate}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 
-          const msgEl = $("#msg");
-          if (msgEl) {
-            msgEl.textContent = "Đã xuất file báo cáo Excel định dạng bảng chuyên nghiệp thành công!";
-            msgEl.style.color = "var(--gold-text)";
-            setTimeout(() => {
-              if (msgEl.textContent.includes("xuất file báo cáo")) msgEl.textContent = "";
-            }, 5000);
-          }
-        } catch (err) {
-          alert("Lỗi xuất báo cáo: " + err.message);
-        } finally {
-          if (btn) {
-            btn.disabled = false;
-            btn.innerHTML = oldText;
-          }
-        }
-      }
-      $("#exportReportBtn").onclick = exportReportToExcel;
-      const exportBtn2 = $("#exportReportBtn2");
-      if (exportBtn2) exportBtn2.onclick = exportReportToExcel;
+    const msgEl = $("#msg");
+    if (msgEl) {
+      msgEl.textContent = "Đã xuất file báo cáo Excel định dạng bảng chuyên nghiệp thành công!";
+      msgEl.style.color = "var(--gold-text)";
+      setTimeout(() => {
+        if (msgEl.textContent.includes("xuất file báo cáo")) msgEl.textContent = "";
+      }, 5000);
+    }
+  } catch (err) {
+    alert("Lỗi xuất báo cáo: " + err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = oldText;
+    }
+  }
+}
+$("#exportReportBtn").onclick = exportReportToExcel;
+const exportBtn2 = $("#exportReportBtn2");
+if (exportBtn2) exportBtn2.onclick = exportReportToExcel;
 
-      $("#catChips").onclick = (e) => {
-        const btn = e.target.closest("[data-cat]");
-        if (!btn) return;
-        $("#cat").value = btn.dataset.cat;
-        renderCatChips();
-        loadDishes();
-      };
+$("#catChips").onclick = (e) => {
+  const btn = e.target.closest("[data-cat]");
+  if (!btn) return;
+  $("#cat").value = btn.dataset.cat;
+  renderCatChips();
+  loadDishes();
+};
 
-      const handleDishAction = async (e) => {
-        const langBadge = e.target.closest("[data-dish-lang]");
-        if (langBadge) {
-          const [dId, lKey] = langBadge.dataset.dishLang.split(":");
-          dishLangMap[dId] = lKey;
-          renderDishes();
-          return;
-        }
+const handleDishAction = async (e) => {
+  const langBadge = e.target.closest("[data-dish-lang]");
+  if (langBadge) {
+    const [dId, lKey] = langBadge.dataset.dishLang.split(":");
+    dishLangMap[dId] = lKey;
+    renderDishes();
+    return;
+  }
 
-        const btn = e.target.closest("[data-edit], [data-del]");
-        if (!btn) return;
-        const id = btn.dataset.edit || btn.dataset.del;
-        if (btn.dataset.edit) {
-          return openForm(dishes.find((d) => d.id == id));
-        }
-        if (
-          !confirm("Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.")
-        )
-          return;
-        try {
-          await api("/dishes/" + id, { method: "DELETE" });
-          await refresh();
-        } catch (err) {
-          $("#msg").textContent = err.message;
-        }
-      };
+  const btn = e.target.closest("[data-edit], [data-del]");
+  if (!btn) return;
+  const id = btn.dataset.edit || btn.dataset.del;
+  if (btn.dataset.edit) {
+    return openForm(dishes.find((d) => d.id == id));
+  }
+  if (
+    !confirm("Xoá món này? Yêu thích và check-in liên quan cũng bị xoá.")
+  )
+    return;
+  try {
+    await api("/dishes/" + id, { method: "DELETE" });
+    await refresh();
+  } catch (err) {
+    $("#msg").textContent = err.message;
+  }
+};
 
-      $("#dishes").onclick = handleDishAction;
-      $("#cardView").onclick = handleDishAction;
+$("#dishes").onclick = handleDishAction;
+$("#cardView").onclick = handleDishAction;
 
-      $("#form").onsubmit = async (e) => {
-        e.preventDefault();
-        const f = e.target;
-        const submitBtn = f.querySelector('button[type="submit"]');
-        const oldBtnText = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Đang lưu...";
-        $("#formErr").textContent = "";
-        const nameVi = f.name_vi.value.trim();
-        const descVi = f.desc_vi.value.trim() || null;
+$("#form").onsubmit = async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const submitBtn = f.querySelector('button[type="submit"]');
+  const oldBtnText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Đang lưu...";
+  $("#formErr").textContent = "";
+  const nameVi = f.name_vi.value.trim();
+  const descVi = f.desc_vi.value.trim() || null;
 
-        const translations = {};
-        for (const k of LANG_KEYS) {
-          const n = f[`name_${k}`].value.trim() || nameVi;
-          const desc = f[`desc_${k}`].value.trim() || descVi;
-          translations[k] = { name: n, description: desc };
-        }
+  const translations = {};
+  for (const k of LANG_KEYS) {
+    const n = f[`name_${k}`].value.trim() || nameVi;
+    const desc = f[`desc_${k}`].value.trim() || descVi;
+    translations[k] = { name: n, description: desc };
+  }
 
-        const body = {
-          name: nameVi,
-          description: descVi,
-          category_id: f.category_id.value ? Number(f.category_id.value) : null,
-          price_vnd: f.price_vnd?.value ? Number(f.price_vnd.value) : null,
-          emoji: f.emoji.value.trim() || "🍜",
-          lat: f.lat.value ? Number(f.lat.value) : 15.878,
-          lng: f.lng.value ? Number(f.lng.value) : 108.327,
-          address: f.address.value.trim() || null,
-          image_url: f.image_url.value.trim() || null,
-          is_active: f.is_active.checked,
-          translations,
-        };
-        try {
-         await api(editing ? "/dishes/" + editing.id : "/dishes", {
+  const body = {
+    name: nameVi,
+    description: descVi,
+    category_id: f.category_id.value ? Number(f.category_id.value) : null,
+    price_vnd: f.price_vnd?.value ? Number(f.price_vnd.value) : null,
+    lat: f.lat.value ? Number(f.lat.value) : 15.878,
+    lng: f.lng.value ? Number(f.lng.value) : 108.327,
+    address: f.address.value.trim() || null,
+    image_url: f.image_url.value.trim() || null,
+    is_active: f.is_active.checked,
+    translations,
+  };
+  try {
+   await api(editing ? "/dishes/" + editing.id : "/dishes", {
   method: editing ? "PUT" : "POST",
   body: JSON.stringify(body),
 });
@@ -5784,1193 +1657,1193 @@ await refresh();
 if (document.getElementById("secMap") && !document.getElementById("secMap").hidden) {
   renderMapSection();
 }
-        } catch (err) {
-          $("#formErr").textContent = err.message;
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = oldBtnText;
+  } catch (err) {
+    $("#formErr").textContent = err.message;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = oldBtnText;
+  }
+};
+
+let t;
+$("#q").oninput = () => {
+  clearTimeout(t);
+  t = setTimeout(loadDishes, 250);
+};
+$("#cat").onchange = () => {
+  renderCatChips();
+  loadDishes();
+};
+
+let adminEventSource = null;
+function connectPresenceStream() {
+  if (!authToken) return;
+  try {
+    if (adminEventSource) {
+      try { adminEventSource.close(); } catch {}
+      adminEventSource = null;
+    }
+    const es = new EventSource(API_BASE + "/presence/stream?role=admin&token=" + encodeURIComponent(authToken));
+    adminEventSource = es;
+    es.addEventListener("dishes_updated", () => {
+      loadDishes();
+    });
+    es.onmessage = (ev) => {
+      try {
+        const data = JSON.parse(ev.data);
+        renderPresence(data);
+        if (data.stats_updated) {
+          loadStats();
+          loadDishes();
         }
-      };
+      } catch {}
+    };
+    es.onerror = () => {
+      es.close();
+      if (adminEventSource === es) adminEventSource = null;
+      if (authToken) setTimeout(connectPresenceStream, 4000);
+    };
+  } catch {}
+}
 
-      let t;
-      $("#q").oninput = () => {
-        clearTimeout(t);
-        t = setTimeout(loadDishes, 250);
-      };
-      $("#cat").onchange = () => {
-        renderCatChips();
-        loadDishes();
-      };
+let isRefreshing = false;
+async function refresh() {
+  if (isRefreshing) return;
+  isRefreshing = true;
+  try {
+    $("#msg").textContent = "";
+    await Promise.all([loadDishes(), loadStats()]);
+    renderCatChips();
+  } catch (e) {
+    console.error("Lỗi làm mới dữ liệu:", e);
+  } finally {
+    isRefreshing = false;
+  }
+}
 
-      let adminEventSource = null;
-      function connectPresenceStream() {
-        if (!authToken) return;
-        try {
-          if (adminEventSource) {
-            try { adminEventSource.close(); } catch {}
-            adminEventSource = null;
-          }
-          const es = new EventSource(API_BASE + "/presence/stream?role=admin&token=" + encodeURIComponent(authToken));
-          adminEventSource = es;
-          es.addEventListener("dishes_updated", () => {
-            loadDishes();
-          });
-          es.onmessage = (ev) => {
-            try {
-              const data = JSON.parse(ev.data);
-              renderPresence(data);
-              if (data.stats_updated) {
-                loadStats();
-                loadDishes();
-              }
-            } catch {}
-          };
-          es.onerror = () => {
-            es.close();
-            if (adminEventSource === es) adminEventSource = null;
-            if (authToken) setTimeout(connectPresenceStream, 4000);
-          };
-        } catch {}
-      }
+window.addEventListener("pageshow", () => refresh());
+window.addEventListener("focus", () => refresh());
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") refresh();
+});
 
-      let isRefreshing = false;
-      async function refresh() {
-        if (isRefreshing) return;
-        isRefreshing = true;
-        try {
-          $("#msg").textContent = "";
-          await Promise.all([loadDishes(), loadStats()]);
-          renderCatChips();
-        } catch (e) {
-          console.error("Lỗi làm mới dữ liệu:", e);
-        } finally {
-          isRefreshing = false;
-        }
-      }
+setInterval(() => {
+  if (document.visibilityState === "visible") {
+    refresh();
+  }
+}, 8000);
 
-      window.addEventListener("pageshow", () => refresh());
-      window.addEventListener("focus", () => refresh());
-      document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible") refresh();
+switchNavSection("overview");
+
+function showDashboard(username) {
+  $("#loginOverlay").style.display = "none";
+  $("#appShell").style.display = "flex";
+  const finalUser = username || "admin";
+  currentLoggedInUsername = finalUser;
+  const adminText = $("#adminNameDisplay");
+  if (adminText) {
+    adminText.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;"></span> ${esc(finalUser)}`;
+  }
+  const accUserEl = $("#accountUsernameDisplay");
+  if (accUserEl) {
+    accUserEl.textContent = finalUser;
+  }
+}
+
+function showLogin(errMsg) {
+  $("#appShell").style.display = "none";
+  $("#loginOverlay").style.display = "flex";
+  const errEl = $("#loginErr");
+  if (errMsg) {
+    errEl.textContent = errMsg;
+    errEl.style.display = "block";
+  } else {
+    errEl.style.display = "none";
+  }
+}
+
+function doLogout(msg) {
+  if (adminEventSource) {
+    try { adminEventSource.close(); } catch {}
+    adminEventSource = null;
+  }
+  localStorage.removeItem("hoian_admin_token");
+  authToken = "";
+  showLogin(msg);
+}
+
+$("#logoutBtn").onclick = () => {
+  if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi Bảng Quản Trị?")) {
+    doLogout();
+  }
+};
+
+      let currentLoggedInUsername = "admin";
+
+async function loadAdminUsers() {
+  try {
+    const res = await api("/auth/users");
+    if (res && Array.isArray(res.users)) {
+      const users = res.users;
+      const badgeEl = $("#navAccountBadge");
+      if (badgeEl) badgeEl.textContent = users.length;
+      renderAdminUsersTable(users);
+    }
+  } catch (e) {
+    console.error("Lỗi tải danh sách tài khoản:", e);
+  }
+}
+
+function renderAdminUsersTable(users) {
+  const tbody = $("#usersTableBody");
+  if (!tbody) return;
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">Chưa có tài khoản nào.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = users.map((u, idx) => {
+    const isSelf = u.username.toLowerCase() === currentLoggedInUsername.toLowerCase();
+    const roleLabel = u.role === "super_admin" ? "Quản Trị Viên Cấp Cao" : (u.role === "editor" ? "Biên Tập Viên" : "Quản Trị Viên");
+    const roleBadgeColor = u.role === "super_admin" ? "badge-gold" : "badge-emerald";
+    const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString("vi-VN") : "Mặc định";
+
+    let actionHtml = "";
+    if (isSelf) {
+      actionHtml = '<span style="font-size: 11px; color: var(--muted); font-style: italic;">Đang dùng</span>';
+    } else if (u.role === "super_admin") {
+      actionHtml = '<span style="font-size: 11.5px; color: #d97706; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Tài khoản Quản Trị Viên Cấp Cao cố định, không thể xoá">Cố định</span>';
+    } else {
+      actionHtml = `
+        <button type="button" class="danger" onclick="deleteAdminUserAccount(${u.id}, '${esc(u.username)}', '${u.role}')" style="font-size: 12px; padding: 4px 10px; border-radius: 8px;">
+          Xoá
+        </button>
+      `;
+    }
+
+    return `
+      <tr>
+        <td style="text-align: center;">${idx + 1}</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="width: 28px; height: 28px; border-radius: 50%; background: #ea580c; color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">
+              ${esc((u.username || "A").charAt(0).toUpperCase())}
+            </span>
+            <div>
+              <b style="color: var(--ink); font-size: 13.5px;">${esc(u.username)}</b>
+              ${isSelf ? '<span style="font-size: 10px; background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 1px 6px; margin-left: 5px; font-weight: 700;">Bạn</span>' : ''}
+            </div>
+          </div>
+        </td>
+        <td>${esc(u.full_name || u.username)}</td>
+        <td><span class="${roleBadgeColor}" style="font-size: 11px;">${esc(roleLabel)}</span></td>
+        <td style="color: var(--muted); font-size: 12px;">${esc(dateStr)}</td>
+        <td style="text-align: right;">
+          ${actionHtml}
+        </td>
+      </tr>
+    `;
+  }).join("");
+}
+
+window.deleteAdminUserAccount = async (userId, username, role) => {
+  if (role === "super_admin") {
+    alert("Tài khoản 'Quản Trị Viên Cấp Cao' là tài khoản hệ thống cố định, không được phép xoá!");
+    return;
+  }
+  if (!confirm(`Bạn có chắc chắn muốn xoá tài khoản quản trị '${username}' không?`)) {
+    return;
+  }
+  try {
+    const res = await api("/auth/users/" + userId, { method: "DELETE" });
+    alert(res.message || "Đã xoá tài khoản thành công!");
+    await loadAdminUsers();
+  } catch (err) {
+    alert("Lỗi xoá tài khoản: " + err.message);
+  }
+};
+
+const toggleAddUserBtn = $("#toggleAddUserBtn");
+const addUserBox = $("#addUserBox");
+const closeAddUserBtn = $("#closeAddUserBtn");
+const cancelAddUserBtn = $("#cancelAddUserBtn");
+
+if (toggleAddUserBtn && addUserBox) {
+  toggleAddUserBtn.onclick = () => {
+    addUserBox.style.display = addUserBox.style.display === "none" ? "block" : "none";
+    if (addUserBox.style.display === "block") $("#newAdminUser").focus();
+  };
+}
+if (closeAddUserBtn && addUserBox) {
+  closeAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
+}
+if (cancelAddUserBtn && addUserBox) {
+  cancelAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
+}
+
+const addUserForm = $("#addUserForm");
+if (addUserForm) {
+  addUserForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const username = $("#newAdminUser").value.trim();
+    const password = $("#newAdminPass").value.trim();
+    const full_name = $("#newAdminFullName").value.trim();
+    const role = $("#newAdminRole").value;
+    const msgEl = $("#addUserMsg");
+    const submitBtn = $("#submitAddUserBtn");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Đang lưu...";
+    msgEl.style.display = "none";
+
+    try {
+      const res = await api("/auth/users", {
+        method: "POST",
+        body: JSON.stringify({ username, password, full_name, role }),
       });
+      msgEl.style.display = "block";
+      msgEl.style.background = "#ecfdf5";
+      msgEl.style.color = "#047857";
+      msgEl.textContent = res.message || "Đã thêm tài khoản thành công!";
+      addUserForm.reset();
+      await loadAdminUsers();
+      setTimeout(() => {
+        if (addUserBox) addUserBox.style.display = "none";
+        msgEl.style.display = "none";
+      }, 1500);
+    } catch (err) {
+      msgEl.style.display = "block";
+      msgEl.style.background = "#fef2f2";
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = err.message;
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Lưu Tài Khoản";
+    }
+  };
+}
 
-      setInterval(() => {
-        if (document.visibilityState === "visible") {
-          refresh();
-        }
-      }, 8000);
+const changePassForm = $("#changePasswordForm");
+if (changePassForm) {
+  changePassForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const currentPass = $("#currentPassInput").value;
+    const newPass = $("#newPassInput").value;
+    const confirmPass = $("#confirmPassInput").value;
+    const msgEl = $("#changePassMsg");
+    const btn = $("#changePassSubmitBtn");
 
-      switchNavSection("overview");
+    if (newPass !== confirmPass) {
+      msgEl.style.display = "block";
+      msgEl.style.background = "#fef2f2";
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = "Mật khẩu xác nhận không trùng khớp!";
+      return;
+    }
 
-      function showDashboard(username) {
-        $("#loginOverlay").style.display = "none";
-        $("#appShell").style.display = "flex";
-        const finalUser = username || "admin";
-        currentLoggedInUsername = finalUser;
-        const adminText = $("#adminNameDisplay");
-        if (adminText) {
-          adminText.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#10b981;"></span> ${esc(finalUser)}`;
-        }
-        const accUserEl = $("#accountUsernameDisplay");
-        if (accUserEl) {
-          accUserEl.textContent = finalUser;
-        }
+    btn.disabled = true;
+    btn.textContent = "Đang cập nhật...";
+    try {
+      const res = await api("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass }),
+      });
+      msgEl.style.display = "block";
+      msgEl.style.background = "#ecfdf5";
+      msgEl.style.color = "#047857";
+      msgEl.textContent = res.message || "Đổi mật khẩu thành công!";
+      changePassForm.reset();
+    } catch (err) {
+      msgEl.style.display = "block";
+      msgEl.style.background = "#fef2f2";
+      msgEl.style.color = "#dc2626";
+      msgEl.textContent = err.message;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Cập Nhật Mật Khẩu";
+    }
+  };
+}
+
+const togglePassBtn = $("#togglePasswordBtn");
+if (togglePassBtn) {
+  togglePassBtn.onclick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const input = $("#loginPassword");
+    if (!input) return;
+    const isPass = input.type === "password";
+    input.type = isPass ? "text" : "password";
+    const svg = $("#eyeIconSvg");
+    if (svg) {
+      svg.innerHTML = isPass
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+    }
+  };
+}
+
+$("#loginForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const username = $("#loginUsername").value.trim();
+  const password = $("#loginPassword").value;
+  const submitBtn = $("#loginSubmitBtn");
+  const errEl = $("#loginErr");
+  errEl.style.display = "none";
+
+  submitBtn.disabled = true;
+  const oldText = submitBtn.textContent;
+  submitBtn.textContent = "Đang xác thực...";
+
+  try {
+    const res = await api("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+    });
+    if (res && res.token) {
+      authToken = res.token;
+      localStorage.setItem("hoian_admin_token", authToken);
+      showDashboard(res.user?.username || username);
+      try {
+        await loadCats();
+        await refresh();
+        loadAdminUsers();
+        connectPresenceStream();
+      } catch (loadErr) {
+        console.warn("Lỗi tải dữ liệu sau đăng nhập:", loadErr);
       }
+    } else {
+      throw new Error(res.message || "Đăng nhập thất bại");
+    }
+  } catch (err) {
+    const msg = String(err.message || "");
+    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+      errEl.innerHTML = `<strong>Không thể kết nối tới server (port 4000).</strong><br>Vui lòng mở web qua: <a href="http://localhost:4000" target="_blank" style="color: #ea580c; text-decoration: underline; font-weight: 700;">http://localhost:4000</a>`;
+    } else {
+      errEl.textContent = msg || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản!";
+    }
+    errEl.style.display = "block";
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = oldText;
+  }
+};
 
-      function showLogin(errMsg) {
-        $("#appShell").style.display = "none";
-        $("#loginOverlay").style.display = "flex";
-        const errEl = $("#loginErr");
-        if (errMsg) {
-          errEl.textContent = errMsg;
-          errEl.style.display = "block";
-        } else {
-          errEl.style.display = "none";
-        }
-      }
-
-      function doLogout(msg) {
-        if (adminEventSource) {
-          try { adminEventSource.close(); } catch {}
-          adminEventSource = null;
-        }
-        localStorage.removeItem("hoian_admin_token");
-        authToken = "";
-        showLogin(msg);
-      }
-
-      $("#logoutBtn").onclick = () => {
-        if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi Bảng Quản Trị?")) {
-          doLogout();
-        }
-      };
-
-            let currentLoggedInUsername = "admin";
-
-      async function loadAdminUsers() {
-        try {
-          const res = await api("/auth/users");
-          if (res && Array.isArray(res.users)) {
-            const users = res.users;
-            const badgeEl = $("#navAccountBadge");
-            if (badgeEl) badgeEl.textContent = users.length;
-            renderAdminUsersTable(users);
-          }
-        } catch (e) {
-          console.error("Lỗi tải danh sách tài khoản:", e);
-        }
-      }
-
-      function renderAdminUsersTable(users) {
-        const tbody = $("#usersTableBody");
-        if (!tbody) return;
-        if (!users.length) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--muted); padding: 18px;">Chưa có tài khoản nào.</td></tr>';
-          return;
-        }
-
-        tbody.innerHTML = users.map((u, idx) => {
-          const isSelf = u.username.toLowerCase() === currentLoggedInUsername.toLowerCase();
-          const roleLabel = u.role === "super_admin" ? "Quản Trị Viên Cấp Cao" : (u.role === "editor" ? "Biên Tập Viên" : "Quản Trị Viên");
-          const roleBadgeColor = u.role === "super_admin" ? "badge-gold" : "badge-emerald";
-          const dateStr = u.created_at ? new Date(u.created_at).toLocaleDateString("vi-VN") : "Mặc định";
-
-          let actionHtml = "";
-          if (isSelf) {
-            actionHtml = '<span style="font-size: 11px; color: var(--muted); font-style: italic;">Đang dùng</span>';
-          } else if (u.role === "super_admin") {
-            actionHtml = '<span style="font-size: 11.5px; color: #d97706; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="Tài khoản Quản Trị Viên Cấp Cao cố định, không thể xoá">Cố định</span>';
-          } else {
-            actionHtml = `
-              <button type="button" class="danger" onclick="deleteAdminUserAccount(${u.id}, '${esc(u.username)}', '${u.role}')" style="font-size: 12px; padding: 4px 10px; border-radius: 8px;">
-                Xoá
-              </button>
-            `;
-          }
-
-          return `
-            <tr>
-              <td style="text-align: center;">${idx + 1}</td>
-              <td>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="width: 28px; height: 28px; border-radius: 50%; background: #ea580c; color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;">
-                    ${esc((u.username || "A").charAt(0).toUpperCase())}
-                  </span>
-                  <div>
-                    <b style="color: var(--ink); font-size: 13.5px;">${esc(u.username)}</b>
-                    ${isSelf ? '<span style="font-size: 10px; background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 1px 6px; margin-left: 5px; font-weight: 700;">Bạn</span>' : ''}
-                  </div>
-                </div>
-              </td>
-              <td>${esc(u.full_name || u.username)}</td>
-              <td><span class="${roleBadgeColor}" style="font-size: 11px;">${esc(roleLabel)}</span></td>
-              <td style="color: var(--muted); font-size: 12px;">${esc(dateStr)}</td>
-              <td style="text-align: right;">
-                ${actionHtml}
-              </td>
-            </tr>
-          `;
-        }).join("");
-      }
-
-      window.deleteAdminUserAccount = async (userId, username, role) => {
-        if (role === "super_admin") {
-          alert("Tài khoản 'Quản Trị Viên Cấp Cao' là tài khoản hệ thống cố định, không được phép xoá!");
-          return;
-        }
-        if (!confirm(`Bạn có chắc chắn muốn xoá tài khoản quản trị '${username}' không?`)) {
-          return;
-        }
-        try {
-          const res = await api("/auth/users/" + userId, { method: "DELETE" });
-          alert(res.message || "Đã xoá tài khoản thành công!");
-          await loadAdminUsers();
-        } catch (err) {
-          alert("Lỗi xoá tài khoản: " + err.message);
-        }
-      };
-
-      const toggleAddUserBtn = $("#toggleAddUserBtn");
-      const addUserBox = $("#addUserBox");
-      const closeAddUserBtn = $("#closeAddUserBtn");
-      const cancelAddUserBtn = $("#cancelAddUserBtn");
-
-      if (toggleAddUserBtn && addUserBox) {
-        toggleAddUserBtn.onclick = () => {
-          addUserBox.style.display = addUserBox.style.display === "none" ? "block" : "none";
-          if (addUserBox.style.display === "block") $("#newAdminUser").focus();
-        };
-      }
-      if (closeAddUserBtn && addUserBox) {
-        closeAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
-      }
-      if (cancelAddUserBtn && addUserBox) {
-        cancelAddUserBtn.onclick = () => { addUserBox.style.display = "none"; };
-      }
-
-      const addUserForm = $("#addUserForm");
-      if (addUserForm) {
-        addUserForm.onsubmit = async (e) => {
-          e.preventDefault();
-          const username = $("#newAdminUser").value.trim();
-          const password = $("#newAdminPass").value.trim();
-          const full_name = $("#newAdminFullName").value.trim();
-          const role = $("#newAdminRole").value;
-          const msgEl = $("#addUserMsg");
-          const submitBtn = $("#submitAddUserBtn");
-
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Đang lưu...";
-          msgEl.style.display = "none";
-
-          try {
-            const res = await api("/auth/users", {
-              method: "POST",
-              body: JSON.stringify({ username, password, full_name, role }),
-            });
-            msgEl.style.display = "block";
-            msgEl.style.background = "#ecfdf5";
-            msgEl.style.color = "#047857";
-            msgEl.textContent = res.message || "Đã thêm tài khoản thành công!";
-            addUserForm.reset();
-            await loadAdminUsers();
-            setTimeout(() => {
-              if (addUserBox) addUserBox.style.display = "none";
-              msgEl.style.display = "none";
-            }, 1500);
-          } catch (err) {
-            msgEl.style.display = "block";
-            msgEl.style.background = "#fef2f2";
-            msgEl.style.color = "#dc2626";
-            msgEl.textContent = err.message;
-          } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Lưu Tài Khoản";
-          }
-        };
-      }
-
-      const changePassForm = $("#changePasswordForm");
-      if (changePassForm) {
-        changePassForm.onsubmit = async (e) => {
-          e.preventDefault();
-          const currentPass = $("#currentPassInput").value;
-          const newPass = $("#newPassInput").value;
-          const confirmPass = $("#confirmPassInput").value;
-          const msgEl = $("#changePassMsg");
-          const btn = $("#changePassSubmitBtn");
-
-          if (newPass !== confirmPass) {
-            msgEl.style.display = "block";
-            msgEl.style.background = "#fef2f2";
-            msgEl.style.color = "#dc2626";
-            msgEl.textContent = "Mật khẩu xác nhận không trùng khớp!";
-            return;
-          }
-
-          btn.disabled = true;
-          btn.textContent = "Đang cập nhật...";
-          try {
-            const res = await api("/auth/change-password", {
-              method: "POST",
-              body: JSON.stringify({ currentPassword: currentPass, newPassword: newPass }),
-            });
-            msgEl.style.display = "block";
-            msgEl.style.background = "#ecfdf5";
-            msgEl.style.color = "#047857";
-            msgEl.textContent = res.message || "Đổi mật khẩu thành công!";
-            changePassForm.reset();
-          } catch (err) {
-            msgEl.style.display = "block";
-            msgEl.style.background = "#fef2f2";
-            msgEl.style.color = "#dc2626";
-            msgEl.textContent = err.message;
-          } finally {
-            btn.disabled = false;
-            btn.textContent = "Cập Nhật Mật Khẩu";
-          }
-        };
-      }
-
-      const togglePassBtn = $("#togglePasswordBtn");
-      if (togglePassBtn) {
-        togglePassBtn.onclick = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          const input = $("#loginPassword");
-          if (!input) return;
-          const isPass = input.type === "password";
-          input.type = isPass ? "text" : "password";
-          const svg = $("#eyeIconSvg");
-          if (svg) {
-            svg.innerHTML = isPass
-              ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
-              : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
-          }
-        };
-      }
-
-      $("#loginForm").onsubmit = async (e) => {
-        e.preventDefault();
-        const username = $("#loginUsername").value.trim();
-        const password = $("#loginPassword").value;
-        const submitBtn = $("#loginSubmitBtn");
-        const errEl = $("#loginErr");
-        errEl.style.display = "none";
-
-        submitBtn.disabled = true;
-        const oldText = submitBtn.textContent;
-        submitBtn.textContent = "Đang xác thực...";
-
-        try {
-          const res = await api("/auth/login", {
-            method: "POST",
-            body: JSON.stringify({ username, password }),
-          });
-          if (res && res.token) {
-            authToken = res.token;
-            localStorage.setItem("hoian_admin_token", authToken);
-            showDashboard(res.user?.username || username);
-            try {
-              await loadCats();
-              await refresh();
-              loadAdminUsers();
-              connectPresenceStream();
-            } catch (loadErr) {
-              console.warn("Lỗi tải dữ liệu sau đăng nhập:", loadErr);
-            }
-          } else {
-            throw new Error(res.message || "Đăng nhập thất bại");
-          }
-        } catch (err) {
-          const msg = String(err.message || "");
-          if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
-            errEl.innerHTML = `<strong>Không thể kết nối tới server (port 4000).</strong><br>Vui lòng mở web qua: <a href="http://localhost:4000" target="_blank" style="color: #ea580c; text-decoration: underline; font-weight: 700;">http://localhost:4000</a>`;
-          } else {
-            errEl.textContent = msg || "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản!";
-          }
-          errEl.style.display = "block";
-        } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = oldText;
-        }
-      };
-
-      (async () => {
-        if (!authToken) {
-          showLogin();
-          return;
-        }
-        try {
-          const me = await api("/auth/me");
-          if (me && me.ok) {
-            showDashboard(me.user?.username);
-            await loadCats();
-            await refresh();
-            connectPresenceStream();
-          } else {
-            doLogout();
-          }
-        } catch (err) {
-          doLogout();
-        }
-      })();
+(async () => {
+  if (!authToken) {
+    showLogin();
+    return;
+  }
+  try {
+    const me = await api("/auth/me");
+    if (me && me.ok) {
+      showDashboard(me.user?.username);
+      await loadCats();
+      await refresh();
+      connectPresenceStream();
+    } else {
+      doLogout();
+    }
+  } catch (err) {
+    doLogout();
+  }
+})();
     
-      const chartTooltip = $("#chartTooltip");
+const chartTooltip = $("#chartTooltip");
 
-      function formatTooltipHtml(el) {
-        const type = el.dataset.ttType;
-        if (type === "bar") {
-          const title = el.dataset.ttTitle || "Món ăn";
-          const favs = el.dataset.ttFavs || "0";
-          const checks = el.dataset.ttChecks || "0";
-          const total = el.dataset.ttVal || "0 lượt";
-          return `
-            <div class="chart-tooltip-header">
-              
-              <span>${esc(title)}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Yêu thích:</span>
-              <span class="chart-tooltip-val">${esc(favs)} lượt</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Check-in:</span>
-              <span class="chart-tooltip-val">${esc(checks)} lượt</span>
-            </div>
-            <div class="chart-tooltip-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 5px; margin-top: 5px;">
-              <span>Tổng tương tác:</span>
-              <span class="chart-tooltip-badge">${esc(total)}</span>
-            </div>
-          `;
-        }
-        if (type === "pie") {
-          const title = el.dataset.ttTitle || "Nhóm";
-          const val = el.dataset.ttVal || "0";
-          const pct = el.dataset.ttPct || "0%";
-          const mode = el.dataset.ttMode;
-          const unit = mode === "cat" ? "món ăn" : "lượt tương tác";
-          return `
-            <div class="chart-tooltip-header">
-              
-              <span>${esc(title)}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Số lượng:</span>
-              <span class="chart-tooltip-val">${esc(val)} ${unit}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Tỷ trọng:</span>
-              <span class="chart-tooltip-badge">${esc(pct)}</span>
-            </div>
-          `;
-        }
-        if (type === "line") {
-          const title = el.dataset.ttTitle || "Số liệu";
-          const val = el.dataset.ttVal || "0";
-          const time = el.dataset.ttTime || "";
-          const mode = el.dataset.ttMode;
-          if (mode === "online") {
-            return `
-              <div class="chart-tooltip-header">
-                <span class="live-dot" style="margin-right: 5px;"></span>
-                <span>Thiết Bị Đang Online Live</span>
-              </div>
-              <div class="chart-tooltip-row">
-                <span>Thời điểm:</span>
-                <span style="color:#94a3b8">${esc(time)}</span>
-              </div>
-              <div class="chart-tooltip-row">
-                <span>Trực tiếp:</span>
-                <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(val)} thiết bị</span>
-              </div>
-            `;
-          }
-          return `
-            <div class="chart-tooltip-header">
-              
-              <span>${esc(title)}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Tổng tương tác:</span>
-              <span class="chart-tooltip-badge">${esc(val)}</span>
-            </div>
-          `;
-        }
-        if (type === "daily") {
-          const date = el.dataset.ttDate || "";
-          const day = el.dataset.ttDay || "";
-          const count = el.dataset.ttCount || "0";
-          return `
-            <div class="chart-tooltip-header">
-              
-              <span>Ngày ${esc(date)}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Mốc ngày:</span>
-              <span style="color:#94a3b8">${esc(day)}</span>
-            </div>
-            <div class="chart-tooltip-row">
-              <span>Số lượt check-in:</span>
-              <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(count)} lượt</span>
-            </div>
-          `;
-        }
-        return "";
-      }
+function formatTooltipHtml(el) {
+  const type = el.dataset.ttType;
+  if (type === "bar") {
+    const title = el.dataset.ttTitle || "Món ăn";
+    const favs = el.dataset.ttFavs || "0";
+    const checks = el.dataset.ttChecks || "0";
+    const total = el.dataset.ttVal || "0 lượt";
+    return `
+      <div class="chart-tooltip-header">
+        
+        <span>${esc(title)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Yêu thích:</span>
+        <span class="chart-tooltip-val">${esc(favs)} lượt</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Check-in:</span>
+        <span class="chart-tooltip-val">${esc(checks)} lượt</span>
+      </div>
+      <div class="chart-tooltip-row" style="border-top: 1px dashed rgba(255,255,255,0.15); padding-top: 5px; margin-top: 5px;">
+        <span>Tổng tương tác:</span>
+        <span class="chart-tooltip-badge">${esc(total)}</span>
+      </div>
+    `;
+  }
+  if (type === "pie") {
+    const title = el.dataset.ttTitle || "Nhóm";
+    const val = el.dataset.ttVal || "0";
+    const pct = el.dataset.ttPct || "0%";
+    const mode = el.dataset.ttMode;
+    const unit = mode === "cat" ? "món ăn" : "lượt tương tác";
+    return `
+      <div class="chart-tooltip-header">
+        
+        <span>${esc(title)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Số lượng:</span>
+        <span class="chart-tooltip-val">${esc(val)} ${unit}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Tỷ trọng:</span>
+        <span class="chart-tooltip-badge">${esc(pct)}</span>
+      </div>
+    `;
+  }
+  if (type === "line") {
+    const title = el.dataset.ttTitle || "Số liệu";
+    const val = el.dataset.ttVal || "0";
+    const time = el.dataset.ttTime || "";
+    const mode = el.dataset.ttMode;
+    if (mode === "online") {
+      return `
+        <div class="chart-tooltip-header">
+          <span class="live-dot" style="margin-right: 5px;"></span>
+          <span>Thiết Bị Đang Online Live</span>
+        </div>
+        <div class="chart-tooltip-row">
+          <span>Thời điểm:</span>
+          <span style="color:#94a3b8">${esc(time)}</span>
+        </div>
+        <div class="chart-tooltip-row">
+          <span>Trực tiếp:</span>
+          <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(val)} thiết bị</span>
+        </div>
+      `;
+    }
+    return `
+      <div class="chart-tooltip-header">
+        
+        <span>${esc(title)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Tổng tương tác:</span>
+        <span class="chart-tooltip-badge">${esc(val)}</span>
+      </div>
+    `;
+  }
+  if (type === "daily") {
+    const date = el.dataset.ttDate || "";
+    const day = el.dataset.ttDay || "";
+    const count = el.dataset.ttCount || "0";
+    return `
+      <div class="chart-tooltip-header">
+        
+        <span>Ngày ${esc(date)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Mốc ngày:</span>
+        <span style="color:#94a3b8">${esc(day)}</span>
+      </div>
+      <div class="chart-tooltip-row">
+        <span>Số lượt check-in:</span>
+        <span class="chart-tooltip-badge" style="background:rgba(16,185,129,0.25); color:#34d399;">${esc(count)} lượt</span>
+      </div>
+    `;
+  }
+  return "";
+}
 
-      function updateTooltipPos(e) {
-        if (!chartTooltip || !chartTooltip.classList.contains("visible")) return;
-        const pad = 16;
-        let x = e.clientX;
-        let y = e.clientY - 14;
-        const rect = chartTooltip.getBoundingClientRect();
-        if (x - rect.width / 2 < pad) x = rect.width / 2 + pad;
-        if (x + rect.width / 2 > window.innerWidth - pad) x = window.innerWidth - rect.width / 2 - pad;
-        if (y - rect.height < pad) {
-          y = e.clientY + 26;
-          chartTooltip.style.transform = "translate(-50%, 0)";
-        } else {
-          chartTooltip.style.transform = "translate(-50%, -100%)";
-        }
-        chartTooltip.style.left = x + "px";
-        chartTooltip.style.top = y + "px";
-      }
+function updateTooltipPos(e) {
+  if (!chartTooltip || !chartTooltip.classList.contains("visible")) return;
+  const pad = 16;
+  let x = e.clientX;
+  let y = e.clientY - 14;
+  const rect = chartTooltip.getBoundingClientRect();
+  if (x - rect.width / 2 < pad) x = rect.width / 2 + pad;
+  if (x + rect.width / 2 > window.innerWidth - pad) x = window.innerWidth - rect.width / 2 - pad;
+  if (y - rect.height < pad) {
+    y = e.clientY + 26;
+    chartTooltip.style.transform = "translate(-50%, 0)";
+  } else {
+    chartTooltip.style.transform = "translate(-50%, -100%)";
+  }
+  chartTooltip.style.left = x + "px";
+  chartTooltip.style.top = y + "px";
+}
 
-      document.addEventListener("mouseover", (e) => {
-        const target = e.target.closest("[data-tt-type]");
-        if (!target) return;
-        const html = formatTooltipHtml(target);
-        if (html && chartTooltip) {
-          chartTooltip.innerHTML = html;
-          chartTooltip.classList.add("visible");
-          updateTooltipPos(e);
-        }
-      });
+document.addEventListener("mouseover", (e) => {
+  const target = e.target.closest("[data-tt-type]");
+  if (!target) return;
+  const html = formatTooltipHtml(target);
+  if (html && chartTooltip) {
+    chartTooltip.innerHTML = html;
+    chartTooltip.classList.add("visible");
+    updateTooltipPos(e);
+  }
+});
 
-      document.addEventListener("mousemove", (e) => {
-        if (chartTooltip && chartTooltip.classList.contains("visible")) {
-          updateTooltipPos(e);
-        }
-      });
+document.addEventListener("mousemove", (e) => {
+  if (chartTooltip && chartTooltip.classList.contains("visible")) {
+    updateTooltipPos(e);
+  }
+});
 
-      document.addEventListener("mouseout", (e) => {
-        const target = e.target.closest("[data-tt-type]");
-        if (target && chartTooltip) {
-          chartTooltip.classList.remove("visible");
-        }
-      });
-
-    
-      let selectedQrDishId = null;
-
-      function renderQrManager() {
-        const sel = $("#qrDishSelect");
-        if (sel && dishes.length > 0) {
-          const newIds = dishes.map((d) => d.id).join(",");
-          if (sel.dataset.renderedIds !== newIds) {
-            sel.innerHTML = dishes
-              .map((d) => {
-                const dishName = d.localized_name || d.name;
-                const shopInfo = d.address ? " - " + d.address.split(" - ")[0] : "";
-                const catLabel = getCatLabel(d.category_id, d.category_slug);
-                return `<option value="${d.id}">${esc(dishName)}${esc(shopInfo)} (${catLabel})</option>`;
-              })
-              .join("");
-            sel.dataset.renderedIds = newIds;
-          }
-          if (selectedQrDishId && dishes.some((d) => String(d.id) === String(selectedQrDishId))) {
-            sel.value = String(selectedQrDishId);
-          } else if (!sel.value && dishes[0]) {
-            sel.value = String(dishes[0].id);
-            selectedQrDishId = dishes[0].id;
-          }
-        }
-        updateAppQr();
-        updateDishQr();
-      }
-
-      function updateAppQr() {
-        const urlInput = $("#qrAppUrlInput");
-        const langSel = $("#qrAppLangSelect");
-        const colorSel = $("#qrAppColorSelect");
-        const sizeSel = $("#qrAppSizeSelect");
-        const img = $("#qrAppImgPreview");
-        if (!urlInput || !img) return;
-
-        let base = urlInput.value.trim() || "https://doancnpm-beta.vercel.app";
-        const lang = langSel ? langSel.value : "vi";
-        const sep = base.includes("?") ? "&" : "?";
-        const fullUrl = lang === "vi" ? base : `${base}${sep}lang=${lang}`;
-        const color = (colorSel ? colorSel.value : "0f172a").replace("#", "");
-        const size = sizeSel ? sizeSel.value : "600x600";
-
-        const newSrc = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&color=${color}&data=${encodeURIComponent(fullUrl)}`;
-        if (img.src !== newSrc) {
-          img.src = newSrc;
-        }
-      }
-
-      function updateDishQr() {
-        const dishSel = $("#qrDishSelect");
-        const langSel = $("#qrDishLangSelect");
-        const colorSel = $("#qrDishColorSelect");
-        const img = $("#qrDishImgPreview");
-        const linkInput = $("#qrDishLinkInput");
-        const titleEl = $("#qrDishCardTitle");
-        if (!dishSel || !img) return;
-
-        if (dishSel.value) {
-          selectedQrDishId = dishSel.value;
-        }
-
-        const dishId = dishSel.value || selectedQrDishId || (dishes[0]?.id ?? 18);
-        const dishObj = dishes.find((d) => String(d.id) === String(dishId)) || dishes[0];
-        const lang = langSel ? langSel.value : "vi";
-
-        const fullUrl = `https://doancnpm-beta.vercel.app/?dish=${dishId}&lang=${lang}`;
-
-        if (linkInput) linkInput.value = fullUrl;
-        if (titleEl && dishObj) titleEl.textContent = dishObj.localized_name || dishObj.name;
-
-        const color = (colorSel ? colorSel.value : "d4152f").replace("#", "");
-        const newSrc = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&color=${color}&data=${encodeURIComponent(fullUrl)}`;
-        if (img.src !== newSrc) {
-          img.src = newSrc;
-        }
-      }
-
-      const qrTabApp = $("#qrTabAppBtn");
-      if (qrTabApp) {
-        qrTabApp.onclick = () => {
-          qrTabApp.classList.add("active");
-          const dTab = $("#qrTabDishesBtn");
-          if (dTab) dTab.classList.remove("active");
-          const appBox = $("#qrAppBox");
-          if (appBox) appBox.hidden = false;
-          const dishBox = $("#qrDishesBox");
-          if (dishBox) dishBox.hidden = true;
-          updateAppQr();
-        };
-      }
-
-      const qrTabDishes = $("#qrTabDishesBtn");
-      if (qrTabDishes) {
-        qrTabDishes.onclick = () => {
-          qrTabDishes.classList.add("active");
-          const aTab = $("#qrTabAppBtn");
-          if (aTab) aTab.classList.remove("active");
-          const appBox = $("#qrAppBox");
-          if (appBox) appBox.hidden = true;
-          const dishBox = $("#qrDishesBox");
-          if (dishBox) dishBox.hidden = false;
-          updateDishQr();
-        };
-      }
-
-      ["qrAppUrlInput", "qrAppLangSelect", "qrAppColorSelect", "qrAppSizeSelect"].forEach((id) => {
-        const el = $("#" + id);
-        if (el) {
-          el.oninput = updateAppQr;
-          el.onchange = updateAppQr;
-        }
-      });
-
-      const setVercelBtn = $("#qrSetVercelBtn");
-      if (setVercelBtn) {
-        setVercelBtn.onclick = () => {
-          const u = $("#qrAppUrlInput");
-          if (u) u.value = "https://doancnpm-beta.vercel.app";
-          updateAppQr();
-        };
-      }
-
-      const setBackendBtn = $("#qrSetBackendBtn");
-      if (setBackendBtn) {
-        setBackendBtn.onclick = () => {
-          const u = $("#qrAppUrlInput");
-          if (u) u.value = "https://doancnpm-backend.onrender.com";
-          updateAppQr();
-        };
-      }
-
-      ["qrDishSelect", "qrDishLangSelect", "qrDishColorSelect"].forEach((id) => {
-        const el = $("#" + id);
-        if (el) {
-          el.onchange = () => { if (id === "qrDishSelect") selectedQrDishId = el.value; updateDishQr(); };
-          el.oninput = () => { if (id === "qrDishSelect") selectedQrDishId = el.value; updateDishQr(); };
-        }
-      });
-
-      const qrAppDlBtn = $("#qrAppDownloadBtn");
-      if (qrAppDlBtn) {
-        qrAppDlBtn.onclick = async () => {
-          const img = $("#qrAppImgPreview");
-          if (!img || !img.src) return;
-          qrAppDlBtn.textContent = "Đang tải ảnh...";
-          try {
-            const resp = await fetch(img.src);
-            const blob = await resp.blob();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "TheoDauViHoi_App_QRCode.png";
-            a.click();
-          } catch {
-            window.open(img.src, "_blank");
-          } finally {
-            qrAppDlBtn.innerHTML = `Tải Ảnh QR (PNG)`;
-          }
-        };
-      }
-
-      const qrAppCpBtn = $("#qrAppCopyBtn");
-      if (qrAppCpBtn) {
-        qrAppCpBtn.onclick = () => {
-          const input = $("#qrAppUrlInput");
-          if (!input) return;
-          navigator.clipboard?.writeText(input.value);
-          const oldText = qrAppCpBtn.textContent;
-          qrAppCpBtn.textContent = "Đã sao chép!";
-          setTimeout(() => (qrAppCpBtn.textContent = oldText), 2000);
-        };
-      }
-
-      const qrDishDlBtn = $("#qrDishDownloadBtn");
-      if (qrDishDlBtn) {
-        qrDishDlBtn.onclick = async () => {
-          const img = $("#qrDishImgPreview");
-          if (!img || !img.src) return;
-          qrDishDlBtn.textContent = "Đang tải ảnh...";
-          try {
-            const resp = await fetch(img.src);
-            const blob = await resp.blob();
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            const dishSel = $("#qrDishSelect");
-            const dishName = dishSel ? dishSel.options[dishSel.selectedIndex]?.text || "Dish" : "Dish";
-            a.download = `QRCode_${dishName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
-            a.click();
-          } catch {
-            window.open(img.src, "_blank");
-          } finally {
-            qrDishDlBtn.innerHTML = `Tải Thẻ Bàn Món Ăn (PNG)`;
-          }
-        };
-      }
-
-      function handlePrintCard(elemId) {
-        const el = document.getElementById(elemId);
-        if (!el) return;
-        const w = window.open("", "_blank", "width=600,height=700");
-        w.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8" />
-            <title>In Thẻ QR Ẩm Thực Hội An</title>
-            <style>
-              body { font-family: 'Be Vietnam Pro', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; }
-              .card { max-width: 320px; border: 2px solid #e9c26b; border-radius: 16px; padding: 24px; text-align: center; }
-              @media print { body { -webkit-print-color-adjust: exact; } }
-            </style>
-          </head>
-          <body>
-            <div class="card">${el.innerHTML}</div>
-            <` + `script>setTimeout(() => { window.print(); window.close(); }, 500);<` + `/script>
-          </body>
-          </html>
-        `);
-        w.document.close();
-      }
-
-      const printAllBtn = $("#qrPrintAllBtn");
-      if (printAllBtn) {
-        printAllBtn.onclick = () => {
-          const isApp = !$("#qrAppBox")?.hidden;
-          handlePrintCard(isApp ? "qrCardPreview" : "qrDishCardPreview");
-        };
-      }
-
-      const qrDishPrintBtn = $("#qrDishPrintBtn");
-      if (qrDishPrintBtn) {
-        qrDishPrintBtn.onclick = () => {
-          handlePrintCard("qrDishCardPreview");
-        };
-      }
+document.addEventListener("mouseout", (e) => {
+  const target = e.target.closest("[data-tt-type]");
+  if (target && chartTooltip) {
+    chartTooltip.classList.remove("visible");
+  }
+});
 
     
+let selectedQrDishId = null;
+
+function renderQrManager() {
+  const sel = $("#qrDishSelect");
+  if (sel && dishes.length > 0) {
+    const newIds = dishes.map((d) => d.id).join(",");
+    if (sel.dataset.renderedIds !== newIds) {
+      sel.innerHTML = dishes
+        .map((d) => {
+          const dishName = d.localized_name || d.name;
+          const shopInfo = d.address ? " - " + d.address.split(" - ")[0] : "";
+          const catLabel = getCatLabel(d.category_id, d.category_slug);
+          return `<option value="${d.id}">${esc(dishName)}${esc(shopInfo)} (${catLabel})</option>`;
+        })
+        .join("");
+      sel.dataset.renderedIds = newIds;
+    }
+    if (selectedQrDishId && dishes.some((d) => String(d.id) === String(selectedQrDishId))) {
+      sel.value = String(selectedQrDishId);
+    } else if (!sel.value && dishes[0]) {
+      sel.value = String(dishes[0].id);
+      selectedQrDishId = dishes[0].id;
+    }
+  }
+  updateAppQr();
+  updateDishQr();
+}
+
+function updateAppQr() {
+  const urlInput = $("#qrAppUrlInput");
+  const langSel = $("#qrAppLangSelect");
+  const colorSel = $("#qrAppColorSelect");
+  const sizeSel = $("#qrAppSizeSelect");
+  const img = $("#qrAppImgPreview");
+  if (!urlInput || !img) return;
+
+  let base = urlInput.value.trim() || "https://doancnpm-beta.vercel.app";
+  const lang = langSel ? langSel.value : "vi";
+  const sep = base.includes("?") ? "&" : "?";
+  const fullUrl = lang === "vi" ? base : `${base}${sep}lang=${lang}`;
+  const color = (colorSel ? colorSel.value : "0f172a").replace("#", "");
+  const size = sizeSel ? sizeSel.value : "600x600";
+
+  const newSrc = `https://api.qrserver.com/v1/create-qr-code/?size=${size}&color=${color}&data=${encodeURIComponent(fullUrl)}`;
+  if (img.src !== newSrc) {
+    img.src = newSrc;
+  }
+}
+
+function updateDishQr() {
+  const dishSel = $("#qrDishSelect");
+  const langSel = $("#qrDishLangSelect");
+  const colorSel = $("#qrDishColorSelect");
+  const img = $("#qrDishImgPreview");
+  const linkInput = $("#qrDishLinkInput");
+  const titleEl = $("#qrDishCardTitle");
+  if (!dishSel || !img) return;
+
+  if (dishSel.value) {
+    selectedQrDishId = dishSel.value;
+  }
+
+  const dishId = dishSel.value || selectedQrDishId || (dishes[0]?.id ?? 18);
+  const dishObj = dishes.find((d) => String(d.id) === String(dishId)) || dishes[0];
+  const lang = langSel ? langSel.value : "vi";
+
+  const fullUrl = `https://doancnpm-beta.vercel.app/?dish=${dishId}&lang=${lang}`;
+
+  if (linkInput) linkInput.value = fullUrl;
+  if (titleEl && dishObj) titleEl.textContent = dishObj.localized_name || dishObj.name;
+
+  const color = (colorSel ? colorSel.value : "d4152f").replace("#", "");
+  const newSrc = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&color=${color}&data=${encodeURIComponent(fullUrl)}`;
+  if (img.src !== newSrc) {
+    img.src = newSrc;
+  }
+}
+
+const qrTabApp = $("#qrTabAppBtn");
+if (qrTabApp) {
+  qrTabApp.onclick = () => {
+    qrTabApp.classList.add("active");
+    const dTab = $("#qrTabDishesBtn");
+    if (dTab) dTab.classList.remove("active");
+    const appBox = $("#qrAppBox");
+    if (appBox) appBox.hidden = false;
+    const dishBox = $("#qrDishesBox");
+    if (dishBox) dishBox.hidden = true;
+    updateAppQr();
+  };
+}
+
+const qrTabDishes = $("#qrTabDishesBtn");
+if (qrTabDishes) {
+  qrTabDishes.onclick = () => {
+    qrTabDishes.classList.add("active");
+    const aTab = $("#qrTabAppBtn");
+    if (aTab) aTab.classList.remove("active");
+    const appBox = $("#qrAppBox");
+    if (appBox) appBox.hidden = true;
+    const dishBox = $("#qrDishesBox");
+    if (dishBox) dishBox.hidden = false;
+    updateDishQr();
+  };
+}
+
+["qrAppUrlInput", "qrAppLangSelect", "qrAppColorSelect", "qrAppSizeSelect"].forEach((id) => {
+  const el = $("#" + id);
+  if (el) {
+    el.oninput = updateAppQr;
+    el.onchange = updateAppQr;
+  }
+});
+
+const setVercelBtn = $("#qrSetVercelBtn");
+if (setVercelBtn) {
+  setVercelBtn.onclick = () => {
+    const u = $("#qrAppUrlInput");
+    if (u) u.value = "https://doancnpm-beta.vercel.app";
+    updateAppQr();
+  };
+}
+
+const setBackendBtn = $("#qrSetBackendBtn");
+if (setBackendBtn) {
+  setBackendBtn.onclick = () => {
+    const u = $("#qrAppUrlInput");
+    if (u) u.value = "https://doancnpm-backend.onrender.com";
+    updateAppQr();
+  };
+}
+
+["qrDishSelect", "qrDishLangSelect", "qrDishColorSelect"].forEach((id) => {
+  const el = $("#" + id);
+  if (el) {
+    el.onchange = () => { if (id === "qrDishSelect") selectedQrDishId = el.value; updateDishQr(); };
+    el.oninput = () => { if (id === "qrDishSelect") selectedQrDishId = el.value; updateDishQr(); };
+  }
+});
+
+const qrAppDlBtn = $("#qrAppDownloadBtn");
+if (qrAppDlBtn) {
+  qrAppDlBtn.onclick = async () => {
+    const img = $("#qrAppImgPreview");
+    if (!img || !img.src) return;
+    qrAppDlBtn.textContent = "Đang tải ảnh...";
+    try {
+      const resp = await fetch(img.src);
+      const blob = await resp.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "TheoDauViHoi_App_QRCode.png";
+      a.click();
+    } catch {
+      window.open(img.src, "_blank");
+    } finally {
+      qrAppDlBtn.innerHTML = `Tải Ảnh QR (PNG)`;
+    }
+  };
+}
+
+const qrAppCpBtn = $("#qrAppCopyBtn");
+if (qrAppCpBtn) {
+  qrAppCpBtn.onclick = () => {
+    const input = $("#qrAppUrlInput");
+    if (!input) return;
+    navigator.clipboard?.writeText(input.value);
+    const oldText = qrAppCpBtn.textContent;
+    qrAppCpBtn.textContent = "Đã sao chép!";
+    setTimeout(() => (qrAppCpBtn.textContent = oldText), 2000);
+  };
+}
+
+const qrDishDlBtn = $("#qrDishDownloadBtn");
+if (qrDishDlBtn) {
+  qrDishDlBtn.onclick = async () => {
+    const img = $("#qrDishImgPreview");
+    if (!img || !img.src) return;
+    qrDishDlBtn.textContent = "Đang tải ảnh...";
+    try {
+      const resp = await fetch(img.src);
+      const blob = await resp.blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      const dishSel = $("#qrDishSelect");
+      const dishName = dishSel ? dishSel.options[dishSel.selectedIndex]?.text || "Dish" : "Dish";
+      a.download = `QRCode_${dishName.replace(/[^a-zA-Z0-9]/g, '_')}.png`;
+      a.click();
+    } catch {
+      window.open(img.src, "_blank");
+    } finally {
+      qrDishDlBtn.innerHTML = `Tải Thẻ Bàn Món Ăn (PNG)`;
+    }
+  };
+}
+
+function handlePrintCard(elemId) {
+  const el = document.getElementById(elemId);
+  if (!el) return;
+  const w = window.open("", "_blank", "width=600,height=700");
+  w.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <title>In Thẻ QR Ẩm Thực Hội An</title>
+      <style>
+        body { font-family: 'Be Vietnam Pro', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; }
+        .card { max-width: 320px; border: 2px solid #e9c26b; border-radius: 16px; padding: 24px; text-align: center; }
+        @media print { body { -webkit-print-color-adjust: exact; } }
+      </style>
+    </head>
+    <body>
+      <div class="card">${el.innerHTML}</div>
+      <` + `script>setTimeout(() => { window.print(); window.close(); }, 500);<` + `/script>
+    </body>
+    </html>
+  `);
+  w.document.close();
+}
+
+const printAllBtn = $("#qrPrintAllBtn");
+if (printAllBtn) {
+  printAllBtn.onclick = () => {
+    const isApp = !$("#qrAppBox")?.hidden;
+    handlePrintCard(isApp ? "qrCardPreview" : "qrDishCardPreview");
+  };
+}
+
+const qrDishPrintBtn = $("#qrDishPrintBtn");
+if (qrDishPrintBtn) {
+  qrDishPrintBtn.onclick = () => {
+    handlePrintCard("qrDishCardPreview");
+  };
+}
+
+    
 
 
-      function createGoogleMapsTileLayer(type) {
-        const lyrs = type === "y" ? "y" : type === "p" ? "p" : "m";
-        return L.tileLayer("https://mt1.google.com/vt/lyrs=" + lyrs + "&x={x}&y={y}&z={z}", {
-          maxZoom: 21,
-          attribution: "&copy; Google Maps",
-        });
+function createGoogleMapsTileLayer(type) {
+  const lyrs = type === "y" ? "y" : type === "p" ? "p" : "m";
+  return L.tileLayer("https://mt1.google.com/vt/lyrs=" + lyrs + "&x={x}&y={y}&z={z}", {
+    maxZoom: 21,
+    attribution: "&copy; Google Maps",
+  });
+}
+
+let adminHeatmapInstance = null;
+let adminHeatLayer = null;
+let adminMarkersLayer = null;
+let adminDensityLayer = null;
+let adminFallbackHeatLayer = null;
+let currentAdminMapMode = "hybrid";      let currentHeatRadius = 38;
+
+const HOI_AN_CORE_COORDS = [15.8778, 108.3275];
+
+function renderMapSection() {
+  const secMap = document.getElementById("secMap");
+  if (!secMap || secMap.hidden) return;
+
+  const mapBadge = document.getElementById("navMapBadge");
+  if (mapBadge) {
+    const validCount = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng))).length;
+    mapBadge.textContent = validCount ? validCount + " GPS" : "HEAT";
+  }
+
+  initOrUpdateAdminHeatmap();
+
+  updateSpatialAnalyticsData();
+}
+
+function initOrUpdateAdminHeatmap() {
+  if (typeof L === "undefined") {
+    console.warn("Leaflet library is not available.");
+    return;
+  }
+
+  const container = document.getElementById("adminHeatmapCanvas");
+  if (!container) return;
+
+  if (!adminHeatmapInstance) {
+    adminHeatmapInstance = L.map("adminHeatmapCanvas", {
+      center: HOI_AN_CORE_COORDS,
+      zoom: 15,
+      zoomControl: true,
+      attributionControl: false,
+    });
+
+    createGoogleMapsTileLayer("m").addTo(adminHeatmapInstance);
+
+    adminDensityLayer = L.layerGroup().addTo(adminHeatmapInstance);
+    adminMarkersLayer = L.layerGroup().addTo(adminHeatmapInstance);
+    adminFallbackHeatLayer = L.layerGroup().addTo(adminHeatmapInstance);
+
+    setupAdminMapControls();
+  }
+
+  setTimeout(() => {
+    if (adminHeatmapInstance) {
+      adminHeatmapInstance.invalidateSize();
+    }
+  }, 120);
+
+  drawAdminMapLayers();
+}
+
+function setupAdminMapControls() {
+  const btnCenter = document.getElementById("btnAdminMapHoiAnCenter");
+  if (btnCenter) {
+    btnCenter.onclick = () => {
+      if (adminHeatmapInstance) {
+        adminHeatmapInstance.flyTo(HOI_AN_CORE_COORDS, 15, { duration: 1.0 });
       }
+    };
+  }
 
-      let adminHeatmapInstance = null;
-      let adminHeatLayer = null;
-      let adminMarkersLayer = null;
-      let adminDensityLayer = null;
-      let adminFallbackHeatLayer = null;
-      let currentAdminMapMode = "hybrid";      let currentHeatRadius = 38;
-
-      const HOI_AN_CORE_COORDS = [15.8778, 108.3275];
-
-      function renderMapSection() {
-        const secMap = document.getElementById("secMap");
-        if (!secMap || secMap.hidden) return;
-
-        const mapBadge = document.getElementById("navMapBadge");
-        if (mapBadge) {
-          const validCount = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng))).length;
-          mapBadge.textContent = validCount ? validCount + " GPS" : "HEAT";
-        }
-
-        initOrUpdateAdminHeatmap();
-
-        updateSpatialAnalyticsData();
+  const btnRefresh = document.getElementById("btnAdminMapRefresh");
+  if (btnRefresh) {
+    btnRefresh.onclick = async () => {
+      btnRefresh.disabled = true;
+      btnRefresh.innerHTML = "Đang nạp...";
+      try {
+        if (typeof refresh === "function") await refresh();
+        renderMapSection();
+      } finally {
+        btnRefresh.disabled = false;
+        btnRefresh.innerHTML = "Cập Nhật Dữ Liệu";
       }
+    };
+  }
 
-      function initOrUpdateAdminHeatmap() {
-        if (typeof L === "undefined") {
-          console.warn("Leaflet library is not available.");
-          return;
-        }
+  const btnHybrid = document.getElementById("btnAdminMapModeHybrid");
+  const btnHeat = document.getElementById("btnAdminMapModeHeat");
+  const btnDensity = document.getElementById("btnAdminMapModeDensity");
 
-        const container = document.getElementById("adminHeatmapCanvas");
-        if (!container) return;
+  function setMode(mode) {
+    currentAdminMapMode = mode;
+    if (btnHybrid) btnHybrid.classList.toggle("active", mode === "hybrid");
+    if (btnHeat) btnHeat.classList.toggle("active", mode === "heat");
+    if (btnDensity) btnDensity.classList.toggle("active", mode === "density");
 
-        if (!adminHeatmapInstance) {
-          adminHeatmapInstance = L.map("adminHeatmapCanvas", {
-            center: HOI_AN_CORE_COORDS,
-            zoom: 15,
-            zoomControl: true,
-            attributionControl: false,
-          });
+    const densityLegend = document.getElementById("adminDensityLegendOverlay");
+    const heatLegend = document.getElementById("adminHeatLegendOverlay");
+    if (densityLegend) densityLegend.style.display = mode === "heat" ? "none" : (mode === "density" ? "block" : "none");
+    if (heatLegend) heatLegend.style.display = mode === "density" ? "none" : "block";
 
-          createGoogleMapsTileLayer("m").addTo(adminHeatmapInstance);
+    drawAdminMapLayers();
+  }
 
-          adminDensityLayer = L.layerGroup().addTo(adminHeatmapInstance);
-          adminMarkersLayer = L.layerGroup().addTo(adminHeatmapInstance);
-          adminFallbackHeatLayer = L.layerGroup().addTo(adminHeatmapInstance);
+  if (btnHybrid) btnHybrid.onclick = () => setMode("hybrid");
+  if (btnHeat) btnHeat.onclick = () => setMode("heat");
+  if (btnDensity) btnDensity.onclick = () => setMode("density");
 
-          setupAdminMapControls();
-        }
+  const radiusSlider = document.getElementById("adminHeatRadiusSlider");
+  const radiusLabel = document.getElementById("adminHeatRadiusLabel");
+  if (radiusSlider) {
+    radiusSlider.oninput = (e) => {
+      currentHeatRadius = Number(e.target.value) || 38;
+      if (radiusLabel) radiusLabel.textContent = currentHeatRadius + "px";
+      drawAdminMapLayers();
+    };
+  }
+}
 
-        setTimeout(() => {
-          if (adminHeatmapInstance) {
-            adminHeatmapInstance.invalidateSize();
-          }
-        }, 120);
+function updateSpatialAnalyticsData() {
+  const validDishes = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng)));
+  const topStats = (lastStats && lastStats.top) || [];
 
-        drawAdminMapLayers();
-      }
+  let totalDishScans = 0;
+  const enriched = validDishes.map(d => {
+    const matched = topStats.find(t => String(t.id) === String(d.id));
+    const checkins = matched ? Number(matched.check_ins ?? matched.checkins ?? 0) : Number(d.check_ins ?? d.checkins ?? 0);
+    const favs = matched ? Number(matched.favorites ?? 0) : Number(d.favorites ?? 0);
+    const scans = checkins + favs;
+    totalDishScans += scans;
+    return {
+      ...d,
+      scans,
+      checkins,
+      favorites: favs,
+      displayName: d.translations?.vi?.name || d.name || "Món ăn #" + d.id,
+      displayAddress: d.address || "Hội An, Quảng Nam",
+    };
+  });
 
-      function setupAdminMapControls() {
-        const btnCenter = document.getElementById("btnAdminMapHoiAnCenter");
-        if (btnCenter) {
-          btnCenter.onclick = () => {
-            if (adminHeatmapInstance) {
-              adminHeatmapInstance.flyTo(HOI_AN_CORE_COORDS, 15, { duration: 1.0 });
-            }
-          };
-        }
+  enriched.sort((a, b) => b.scans - a.scans);
 
-        const btnRefresh = document.getElementById("btnAdminMapRefresh");
-        if (btnRefresh) {
-          btnRefresh.onclick = async () => {
-            btnRefresh.disabled = true;
-            btnRefresh.innerHTML = "Đang nạp...";
-            try {
-              if (typeof refresh === "function") await refresh();
-              renderMapSection();
-            } finally {
-              btnRefresh.disabled = false;
-              btnRefresh.innerHTML = "Cập Nhật Dữ Liệu";
-            }
-          };
-        }
+  const topHotspot = enriched[0] || null;
+  const maxScans = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 1;
 
-        const btnHybrid = document.getElementById("btnAdminMapModeHybrid");
-        const btnHeat = document.getElementById("btnAdminMapModeHeat");
-        const btnDensity = document.getElementById("btnAdminMapModeDensity");
+  let coreCount = 0;
+  enriched.forEach(item => {
+    const distKm = getHaversineDistKm(HOI_AN_CORE_COORDS[0], HOI_AN_CORE_COORDS[1], Number(item.lat), Number(item.lng));
+    item.distToCoreKm = distKm;
+    if (distKm <= 1.0) coreCount++;
+  });
 
-        function setMode(mode) {
-          currentAdminMapMode = mode;
-          if (btnHybrid) btnHybrid.classList.toggle("active", mode === "hybrid");
-          if (btnHeat) btnHeat.classList.toggle("active", mode === "heat");
-          if (btnDensity) btnDensity.classList.toggle("active", mode === "density");
+  const coreRatio = enriched.length ? Math.round((coreCount / enriched.length) * 1000) / 10 : 83.3;
 
-          const densityLegend = document.getElementById("adminDensityLegendOverlay");
-          const heatLegend = document.getElementById("adminHeatLegendOverlay");
-          if (densityLegend) densityLegend.style.display = mode === "heat" ? "none" : (mode === "density" ? "block" : "none");
-          if (heatLegend) heatLegend.style.display = mode === "density" ? "none" : "block";
+  const kpiTotal = document.getElementById("kpiMapTotalDishes");
+  if (kpiTotal) kpiTotal.textContent = enriched.length + " điểm";
 
-          drawAdminMapLayers();
-        }
+  const kpiTopName = document.getElementById("kpiMapTopHotspot");
+  if (kpiTopName) {
+    kpiTopName.textContent = (topHotspot && topHotspot.scans > 0)
+      ? topHotspot.displayName
+      : (enriched[0]?.displayName || "Chưa có tương tác");
+  }
 
-        if (btnHybrid) btnHybrid.onclick = () => setMode("hybrid");
-        if (btnHeat) btnHeat.onclick = () => setMode("heat");
-        if (btnDensity) btnDensity.onclick = () => setMode("density");
+  const kpiTopScans = document.getElementById("kpiMapTopHotspotScans");
+  if (kpiTopScans) {
+    const sCount = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 0;
+    kpiTopScans.textContent = sCount > 0 ? (sCount + " lượt tương tác (Cực đại)") : "0 lượt tương tác";
+  }
 
-        const radiusSlider = document.getElementById("adminHeatRadiusSlider");
-        const radiusLabel = document.getElementById("adminHeatRadiusLabel");
-        if (radiusSlider) {
-          radiusSlider.oninput = (e) => {
-            currentHeatRadius = Number(e.target.value) || 38;
-            if (radiusLabel) radiusLabel.textContent = currentHeatRadius + "px";
-            drawAdminMapLayers();
-          };
-        }
-      }
+  const kpiInteractions = document.getElementById("kpiMapTotalInteractions");
+  if (kpiInteractions) {
+    const sysCheckins = Number(lastStats?.totals?.check_ins || 0);
+    const sysFavs = Number(lastStats?.totals?.favorites || 0);
+    const globalInteractions = sysCheckins + sysFavs;
+    const displayInteractions = globalInteractions > totalDishScans ? globalInteractions : totalDishScans;
+    kpiInteractions.textContent = displayInteractions + " lượt";
+  }
 
-      function updateSpatialAnalyticsData() {
-        const validDishes = dishes.filter(d => Number.isFinite(Number(d.lat)) && Number.isFinite(Number(d.lng)));
-        const topStats = (lastStats && lastStats.top) || [];
+  const kpiCoreRatioEl = document.getElementById("kpiMapCoreRatio");
+  if (kpiCoreRatioEl) kpiCoreRatioEl.textContent = coreRatio + "%";
 
-        let totalDishScans = 0;
-        const enriched = validDishes.map(d => {
-          const matched = topStats.find(t => String(t.id) === String(d.id));
-          const checkins = matched ? Number(matched.check_ins ?? matched.checkins ?? 0) : Number(d.check_ins ?? d.checkins ?? 0);
-          const favs = matched ? Number(matched.favorites ?? 0) : Number(d.favorites ?? 0);
-          const scans = checkins + favs;
-          totalDishScans += scans;
-          return {
-            ...d,
-            scans,
-            checkins,
-            favorites: favs,
-            displayName: d.translations?.vi?.name || d.name || "Món ăn #" + d.id,
-            displayAddress: d.address || "Hội An, Quảng Nam",
-          };
-        });
+  const kpiCoreSubEl = document.getElementById("kpiMapCoreSub");
+  if (kpiCoreSubEl) kpiCoreSubEl.textContent = coreCount + "/" + enriched.length + " quán tập trung bán kính <1.0km";
 
-        enriched.sort((a, b) => b.scans - a.scans);
+  renderHotspotRankingsList(enriched, maxScans);
 
-        const topHotspot = enriched[0] || null;
-        const maxScans = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 1;
+  window._adminEnrichedDishes = enriched;
+  window._adminMaxScans = maxScans;
 
-        let coreCount = 0;
-        enriched.forEach(item => {
-          const distKm = getHaversineDistKm(HOI_AN_CORE_COORDS[0], HOI_AN_CORE_COORDS[1], Number(item.lat), Number(item.lng));
-          item.distToCoreKm = distKm;
-          if (distKm <= 1.0) coreCount++;
-        });
+  drawAdminMapLayers();
+}
 
-        const coreRatio = enriched.length ? Math.round((coreCount / enriched.length) * 1000) / 10 : 83.3;
+function renderHotspotRankingsList(items, maxScans) {
+  const listContainer = document.getElementById("adminHotspotList");
+  if (!listContainer) return;
 
-        const kpiTotal = document.getElementById("kpiMapTotalDishes");
-        if (kpiTotal) kpiTotal.textContent = enriched.length + " điểm";
+  if (!items || !items.length) {
+    listContainer.innerHTML = '<div style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">Chưa có dữ liệu tọa độ quán ăn</div>';
+    return;
+  }
 
-        const kpiTopName = document.getElementById("kpiMapTopHotspot");
-        if (kpiTopName) {
-          kpiTopName.textContent = (topHotspot && topHotspot.scans > 0)
-            ? topHotspot.displayName
-            : (enriched[0]?.displayName || "Chưa có tương tác");
-        }
+  const medals = ["#1", "#2", "#3"];
+  listContainer.innerHTML = items.map((item, idx) => {
+    const rankBadge = idx < 3 ? medals[idx] : ("#" + (idx + 1));
+    const percent = Math.min(100, Math.round((item.scans / (maxScans || 1)) * 100));
+    const barColor = idx === 0 
+      ? "linear-gradient(90deg, #f59e0b, #ef4444)" 
+      : idx === 1 
+      ? "linear-gradient(90deg, #3b82f6, #f59e0b)" 
+      : "linear-gradient(90deg, #10b981, #3b82f6)";
 
-        const kpiTopScans = document.getElementById("kpiMapTopHotspotScans");
-        if (kpiTopScans) {
-          const sCount = (topHotspot && topHotspot.scans > 0) ? topHotspot.scans : 0;
-          kpiTopScans.textContent = sCount > 0 ? (sCount + " lượt tương tác (Cực đại)") : "0 lượt tương tác";
-        }
-
-        const kpiInteractions = document.getElementById("kpiMapTotalInteractions");
-        if (kpiInteractions) {
-          const sysCheckins = Number(lastStats?.totals?.check_ins || 0);
-          const sysFavs = Number(lastStats?.totals?.favorites || 0);
-          const globalInteractions = sysCheckins + sysFavs;
-          const displayInteractions = globalInteractions > totalDishScans ? globalInteractions : totalDishScans;
-          kpiInteractions.textContent = displayInteractions + " lượt";
-        }
-
-        const kpiCoreRatioEl = document.getElementById("kpiMapCoreRatio");
-        if (kpiCoreRatioEl) kpiCoreRatioEl.textContent = coreRatio + "%";
-
-        const kpiCoreSubEl = document.getElementById("kpiMapCoreSub");
-        if (kpiCoreSubEl) kpiCoreSubEl.textContent = coreCount + "/" + enriched.length + " quán tập trung bán kính <1.0km";
-
-        renderHotspotRankingsList(enriched, maxScans);
-
-        window._adminEnrichedDishes = enriched;
-        window._adminMaxScans = maxScans;
-
-        drawAdminMapLayers();
-      }
-
-      function renderHotspotRankingsList(items, maxScans) {
-        const listContainer = document.getElementById("adminHotspotList");
-        if (!listContainer) return;
-
-        if (!items || !items.length) {
-          listContainer.innerHTML = '<div style="color: var(--muted); font-size: 13px; text-align: center; padding: 20px;">Chưa có dữ liệu tọa độ quán ăn</div>';
-          return;
-        }
-
-        const medals = ["#1", "#2", "#3"];
-        listContainer.innerHTML = items.map((item, idx) => {
-          const rankBadge = idx < 3 ? medals[idx] : ("#" + (idx + 1));
-          const percent = Math.min(100, Math.round((item.scans / (maxScans || 1)) * 100));
-          const barColor = idx === 0 
-            ? "linear-gradient(90deg, #f59e0b, #ef4444)" 
-            : idx === 1 
-            ? "linear-gradient(90deg, #3b82f6, #f59e0b)" 
-            : "linear-gradient(90deg, #10b981, #3b82f6)";
-
-          return `
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; transition: all 0.2s ease;" class="hotspot-rank-card">
-              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-                <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
-                  <span style="font-size: 16px; font-weight: 800; min-width: 24px; text-align: center;">${rankBadge}</span>
-                  <div style="min-width: 0; flex: 1;">
-                    <div style="font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      ${esc(item.displayName)}
-                    </div>
-                    <div style="font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
-                      ${esc(item.displayAddress)}
-                    </div>
-                  </div>
-                </div>
-                <button type="button" onclick="focusAdminHotspot(${item.lat}, ${item.lng}, ${item.id})" style="padding: 4px 8px; font-size: 11px; font-weight: 700; color: var(--maroon); background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
-                  Xem
-                </button>
+    return `
+      <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; transition: all 0.2s ease;" class="hotspot-rank-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0;">
+            <span style="font-size: 16px; font-weight: 800; min-width: 24px; text-align: center;">${rankBadge}</span>
+            <div style="min-width: 0; flex: 1;">
+              <div style="font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${esc(item.displayName)}
               </div>
-              <div style="margin-top: 8px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
-                  <span style="color: #64748b; font-weight: 600;">${item.scans} lượt quét</span>
-                  <span style="font-weight: 800; color: #dc2626;">${percent}% Nhiệt lượng</span>
-                </div>
-                <div style="height: 6px; width: 100%; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
-                  <div style="height: 100%; width: ${percent}%; background: ${barColor}; border-radius: 3px;"></div>
-                </div>
+              <div style="font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px;">
+                ${esc(item.displayAddress)}
               </div>
             </div>
-          `;
-        }).join("");
+          </div>
+          <button type="button" onclick="focusAdminHotspot(${item.lat}, ${item.lng}, ${item.id})" style="padding: 4px 8px; font-size: 11px; font-weight: 700; color: var(--maroon); background: #fee2e2; border: 1px solid #fca5a5; border-radius: 8px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;">
+            Xem
+          </button>
+        </div>
+        <div style="margin-top: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+            <span style="color: #64748b; font-weight: 600;">${item.scans} lượt quét</span>
+            <span style="font-weight: 800; color: #dc2626;">${percent}% Nhiệt lượng</span>
+          </div>
+          <div style="height: 6px; width: 100%; background: #f1f5f9; border-radius: 3px; overflow: hidden;">
+            <div style="height: 100%; width: ${percent}%; background: ${barColor}; border-radius: 3px;"></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+window.focusAdminHotspot = function(lat, lng, id) {
+  if (!adminHeatmapInstance) return;
+  adminHeatmapInstance.flyTo([lat, lng], 17, { duration: 1.2 });
+  if (adminMarkersLayer) {
+    adminMarkersLayer.eachLayer(layer => {
+      if (layer._dishId === id) {
+        setTimeout(() => layer.openPopup(), 600);
       }
+    });
+  }
+};
 
-      window.focusAdminHotspot = function(lat, lng, id) {
-        if (!adminHeatmapInstance) return;
-        adminHeatmapInstance.flyTo([lat, lng], 17, { duration: 1.2 });
-        if (adminMarkersLayer) {
-          adminMarkersLayer.eachLayer(layer => {
-            if (layer._dishId === id) {
-              setTimeout(() => layer.openPopup(), 600);
-            }
-          });
-        }
-      };
+function drawAdminMapLayers() {
+  if (!adminHeatmapInstance) return;
 
-      function drawAdminMapLayers() {
-        if (!adminHeatmapInstance) return;
+  const items = window._adminEnrichedDishes || [];
+  const maxScans = window._adminMaxScans || 1;
 
-        const items = window._adminEnrichedDishes || [];
-        const maxScans = window._adminMaxScans || 1;
+  if (adminHeatLayer) {
+    adminHeatmapInstance.removeLayer(adminHeatLayer);
+    adminHeatLayer = null;
+  }
+  if (adminMarkersLayer) adminMarkersLayer.clearLayers();
+  if (adminDensityLayer) adminDensityLayer.clearLayers();
+  if (adminFallbackHeatLayer) adminFallbackHeatLayer.clearLayers();
 
-        if (adminHeatLayer) {
-          adminHeatmapInstance.removeLayer(adminHeatLayer);
-          adminHeatLayer = null;
-        }
-        if (adminMarkersLayer) adminMarkersLayer.clearLayers();
-        if (adminDensityLayer) adminDensityLayer.clearLayers();
-        if (adminFallbackHeatLayer) adminFallbackHeatLayer.clearLayers();
+  if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
+    L.circle(HOI_AN_CORE_COORDS, {
+      radius: 500,
+      color: "#dc2626",
+      weight: 2,
+      dashArray: "6, 6",
+      fillColor: "#ef4444",
+      fillOpacity: 0.12,
+    }).bindTooltip("Vùng lõi Di sản Phố Cổ (<500m)", { sticky: true }).addTo(adminDensityLayer);
 
-        if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
-          L.circle(HOI_AN_CORE_COORDS, {
-            radius: 500,
-            color: "#dc2626",
-            weight: 2,
-            dashArray: "6, 6",
-            fillColor: "#ef4444",
-            fillOpacity: 0.12,
-          }).bindTooltip("Vùng lõi Di sản Phố Cổ (<500m)", { sticky: true }).addTo(adminDensityLayer);
+    L.circle(HOI_AN_CORE_COORDS, {
+      radius: 1500,
+      color: "#f59e0b",
+      weight: 1.5,
+      dashArray: "8, 8",
+      fillColor: "#fbbf24",
+      fillOpacity: 0.06,
+    }).bindTooltip("Vùng đệm Phố Cổ (<1.5km)", { sticky: true }).addTo(adminDensityLayer);
 
-          L.circle(HOI_AN_CORE_COORDS, {
-            radius: 1500,
-            color: "#f59e0b",
-            weight: 1.5,
-            dashArray: "8, 8",
-            fillColor: "#fbbf24",
-            fillOpacity: 0.06,
-          }).bindTooltip("Vùng đệm Phố Cổ (<1.5km)", { sticky: true }).addTo(adminDensityLayer);
+    L.circle(HOI_AN_CORE_COORDS, {
+      radius: 3500,
+      color: "#3b82f6",
+      weight: 1.2,
+      dashArray: "10, 10",
+      fillColor: "#60a5fa",
+      fillOpacity: 0.03,
+    }).bindTooltip("Vùng mở rộng Làng rau Trà Quế & Biển An Bàng (<3.5km)", { sticky: true }).addTo(adminDensityLayer);
+  }
 
-          L.circle(HOI_AN_CORE_COORDS, {
-            radius: 3500,
-            color: "#3b82f6",
-            weight: 1.2,
-            dashArray: "10, 10",
-            fillColor: "#60a5fa",
-            fillOpacity: 0.03,
-          }).bindTooltip("Vùng mở rộng Làng rau Trà Quế & Biển An Bàng (<3.5km)", { sticky: true }).addTo(adminDensityLayer);
-        }
+  if (currentAdminMapMode === "heat" || currentAdminMapMode === "hybrid") {
+    const heatPoints = items.map(item => {
+      const intensity = Math.max(0.35, Math.min(1.0, item.scans / (maxScans || 1)));
+      return [Number(item.lat), Number(item.lng), intensity];
+    });
 
-        if (currentAdminMapMode === "heat" || currentAdminMapMode === "hybrid") {
-          const heatPoints = items.map(item => {
-            const intensity = Math.max(0.35, Math.min(1.0, item.scans / (maxScans || 1)));
-            return [Number(item.lat), Number(item.lng), intensity];
-          });
+    if (typeof L.heatLayer === "function" && heatPoints.length > 0) {
+      adminHeatLayer = L.heatLayer(heatPoints, {
+        radius: currentHeatRadius,
+        blur: 24,
+        maxZoom: 18,
+        max: 1.0,
+        minOpacity: 0.35,
+        gradient: {
+          0.2: "#2563eb",                0.4: "#10b981",                0.6: "#f59e0b",                0.8: "#f97316",                1.0: "#dc2626",              },
+      }).addTo(adminHeatmapInstance);
+    } else {
+      items.forEach(item => {
+        const weight = Math.max(0.3, item.scans / (maxScans || 1));
+        const r = currentHeatRadius * 5;
+        L.circle([item.lat, item.lng], {
+          radius: r,
+          color: "#ef4444",
+          weight: 0,
+          fillColor: "#ef4444",
+          fillOpacity: weight * 0.45,
+        }).addTo(adminFallbackHeatLayer);
+      });
+    }
+  }
 
-          if (typeof L.heatLayer === "function" && heatPoints.length > 0) {
-            adminHeatLayer = L.heatLayer(heatPoints, {
-              radius: currentHeatRadius,
-              blur: 24,
-              maxZoom: 18,
-              max: 1.0,
-              minOpacity: 0.35,
-              gradient: {
-                0.2: "#2563eb",                0.4: "#10b981",                0.6: "#f59e0b",                0.8: "#f97316",                1.0: "#dc2626",              },
-            }).addTo(adminHeatmapInstance);
-          } else {
-            items.forEach(item => {
-              const weight = Math.max(0.3, item.scans / (maxScans || 1));
-              const r = currentHeatRadius * 5;
-              L.circle([item.lat, item.lng], {
-                radius: r,
-                color: "#ef4444",
-                weight: 0,
-                fillColor: "#ef4444",
-                fillOpacity: weight * 0.45,
-              }).addTo(adminFallbackHeatLayer);
-            });
-          }
-        }
+  if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
+    items.forEach((item, idx) => {
+      const isTop1 = idx === 0;
+      const badgeColor = isTop1 ? "#dc2626" : (idx < 3 ? "#d97706" : "#2563eb");
+      const pinIcon = L.divIcon({
+        className: "admin-heat-marker",
+        html: `
+          <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
+            <div style="background: ${badgeColor}; color: #ffffff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); white-space: nowrap; display: flex; align-items: center; gap: 3px; border: 1.5px solid #ffffff;">
+              ${item.scans} lượt
+            </div>
+            <div style="width: 10px; height: 10px; background: ${badgeColor}; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: -2px;"></div>
+          </div>
+        `,
+        iconSize: [60, 36],
+        iconAnchor: [30, 34],
+        popupAnchor: [0, -32],
+      });
 
-        if (currentAdminMapMode === "density" || currentAdminMapMode === "hybrid") {
-          items.forEach((item, idx) => {
-            const isTop1 = idx === 0;
-            const badgeColor = isTop1 ? "#dc2626" : (idx < 3 ? "#d97706" : "#2563eb");
-            const pinIcon = L.divIcon({
-              className: "admin-heat-marker",
-              html: `
-                <div style="position: relative; display: flex; flex-direction: column; align-items: center; cursor: pointer;">
-                  <div style="background: ${badgeColor}; color: #ffffff; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); white-space: nowrap; display: flex; align-items: center; gap: 3px; border: 1.5px solid #ffffff;">
-                    ${item.scans} lượt
-                  </div>
-                  <div style="width: 10px; height: 10px; background: ${badgeColor}; border: 2px solid #ffffff; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3); margin-top: -2px;"></div>
-                </div>
-              `,
-              iconSize: [60, 36],
-              iconAnchor: [30, 34],
-              popupAnchor: [0, -32],
-            });
+      const marker = L.marker([Number(item.lat), Number(item.lng)], { icon: pinIcon });
+      marker._dishId = item.id;
 
-            const marker = L.marker([Number(item.lat), Number(item.lng)], { icon: pinIcon });
-            marker._dishId = item.id;
+      const popupContent = `
+        <div style="width: 240px; font-family: 'Be Vietnam Pro', sans-serif;">
+          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
+            ${item.image ? `<img src="${esc(item.image)}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;" />` : ""}
+            <div>
+              <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #1e293b;">${esc(item.displayName)}</h4>
+              <span style="display: inline-block; font-size: 10px; font-weight: 700; color: ${badgeColor}; background: #fee2e2; padding: 2px 6px; border-radius: 6px; margin-top: 2px;">
+                #${idx + 1} Điểm Nóng Quét QR
+              </span>
+            </div>
+          </div>
+          <div style="font-size: 12px; color: #475569; margin-bottom: 6px;">
+            <strong>Địa chỉ:</strong> ${esc(item.displayAddress)}
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 12px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span>Lượt quét mã QR:</span>
+              <strong style="color: #dc2626;">${item.scans} lượt</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Khoảng cách đến Chùa Cầu:</span>
+              <strong style="color: #1e293b;">${item.distToCoreKm ? (item.distToCoreKm * 1000).toFixed(0) + 'm' : '<500m'}</strong>
+            </div>
+          </div>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" onclick="openForm(${item.id})" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: var(--maroon); color: #fff; border: none; border-radius: 6px; cursor: pointer;">
+              Chỉnh Sửa Món
+            </button>
+            <button type="button" onclick="switchNavSection('qrcode')" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">
+              Xem Mã QR
+            </button>
+          </div>
+        </div>
+      `;
 
-            const popupContent = `
-              <div style="width: 240px; font-family: 'Be Vietnam Pro', sans-serif;">
-                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px;">
-                  ${item.image ? `<img src="${esc(item.image)}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;" />` : ""}
-                  <div>
-                    <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #1e293b;">${esc(item.displayName)}</h4>
-                    <span style="display: inline-block; font-size: 10px; font-weight: 700; color: ${badgeColor}; background: #fee2e2; padding: 2px 6px; border-radius: 6px; margin-top: 2px;">
-                      #${idx + 1} Điểm Nóng Quét QR
-                    </span>
-                  </div>
-                </div>
-                <div style="font-size: 12px; color: #475569; margin-bottom: 6px;">
-                  <strong>Địa chỉ:</strong> ${esc(item.displayAddress)}
-                </div>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 12px; margin-bottom: 10px;">
-                  <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
-                    <span>Lượt quét mã QR:</span>
-                    <strong style="color: #dc2626;">${item.scans} lượt</strong>
-                  </div>
-                  <div style="display: flex; justify-content: space-between;">
-                    <span>Khoảng cách đến Chùa Cầu:</span>
-                    <strong style="color: #1e293b;">${item.distToCoreKm ? (item.distToCoreKm * 1000).toFixed(0) + 'm' : '<500m'}</strong>
-                  </div>
-                </div>
-                <div style="display: flex; gap: 6px;">
-                  <button type="button" onclick="openForm(${item.id})" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: var(--maroon); color: #fff; border: none; border-radius: 6px; cursor: pointer;">
-                    Chỉnh Sửa Món
-                  </button>
-                  <button type="button" onclick="switchNavSection('qrcode')" style="flex: 1; padding: 6px; font-size: 11px; font-weight: 700; background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;">
-                    Xem Mã QR
-                  </button>
-                </div>
-              </div>
-            `;
+      marker.bindPopup(popupContent);
+      marker.addTo(adminMarkersLayer);
+    });
+  }
+}
 
-            marker.bindPopup(popupContent);
-            marker.addTo(adminMarkersLayer);
-          });
-        }
-      }
+function getHaversineDistKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
-      function getHaversineDistKm(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-          Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      }
-
-      const dishMapPicker = { map: null, marker: null, point: null };
+const dishMapPicker = { map: null, marker: null, point: null };
 
 function dishMapValid(lat, lng) {
   return lat !== null && lat !== undefined && String(lat).trim() !== "" &&
@@ -6988,11 +2861,11 @@ function dishMapSetPoint(lat, lng) {
     state.marker.setLatLng(position);
   } else {
     state.marker = L.marker(position, {
-      draggable: true, title: "Vị trí quán đang chọn",
+draggable: true, title: "Vị trí quán đang chọn",
     }).addTo(state.map);
     state.marker.on("dragend", (event) => {
-      const point = event.target.getLatLng();
-      dishMapSetPoint(point.lat, point.lng);
+const point = event.target.getLatLng();
+dishMapSetPoint(point.lat, point.lng);
     });
   }
   document.getElementById("dishMapApply").disabled = false;
@@ -7019,7 +2892,7 @@ document.getElementById("dishMapOpen").onclick = () => {
     state.map = L.map("dishMapCanvas");
     createGoogleMapsTileLayer("m").addTo(state.map);
     state.map.on("click", (event) => {
-      dishMapSetPoint(event.latlng.lat, event.latlng.lng);
+dishMapSetPoint(event.latlng.lat, event.latlng.lng);
     });
   }
   if (state.marker) {
@@ -7048,6 +2921,3 @@ document.getElementById("dishMapApply").onclick = () => {
   document.getElementById("formErr").textContent = "Đã điền tọa độ. Bấm Lưu món ăn để lưu thay đổi.";
 };
 document.getElementById("dlg").addEventListener("close", dishMapClose);
-</script>
-  </body>
-</html>

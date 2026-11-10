@@ -14,9 +14,7 @@ export const LANGS: Record<
 export interface Dish {
   id: number;
   cat: "main" | "snack" | "street" | "sweet";
-  emoji: string;
   price: string;
-  rating: number;
   lat: number;
   lng: number;
   img: string;
@@ -31,9 +29,7 @@ export const DISHES: Dish[] = [
   {
     "id": 4,
     "cat": "main",
-    "emoji": "🍜",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.8765,
     "lng": 108.3312,
     "address": "26 Trần Quý Cáp, Old Town, Hội An, Đà Nẵng, Việt Nam",
@@ -56,9 +52,7 @@ export const DISHES: Dish[] = [
   {
     "id": 6,
     "cat": "main",
-    "emoji": "🥖",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.8795,
     "lng": 108.3301,
     "address": "2B Phan Châu Trinh, Hội An",
@@ -81,9 +75,7 @@ export const DISHES: Dish[] = [
   {
     "id": 7,
     "cat": "main",
-    "emoji": "🍜",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.877057,
     "lng": 108.329936,
     "address": "2 Hoàng Văn Thụ, Old Town, Hội An, Đà Nẵng, Việt Nam",
@@ -106,9 +98,7 @@ export const DISHES: Dish[] = [
   {
     "id": 8,
     "cat": "main",
-    "emoji": "🍜",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.87335,
     "lng": 108.33685,
     "address": "34 Nguyễn Tri Phương, Hội An, Đà Nẵng, Việt Nam",
@@ -131,9 +121,7 @@ export const DISHES: Dish[] = [
   {
     "id": 9,
     "cat": "main",
-    "emoji": "🍜",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.8765,
     "lng": 108.328,
     "address": "86/23 Vũ Huy Tấn, Gia Định, Hồ Chí Minh 72317, Việt Nam",
@@ -156,9 +144,7 @@ export const DISHES: Dish[] = [
   {
     "id": 11,
     "cat": "sweet",
-    "emoji": "🍜",
     "price": "Đang cập nhật",
-    "rating": 4.8,
     "lat": 15.877801,
     "lng": 108.332363,
     "address": "150 Trần Phú, Old Town, Hội An, Đà Nẵng 550000, Việt Nam",

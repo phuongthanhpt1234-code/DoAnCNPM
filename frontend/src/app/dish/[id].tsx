@@ -101,12 +101,10 @@ export default function DishDetailScreen() {
         setDish({
           id: row.id,
           cat: (row.category_slug as Dish["cat"]) || "main",
-          emoji: row.emoji || "🍜",
           price:
             row.price_vnd != null
               ? Number(row.price_vnd).toLocaleString("vi-VN") + "đ"
               : "Đang cập nhật",
-          rating: row.rating != null ? Number(row.rating) : 4.8,
           lat: row.lat != null ? Number(row.lat) : 15.877,
           lng: row.lng != null ? Number(row.lng) : 108.327,
           img: dishImg,
@@ -233,7 +231,7 @@ export default function DishDetailScreen() {
       <View style={styles.body}>
         <Text style={styles.title}>{currentName}</Text>
         {dish.address ? (
-          <Text style={styles.address}>📍 {dish.address}</Text>
+          <Text style={styles.address}>{dish.address}</Text>
         ) : null}
 
         <TouchableOpacity

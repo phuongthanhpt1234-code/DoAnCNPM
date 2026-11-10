@@ -40,10 +40,10 @@ export async function ensureQrCodesTable() {
           ('QR-DISH-27', 'QR Thẻ Bàn 1 - Mì Quảng 92', 'dish', 27, 'https://doancnpm-beta.vercel.app/dish/27', 'vi', '#d4152f', 'Bàn số 1 - Quán 92', 67)
         ON CONFLICT (code) DO NOTHING;
       `);
-      console.log('✅ Khởi tạo dữ liệu mẫu cho Quản Lý Mã QR thành công!');
+      console.log('Đã khởi tạo dữ liệu mã QR.');
     }
   } catch (err: any) {
-    console.warn('⚠️ Lỗi kiểm tra bảng qr_codes:', err.message);
+    console.warn('Lỗi kiểm tra bảng qr_codes:', err.message);
   }
 }
 

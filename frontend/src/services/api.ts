@@ -229,8 +229,6 @@ export type ApiDish = {
   address: string | null;
   price_vnd: number | null;
   image_url: string | null;
-  emoji: string;
-  rating: number;
   lat: number;
   lng: number;
   category_name: string | null;

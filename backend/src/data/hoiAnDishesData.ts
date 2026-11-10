@@ -2,7 +2,6 @@ export const HOI_AN_DISHES_PRESETS = [
   {
     "id": "1",
     "shopVi": "Cơm Gà Bà Buội",
-    "rating": "4.8",
     "categoryKey": "specialty",
     "hours": "10:30 - 20:00",
     "isCalm": false,
@@ -34,23 +33,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホイアン伝統チキンライス",
         "tag": "ウコン鶏だしご飯とチャークエ香草",
         "story": "ニンニクと炒めた古米を、地鶏のスープと生ウコンでふっくら炊き上げます。手裂きした地鶏に玉ねぎ、青パパイヤの漬物、チャークエ村の香草を添えた逸品です。"
-      },
-      "es": {
-        "name": "Arroz con Pollo Tradicional de Hoi An",
-        "tag": "Arroz cocido en caldo de cúrcuma",
-        "story": "El arroz local se tuesta con ajo y se cocina en caldo de pollo con cúrcuma fresca, servido con pollo de corral desmenuzado y hierbas de Tra Que."
-      },
-      "ar": {
-        "name": "أرز الدجاج التراثي في هوي آن",
-        "tag": "أرز مطهو بمرق الدجاج والكركم",
-        "story": "يُحمص الأرز المحلي مع الثوم ثم يُطهى في مرق الدجاج الغني بالكركم الطازج ويُقدم مع الدجاج البلدي المفتت وأعشاب ترا كوي."
       }
     }
   },
   {
     "id": "2",
     "shopVi": "Bánh Mì Phượng",
-    "rating": "4.6",
     "categoryKey": "specialty",
     "hours": "06:30 - 21:30",
     "isCalm": false,
@@ -82,23 +70,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホイアン炭火焼きバインミー",
         "tag": "パリッと香ばしい皮と秘伝ソース",
         "story": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
-      },
-      "es": {
-        "name": "Baguette Crujiente de Hoi An (Banh Mi)",
-        "tag": "Corteza al carbón y salsa secreta",
-        "story": "Baguette de puntas afiladas horneada al carbón, rellena de paté suave, cerdo char siu, encurtidos y salsa secreta."
-      },
-      "ar": {
-        "name": "خبز الباغيت المقرمش في هوي آن",
-        "tag": "قشرة مخبوزة على الفحم وصلصة سرية",
-        "story": "خبز باغيت مقرمش مخبوز على الفحم محشو بباتيه الكبد الغني ولحم المشوي والخضروات المخللة مع الصلصة التقليدية."
       }
     }
   },
   {
     "id": "3",
     "shopVi": "Quán Giếng Bá Lễ",
-    "rating": "4.5",
     "categoryKey": "specialty",
     "hours": "11:00 - 21:30",
     "isCalm": true,
@@ -130,23 +107,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "クアンナム風パリパリお好み焼き",
         "tag": "鉄鍋焼きクレープと濃厚ピーナッツだれ",
         "story": "小さな鉄鍋でカリッと焼き上げたウコン風味の米粉クレープ。川エビともやしを包み、ライスペーパーと香草で巻いて温かいピーナッツだれで味わいます。"
-      },
-      "es": {
-        "name": "Crepa Crujiente de Camarones (Banh Xeo)",
-        "tag": "Sartén de hierro y salsa de maní",
-        "story": "Crepa de arroz y cúrcuma cocinada en sartén de hierro con camarones de río y brotes, envuelta en papel de arroz con salsa de maní."
-      },
-      "ar": {
-        "name": "فطيرة الأرز المقرمشة بالروبيان",
-        "tag": "مخبوزة في مقلاة حديدية مع صلصة الفول السوداني",
-        "story": "فطيرة أرز مقرمشة محشوة بروبيان النهر الطازج وبراعم الفاصوليا، تُلف بورق الأرز وتُغمس في صلصة الفول السوداني."
       }
     }
   },
   {
     "id": "4",
     "shopVi": "Bông Hồng Trắng",
-    "rating": "4.7",
     "categoryKey": "specialty",
     "hours": "07:00 - 20:30",
     "isCalm": true,
@@ -178,23 +144,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホワイトローズ（米粉の蒸し餃子）",
         "tag": "古井戸水で15回濾した透明な米粉皮",
         "story": "バーレー古井戸の水で15回濾した米粉生地を白いバラの花びらのように手包みし、エビのすり身を詰めて蒸し上げた芸術的な一皿です。"
-      },
-      "es": {
-        "name": "Empanadillas Rosa Blanca (White Rose)",
-        "tag": "Masa de arroz filtrada 15 veces",
-        "story": "Masa de arroz translúcida filtrada quince veces con agua de pozo antiguo, plegada a mano como pétalos de rosa blanca con camarón."
-      },
-      "ar": {
-        "name": "زلابية الوردة البيضاء بالروبيان",
-        "tag": "عجينة أرز مصفاة 15 مرة بماء البئر القديم",
-        "story": "عجينة أرز شفافة تُشكل يدوياً مثل بتلات الورد الأبيض وتحشى بالروبيان المتبل وتُزين بالبصل المقرمش."
       }
     }
   },
   {
     "id": "21",
     "shopVi": "Lò Bánh Gia Truyền Cẩm Phô",
-    "rating": "4.6",
     "categoryKey": "specialty",
     "hours": "07:00 - 19:00",
     "isCalm": true,
@@ -226,23 +181,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "クアンナム伝統・黒糖生姜もち（バイントー）",
         "tag": "バナナ葉籠で蒸し上げる宮廷献上餅",
         "story": "香り高いもち米粉と伝統黒糖、生姜汁を合わせてバナナの葉を敷いた竹籠で蒸し上げ、表面を香ばしく焼いて味わう伝統菓子です。"
-      },
-      "es": {
-        "name": "Pastel Real de Arroz Glutinoso y Jengibre",
-        "tag": "Arroz glutinoso al vapor con azúcar de caña",
-        "story": "Delicia tradicional elaborada con harina de arroz glutinoso, azúcar de caña y jengibre, cocida al vapor en hojas de plátano y dorada a la sartén."
-      },
-      "ar": {
-        "name": "كعكة الأرز اللزج الملكية بالزنجبيل والسكر الأسمر",
-        "tag": "مطهو على البخار في أوراق الموز مع الزنجبيل",
-        "story": "حلوى ملكية تقليدية تُصنع من دقيق الأرز اللزج العطري وسكر القصب الخام والزنجبيل، تُطهى بالبخار ثم تُحمر قليلاً."
       }
     }
   },
   {
     "id": "5",
     "shopVi": "Không Gian Xanh",
-    "rating": "4.7",
     "categoryKey": "noodle",
     "hours": "09:00 - 21:00",
     "isCalm": true,
@@ -274,23 +218,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホイアン伝統カオラウ（伊勢うどん風麺）",
         "tag": "チャム島の灰汁と古井戸水で打つ黄金麺",
         "story": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
-      },
-      "es": {
-        "name": "Fideos Tradicionales Cao Lau",
-        "tag": "Fideos de agua de ceniza de Isla Cham",
-        "story": "Fideos dorados masticables elaborados con agua de ceniza de madera de la Isla Cham y agua del pozo Ba Le, servidos con cerdo char siu."
-      },
-      "ar": {
-        "name": "نودلز كاو لاو التقليدية في هوي آن",
-        "tag": "نودلز محضرة بماء رماد جزيرة تشام وبئر با لي",
-        "story": "نودلز ذهبية ذات قوام مميز تُصنع من الأرز المنقوع في ماء رماد الخشب وماء بئر با لي القديم، تُقدم مع اللحم المتبل."
       }
     }
   },
   {
     "id": "6",
     "shopVi": "Mì Quảng Ông Hai",
-    "rating": "4.6",
     "categoryKey": "noodle",
     "hours": "07:30 - 21:00",
     "isCalm": true,
@@ -322,23 +255,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ミークアン（クアンナム風汁なし混ぜ麺）",
         "tag": "濃厚エビ豚スープと黒ごま焼きせんべい",
         "story": "ピーナッツオイルが香る平打ち米麺に、エビと豚肉の旨味が凝縮された少量の濃厚スープをかけ、香ばしい黒ごまライスクラッカーを割り入れて楽しみます。"
-      },
-      "es": {
-        "name": "Fideos Mi Quang con Camarones",
-        "tag": "Caldo concentrado y galleta de sésamo",
-        "story": "Fideos planos de arroz con cúrcuma bañados en una reducción concentrada de camarones y cerdo, acompañados de galleta de sésamo."
-      },
-      "ar": {
-        "name": "نودلز مي كوانغ بالكركم والروبيان",
-        "tag": "مرق الروبيان المركز ورقائق السمسم المقرمشة",
-        "story": "شرائط أرز عريضة متبلة بزيت الفول السوداني العطري مع مرق الروبيان المركز ورقائق الأرز بالسمسم."
       }
     }
   },
   {
     "id": "7",
     "shopVi": "Bún Bà Thuận",
-    "rating": "4.5",
     "categoryKey": "noodle",
     "hours": "06:30 - 18:00",
     "isCalm": true,
@@ -370,23 +292,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "カリカリ焼き豚の発酵魚醤ビーフン",
         "tag": "パイナップル入り魚醤だれと若ジャックフルーツ",
         "story": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
-      },
-      "es": {
-        "name": "Fideos con Cerdo Asado Crujiente",
-        "tag": "Salsa de anchoas con piña y yaca tierna",
-        "story": "Fideos de arroz frescos con panceta de cerdo asada crujiente y yaca tierna hervida, aderezados con salsa de anchoas y piña."
-      },
-      "ar": {
-        "name": "شعيرية الأرز باللحم المحمص المقرمش",
-        "tag": "صلصة الأنشوجة بالأناناس والجاك فروت الطري",
-        "story": "شعيرية أرز طازجة مع اللحم المحمص المقرمش والجاك فروت المسلوق، متبلة بصلصة الأنشوجة بالأناناس."
       }
     }
   },
   {
     "id": "8",
     "shopVi": "Hoành Thánh Anh Dũng",
-    "rating": "4.6",
     "categoryKey": "noodle",
     "hours": "08:00 - 21:30",
     "isCalm": true,
@@ -418,23 +329,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホイアン風プリプリ海老ワンタンスープ",
         "tag": "絹のように滑らかな皮と椎茸ボーンブロス",
         "story": "17世紀の交易港時代から伝わるレシピ。透き通るように薄い皮で新鮮な川エビを包み、豚骨と椎茸でじっくり取った澄んだ黄金スープでいただきます。"
-      },
-      "es": {
-        "name": "Sopa de Wonton de Camarones Frescos",
-        "tag": "Masa fina como seda y caldo de setas",
-        "story": "Finas envolturas de trigo rellenas de camarones dulces en un caldo cristalino cocinado a fuego lento con setas shiitake."
-      },
-      "ar": {
-        "name": "حساء وونتون الروبيان الطازج",
-        "tag": "عجينة رقيقة كالحرير ومرق الفطر الغني",
-        "story": "رقائق عجين ناعمة محشوة بالروبيان الطازج تُقدم في مرق صافٍ مطهو ببطء مع فطر الشيتاكي."
       }
     }
   },
   {
     "id": "22",
     "shopVi": "Bún Nghệ Gánh Phố Cổ",
-    "rating": "4.5",
     "categoryKey": "noodle",
     "hours": "14:00 - 20:00",
     "isCalm": true,
@@ -466,23 +366,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "生ウコンと香草の黄金焼きビーフン（ブンゲ）",
         "tag": "手搗き生ウコンとベトナムコリアンダーの香り",
         "story": "すり潰した鮮やかな生ウコンとエシャロットで米麺を香ばしく炒め、たっぷりのベトナムコリアンダー（ラウラム）を合わせた滋味深い郷土麺です。"
-      },
-      "es": {
-        "name": "Fideos Salteados con Cúrcuma Fresca Dorada",
-        "tag": "Cúrcuma silvestre machacada a mano y cilantro",
-        "story": "Fideos de arroz frescos salteados al wok con raíz de cúrcuma dorada machacada a mano, chalotes aromáticos y abundante cilantro vietnamita."
-      },
-      "ar": {
-        "name": "شعيرية الأرز المقلية بالكركم الطازج الذهبي",
-        "tag": "كركم طازج مدقوق يدوياً وأعشاب عطرية",
-        "story": "شعيرية أرز طازجة تُقلى في المقلاة مع جذور الكركم الطازجة المدقوقة يدوياً والبصل المحمر والأعشاب الفيتنامية."
       }
     }
   },
   {
     "id": "9",
     "shopVi": "Chè Cẩm Nam",
-    "rating": "4.4",
     "categoryKey": "vegan",
     "hours": "09:00 - 22:00",
     "isCalm": true,
@@ -514,23 +403,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "カムナム島の若トウモロコシとココナッツのチェー",
         "tag": "中洲で育った甘みコーンとパンダンココナッツ",
         "story": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
-      },
-      "es": {
-        "name": "Postre Dulce de Maíz Tierno de Cam Nam",
-        "tag": "Maíz lechoso de isla aluvial y crema de coco",
-        "story": "Maíz tierno glutinoso de la isla Cam Nam rallado fino y cocinado a fuego lento con azúcar de roca, hojas de pandan y crema de coco."
-      },
-      "ar": {
-        "name": "حلوى الذرة الطرية بحليب جوز الهند",
-        "tag": "ذرة جزيرة كام نام الطرية وكريمة جوز الهند",
-        "story": "ذرة صغيرة حلوة من جزيرة كام نام تُبشر وتُطهى على نار هادئة مع سكر النبات وأوراق الباندان وكريمة جوز الهند."
       }
     }
   },
   {
     "id": "10",
     "shopVi": "Gánh Chè Ông Thiều",
-    "rating": "4.6",
     "categoryKey": "vegan",
     "hours": "16:00 - 21:00",
     "isCalm": false,
@@ -562,23 +440,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "黒ごまの薬膳おしるこ（シーマーフー）",
         "tag": "石臼挽き黒ごまと東洋ハーブの百年レシピ",
         "story": "香ばしく煎った黒ごまを石臼で滑らかに挽き、葛粉と漢方ハーブを加えてとろみをつけた、100年続くホイアン伝統の温かい養生スイーツです。"
-      },
-      "es": {
-        "name": "Pudín Tradicional de Sésamo Negro",
-        "tag": "Sésamo negro molido en piedra y hierbas",
-        "story": "Receta centenaria de Hoi An elaborada con sésamo negro tostado molido en piedra y cocinado con hierbas medicinales."
-      },
-      "ar": {
-        "name": "بودينغ السمسم الأسود العشبي التقليدي",
-        "tag": "سمسم أسود مطحون بالرحى وأعشاب طبيعية",
-        "story": "حلوى تراثية دافئة تُحضر من السمسم الأسود المحمص والمطحون بالحجر مع الأعشاب الشرقية المفيدة."
       }
     }
   },
   {
     "id": "11",
     "shopVi": "Tàu Phớ Sông Hoài",
-    "rating": "4.5",
     "categoryKey": "vegan",
     "hours": "14:00 - 22:30",
     "isCalm": true,
@@ -610,23 +477,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "生姜黒蜜のなめらか豆花（タウフォー）",
         "tag": "銅杓子ですくう極薄豆腐と生姜シロップ",
         "story": "地元産大豆で作る絹のように滑らかな豆腐プリンを銅の杓子で薄くすくい、香り高い生姜を効かせた温かい黒糖シロップをかけて味わいます。"
-      },
-      "es": {
-        "name": "Flan Sedoso de Tofu con Jarabe de Jengibre",
-        "tag": "Cuajada de soja artesanal y jengibre tibio",
-        "story": "Suave pudín de soja cortado en láminas finas y bañado en jarabe tibio de azúcar de caña oscura con jengibre fresco."
-      },
-      "ar": {
-        "name": "بودينغ التوفو الناعم بشراب الزنجبيل",
-        "tag": "فول صويا تقليدي وشراب السكر الأسمر بالزنجبيل",
-        "story": "حلوى التوفو الحريرية الناعمة تُقدم في شراب السكر الأسمر الدافئ المنكه بالزنجبيل الطازج."
       }
     }
   },
   {
     "id": "12",
     "shopVi": "Chay Tâm Quang",
-    "rating": "4.7",
     "categoryKey": "vegan",
     "hours": "07:00 - 20:00",
     "isCalm": true,
@@ -658,23 +514,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "精進カオラウ（五香エリンギと有機ハーブ）",
         "tag": "100%植物性・五香粉香るキノコと揚げ湯葉",
         "story": "伝統カオラウ麺のコシはそのままに、五香粉で甘辛く煮込んだエリンギと椎茸、カリカリの揚げ湯葉、チャークエ村の有機ハーブを添えた菜食麺です。"
-      },
-      "es": {
-        "name": "Cao Lau Vegano con Setas Estofadas",
-        "tag": "100% vegetal con setas a las cinco especias",
-        "story": "Fideos Cao Lau masticables servidos con setas rey ostra estofadas en cinco especias, tofu crujiente y hierbas orgánicas."
-      },
-      "ar": {
-        "name": "نودلز كاو لاو النباتية بالفطر المتبل",
-        "tag": "طبق نباتي 100% مع فطر المحار والأعشاب العضوية",
-        "story": "نودلز كاو لاو التقليدية مع فطر المحار المطهو بالتوابل الخمسة والتوفو المقرمش وأعشاب ترا كوي العضوية."
       }
     }
   },
   {
     "id": "23",
     "shopVi": "Chè Sen Cổ Tháp",
-    "rating": "4.8",
     "categoryKey": "vegan",
     "hours": "10:00 - 22:00",
     "isCalm": true,
@@ -706,23 +551,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "蓮の実と竜眼の氷砂糖コンポート（チェーセン）",
         "tag": "ほっくり蓮の実と竜眼のジャスミンシロップ煮",
         "story": "煮崩れないよう丁寧に炊いた蓮の実を甘い竜眼の果肉で包み、ジャスミン香る澄んだ氷砂糖シロップでいただく上品な伝統甘味です。"
-      },
-      "es": {
-        "name": "Sopa Dulce de Semillas de Loto y Longan",
-        "tag": "Semillas de loto tiernas en almíbar de jazmín",
-        "story": "Semillas de loto tiernas envueltas en fruta de longan dulce, escalfadas en almíbar claro de azúcar de roca con aroma a jazmín."
-      },
-      "ar": {
-        "name": "حساء بذور اللوتس واللونجان الحلو بسكر النبات",
-        "tag": "بذور اللوتس الطرية مع فاكهة اللونجان وماء الياسمين",
-        "story": "بذور لوتس طرية محشوة داخل فاكهة اللونجان الحلوة، مطهوة في شراب سكر النبات الصافي المنكه بالياسمين."
       }
     }
   },
   {
     "id": "13",
     "shopVi": "Phố Ẩm Thực",
-    "rating": "4.3",
     "categoryKey": "snack",
     "hours": "10:00 - 22:00",
     "isCalm": true,
@@ -754,23 +588,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "揚げワンタンのパイナップル甘酢あんかけ",
         "tag": "パリパリ黄金ワンタンと海老パイナップル餡",
         "story": "蝶の羽のようにパリッと揚げたワンタンの皮に、完熟パイナップル、トマト、刻みエビで作ったフルーティーな甘酢あんをたっぷりかけました。"
-      },
-      "es": {
-        "name": "Wonton Frito Crujiente con Salsa de Piña",
-        "tag": "Wontons dorados con glaseado agridulce",
-        "story": "Crujientes láminas de wonton fritas cubiertas con una vibrante salsa agridulce de piña fresca, tomate y camarones picados."
-      },
-      "ar": {
-        "name": "وونتون مقلي مقرمش بصلصة الأناناس",
-        "tag": "رقائق ذهبية مقرمشة مع صلصة الروبيان الحلوة والحامضة",
-        "story": "رقائق وونتون مقلية ومقرمشة مغطاة بصلصة غنية من الأناناس الطازج والطماطم والروبيان المفروم."
       }
     }
   },
   {
     "id": "14",
     "shopVi": "Bờ Sông Hoài",
-    "rating": "4.8",
     "categoryKey": "snack",
     "hours": "15:30 - 22:30",
     "isCalm": false,
@@ -802,23 +625,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホアイ川沿いの炭火焼き豚串と生春巻き",
         "tag": "蜂蜜五香粉マリネと二層ライスペーパー巻き",
         "story": "レモングラスと蜂蜜、五香粉に漬け込んだ豚肉を炭火で香ばしく焼き、乾燥ライスペーパーと生米皮の二層で香草と一緒に巻いて味わいます。"
-      },
-      "es": {
-        "name": "Brochetas de Cerdo a la Parrilla en Rollo",
-        "tag": "Marinado en miel y cinco especias al carbón",
-        "story": "Cerdo marinado en hierba limón y miel asado al carbón, envuelto en doble capa de papel de arroz con hierbas frescas."
-      },
-      "ar": {
-        "name": "أسياخ اللحم المشوي على الفحم مع لفائف الأرز",
-        "tag": "تتبيلة العسل وعشب الليمون على الفحم",
-        "story": "أسياخ لحم متبلة بعشب الليمون والعسل والتوابل الخمسة مشوية على الفحم وتُلف بورق الأرز الطري."
       }
     }
   },
   {
     "id": "15",
     "shopVi": "Quán Bà Già",
-    "rating": "4.5",
     "categoryKey": "snack",
     "hours": "08:00 - 17:30",
     "isCalm": true,
@@ -850,23 +662,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "バインダップ（割れせんべい）とシジミ炒め",
         "tag": "パリもち二層せんべいとカムナム産シジミの香味炒め",
         "story": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
-      },
-      "es": {
-        "name": "Papel de Arroz Crujiente con Almejas Salteadas",
-        "tag": "Galleta de arroz doble y almejas de río",
-        "story": "Dos galletas de arroz tostadas con una lámina de arroz al vapor en el medio, partidas a mano para recoger almejas salteadas."
-      },
-      "ar": {
-        "name": "رقائق الأرز المقرمشة مع المحار المقلي",
-        "tag": "طبقتان من رقائق الأرز المحمصة مع محار النهر المتبل",
-        "story": "رقائق أرز محمصة ومقرمشة تُستخدم لتناول محار نهر كام نام المقلي مع عشب الليمون والفول السوداني."
       }
     }
   },
   {
     "id": "16",
     "shopVi": "Gánh Chùa Cầu",
-    "rating": "4.4",
     "categoryKey": "snack",
     "hours": "14:00 - 21:00",
     "isCalm": true,
@@ -898,23 +699,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "小鉢バインベオとホイアン風マンゴー餅",
         "tag": "竹ベラで味わう蒸し米粉餅と海老そぼろ",
         "story": "小さな陶器の小鉢で蒸し上げた米粉生地の中央にエビと豚肉のそぼろをのせ、伝統的な竹ベラで切り分けながら味わう風情あるおやつです。"
-      },
-      "es": {
-        "name": "Pastelitos de Arroz en Cuenco y Pastel Mango",
-        "tag": "Comido con cuchilla de bambú tradicional",
-        "story": "Pastelitos de arroz al vapor en pequeños cuencos de barro con centro de camarones, cortados tradicionalmente con una fina hoja de bambú."
-      },
-      "ar": {
-        "name": "كعك الأرز المطهو على البخار في أوعية فخارية",
-        "tag": "يُؤكل بشفرة الخيزران التقليدية مع حشوة الروبيان",
-        "story": "كعك أرز ناعم مطهو بالبخار في أوعية فخارية صغيرة مغطى بصلصة الروبيان المتبلة."
       }
     }
   },
   {
     "id": "24",
     "shopVi": "Lò Bánh Đậu Xanh Bà Trinh",
-    "rating": "4.7",
     "categoryKey": "snack",
     "hours": "07:30 - 21:00",
     "isCalm": true,
@@ -946,23 +736,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "ホイアン伝統・豚肉入り炭火焼き緑豆落雁",
         "tag": "甘い緑豆生地と塩気のある豚肉餡の絶妙な調和",
         "story": "きめ細かな緑豆の甘い生地の中に、黒胡椒とネギ油で味付けした豚肉餡を包み、炭火で香ばしく焼き上げた甘じょっぱい伝統銘菓です。"
-      },
-      "es": {
-        "name": "Pastel de Frijol Mungo al Carbón con Cerdo",
-        "tag": "Masa dulce de frijol mungo y relleno salado",
-        "story": "Exclusiva delicia dulce y salada de Hoi An: pasta fina de frijol mungo moldeada alrededor de un centro de cerdo sazonado y horneada al carbón."
-      },
-      "ar": {
-        "name": "كعكة الفاصوليا الخضراء المحمصة على الفحم",
-        "tag": "مزيج فريد بين عجينة الفاصوليا الحلوة والحشوة المالحة",
-        "story": "حلوى تراثية فريدة في هوي آن تجمع بين قشرة الفاصوليا الخضراء الحلوة الناعمة وحشوة اللحم المتبل المخبوزة على الفحم."
       }
     }
   },
   {
     "id": "17",
     "shopVi": "Nước Mót Hội An",
-    "rating": "4.9",
     "categoryKey": "drink",
     "hours": "08:00 - 21:30",
     "isCalm": false,
@@ -994,23 +773,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "蓮の花びら添え・9種ハーブのレモングラス茶",
         "tag": "古方9種ブレンドの涼茶とピンクの蓮の花びら",
         "story": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
-      },
-      "es": {
-        "name": "Té Herbal de Hierba Limón y Pétalo de Loto",
-        "tag": "Infusión ancestral de 9 hierbas y flor de loto",
-        "story": "Elixir refrescante elaborado con nueve botánicos como fruto del monje, regaliz, crisantemo, hierba limón y lima, decorado con un pétalo de loto."
-      },
-      "ar": {
-        "name": "شاي الأعشاب بعشب الليمون وبتلات اللوتس",
-        "tag": "مزيج تقليدي من 9 أعشاب طبيعية مع زهرة اللوتس",
-        "story": "مشروب عشبي منعش يُحضر من تسعة أعشاب طبيعية مع عشب الليمون الطازج والليمون الأخضر ويُزين ببتلة زهرة اللوتس الوردية."
       }
     }
   },
   {
     "id": "18",
     "shopVi": "Faifo Roastery",
-    "rating": "4.7",
     "categoryKey": "drink",
     "hours": "07:00 - 21:30",
     "isCalm": true,
@@ -1042,23 +810,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "自家焙煎ベトナム雫出し・海塩クリームコーヒー",
         "tag": "伝統フィン抽出とクアダイ海塩の濃厚クリーム",
         "story": "少量ずつ自家焙煎した高原コーヒー豆を伝統のアルミフィルターでじっくり抽出し、ほんのり塩っぱい海塩ホイップクリームを重ねた至福の一杯です。"
-      },
-      "es": {
-        "name": "Café de Filtro Tradicional con Crema de Sal Marina",
-        "tag": "Tostado artesanal y espuma de sal marina",
-        "story": "Café de altura tostado artesanalmente, filtrado gota a gota y coronado con una suave capa de crema de sal marina."
-      },
-      "ar": {
-        "name": "قهوة الفلتر التقليدية بكريمة ملح البحر",
-        "tag": "حبوب قهوة محمصة يدوياً مع رغوة ملح البحر الغنية",
-        "story": "قهوة محمصة بعناية تُقطر ببطء عبر الفلتر التقليدي وتُغطى بطبقة ناعمة من كريمة ملح البحر."
       }
     }
   },
   {
     "id": "19",
     "shopVi": "Dừa Cẩm Thanh",
-    "rating": "4.6",
     "categoryKey": "drink",
     "hours": "08:00 - 21:00",
     "isCalm": true,
@@ -1090,23 +847,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "カムタン椰子の森・金柑ココナッツジュース",
         "tag": "採れたてヤシの実ジュースと氷砂糖漬け金柑",
         "story": "カムタンの椰子の森で収穫された甘いヤシの実の果汁に、搾りたての金柑と氷砂糖で煮た金柑コンポートを合わせたトロピカルドリンクです。"
-      },
-      "es": {
-        "name": "Agua de Coco Fresco con Kumquat Dulce",
-        "tag": "Coco joven del bosque Cam Thanh y cítricos",
-        "story": "Agua de coco joven dulce mezclada con jugo de kumquat recién exprimido y cáscara de cítricos confitada."
-      },
-      "ar": {
-        "name": "عصير جوز الهند الطازج مع البرتقال الذهبي",
-        "tag": "ماء جوز هند طازج من غابة كام ثانه مع الكمكوات",
-        "story": "مزيج منعش من ماء جوز الهند الحلو الطازج وعصير الكمكوات الحمضي المنعش مع قطع الفاكهة المحلاة."
       }
     }
   },
   {
     "id": "20",
     "shopVi": "Trà Sông Hoài",
-    "rating": "4.5",
     "categoryKey": "drink",
     "hours": "09:00 - 22:00",
     "isCalm": true,
@@ -1138,23 +884,12 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "バタフライピーと森の蜂蜜・アロエハーブティー",
         "tag": "ライムで紫に変わる幻想的なお茶とアロエ果肉",
         "story": "青いバタフライピーのお茶に生ライムを絞ると、ホイアンのランタンのような美しい紫色に変化。森の蜂蜜とアロエ、チアシード入りで爽やかです。"
-      },
-      "es": {
-        "name": "Té de Flor de Guisante Mariposa y Miel Silvestre",
-        "tag": "Infusión violeta natural con aloe vera y chía",
-        "story": "Flores de guisante mariposa que cambian de azul a violeta con jugo de lima fresca, endulzadas con miel silvestre y aloe vera."
-      },
-      "ar": {
-        "name": "شاي زهرة الفراشة البنفسجي بالعسل البري",
-        "tag": "شاي طبيعي يتحول للون البنفسجي مع الصبار وبذور الشيا",
-        "story": "شاي زهرة الفراشة الطبيعي يكتسب لوناً بنفسجياً ساحراً مع قطرات الليمون ويُحلى بالعسل البري ومكعبات الصبار المنعشة."
       }
     }
   },
   {
     "id": "25",
     "shopVi": "Trà Quán Cổ Faifo",
-    "rating": "4.8",
     "categoryKey": "drink",
     "hours": "08:00 - 22:00",
     "isCalm": true,
@@ -1186,16 +921,6 @@ export const HOI_AN_DISHES_PRESETS = [
         "name": "チャーミー産シナモンと焼き生姜の蜂蜜ホットティー",
         "tag": "炙り生姜と名産チャーミー桂皮の温活ハーブ茶",
         "story": "直火で炙った香り高い地生姜と、クアンナム名産の最高級チャーミーシナモン、レモングラスをじっくり煮出し、森の蜂蜜を加えた心温まる一杯です。"
-      },
-      "es": {
-        "name": "Té Caliente de Canela Tra My y Jengibre Asado",
-        "tag": "Jengibre asado al fuego, canela Tra My y miel",
-        "story": "Infusión reconfortante para las noches junto al río Hoai: jengibre local asado al fuego hervido con corteza de canela Tra My y miel silvestre."
-      },
-      "ar": {
-        "name": "شاي القرفة والزنجبيل المشوي الدافئ بالعسل",
-        "tag": "زنجبيل مشوي مع قرفة ترا مي الفاخرة والعسل البري",
-        "story": "مشروب دافئ مثالي لأمسيات نهر هواي: زنجبيل محلي مشوي يُغلى مع لحاء قرفة ترا مي الشهيرة وعشب الليمون والعسل البري."
       }
     }
   }

@@ -10,15 +10,15 @@ const port = Number(process.env.PORT) || 4000;
 async function bootstrap() {
   if (process.env.DATABASE_URL) {
     try {
-      console.log('🔄 Đang đồng bộ cấu trúc cơ sở dữ liệu (Neon / Postgres)...');
+      console.log('Đang đồng bộ cơ sở dữ liệu...');
       await runMigrations();
       await ensureDefaultAdminUser();
       await ensureQrCodesTable();
       await ensureAllDishesSynced();
-      console.log('✅ Cơ sở dữ liệu đã sẵn sàng !');
+      console.log('Cơ sở dữ liệu đã sẵn sàng.');
       await syncDishTranslations();
     } catch (err) {
-      console.error('⚠️ Không thể tự chạy migration khi khởi động:', err);
+      console.error('Lỗi chạy migration khi khởi động:', err);
     }
   }
   app.listen(port, () => console.log(`API chạy tại port ${port}`));
