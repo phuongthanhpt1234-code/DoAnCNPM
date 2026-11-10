@@ -1,34 +1,14 @@
-# Hội An Quán - Food Guide App (`DoAnCNPM`)
 
-Dự án ứng dụng khám phá ẩm thực Hội An, được chia thành 2 thư mục chính:
 
-```text
-DoAnCNPM/
-├── frontend/        # Ứng dụng Mobile & Web (Expo / React Native / TypeScript)
-├── backend/         # REST API & Admin Dashboard (Node.js / Express / PostgreSQL)
-├── .github/         # Cấu hình CI/CD (GitHub Actions)
-├── .vscode/         # Thiết lập gợi ý cho VS Code
-└── README.md        # Tài liệu hướng dẫn chung
-```
+Ứng dụng bản đồ và thuyết minh ẩm thực Hội An đa ngôn ngữ (Việt, Anh, Trung, Hàn, Nhật).
 
----
+# công nghệ sử dụng
+- **Frontend:** React Native (Expo), TypeScript
+- **Backend:** Node.js, Express, TypeScript
+- **Cơ sở dữ liệu:** PostgreSQL
 
-## 1. Chạy Frontend (`frontend/`)
-
-```bash
-cd frontend
-npm install
-npx expo start
-```
-
-- Chạy trên Web: `npm run web`
-- Chạy trên Android: `npm run android`
-- Chạy trên iOS: `npm run ios`
-- Kiểm tra lỗi code (Lint & Typecheck): `npm run lint` và `npx tsc --noEmit`
-
----
-
-## 2. Chạy Backend (`backend/`)
+# 1. chạy Backend
+Tạo file `backend/.env` dựa trên `backend/.env.example`, sau đó chạy:
 
 ```bash
 cd backend
@@ -36,12 +16,16 @@ npm install
 npm run migrate
 npm run dev
 ```
+- API & Trang quản trị Admin chạy tại: `http://localhost:4000`
 
-- Server mặc định chạy tại `http://localhost:4000`
-- Trang quản trị (Admin): `http://localhost:4000/admin`
-- Healthcheck API: `http://localhost:4000/api/health`
+# 2. chạy Frontend
+```bash
+cd frontend
+npm install
+npx expo start
+```
+- Chạy Web: `npm run web`
 
-## 3. triển khai Online
-
-web: `https://doancnpm-beta.vercel.app/?lang=vi`
-admin `https://doancnpm-backend.onrender.com/`
+# link triển khai
+- Giao diện người dùng (Web): https://doancnpm-beta.vercel.app/?lang=vi
+- Trang quản trị (Admin): https://doancnpm-backend.onrender.com/
