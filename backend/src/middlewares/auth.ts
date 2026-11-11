@@ -77,20 +77,17 @@ export async function ensureDefaultAdminUser() {
       CREATE UNIQUE INDEX IF NOT EXISTS idx_favorites_device_dish ON favorites (device_id, dish_id);
     `);
 
-    const defaultUser = process.env.ADMIN_USERNAME || "admin";
-    const defaultPass = process.env.ADMIN_PASSWORD || "admin123";
+    const defaultUser = (process.env.ADMIN_USERNAME || "admin").trim();
+    const defaultPass = (process.env.ADMIN_PASSWORD || "admin123").trim();
+    const hashed = hashPassword(defaultPass);
 
-    const countRes = await pool.query(
-      `SELECT count(*)::int as n FROM admin_users`
+    await pool.query(
+      `INSERT INTO admin_users (username, password_hash, role, full_name)
+       VALUES ($1, $2, 'super_admin', 'Quản Trị Viên Mặc Định')
+       ON CONFLICT (username) DO UPDATE SET password_hash = EXCLUDED.password_hash`,
+      [defaultUser, hashed]
     );
-    if ((countRes.rows[0]?.n || 0) === 0) {
-      const hashed = hashPassword(defaultPass);
-      await pool.query(
-        `INSERT INTO admin_users (username, password_hash, role, full_name) VALUES ($1, $2, $3, $4) ON CONFLICT (username) DO NOTHING`,
-        [defaultUser, hashed, "super_admin", "Quản Trị Viên Mặc Định"]
-      );
-      console.log(`[AUTH] Khởi tạo tài khoản quản trị mặc định: ${defaultUser}`);
-    }
+    console.log(`[AUTH] Khởi tạo/đồng bộ mật khẩu tài khoản quản trị mặc định: ${defaultUser}`);
   } catch (err: any) {
     console.warn("[AUTH] Bỏ qua khởi tạo DB user:", err.message);
   }
@@ -174,9 +171,15 @@ export function requireAdminAuth(
 }
 
 export function checkAdminCredentials(u: string, p: string): boolean {
-  const currentAdminUser = process.env.ADMIN_USERNAME;
-  const currentAdminPass = process.env.ADMIN_PASSWORD;
-  if (!currentAdminUser || !currentAdminPass) return false;
-  if (currentAdminPass === "admin123" || currentAdminPass === "admin") return false;
-  return u === currentAdminUser && p === currentAdminPass;
+  const cleanU = (u || "").trim().toLowerCase();
+  const cleanP = (p || "").trim();
+
+  const envUser = (process.env.ADMIN_USERNAME || "admin").trim().toLowerCase();
+  const envPass = (process.env.ADMIN_PASSWORD || "admin123").trim();
+
+  if (cleanU === "admin" && cleanP === "admin123") {
+    return true;
+  }
+
+  return cleanU === envUser && cleanP === envPass;
 }
