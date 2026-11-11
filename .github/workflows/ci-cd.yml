@@ -108,50 +108,50 @@ jobs:
         run: |
           vercel deploy --prod --yes --token="$VERCEL_TOKEN"
 
-deploy-mobile-ota:
-  name: Publish Expo EAS Update (Mobile)
-  needs: quality-check
-  if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-  runs-on: ubuntu-latest
-  defaults:
-    run:
-      working-directory: frontend
+  deploy-mobile-ota:
+    name: Publish Expo EAS Update (Mobile)
+    needs: quality-check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js 22
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: npm
-        cache-dependency-path: frontend/package-lock.json
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
-    - name: Check Expo Token
-      id: expo-check
-      shell: bash
-      env:
-        EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-      run: |
-        if [ -n "$EXPO_TOKEN" ]; then
-          echo "available=true" >> "$GITHUB_OUTPUT"
-        else
-          echo "available=false" >> "$GITHUB_OUTPUT"
-          echo "::warning::EXPO_TOKEN is not configured. Skipping OTA deployment."
-        fi
+      - name: Check Expo Token
+        id: expo-check
+        shell: bash
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -n "$EXPO_TOKEN" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::EXPO_TOKEN is not configured. Skipping OTA deployment."
+          fi
 
-    - name: Install dependencies
-      if: steps.expo-check.outputs.available == 'true'
-      run: npm ci --legacy-peer-deps
+      - name: Install dependencies
+        if: steps.expo-check.outputs.available == 'true'
+        run: npm ci --legacy-peer-deps
 
-    - name: Setup Expo and EAS CLI
-      if: steps.expo-check.outputs.available == 'true'
-      uses: expo/expo-github-action@v8
-      with:
-        eas-version: latest
-        token: ${{ secrets.EXPO_TOKEN }}
+      - name: Setup Expo and EAS CLI
+        if: steps.expo-check.outputs.available == 'true'
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
-    - name: Publish OTA Update
-      if: steps.expo-check.outputs.available == 'true'
-      run: eas update --auto --non-interactive
+      - name: Publish OTA Update
+        if: steps.expo-check.outputs.available == 'true'
+        run: eas update --auto --non-interactive
