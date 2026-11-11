@@ -86,50 +86,50 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-"en": "Main Dishes",
-"ja": "メイン料理",
-"ko": "메인 요리",
-"vi": "Món chính",
-"zh": "主菜"
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Quán Cao lầu Bá Le",
-  "description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế."
-},
-"en": {
-  "name": "Traditional Hoi An Cao Lau Noodles",
-  "description": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares."
-},
-"zh": {
-  "name": "会安传统高楼面 (Cao Lầu)",
-  "description": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。"
-},
-"ko": {
-  "name": "호이안 전통 까오러우 (Cao Lầu)",
-  "description": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다."
-},
-"ja": {
-  "name": "ホイアン伝統カオラウ（伊勢うどん風麺）",
-  "description": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
-}
+      "vi": {
+        "name": "Quán Cao lầu Bá Le",
+        "description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế."
+      },
+      "en": {
+        "name": "Traditional Hoi An Cao Lau Noodles",
+        "description": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares."
+      },
+      "zh": {
+        "name": "会安传统高楼面 (Cao Lầu)",
+        "description": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。"
+      },
+      "ko": {
+        "name": "호이안 전통 까오러우 (Cao Lầu)",
+        "description": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다."
+      },
+      "ja": {
+        "name": "ホイアン伝統カオラウ（伊勢うどん風麺）",
+        "description": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
+      }
     },
     "localized_name": "Quán Cao lầu Bá Le",
     "localized_description": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
     "name_i18n": {
-"vi": "Quán Cao lầu Bá Le",
-"en": "Traditional Hoi An Cao Lau Noodles",
-"zh": "会安传统高楼面 (Cao Lầu)",
-"ko": "호이안 전통 까오러우 (Cao Lầu)",
-"ja": "ホイアン伝統カオラウ（伊勢うどん風麺）"
+      "vi": "Quán Cao lầu Bá Le",
+      "en": "Traditional Hoi An Cao Lau Noodles",
+      "zh": "会安传统高楼面 (Cao Lầu)",
+      "ko": "호이안 전통 까오러우 (Cao Lầu)",
+      "ja": "ホイアン伝統カオラウ（伊勢うどん風麺）"
     },
     "desc_i18n": {
-"vi": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
-"en": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares.",
-"zh": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。",
-"ko": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다.",
-"ja": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
+      "vi": "Cao lầu là món ăn đặc sản nổi tiếng của Hội An với sợi mì vàng dai đặc trưng, thịt xá xíu đậm đà, da heo giòn và rau sống Trà Quế.",
+      "en": "Chewy golden noodles made from rice soaked in Cham Island wood-ash water and Ba Le well water, tossed with five-spice char siu pork and crispy squares.",
+      "zh": "高楼面是会安的灵魂美食。面条必须用占婆岛相思木灰水与巴礼古井水揉制，口感筋道爽滑，配以五香叉烧肉、酥脆炸猪皮和茶桂香草。",
+      "ko": "참섬의 나무재 물과 발레 우물물로 반죽해 쫄깃한 식감을 자랑하는 황금빛 면 요리입니다. 오향 차슈 돼지고기와 바삭한 크래커를 곁들입니다.",
+      "ja": "チャム島の木灰汁とバーレー古井戸の水で練り上げた独特のコシを持つ太麺に、五香粉香るチャーシューと揚げせんべい、新鮮な香草を絡めて味わいます。"
     }
   },
   {
@@ -147,50 +147,50 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-"en": "Main Dishes",
-"ja": "メイン料理",
-"ko": "메인 요리",
-"vi": "Món chính",
-"zh": "主菜"
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Bánh Mì Phượng",
-  "description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt."
-},
-"en": {
-  "name": "Hoi An Crispy Baguette (Banh Mi)",
-  "description": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce."
-},
-"zh": {
-  "name": "会安炭烤法棍三明治",
-  "description": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。"
-},
-"ko": {
-  "name": "호이안 크리스피 반미",
-  "description": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다."
-},
-"ja": {
-  "name": "ホイアン炭火焼きバインミー",
-  "description": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
-}
+      "vi": {
+        "name": "Bánh Mì Phượng",
+        "description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt."
+      },
+      "en": {
+        "name": "Hoi An Crispy Baguette (Banh Mi)",
+        "description": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce."
+      },
+      "zh": {
+        "name": "会安炭烤法棍三明治",
+        "description": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。"
+      },
+      "ko": {
+        "name": "호이안 크리스피 반미",
+        "description": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다."
+      },
+      "ja": {
+        "name": "ホイアン炭火焼きバインミー",
+        "description": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
+      }
     },
     "localized_name": "Bánh Mì Phượng",
     "localized_description": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
     "name_i18n": {
-"vi": "Bánh Mì Phượng",
-"en": "Hoi An Crispy Baguette (Banh Mi)",
-"zh": "会安炭烤法棍三明治",
-"ko": "호이안 크리스피 반미",
-"ja": "ホイアン炭火焼きバインミー"
+      "vi": "Bánh Mì Phượng",
+      "en": "Hoi An Crispy Baguette (Banh Mi)",
+      "zh": "会安炭烤法棍三明治",
+      "ko": "호이안 크리스피 반미",
+      "ja": "ホイアン炭火焼きバインミー"
     },
     "desc_i18n": {
-"vi": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
-"en": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce.",
-"zh": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。",
-"ko": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다.",
-"ja": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
+      "vi": "Bánh mì Phượng nổi tiếng toàn cầu với lớp vỏ giòn rụm, phần nhân ngập tràn pate thơm béo, chả lụa, thịt nướng và loại nước sốt gia truyền đặc biệt.",
+      "en": "Pointed-end baguette baked over charcoal for a crackling crust, filled with velvety liver pate, char siu pork, artisanal sausage, and secret house sauce.",
+      "zh": "会安特色尖头法棍经炭火烘烤外酥里嫩，内夹绵密猪肝酱、蜜汁叉烧、越式扎肉、爽口酸菜，并淋上世代相传的秘制酱汁。",
+      "ko": "양끝이 뾰족한 호이안식 바게트를 숯불에 구워 겉은 바삭하고 속은 촉촉합니다. 부드러운 파테, 차슈 돼지고기와 비법 소스가 어우러집니다.",
+      "ja": "両端が尖った特徴的なバゲットを炭火でパリッと焼き上げ、濃厚なレバーパテ、チャーシュー、なます、秘伝ソースを贅沢に挟みました。"
     }
   },
   {
@@ -208,50 +208,50 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-"en": "Main Dishes",
-"ja": "メイン料理",
-"ko": "메인 요리",
-"vi": "Món chính",
-"zh": "主菜"
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Bánh Bèo Bà Bảy",
-  "description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ."
-},
-"en": {
-  "name": "Crispy Roast Pork Vermicelli",
-  "description": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce."
-},
-"zh": {
-  "name": "脆皮烧肉菠萝鱼露拌米粉",
-  "description": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。"
-},
-"ko": {
-  "name": "바삭한 구운 삼겹살 비빔 쌀국수",
-  "description": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다."
-},
-"ja": {
-  "name": "カリカリ焼き豚の発酵魚醤ビーフン",
-  "description": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
-}
+      "vi": {
+        "name": "Bánh Bèo Bà Bảy",
+        "description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ."
+      },
+      "en": {
+        "name": "Crispy Roast Pork Vermicelli",
+        "description": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce."
+      },
+      "zh": {
+        "name": "脆皮烧肉菠萝鱼露拌米粉",
+        "description": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。"
+      },
+      "ko": {
+        "name": "바삭한 구운 삼겹살 비빔 쌀국수",
+        "description": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다."
+      },
+      "ja": {
+        "name": "カリカリ焼き豚の発酵魚醤ビーフン",
+        "description": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
+      }
     },
     "localized_name": "Bánh Bèo Bà Bảy",
     "localized_description": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
     "name_i18n": {
-"vi": "Bánh Bèo Bà Bảy",
-"en": "Crispy Roast Pork Vermicelli",
-"zh": "脆皮烧肉菠萝鱼露拌米粉",
-"ko": "바삭한 구운 삼겹살 비빔 쌀국수",
-"ja": "カリカリ焼き豚の発酵魚醤ビーフン"
+      "vi": "Bánh Bèo Bà Bảy",
+      "en": "Crispy Roast Pork Vermicelli",
+      "zh": "脆皮烧肉菠萝鱼露拌米粉",
+      "ko": "바삭한 구운 삼겹살 비빔 쌀국수",
+      "ja": "カリカリ焼き豚の発酵魚醤ビーフン"
     },
     "desc_i18n": {
-"vi": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
-"en": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce.",
-"zh": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。",
-"ko": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다.",
-"ja": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
+      "vi": "Bánh bèo là một món nhỏ, nhưng lại giữ vai trò quan trọng trong bức tranh ẩm thực đường phố Hội An.\n\nMỗi phần được phục vụ trong một chén nhỏ, bên trên có tôm và một lớp giòn nhẹ. Kết cấu mềm mại, hương vị thanh nhẹ, khiến bạn dễ dàng ăn nhiều hơn một phần.\n\nĐây không phải là một bữa ăn đầy đủ. Món này phù hợp hơn như một món ăn vặt trong lúc bạn di chuyển qua Phố cổ. Nhiều du khách dừng lại ăn vài đĩa rồi tiếp tục hành trình khám phá.\n\nNhững món như bánh bèo giúp định hình cảm giác rất riêng của ẩm thực đường phố tại Hội An. Bạn không ngồi lại quá lâu cho một bữa ăn lớn. Bạn đang nếm những món nhỏ dọc đường.\n\nĐó chính là lý do món ăn này hòa hợp tự nhiên với một hành trình khám phá ẩm thực bằng cách đi bộ.",
+      "en": "Fresh rice vermicelli topped with crackling roast pork belly and tender boiled young jackfruit, tossed in pineapple-garlic fermented anchovy sauce.",
+      "zh": "爽滑鲜米粉铺上外皮酥脆的烤五花肉与清甜水煮嫩菠萝蜜，淋上由凤尾鱼酱、碎菠萝与蒜辣椒调制而成的特色酱汁。",
+      "ko": "신선한 쌀국수 위에 껍질이 바삭한 로스트 포크와 부드럽게 삶은 어린 잭프루트를 올리고, 파인애플과 마늘을 넣은 특제 피쉬소스로 비벼 먹습니다.",
+      "ja": "皮までパリパリに焼いたローストポークと柔らかい若ジャックフルーツを米麺にのせ、パイナップルとニンニクが香る特製発酵魚醤だれで和えて味わいます。"
     }
   },
   {
@@ -269,50 +269,50 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-"en": "Main Dishes",
-"ja": "メイン料理",
-"ko": "메인 요리",
-"vi": "Món chính",
-"zh": "主菜"
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Bánh đập Ni Bà Già",
-  "description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu."
-},
-"en": {
-  "name": "Cracked Rice Paper & Stir-Fried Baby Clams",
-  "description": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams."
-},
-"zh": {
-  "name": "锦南香炒河蚬配脆拍米饼",
-  "description": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。"
-},
-"ko": {
-  "name": "바삭한 반답 크래커와 깜남 재첩 볶음",
-  "description": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다."
-},
-"ja": {
-  "name": "バインダップ（割れせんべい）とシジミ炒め",
-  "description": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
-}
+      "vi": {
+        "name": "Bánh đập Ni Bà Già",
+        "description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu."
+      },
+      "en": {
+        "name": "Cracked Rice Paper & Stir-Fried Baby Clams",
+        "description": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams."
+      },
+      "zh": {
+        "name": "锦南香炒河蚬配脆拍米饼",
+        "description": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。"
+      },
+      "ko": {
+        "name": "바삭한 반답 크래커와 깜남 재첩 볶음",
+        "description": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다."
+      },
+      "ja": {
+        "name": "バインダップ（割れせんべい）とシジミ炒め",
+        "description": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
+      }
     },
     "localized_name": "Bánh đập Ni Bà Già",
     "localized_description": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
     "name_i18n": {
-"vi": "Bánh đập Ni Bà Già",
-"en": "Cracked Rice Paper & Stir-Fried Baby Clams",
-"zh": "锦南香炒河蚬配脆拍米饼",
-"ko": "바삭한 반답 크래커와 깜남 재첩 볶음",
-"ja": "バインダップ（割れせんべい）とシジミ炒め"
+      "vi": "Bánh đập Ni Bà Già",
+      "en": "Cracked Rice Paper & Stir-Fried Baby Clams",
+      "zh": "锦南香炒河蚬配脆拍米饼",
+      "ko": "바삭한 반답 크래커와 깜남 재첩 볶음",
+      "ja": "バインダップ（割れせんべい）とシジミ炒め"
     },
     "desc_i18n": {
-"vi": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
-"en": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams.",
-"zh": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。",
-"ko": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다.",
-"ja": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
+      "vi": "Đây là một trong những món ăn mang đậm tính địa phương hơn ở Hội An, và nó mang đến điều gì đó khác biệt so với những lựa chọn quen thuộc.\n\nBánh đập kết hợp hai lớp bánh tráng, một lớp giòn và một lớp mềm. Khi ép chúng lại với nhau, kết cấu tạo cảm giác vừa giòn vừa dai cùng lúc.\n\nMón ăn được phục vụ cùng hến xào, mang đến vị mặn nhẹ và hương vị đặc trưng của sông nước. Sự kết hợp này lúc đầu có thể hơi lạ, nhưng lại rất hài hòa khi bạn thử.\n\nĐây không phải lúc nào cũng là món đầu tiên du khách chọn, nhưng thường trở thành món yêu thích của những ai muốn đi xa hơn những món cơ bản.\n\nNếu bạn muốn ăn như người địa phương, đây là một lựa chọn rất phù hợp để bắt đầu.",
+      "en": "Two toasted rice crackers sandwiching a warm steamed rice sheet—cracked by hand and used to scoop up savory stir-fried Cam Nam river baby clams.",
+      "zh": "两片炭烤脆米饼中间夹一层温热软米皮，用手轻拍使其贴合，用来舀食以香茅、辣椒、花生爆炒的锦南河鲜小蚬肉。",
+      "ko": "구운 라이스크래커 사이에 촉촉한 쌀피를 끼워 손으로 톡 깨뜨린 뒤, 레몬그라스와 고추로 볶아낸 깜남 강 재첩을 듬뿍 얹어 먹습니다.",
+      "ja": "焼きせんべいの間に蒸し米シートを挟んで手で割って食べるユニークな料理。レモングラスと香草で炒めたカムナム島のシジミをのせていただきます。"
     }
   },
   {
@@ -330,50 +330,50 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Món chính",
     "category_slug": "main",
     "category_translations": {
-"en": "Main Dishes",
-"ja": "メイン料理",
-"ko": "메인 요리",
-"vi": "Món chính",
-"zh": "主菜"
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Bánh Ướt Ban Mê Giang Vương",
-  "description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch."
-},
-"en": {
-  "name": "Cam Nam Baby Corn Sweet Soup",
-  "description": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream."
-},
-"zh": {
-  "name": "锦南岛椰香嫩玉米甜羹",
-  "description": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。"
-},
-"ko": {
-  "name": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
-  "description": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다."
-},
-"ja": {
-  "name": "カムナム島の若トウモロコシとココナッツのチェー",
-  "description": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
-}
+      "vi": {
+        "name": "Bánh Ướt Ban Mê Giang Vương",
+        "description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch."
+      },
+      "en": {
+        "name": "Cam Nam Baby Corn Sweet Soup",
+        "description": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream."
+      },
+      "zh": {
+        "name": "锦南岛椰香嫩玉米甜羹",
+        "description": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。"
+      },
+      "ko": {
+        "name": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
+        "description": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다."
+      },
+      "ja": {
+        "name": "カムナム島の若トウモロコシとココナッツのチェー",
+        "description": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
+      }
     },
     "localized_name": "Bánh Ướt Ban Mê Giang Vương",
     "localized_description": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
     "name_i18n": {
-"vi": "Bánh Ướt Ban Mê Giang Vương",
-"en": "Cam Nam Baby Corn Sweet Soup",
-"zh": "锦南岛椰香嫩玉米甜羹",
-"ko": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
-"ja": "カムナム島の若トウモロコシとココナッツのチェー"
+      "vi": "Bánh Ướt Ban Mê Giang Vương",
+      "en": "Cam Nam Baby Corn Sweet Soup",
+      "zh": "锦南岛椰香嫩玉米甜羹",
+      "ko": "깜남 섬 코코넛 초당옥수수 체 (Chè)",
+      "ja": "カムナム島の若トウモロコシとココナッツのチェー"
     },
     "desc_i18n": {
-"vi": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
-"en": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream.",
-"zh": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。",
-"ko": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다.",
-"ja": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
+      "vi": "Bánh ướt thịt nướng là một lựa chọn nhẹ nhàng hơn, rất phù hợp khi bạn muốn ăn món gì đó tươi mới nhưng vẫn đậm đà hương vị.\n\nMón ăn kết hợp thịt nướng với bánh ướt mềm và rau sống tươi. Tất cả hòa quyện cùng nước chấm, giúp kết nối hương vị mà không tạo cảm giác nặng nề.\n\nSo với các món chiên, món này dễ ăn hơn, đặc biệt vào những thời điểm nóng trong ngày. Kết cấu mềm mại và cân bằng khiến nó trở thành khoảng nghỉ hợp lý giữa những bữa ăn đậm vị hơn.\n\nNhiều du khách chọn món này cho bữa trưa hoặc một điểm dừng đầu giờ chiều. Nó cung cấp đủ năng lượng để bạn tiếp tục khám phá mà không khiến bạn chậm nhịp.\n\nMón ăn này rất giản dị, nhưng đó cũng chính là sức hút của nó. Trọng tâm nằm ở nguyên liệu tươi và hương vị thanh sạch.",
+      "en": "Milk-stage glutinous baby corn from Cam Nam alluvial island is thinly shaved and slow-simmered with rock sugar, pandan leaves, and rich coconut cream.",
+      "zh": "选用锦南冲积岛上刚刚灌浆的鲜嫩糯玉米，削成薄片后与冰糖、班兰叶慢火熬煮，食用时淋上浓郁鲜榨椰浆。",
+      "ko": "깜남 섬의 비옥한 충적토에서 자란 부드러운 어린 찰옥수수를 얇게 썰어 암설탕, 판단잎과 함께 끓여낸 뒤 고소한 코코넛 밀크를 얹어 먹습니다.",
+      "ja": "カムナム島の肥沃な土壌で育ったミルクたっぷりの若いモチトウモロコシを薄く削り、氷砂糖とパンダンリーフで優しく煮込んだココナッツデザートです。"
     }
   },
   {
@@ -391,50 +391,294 @@ const DEFAULT_HOI_AN_DISHES = [
     "category_name": "Chè & Đồ uống",
     "category_slug": "sweet",
     "category_translations": {
-"en": "Sweet Soups & Drinks",
-"ja": "チェー・飲み物",
-"ko": "디저트 & 음료",
-"vi": "Chè & Đồ uống",
-"zh": "甜品与饮品"
+      "en": "Sweet Soups & Drinks",
+      "ja": "チェー・飲み物",
+      "ko": "디저트 & 음료",
+      "vi": "Chè & Đồ uống",
+      "zh": "甜品与饮品"
     },
     "favorite_count": 0,
     "translations": {
-"vi": {
-  "name": "Trà mót",
-  "description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An."
-},
-"en": {
-  "name": "Mot Lotus Petal Herbal Lemongrass Tea",
-  "description": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal."
-},
-"zh": {
-  "name": "会安荷花瓣九味草本柠檬香茅茶",
-  "description": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。"
-},
-"ko": {
-  "name": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
-  "description": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다."
-},
-"ja": {
-  "name": "蓮の花びら添え・9種ハーブのレモングラス茶",
-  "description": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
-}
+      "vi": {
+        "name": "Trà mót",
+        "description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An."
+      },
+      "en": {
+        "name": "Mot Lotus Petal Herbal Lemongrass Tea",
+        "description": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal."
+      },
+      "zh": {
+        "name": "会安荷花瓣九味草本柠檬香茅茶",
+        "description": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。"
+      },
+      "ko": {
+        "name": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
+        "description": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다."
+      },
+      "ja": {
+        "name": "蓮の花びら添え・9種ハーブのレモングラス茶",
+        "description": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
+      }
     },
     "localized_name": "Trà mót",
     "localized_description": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
     "name_i18n": {
-"vi": "Trà mót",
-"en": "Mot Lotus Petal Herbal Lemongrass Tea",
-"zh": "会安荷花瓣九味草本柠檬香茅茶",
-"ko": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
-"ja": "蓮の花びら添え・9種ハーブのレモングラス茶"
+      "vi": "Trà mót",
+      "en": "Mot Lotus Petal Herbal Lemongrass Tea",
+      "zh": "会安荷花瓣九味草本柠檬香茅茶",
+      "ko": "연꽃잎 레몬그라스 한방 허브티 (느억못)",
+      "ja": "蓮の花びら添え・9種ハーブのレモングラス茶"
     },
     "desc_i18n": {
-"vi": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
-"en": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal.",
-"zh": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。",
-"ko": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다.",
-"ja": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
+      "vi": "Thật không khó để bắt gặp hình ảnh những ly nước dân dã với cốc giấy màu trắng, ống hút tre, tô điểm bằng lá trà non và lá sen hồng được du khách check-in “rần rần\" trên mạng xã hội. Đó chính là “Mót Hội An\", thức uống có vẻ ngoài đơn giản, mộc mạc nhưng vẫn đẹp tinh tế, đậm chất truyền thống của phố Hội thơ mộng.\n\nNước Mót là sự kết hợp từ hơn 10 loại thảo dược thiên nhiên như: sả, hoa cúc, lá trà xanh, cam thảo, hạ khô thảo, kim ngân hoa, lá sen khô... tạo nên một loại trà thanh nhiệt vừa dễ uống vừa tốt cho sức khỏe, lý tưởng sau khi dạo quanh phố cổ hay thưởng thức ẩm thực đường phố Hội An.",
+      "en": "Iconic refreshing herbal elixir brewed from monk fruit, honeysuckle, licorice root, chrysanthemum, lemongrass, and lime, adorned with a pink lotus petal.",
+      "zh": "由罗汉果、金银花、甘草、菊花、新鲜香茅、青柠与蜂蜜慢熬而成的解暑草本茶，杯口点缀一片清雅的粉红荷花瓣。",
+      "ko": "나한과, 인동초, 감초, 국화, 신선한 레몬그라스와 라임을 우려낸 상쾌한 한방 허브차로, 분홍빛 연꽃잎 한 장을 띄워내는 호이안의 명물입니다.",
+      "ja": "羅漢果、スイカズラ、甘草、菊花、生レモングラス、ライムを煎じた爽やかなハーブティー。可憐な蓮の花びらが添えられたホイアン名物の一杯です。"
+    }
+  },
+  {
+    "id": 12,
+    "category_id": 4,
+    "name": "Mẹt Hội An",
+    "description": "MET Hội An đi theo phong cách thuần Việt truyền thống kết hợp mộc mạc, tập trung vào các món đặc sản Hội An như thịt nướng, nem lụi, bánh xèo, chả giò và rau sống Trà Quế bày trí trên mẹt tre dân dã.",
+    "region": null,
+    "image_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
+    "created_at": "2026-10-27T07:50:11.678Z",
+    "lat": 15.87615,
+    "lng": 108.32925,
+    "address": "63 Phan Châu Trinh, Phường Minh An, Hội An, Đà Nẵng, Việt Nam",
+    "is_active": true,
+    "category_name": "Món chính",
+    "category_slug": "main",
+    "category_translations": {
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
+    },
+    "favorite_count": 1,
+    "translations": {
+      "vi": {
+        "name": "Mẹt Hội An",
+        "description": "MET Hội An đi theo phong cách thuần Việt truyền thống kết hợp mộc mạc, tập trung vào các món đặc sản Hội An như thịt nướng, nem lụi, bánh xèo, chả giò và rau sống Trà Quế bày trí trên mẹt tre dân dã."
+      },
+      "en": {
+        "name": "Met Hoi An Traditional Platter",
+        "description": "MET Hoi An embraces a rustic, authentic Vietnamese culinary style, featuring signature Hoi An specialties such as grilled pork skewers, lemongrass nem lui, crispy banh xeo, spring rolls, and fresh Tra Que herbs served on a woven bamboo tray."
+      },
+      "zh": {
+        "name": "会安传统竹匾拼盘 (Mẹt Hội An)",
+        "description": "MET会安主打质朴纯正的越南传统风味，将炭烤猪肉串、香茅猪肉卷、广南脆煎饼、炸春卷与茶桂村有机香草汇聚于传统手工竹匾之上。"
+      },
+      "ko": {
+        "name": "멧 호이안 전통 모둠 플래터 (Mẹt Hội An)",
+        "description": "소박하고 정통적인 베트남 스타일을 지향하는 멧 호이안으로, 대나무 채반 위에 숯불 돼지고기 꼬치, 넴루이, 반쎄오, 짜조와 신선한 짜꾸에 허브를 풍성하게 담아냅니다."
+      },
+      "ja": {
+        "name": "メット・ホイアン（伝統竹ざる盛り合わせ）",
+        "description": "素朴で本格的なベトナム伝統スタイルを大切にする名店。炭火焼き豚串、ネムルイ、バインセオ、揚げ春巻きとチャークエ村の新鮮な香草を伝統的な竹ざるに盛り合わせて提供します。"
+      }
+    },
+    "localized_name": "Mẹt Hội An",
+    "localized_description": "MET Hội An đi theo phong cách thuần Việt truyền thống kết hợp mộc mạc, tập trung vào các món đặc sản Hội An như thịt nướng, nem lụi, bánh xèo, chả giò và rau sống Trà Quế bày trí trên mẹt tre dân dã.",
+    "name_i18n": {
+      "vi": "Mẹt Hội An",
+      "en": "Met Hoi An Traditional Platter",
+      "zh": "会安传统竹匾拼盘 (Mẹt Hội An)",
+      "ko": "멧 호이안 전통 모둠 플래터 (Mẹt Hội An)",
+      "ja": "メット・ホイアン（伝統竹ざる盛り合わせ）"
+    },
+    "desc_i18n": {
+      "vi": "MET Hội An đi theo phong cách thuần Việt truyền thống kết hợp mộc mạc, tập trung vào các món đặc sản Hội An như thịt nướng, nem lụi, bánh xèo, chả giò và rau sống Trà Quế bày trí trên mẹt tre dân dã.",
+      "en": "MET Hoi An embraces a rustic, authentic Vietnamese culinary style, featuring signature Hoi An specialties such as grilled pork skewers, lemongrass nem lui, crispy banh xeo, spring rolls, and fresh Tra Que herbs served on a woven bamboo tray.",
+      "zh": "MET会安主打质朴纯正的越南传统风味，将炭烤猪肉串、香茅猪肉卷、广南脆煎饼、炸春卷与茶桂村有机香草汇聚于传统手工竹匾之上。",
+      "ko": "소박하고 정통적인 베트남 스타일을 지향하는 멧 호이안으로, 대나무 채반 위에 숯불 돼지고기 꼬치, 넴루이, 반쎄오, 짜조와 신선한 짜꾸에 허브를 풍성하게 담아냅니다.",
+      "ja": "素朴で本格的なベトナム伝統スタイルを大切にする名店。炭火焼き豚串、ネムルイ、バインセオ、揚げ春巻きとチャークエ村の新鮮な香草を伝統的な竹ざるに盛り合わせて提供します。"
+    }
+  },
+  {
+    "id": 13,
+    "category_id": 4,
+    "name": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+    "description": "Không gian ấm cúng ngay cạnh Chùa Cầu phục vụ các món ăn gia đình truyền thống Việt Nam và đặc sản phố cổ Hội An chuẩn vị bếp xưa với nguyên liệu tươi ngon từ làng rau Trà Quế.",
+    "region": null,
+    "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800",
+    "created_at": "2026-10-27T07:50:11.678Z",
+    "lat": 15.87695,
+    "lng": 108.32555,
+    "address": "15 Công Nữ Ngọc Hoa, Hội An, Đà Nẵng, Việt Nam",
+    "is_active": true,
+    "category_name": "Món chính",
+    "category_slug": "main",
+    "category_translations": {
+      "en": "Main Dishes",
+      "ja": "メイン料理",
+      "ko": "메인 요리",
+      "vi": "Món chính",
+      "zh": "主菜"
+    },
+    "favorite_count": 1,
+    "translations": {
+      "vi": {
+        "name": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+        "description": "Không gian ấm cúng ngay cạnh Chùa Cầu phục vụ các món ăn gia đình truyền thống Việt Nam và đặc sản phố cổ Hội An chuẩn vị bếp xưa với nguyên liệu tươi ngon từ làng rau Trà Quế."
+      },
+      "en": {
+        "name": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+        "description": "A cozy heritage dining spot right next to the Japanese Covered Bridge, serving homestyle Vietnamese dishes and authentic Hoi An specialties crafted with fresh organic produce from Tra Que village."
+      },
+      "zh": {
+        "name": "外婆厨房会安传统餐厅 (Grandma Kitchen)",
+        "description": "毗邻日本廊桥的温馨古镇餐厅，选用茶桂蔬菜村的新鲜食材，为您呈现地道会安特色美食与充满家常温暖的传统越南料理。"
+      },
+      "ko": {
+        "name": "그랜마 키친 호이안 레스토랑 (Grandma Kitchen)",
+        "description": "내원교(일본교) 바로 옆 아늑한 공간에서 짜꾸에 마을의 신선한 재료로 만든 베트남 전통 가정식과 호이안 올드타운 특선 요리를 선보입니다."
+      },
+      "ja": {
+        "name": "グランマ・キッチン・ホイアン（伝統ベトナム家庭料理）",
+        "description": "来遠橋（日本橋）すぐそばの温かみあふれるレストラン。チャークエ村の新鮮な有機野菜を使い、おばあちゃんの味を受け継ぐベトナム家庭料理とホイアン名物を提供しています。"
+      }
+    },
+    "localized_name": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+    "localized_description": "Không gian ấm cúng ngay cạnh Chùa Cầu phục vụ các món ăn gia đình truyền thống Việt Nam và đặc sản phố cổ Hội An chuẩn vị bếp xưa với nguyên liệu tươi ngon từ làng rau Trà Quế.",
+    "name_i18n": {
+      "vi": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+      "en": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
+      "zh": "外婆厨房会安传统餐厅 (Grandma Kitchen)",
+      "ko": "그랜마 키친 호이안 레스토랑 (Grandma Kitchen)",
+      "ja": "グランマ・キッチン・ホイアン（伝統ベトナム家庭料理）"
+    },
+    "desc_i18n": {
+      "vi": "Không gian ấm cúng ngay cạnh Chùa Cầu phục vụ các món ăn gia đình truyền thống Việt Nam và đặc sản phố cổ Hội An chuẩn vị bếp xưa với nguyên liệu tươi ngon từ làng rau Trà Quế.",
+      "en": "A cozy heritage dining spot right next to the Japanese Covered Bridge, serving homestyle Vietnamese dishes and authentic Hoi An specialties crafted with fresh organic produce from Tra Que village.",
+      "zh": "毗邻日本廊桥的温馨古镇餐厅，选用茶桂蔬菜村的新鲜食材，为您呈现地道会安特色美食与充满家常温暖的传统越南料理。",
+      "ko": "내원교(일본교) 바로 옆 아늑한 공간에서 짜꾸에 마을의 신선한 재료로 만든 베트남 전통 가정식과 호이안 올드타운 특선 요리를 선보입니다.",
+      "ja": "来遠橋（日本橋）すぐそばの温かみあふれるレストラン。チャークエ村の新鮮な有機野菜を使い、おばあちゃんの味を受け継ぐベトナム家庭料理とホイアン名物を提供しています。"
+    }
+  },
+  {
+    "id": 14,
+    "category_id": 17,
+    "name": "Quán chè cô 7",
+    "description": "Quán chè dân dã nổi tiếng phố cổ Hội An với thực đơn đa dạng gồm chè bắp non Cẩm Nam, chè hạt sen long nhãn, chè đậu ván và chè thập cẩm nấu đường phèn ngọt thanh mát lành.",
+    "region": null,
+    "image_url": "https://images.unsplash.com/photo-1563805042-7684c8a9e9cb?auto=format&fit=crop&q=80&w=800",
+    "created_at": "2026-10-27T07:50:11.678Z",
+    "lat": 15.87835,
+    "lng": 108.33025,
+    "address": "2 Nguyễn Huệ, Old Town, Hội An, Đà Nẵng, Việt Nam",
+    "is_active": true,
+    "category_name": "Chè & Đồ uống",
+    "category_slug": "sweet",
+    "category_translations": {
+      "en": "Sweet Soups & Drinks",
+      "ja": "チェー・飲み物",
+      "ko": "디저트 & 음료",
+      "vi": "Chè & Đồ uống",
+      "zh": "甜品与饮品"
+    },
+    "favorite_count": 1,
+    "translations": {
+      "vi": {
+        "name": "Quán chè cô 7",
+        "description": "Quán chè dân dã nổi tiếng phố cổ Hội An với thực đơn đa dạng gồm chè bắp non Cẩm Nam, chè hạt sen long nhãn, chè đậu ván và chè thập cẩm nấu đường phèn ngọt thanh mát lành."
+      },
+      "en": {
+        "name": "Co 7 Traditional Sweet Soup Stall (Che Co 7)",
+        "description": "Beloved local dessert stall in Hoi An Ancient Town serving Cam Nam baby corn sweet soup, lotus seed and longan infusion, hyacinth bean pudding, and mixed sweet soup with rich coconut cream."
+      },
+      "zh": {
+        "name": "会安七姑传统甜品铺 (Quán chè cô 7)",
+        "description": "会安古镇深受欢迎的传统糖水铺，提供锦南嫩玉米甜羹、冰糖桂圆莲子汤、扁豆甜羹与椰香什锦糖水，清甜解暑。"
+      },
+      "ko": {
+        "name": "꼬 바이 전통 체 디저트 가게 (Quán chè cô 7)",
+        "description": "호이안 구시가지의 유명한 전통 디저트 가게로 깜남 초당옥수수 체, 연자육 용안 체, 모둠 코코넛 체 등 달콤하고 시원한 베트남식 단팥죽과 화채를 맛볼 수 있습니다."
+      },
+      "ja": {
+        "name": "コー・バイ伝統チェー甘味処（Quán chè cô 7）",
+        "description": "ホイアン旧市街で愛される伝統甘味処。カムナム島の若トウモロコシのチェー、蓮の実と竜眼の氷砂糖煮、濃厚ココナッツミルクのミックスチェーなど優しい甘さが魅力です。"
+      }
+    },
+    "localized_name": "Quán chè cô 7",
+    "localized_description": "Quán chè dân dã nổi tiếng phố cổ Hội An với thực đơn đa dạng gồm chè bắp non Cẩm Nam, chè hạt sen long nhãn, chè đậu ván và chè thập cẩm nấu đường phèn ngọt thanh mát lành.",
+    "name_i18n": {
+      "vi": "Quán chè cô 7",
+      "en": "Co 7 Traditional Sweet Soup Stall (Che Co 7)",
+      "zh": "会安七姑传统甜品铺 (Quán chè cô 7)",
+      "ko": "꼬 바이 전통 체 디저트 가게 (Quán chè cô 7)",
+      "ja": "コー・バイ伝統チェー甘味処（Quán chè cô 7）"
+    },
+    "desc_i18n": {
+      "vi": "Quán chè dân dã nổi tiếng phố cổ Hội An với thực đơn đa dạng gồm chè bắp non Cẩm Nam, chè hạt sen long nhãn, chè đậu ván và chè thập cẩm nấu đường phèn ngọt thanh mát lành.",
+      "en": "Beloved local dessert stall in Hoi An Ancient Town serving Cam Nam baby corn sweet soup, lotus seed and longan infusion, hyacinth bean pudding, and mixed sweet soup with rich coconut cream.",
+      "zh": "会安古镇深受欢迎的传统糖水铺，提供锦南嫩玉米甜羹、冰糖桂圆莲子汤、扁豆甜羹与椰香什锦糖水，清甜解暑。",
+      "ko": "호이안 구시가지의 유명한 전통 디저트 가게로 깜남 초당옥수수 체, 연자육 용안 체, 모둠 코코넛 체 등 달콤하고 시원한 베트남식 단팥죽과 화채를 맛볼 수 있습니다.",
+      "ja": "ホイアン旧市街で愛される伝統甘味処。カムナム島の若トウモロコシのチェー、蓮の実と竜眼の氷砂糖煮、濃厚ココナッツミルクのミックスチェーなど優しい甘さが魅力です。"
+    }
+  },
+  {
+    "id": 15,
+    "category_id": 2,
+    "name": "Bánh Bao Xie Xie",
+    "description": "Tiệm bánh bao thủ công và dimsum nổi tiếng trong lòng phố cổ Hội An với lớp vỏ bột mì lên men tự nhiên mềm xốp, nhân thịt xá xíu đậm đà, tôm tươi giòn ngọt và trứng muối tan chảy.",
+    "region": null,
+    "image_url": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&q=80&w=800",
+    "created_at": "2026-10-27T07:50:11.678Z",
+    "lat": 15.8764,
+    "lng": 108.33095,
+    "address": "24 Trần Quý Cáp, Old Town, Hội An, Đà Nẵng, Việt Nam",
+    "is_active": true,
+    "category_name": "Bánh & Ăn vặt",
+    "category_slug": "snack",
+    "category_translations": {
+      "en": "Snacks & Cakes",
+      "ja": "軽食・餅",
+      "ko": "떡 & 간식",
+      "vi": "Bánh & Ăn vặt",
+      "zh": "糕点与小吃"
+    },
+    "favorite_count": 1,
+    "translations": {
+      "vi": {
+        "name": "Bánh Bao Xie Xie",
+        "description": "Tiệm bánh bao thủ công và dimsum nổi tiếng trong lòng phố cổ Hội An với lớp vỏ bột mì lên men tự nhiên mềm xốp, nhân thịt xá xíu đậm đà, tôm tươi giòn ngọt và trứng muối tan chảy."
+      },
+      "en": {
+        "name": "Xie Xie Artisanal Steamed Buns & Dimsum",
+        "description": "Renowned handcrafted bao and dimsum shop in the heart of Hoi An Old Town, featuring naturally fermented fluffy dough filled with savory char siu pork, fresh shrimp, and molten salted egg yolk."
+      },
+      "zh": {
+        "name": "会安Xie Xie手工包子与点心铺 (Bánh Bao Xie Xie)",
+        "description": "位于会安古镇中心的人气手工包子与点心店，采用自然发酵的松软面皮，内裹秘制蜜汁叉烧、鲜甜虾仁与流沙咸蛋黄，香气扑鼻。"
+      },
+      "ko": {
+        "name": "씨에씨에 수제 찐빵 & 딤섬 (Bánh Bao Xie Xie)",
+        "description": "호이안 올드타운 중심가에 위치한 수제 반바오 및 딤섬 전문점으로, 자연 발효한 폭신한 반죽 속에 진한 차슈 돼지고기, 생새우, 고소한 염장 계란노른자를 가득 채워 쪄냅니다."
+      },
+      "ja": {
+        "name": "シエシエ手作り肉まん・点心専門店（Bánh Bao Xie Xie）",
+        "description": "ホイアン旧市街で人気の手作りバインバオ（中華まん）と点心のお店。自然発酵のふわふわ生地に特製チャーシュー、プリプリの海老、濃厚な塩卵黄餡を包んで蒸し上げています。"
+      }
+    },
+    "localized_name": "Bánh Bao Xie Xie",
+    "localized_description": "Tiệm bánh bao thủ công và dimsum nổi tiếng trong lòng phố cổ Hội An với lớp vỏ bột mì lên men tự nhiên mềm xốp, nhân thịt xá xíu đậm đà, tôm tươi giòn ngọt và trứng muối tan chảy.",
+    "name_i18n": {
+      "vi": "Bánh Bao Xie Xie",
+      "en": "Xie Xie Artisanal Steamed Buns & Dimsum",
+      "zh": "会安Xie Xie手工包子与点心铺 (Bánh Bao Xie Xie)",
+      "ko": "씨에씨에 수제 찐빵 & 딤섬 (Bánh Bao Xie Xie)",
+      "ja": "シエシエ手作り肉まん・点心専門店（Bánh Bao Xie Xie）"
+    },
+    "desc_i18n": {
+      "vi": "Tiệm bánh bao thủ công và dimsum nổi tiếng trong lòng phố cổ Hội An với lớp vỏ bột mì lên men tự nhiên mềm xốp, nhân thịt xá xíu đậm đà, tôm tươi giòn ngọt và trứng muối tan chảy.",
+      "en": "Renowned handcrafted bao and dimsum shop in the heart of Hoi An Old Town, featuring naturally fermented fluffy dough filled with savory char siu pork, fresh shrimp, and molten salted egg yolk.",
+      "zh": "位于会安古镇中心的人气手工包子与点心店，采用自然发酵的松软面皮，内裹秘制蜜汁叉烧、鲜甜虾仁与流沙咸蛋黄，香气扑鼻。",
+      "ko": "호이안 올드타운 중심가에 위치한 수제 반바오 및 딤섬 전문점으로, 자연 발효한 폭신한 반죽 속에 진한 차슈 돼지고기, 생새우, 고소한 염장 계란노른자를 가득 채워 쪄냅니다.",
+      "ja": "ホイアン旧市街で人気の手作りバインバオ（中華まん）と点心のお店。自然発酵のふわふわ生地に特製チャーシュー、プリプリの海老、濃厚な塩卵黄餡を包んで蒸し上げています。"
     }
   }
 ];

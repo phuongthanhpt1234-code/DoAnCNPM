@@ -13,14 +13,29 @@ const schema = z.object({
   translations: z.record(langEnum, z.string().min(1)).optional(),
 });
 
+const DEFAULT_CATEGORIES = [
+  { id: 4, name: 'Món chính', slug: 'main', translations: { vi: 'Món chính', en: 'Main Dishes', zh: '主菜', ko: '메인 요리', ja: 'メイン料理' } },
+  { id: 5, name: 'Bánh & Ăn vặt', slug: 'snack', translations: { vi: 'Bánh & Ăn vặt', en: 'Cakes & Snacks', zh: '糕点与小吃', ko: '떡 & 간식', ja: '餅＆軽食' } },
+  { id: 6, name: 'Đường phố', slug: 'street', translations: { vi: 'Đường phố', en: 'Street Food', zh: '街头美食', ko: '길거리 음식', ja: '屋台料理' } },
+  { id: 7, name: 'Chè & Đồ uống', slug: 'sweet', translations: { vi: 'Chè & Đồ uống', en: 'Desserts & Drinks', zh: '甜品与饮品', ko: '디저트 & 음료', ja: 'チェー＆ドリンク' } },
+];
+
 r.get('/', ah(async (req, res) => {
   const lang = typeof req.query.lang === 'string' ? req.query.lang : 'vi';
-  const { rows } = await pool.query('SELECT * FROM categories ORDER BY id');
-  const enriched = rows.map((row) => ({
-    ...row,
-    localized_name: row.translations?.[lang] || row.translations?.vi || row.name,
-  }));
-  res.json(enriched);
+  try {
+    const { rows } = await pool.query('SELECT * FROM categories ORDER BY id');
+    const enriched = rows.map((row) => ({
+      ...row,
+      localized_name: row.translations?.[lang] || row.translations?.vi || row.name,
+    }));
+    return res.json(enriched);
+  } catch {
+    const enriched = DEFAULT_CATEGORIES.map((row: any) => ({
+      ...row,
+      localized_name: row.translations?.[lang] || row.translations?.vi || row.name,
+    }));
+    return res.json(enriched);
+  }
 }));
 
 r.post('/', requireAdminAuth, ah(async (req, res) => {

@@ -222,11 +222,15 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               return false;
             });
 
+            const dishPresetById = DISHES.find((d) => d.id === Number(row.id));
             const getLocalizedName = (k: LangKey): string => {
-              if (k === "vi") return row.name_i18n?.vi || row.name || localDish?.translations?.vi?.name || "Món Hội An";
-              const rName = row.name_i18n?.[k];
+              if (k === "vi") return row.name_i18n?.vi || row.name || dishPresetById?.name?.vi || localDish?.translations?.vi?.name || "Món Hội An";
+              const rName = row.name_i18n?.[k] || row.translations?.[k]?.name;
               if (rName && rName.trim() && rName !== row.name) {
                 return rName;
+              }
+              if (dishPresetById?.name?.[k]) {
+                return dishPresetById.name[k];
               }
               const localName = localDish?.translations?.[k]?.name;
               if (localName && localName.trim()) {
@@ -235,12 +239,15 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               return rName || localDish?.translations?.en?.name || row.name;
             };
 
-            const rawDescVi = row.desc_i18n?.vi || row.description || localDish?.translations?.vi?.story || "";
+            const rawDescVi = row.desc_i18n?.vi || row.description || dishPresetById?.desc?.vi || localDish?.translations?.vi?.story || "";
             const getLocalizedDesc = (k: LangKey): string => {
               if (k === "vi") return rawDescVi;
-              const rDesc = row.desc_i18n?.[k];
+              const rDesc = row.desc_i18n?.[k] || row.translations?.[k]?.description;
               if (rDesc && rDesc.trim() && rDesc !== rawDescVi) {
                 return rDesc;
+              }
+              if (dishPresetById?.desc?.[k]) {
+                return dishPresetById.desc[k];
               }
               const localStory = localDish?.translations?.[k]?.story;
               if (localStory && localStory.trim()) {

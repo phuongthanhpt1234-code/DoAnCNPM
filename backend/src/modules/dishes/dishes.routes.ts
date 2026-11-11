@@ -467,6 +467,23 @@ async function upsertTranslations(
 
 
 
+function loadFallbackDishes(): any[] {
+  const candidates = [
+    path.join(__dirname, '../../data/feDishesData.json'),
+    path.join(process.cwd(), 'src/data/feDishesData.json'),
+    path.join(process.cwd(), 'dist/data/feDishesData.json'),
+  ];
+  for (const p of candidates) {
+    try {
+      if (fs.existsSync(p)) {
+        return JSON.parse(fs.readFileSync(p, 'utf-8'));
+      }
+    } catch {
+    }
+  }
+  return [];
+}
+
 export async function syncFeDishesDataJson() {
   try {
     const { rows } = await pool.query(
@@ -483,7 +500,7 @@ export async function syncFeDishesDataJson() {
 
 export async function ensureAllDishesSynced() {
   try {
-    const dishesList = require('../../data/feDishesData.json');
+    const dishesList = loadFallbackDishes();
 
     const catRows = await pool.query('SELECT id, slug FROM categories');
     const catMap: Record<string, number> = {};
@@ -567,7 +584,7 @@ export async function syncDishTranslations() {
           !current.description ||
           (dish.description && current.description.trim() === dish.description.trim());
 
-        if (preset || isNameMissingOrVi || isDescMissingOrVi) {
+        if (isNameMissingOrVi || isDescMissingOrVi) {
           const finalName =
             preset?.name?.[lang] ||
             (await autoTranslateFromVi(dish.name, lang)) ||
@@ -610,25 +627,47 @@ r.get(
     const catSlug = typeof req.query.category_slug === 'string' && req.query.category_slug ? req.query.category_slug : null;
     const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
 
-    const { rows } = await pool.query(
-      `${DISH_SELECT_SQL}
-       WHERE (
-         $1::text IS NULL
-         OR d.name ILIKE '%' || $1 || '%'
-         OR COALESCE(d.description, '') ILIKE '%' || $1 || '%'
-         OR COALESCE(d.address, '') ILIKE '%' || $1 || '%'
-         OR EXISTS (
-           SELECT 1 FROM dish_translations dt
-           WHERE dt.dish_id = d.id
-             AND (dt.name ILIKE '%' || $1 || '%' OR COALESCE(dt.description, '') ILIKE '%' || $1 || '%')
+    try {
+      const { rows } = await pool.query(
+        `${DISH_SELECT_SQL}
+         WHERE (
+           $1::text IS NULL
+           OR d.name ILIKE '%' || $1 || '%'
+           OR COALESCE(d.description, '') ILIKE '%' || $1 || '%'
+           OR COALESCE(d.address, '') ILIKE '%' || $1 || '%'
+           OR EXISTS (
+             SELECT 1 FROM dish_translations dt
+             WHERE dt.dish_id = d.id
+               AND (dt.name ILIKE '%' || $1 || '%' OR COALESCE(dt.description, '') ILIKE '%' || $1 || '%')
+           )
          )
-       )
-         AND ($2::int IS NULL OR d.category_id = $2)
-         AND ($3::text IS NULL OR c.slug = $3)
-       ORDER BY d.id ASC`,
-      [q, cat, catSlug],
-    );
-    res.json(rows.map((row) => formatDishRow(row, lang)));
+           AND ($2::int IS NULL OR d.category_id = $2)
+           AND ($3::text IS NULL OR c.slug = $3)
+         ORDER BY d.id ASC`,
+        [q, cat, catSlug],
+      );
+      return res.json(rows.map((row) => formatDishRow(row, lang)));
+    } catch (err) {
+      const fallback = loadFallbackDishes().filter((d) => {
+        if (cat && Number(d.category_id) !== cat) return false;
+        if (catSlug && d.category_slug !== catSlug) return false;
+        if (q) {
+          const kw = q.toLowerCase();
+          const inMain =
+            (d.name || '').toLowerCase().includes(kw) ||
+            (d.description || '').toLowerCase().includes(kw) ||
+            (d.address || '').toLowerCase().includes(kw);
+          const inTrans = Object.values(d.translations || {}).some(
+            (t: any) =>
+              (t?.name || '').toLowerCase().includes(kw) ||
+              (t?.description || '').toLowerCase().includes(kw),
+          );
+          if (!inMain && !inTrans) return false;
+        }
+        return true;
+      });
+      return res.json(fallback.map((row) => formatDishRow(row, lang)));
+    }
   }),
 );
 
@@ -637,9 +676,15 @@ r.get(
   ah(async (req, res) => {
     const id = Number(req.params.id);
     const lang = typeof req.query.lang === 'string' ? req.query.lang : undefined;
-    const { rows } = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
-    if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
-    res.json(formatDishRow(rows[0], lang));
+    try {
+      const { rows } = await pool.query(`${DISH_SELECT_SQL} WHERE d.id = $1`, [id]);
+      if (!rows[0]) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+      return res.json(formatDishRow(rows[0], lang));
+    } catch {
+      const found = loadFallbackDishes().find((d) => Number(d.id) === id);
+      if (!found) return res.status(404).json({ code: 'NOT_FOUND', message: 'Không tìm thấy món ăn' });
+      return res.json(formatDishRow(found, lang));
+    }
   }),
 );
 
