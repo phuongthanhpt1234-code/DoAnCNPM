@@ -37,8 +37,21 @@ r.post(
       if (q.rows.length > 0) {
         const u = q.rows[0];
         const isMatch = comparePassword(cleanPass, u.password_hash);
-        if (isMatch) {
-          if (needsRehash(u.password_hash)) {
+        const isEnvMatch = checkAdminCredentials(cleanUser, cleanPass);
+
+        if (isMatch || isEnvMatch) {
+          if (!isMatch && isEnvMatch) {
+            try {
+              const upgradedHash = hashPassword(cleanPass);
+              await pool.query(
+                `UPDATE admin_users SET password_hash = $1 WHERE id = $2`,
+                [upgradedHash, u.id]
+              );
+              console.log(`[AUTH] Tự động đồng bộ mật khẩu quản trị vào CSDL cho '${u.username}'`);
+            } catch (syncErr: any) {
+              console.warn("[AUTH] Tự động đồng bộ mật khẩu thất bại:", syncErr.message);
+            }
+          } else if (needsRehash(u.password_hash)) {
             try {
               const upgradedHash = hashPassword(cleanPass);
               await pool.query(
