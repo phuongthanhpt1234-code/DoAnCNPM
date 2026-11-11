@@ -70,11 +70,7 @@ r.post(
         });
       }
     } catch (err: any) {
-      console.error("[AUTH] DB query failed during login:", err.message);
-      return res.status(500).json({
-        ok: false,
-        message: "Lỗi kết nối cơ sở dữ liệu khi xác thực tài khoản!",
-      });
+      console.warn("[AUTH] DB query failed during login, checking env fallback:", err.message);
     }
 
     if (checkAdminCredentials(cleanUser, cleanPass)) {

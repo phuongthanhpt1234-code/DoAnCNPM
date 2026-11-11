@@ -65,16 +65,20 @@ r.get('/', ah(async (req, res) => {
   }
 
   return requireAdminAuth(req, res, async () => {
-    const { rows } = await pool.query(
-      `SELECT c.id, c.device_id, c.note, c.created_at,
-              d.id AS dish_id, d.name AS dish_name
-       FROM check_ins c
-       JOIN dishes d ON d.id = c.dish_id
-       ORDER BY c.created_at DESC
-       LIMIT $1`,
-      [limit],
-    );
-    res.json(rows);
+    try {
+      const { rows } = await pool.query(
+        `SELECT c.id, c.device_id, c.note, c.created_at,
+                d.id AS dish_id, d.name AS dish_name
+         FROM check_ins c
+         LEFT JOIN dishes d ON d.id = c.dish_id
+         ORDER BY c.created_at DESC
+         LIMIT $1`,
+        [limit],
+      );
+      res.json(rows);
+    } catch {
+      res.json([]);
+    }
   });
 }));
 
