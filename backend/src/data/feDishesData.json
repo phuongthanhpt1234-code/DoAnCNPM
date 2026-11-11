@@ -372,7 +372,7 @@
     "description": "MET Hội An đi theo phong cách thuần Việt truyền thống kết hợp mộc mạc, tập trung vào các món đặc sản Hội An như thịt nướng, nem lụi, bánh xèo, chả giò và rau sống Trà Quế bày trí trên mẹt tre dân dã.",
     "region": null,
     "image_url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800",
-    "created_at": "2026-10-27T07:50:11.678Z",
+    "created_at": "2026-11-10T16:55:33.833Z",
     "lat": 15.87615,
     "lng": 108.32925,
     "address": "63 Phan Châu Trinh, Phường Minh An, Hội An, Đà Nẵng, Việt Nam",
@@ -386,7 +386,7 @@
       "vi": "Món chính",
       "zh": "主菜"
     },
-    "favorite_count": 1,
+    "favorite_count": 0,
     "translations": {
       "vi": {
         "name": "Mẹt Hội An",
@@ -433,7 +433,7 @@
     "description": "Không gian ấm cúng ngay cạnh Chùa Cầu phục vụ các món ăn gia đình truyền thống Việt Nam và đặc sản phố cổ Hội An chuẩn vị bếp xưa với nguyên liệu tươi ngon từ làng rau Trà Quế.",
     "region": null,
     "image_url": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&q=80&w=800",
-    "created_at": "2026-10-27T07:50:11.678Z",
+    "created_at": "2026-11-10T16:55:33.833Z",
     "lat": 15.87695,
     "lng": 108.32555,
     "address": "15 Công Nữ Ngọc Hoa, Hội An, Đà Nẵng, Việt Nam",
@@ -447,7 +447,7 @@
       "vi": "Món chính",
       "zh": "主菜"
     },
-    "favorite_count": 1,
+    "favorite_count": 0,
     "translations": {
       "vi": {
         "name": "Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine",
@@ -494,7 +494,7 @@
     "description": "Quán chè dân dã nổi tiếng phố cổ Hội An với thực đơn đa dạng gồm chè bắp non Cẩm Nam, chè hạt sen long nhãn, chè đậu ván và chè thập cẩm nấu đường phèn ngọt thanh mát lành.",
     "region": null,
     "image_url": "https://images.unsplash.com/photo-1563805042-7684c8a9e9cb?auto=format&fit=crop&q=80&w=800",
-    "created_at": "2026-10-27T07:50:11.678Z",
+    "created_at": "2026-11-10T16:55:33.833Z",
     "lat": 15.87835,
     "lng": 108.33025,
     "address": "2 Nguyễn Huệ, Old Town, Hội An, Đà Nẵng, Việt Nam",
@@ -508,7 +508,7 @@
       "vi": "Chè & Đồ uống",
       "zh": "甜品与饮品"
     },
-    "favorite_count": 1,
+    "favorite_count": 0,
     "translations": {
       "vi": {
         "name": "Quán chè cô 7",
@@ -550,12 +550,12 @@
   },
   {
     "id": 15,
-    "category_id": 2,
+    "category_id": 5,
     "name": "Bánh Bao Xie Xie",
     "description": "Tiệm bánh bao thủ công và dimsum nổi tiếng trong lòng phố cổ Hội An với lớp vỏ bột mì lên men tự nhiên mềm xốp, nhân thịt xá xíu đậm đà, tôm tươi giòn ngọt và trứng muối tan chảy.",
     "region": null,
     "image_url": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&q=80&w=800",
-    "created_at": "2026-10-27T07:50:11.678Z",
+    "created_at": "2026-11-10T16:55:33.833Z",
     "lat": 15.8764,
     "lng": 108.33095,
     "address": "24 Trần Quý Cáp, Old Town, Hội An, Đà Nẵng, Việt Nam",
@@ -569,7 +569,7 @@
       "vi": "Bánh & Ăn vặt",
       "zh": "糕点与小吃"
     },
-    "favorite_count": 1,
+    "favorite_count": 0,
     "translations": {
       "vi": {
         "name": "Bánh Bao Xie Xie",
