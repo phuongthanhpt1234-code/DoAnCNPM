@@ -6,8 +6,6 @@ import { activityHistoryText } from "../locales/activityHistory";
 import {
   DIETARY_OPTIONS,
   PAGE_UI,
-  SCHEDULE_DATA,
-  TimeSlotKey,
   translateNoteInstant,
 } from "../constants/homeData";
 import { styles } from "../styles/homeStyles";
@@ -37,8 +35,8 @@ import {
 } from "../services/api";
 import { playSpeech, stopSpeech } from "../services/speech";
 
-function getCustomerMapUrl(lang: string = 'vi') {
-  if (Platform.OS === 'web' && typeof window !== 'undefined') {
+function getCustomerMapUrl(lang: string = "vi") {
+  if (Platform.OS === "web" && typeof window !== "undefined") {
     return `/customer-map.html?embed=true&lang=${lang}`;
   }
   return `${API_URL}/customer-map.html?embed=true&lang=${lang}`;
@@ -84,12 +82,18 @@ export default function HomeScreen() {
     route: string | undefined;
     value: LangKey;
   }>(() => ({ route: params.lang, value: (params.lang as LangKey) || "vi" }));
-  const lang: LangKey = languageSelection.route === params.lang
-    ? languageSelection.value
-    : params.lang && PAGE_UI[params.lang] ? params.lang as LangKey : "vi";
-  const setLang = useCallback((value: LangKey) => {
-    setLanguageSelection({ route: params.lang, value });
-  }, [params.lang]);
+  const lang: LangKey =
+    languageSelection.route === params.lang
+      ? languageSelection.value
+      : params.lang && PAGE_UI[params.lang]
+        ? (params.lang as LangKey)
+        : "vi";
+  const setLang = useCallback(
+    (value: LangKey) => {
+      setLanguageSelection({ route: params.lang, value });
+    },
+    [params.lang],
+  );
   const [cat, setCat] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(
@@ -98,14 +102,23 @@ export default function HomeScreen() {
       : null,
   );
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
-
+  const [qrVisible, setQrVisible] = useState<boolean>(false);
+  const [customerMapVisible, setCustomerMapVisible] = useState<boolean>(false);
+  const [customUrl, setCustomUrl] = useState<string>(
+    Platform.OS === "web" && typeof window !== "undefined"
+      ? window.location.origin
+      : "https://hoian-food-map.vercel.app",
+  );
+  const [activityFilter, setActivityFilter] = useState<
+    "all" | "favorites" | "checkins"
+  >("all");
+  const [tasteCardVisible, setTasteCardVisible] = useState<boolean>(false);
+  const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
   const handleStopSpeech = useCallback(() => {
     stopSpeech();
     setIsSpeaking(false);
   }, []);
-
   const flatListRef = useRef<FlatList<Dish> | null>(null);
-
   const handleCloseDishModal = useCallback(() => {
     handleStopSpeech();
     setSelectedDish(null);
@@ -134,18 +147,6 @@ export default function HomeScreen() {
       handleStopSpeech();
     }
   }, [lang]);
-  const [qrVisible, setQrVisible] = useState<boolean>(false);
-  const [customerMapVisible, setCustomerMapVisible] = useState<boolean>(false);
-  const [customUrl, setCustomUrl] = useState<string>(
-    Platform.OS === "web" && typeof window !== "undefined"
-      ? window.location.origin
-      : "https://hoian-food-map.vercel.app",
-  );
-
-  const [checkedDishIds, setCheckedDishIds] = useState<number[]>([]);
-  const [activityFilter, setActivityFilter] = useState<
-    "all" | "favorites" | "checkins"
-  >("all");
 
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
   const [toastMsg, setToastMsg] = useState<string>("");
@@ -157,7 +158,7 @@ export default function HomeScreen() {
   useEffect(() => {
     let cancelled = false;
 
-const CAT_BY_NAME: Record<string, Dish["cat"]> = {
+    const CAT_BY_NAME: Record<string, Dish["cat"]> = {
       "Món chính": "main",
       "Ăn vặt": "snack",
       "Đường phố": "street",
@@ -210,21 +211,65 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               ) {
                 return true;
               }
-              if (rowNameNorm.includes("cao lau") && (s1.includes("cao lau") || s2.includes("cao lau"))) return true;
-              if (rowNameNorm.includes("mot") && (s1.includes("mot") || s2.includes("mot"))) return true;
-              if (rowNameNorm.includes("banh mi") && (s1.includes("banh mi") || s2.includes("banh mi"))) return true;
-              if (rowNameNorm.includes("com ga") && (s1.includes("com ga") || s2.includes("com ga"))) return true;
-              if (rowNameNorm.includes("banh beo") && (s1.includes("banh beo") || s2.includes("banh beo"))) return true;
-              if (rowNameNorm.includes("banh xeo") && (s1.includes("banh xeo") || s2.includes("banh xeo"))) return true;
-              if (rowNameNorm.includes("mi quang") && (s1.includes("mi quang") || s2.includes("mi quang"))) return true;
-              if (rowNameNorm.includes("che") && (s1.includes("che") || s2.includes("che"))) return true;
-              if ((rowNameNorm.includes("bong hong") || rowNameNorm.includes("banh vac")) && (s1.includes("bong hong") || s2.includes("banh vac"))) return true;
+              if (
+                rowNameNorm.includes("cao lau") &&
+                (s1.includes("cao lau") || s2.includes("cao lau"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("mot") &&
+                (s1.includes("mot") || s2.includes("mot"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("banh mi") &&
+                (s1.includes("banh mi") || s2.includes("banh mi"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("com ga") &&
+                (s1.includes("com ga") || s2.includes("com ga"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("banh beo") &&
+                (s1.includes("banh beo") || s2.includes("banh beo"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("banh xeo") &&
+                (s1.includes("banh xeo") || s2.includes("banh xeo"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("mi quang") &&
+                (s1.includes("mi quang") || s2.includes("mi quang"))
+              )
+                return true;
+              if (
+                rowNameNorm.includes("che") &&
+                (s1.includes("che") || s2.includes("che"))
+              )
+                return true;
+              if (
+                (rowNameNorm.includes("bong hong") ||
+                  rowNameNorm.includes("banh vac")) &&
+                (s1.includes("bong hong") || s2.includes("banh vac"))
+              )
+                return true;
               return false;
             });
 
             const dishPresetById = DISHES.find((d) => d.id === Number(row.id));
             const getLocalizedName = (k: LangKey): string => {
-              if (k === "vi") return row.name_i18n?.vi || row.name || dishPresetById?.name?.vi || localDish?.translations?.vi?.name || "Món Hội An";
+              if (k === "vi")
+                return (
+                  row.name_i18n?.vi ||
+                  row.name ||
+                  dishPresetById?.name?.vi ||
+                  localDish?.translations?.vi?.name ||
+                  "Món Hội An"
+                );
               const rName = row.name_i18n?.[k] || row.translations?.[k]?.name;
               if (rName && rName.trim() && rName !== row.name) {
                 return rName;
@@ -239,10 +284,16 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               return rName || localDish?.translations?.en?.name || row.name;
             };
 
-            const rawDescVi = row.desc_i18n?.vi || row.description || dishPresetById?.desc?.vi || localDish?.translations?.vi?.story || "";
+            const rawDescVi =
+              row.desc_i18n?.vi ||
+              row.description ||
+              dishPresetById?.desc?.vi ||
+              localDish?.translations?.vi?.story ||
+              "";
             const getLocalizedDesc = (k: LangKey): string => {
               if (k === "vi") return rawDescVi;
-              const rDesc = row.desc_i18n?.[k] || row.translations?.[k]?.description;
+              const rDesc =
+                row.desc_i18n?.[k] || row.translations?.[k]?.description;
               if (rDesc && rDesc.trim() && rDesc !== rawDescVi) {
                 return rDesc;
               }
@@ -284,19 +335,24 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               row.category_slug === "snack"
                 ? "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?auto=format&fit=crop&q=80&w=800"
                 : row.category_slug === "street"
-                ? "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800"
-                : row.category_slug === "sweet"
-                ? "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=800"
-                : "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
+                  ? "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&q=80&w=800"
+                  : row.category_slug === "sweet"
+                    ? "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&q=80&w=800"
+                    : "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&q=80&w=800";
 
-            const backendFallback = DISHES.find((d) => d.id === Number(row.id))?.img;
-            const fallbackImg = backendFallback || localDish?.image || defaultCatImg;
+            const backendFallback = DISHES.find(
+              (d) => d.id === Number(row.id),
+            )?.img;
+            const fallbackImg =
+              backendFallback || localDish?.image || defaultCatImg;
 
             let rawImg = (row.image_url || "").trim();
             if (rawImg.includes("/uploads/")) {
               const uploadPart = rawImg.slice(rawImg.indexOf("/uploads/"));
               rawImg = `${API_URL}${uploadPart}`;
-            } else if (rawImg.startsWith("http://doancnpm-backend.onrender.com")) {
+            } else if (
+              rawImg.startsWith("http://doancnpm-backend.onrender.com")
+            ) {
               rawImg = rawImg.replace("http://", "https://");
             }
 
@@ -310,7 +366,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 "main",
               lat: row.lat != null ? Number(row.lat) : 15.877,
               lng: row.lng != null ? Number(row.lng) : 108.327,
-              address: row.address || DISHES.find((d) => d.id === Number(row.id))?.address || localDish?.shopVi || "",
+              address:
+                row.address ||
+                DISHES.find((d) => d.id === Number(row.id))?.address ||
+                localDish?.shopVi ||
+                "",
               name: mergedName,
               desc: mergedDesc,
               tag: mergedTag,
@@ -327,7 +387,11 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         setApiDishes(finalDishes);
 
         let targetParam = params.dish;
-        if (!targetParam && Platform.OS === "web" && typeof window !== "undefined") {
+        if (
+          !targetParam &&
+          Platform.OS === "web" &&
+          typeof window !== "undefined"
+        ) {
           const sM = window.location.search.match(/[?&]dish=([^&]+)/);
           if (sM) targetParam = decodeURIComponent(sM[1]);
           const pM = window.location.pathname.match(/\/dish\/([^/?#]+)/);
@@ -336,12 +400,30 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
 
         let initialDish: Dish | null = null;
         if (targetParam) {
-          const normP = String(targetParam).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").trim();
-          initialDish = finalDishes.find((d) => 
-            String(d.id) === String(targetParam) ||
-            d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").includes(normP) ||
-            normP.includes(d.name.vi.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d"))
-          ) || null;
+          const normP = String(targetParam)
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/đ/g, "d")
+            .trim();
+          initialDish =
+            finalDishes.find(
+              (d) =>
+                String(d.id) === String(targetParam) ||
+                d.name.vi
+                  .toLowerCase()
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/g, "")
+                  .replace(/đ/g, "d")
+                  .includes(normP) ||
+                normP.includes(
+                  d.name.vi
+                    .toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/đ/g, "d"),
+                ),
+            ) || null;
         }
 
         setSelectedDish((prev) => {
@@ -490,15 +572,19 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     "no_peanut",
     "no_spicy",
   ]);
-  const [tasteCardVisible, setTasteCardVisible] = useState<boolean>(false);
 
   const [showCustomNoteBox, setShowCustomNoteBox] = useState<boolean>(false);
   const [customDietaryNote, setCustomDietaryNote] = useState<string>("");
-  const [remoteTranslation, setRemoteTranslation] = useState({ source: "", text: "" });
+  const [remoteTranslation, setRemoteTranslation] = useState({
+    source: "",
+    text: "",
+  });
   const noteSource = customDietaryNote.trim();
-  const translatedCustomNoteVi = !noteSource ? ""
-    : remoteTranslation.source === noteSource ? remoteTranslation.text
-    : translateNoteInstant(noteSource);
+  const translatedCustomNoteVi = !noteSource
+    ? ""
+    : remoteTranslation.source === noteSource
+      ? remoteTranslation.text
+      : translateNoteInstant(noteSource);
 
   const ui = PAGE_UI[lang] || PAGE_UI.vi;
 
@@ -519,7 +605,12 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleMapMessage = (event: MessageEvent) => {
-      if (event.data && event.data.type === "MAP_LANG_CHANGED" && event.data.lang && (LANGS as any)[event.data.lang]) {
+      if (
+        event.data &&
+        event.data.type === "MAP_LANG_CHANGED" &&
+        event.data.lang &&
+        (LANGS as any)[event.data.lang]
+      ) {
         handleSelectLanguage(event.data.lang as LangKey);
       }
     };
@@ -548,7 +639,8 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
             .map((part: any) => part[0])
             .join("")
             .trim();
-          if (translated) setRemoteTranslation({ source: raw, text: translated });
+          if (translated)
+            setRemoteTranslation({ source: raw, text: translated });
         }
       } catch (e) {}
     }, 250);
@@ -598,10 +690,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
         return false;
       }
 
-      if (
-        activityFilter === "checkins" &&
-        !checkedDishIds.includes(dishId)
-      ) {
+      if (activityFilter === "checkins" && !checkedDishIds.includes(dishId)) {
         return false;
       }
 
@@ -644,7 +733,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
     const lastTime = lastCheckInActionRef.current[dish.id] || 0;
     const isBusy = isCheckInBusyRef.current[dish.id];
 
-    if (isBusy || (now - lastTime < 2000)) {
+    if (isBusy || now - lastTime < 2000) {
       showToast(ui.spamCheckInWarning);
       return;
     }
@@ -903,7 +992,10 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 contentContainerStyle={styles.catRow}
               >
                 {[
-                  ["all", `${ui.catAll.replace(/\s*\(\d+\)/, "")} (${apiDishes.length})`],
+                  [
+                    "all",
+                    `${ui.catAll.replace(/\s*\(\d+\)/, "")} (${apiDishes.length})`,
+                  ],
                   ["main", ui.catMain],
                   ["snack", ui.catSnack],
                   ["street", ui.catStreet],
@@ -911,7 +1003,10 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 ].map(([key, label]) => (
                   <TouchableOpacity
                     key={key}
-                    onPress={() => { setCat(key); if (key === "all") setActivityFilter("all"); }}
+                    onPress={() => {
+                      setCat(key);
+                      if (key === "all") setActivityFilter("all");
+                    }}
                     style={[
                       styles.catChip,
                       cat === key && styles.catChipActive,
@@ -963,9 +1058,7 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               },
               numColumns === 2 && {
                 maxWidth:
-                  Platform.OS === "web"
-                    ? ("calc(50% - 16px)" as any)
-                    : "48%",
+                  Platform.OS === "web" ? ("calc(50% - 16px)" as any) : "48%",
               },
             ]}
             onPress={() => setSelectedDish(item)}
@@ -1047,13 +1140,16 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                   }}
                   style={[
                     styles.favoriteHeartBtn,
-                    favoritedDishIds.includes(item.id) && styles.favoriteHeartBtnActive,
+                    favoritedDishIds.includes(item.id) &&
+                      styles.favoriteHeartBtnActive,
                   ]}
                 >
                   <Ionicons
                     name="heart"
                     size={20}
-                    color={favoritedDishIds.includes(item.id) ? "#ef4444" : "#4b5563"}
+                    color={
+                      favoritedDishIds.includes(item.id) ? "#ef4444" : "#4b5563"
+                    }
                   />
                 </TouchableOpacity>
               </View>
@@ -1256,7 +1352,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       if (isSpeaking) {
                         handleStopSpeech();
                       } else {
-                        speakText(selectedDish.desc[lang] || selectedDish.desc.vi);
+                        speakText(
+                          selectedDish.desc[lang] || selectedDish.desc.vi,
+                        );
                       }
                     }}
                     activeOpacity={0.85}
@@ -1315,8 +1413,6 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                       </View>
                     </TouchableOpacity>
                   )}
-
-                 
 
                   <TouchableOpacity
                     style={styles.secondaryBtn}
@@ -1449,7 +1545,9 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
               }}
             >
               <Text style={styles.openTasteCardBtnText}>
-                {isSpeaking ? `⏹ ${ui.stopVoiceModalBtn}` : ui.replayChefVoiceBtn}
+                {isSpeaking
+                  ? `⏹ ${ui.stopVoiceModalBtn}`
+                  : ui.replayChefVoiceBtn}
               </Text>
             </TouchableOpacity>
 
@@ -1509,14 +1607,17 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
           <View style={styles.customerMapHeader}>
             <View style={{ flex: 1, marginRight: 10 }}>
               <Text style={styles.customerMapTitle} numberOfLines={1}>
-                  {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
-                </Text>
+                {ui.mapModalTitle || "THEO DẤU VỊ HỘI — BẢN ĐỒ & CHỈ ĐƯỜNG GPS"}
+              </Text>
               <Text style={styles.customerMapSubtitle} numberOfLines={1}>
-                  {ui.mapModalSubtitle || "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM"}
-                </Text>
+                {ui.mapModalSubtitle ||
+                  "Định vị GPS tức thời · Quét bán kính · Chỉ đường thực tế OSRM"}
+              </Text>
             </View>
 
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
+            >
               <TouchableOpacity
                 style={styles.customerMapCloseBtn}
                 onPress={() => setCustomerMapVisible(false)}
@@ -1543,25 +1644,50 @@ const CAT_BY_NAME: Record<string, Dish["cat"]> = {
                 title="Bản Đồ GPS Ẩm Thực Hội An"
               />
             ) : (
-              <View style={{ flex: 1, alignItems: "center", justifyContent: "center", padding: 24 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold", color: "#8b1d24", marginBottom: 8 }}>
+              <View
+                style={{
+                  flex: 1,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 24,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    color: "#8b1d24",
+                    marginBottom: 8,
+                  }}
+                >
                   Bản Đồ Ẩm Thực Du Khách Hội An
                 </Text>
-                <Text style={{ fontSize: 13, color: "#6b7280", textAlign: "center", marginBottom: 20 }}>
-                  Trải nghiệm khám phá quán ăn với radar GPS và định tuyến đường bộ OSRM.
+                <Text
+                  style={{
+                    fontSize: 13,
+                    color: "#6b7280",
+                    textAlign: "center",
+                    marginBottom: 20,
+                  }}
+                >
+                  Trải nghiệm khám phá quán ăn với radar GPS và định tuyến đường
+                  bộ OSRM.
                 </Text>
                 <TouchableOpacity
                   style={styles.qrTriggerBtn}
-                  onPress={() => Linking.openURL(`/customer-map.html?lang=${lang}`)}
+                  onPress={() =>
+                    Linking.openURL(`/customer-map.html?lang=${lang}`)
+                  }
                 >
-                  <Text style={styles.qrTriggerText}>Mở Bản Đồ Trên Trình Duyệt</Text>
+                  <Text style={styles.qrTriggerText}>
+                    Mở Bản Đồ Trên Trình Duyệt
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}
           </View>
         </View>
       </Modal>
-
     </View>
   );
 }

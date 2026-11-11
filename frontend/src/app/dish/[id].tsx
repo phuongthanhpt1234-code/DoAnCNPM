@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -28,9 +28,7 @@ export default function DishDetailScreen() {
     lang?: string;
   }>();
 
-  const [lang, setLang] = useState<LangKey>(
-    (paramLang as LangKey) || "vi",
-  );
+  const [lang, setLang] = useState<LangKey>((paramLang as LangKey) || "vi");
   const [dish, setDish] = useState<Dish | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
@@ -139,7 +137,8 @@ export default function DishDetailScreen() {
       setIsSpeaking(false);
       return;
     }
-    const textToSpeak = dish.desc[lang] || dish.desc.vi || dish.name[lang] || dish.name.vi;
+    const textToSpeak =
+      dish.desc[lang] || dish.desc.vi || dish.name[lang] || dish.name.vi;
     const speechCode = LANGS[lang]?.speechCode || "vi-VN";
     playSpeech(textToSpeak, speechCode, 1.0, (speaking) => {
       setIsSpeaking(speaking);
@@ -170,7 +169,10 @@ export default function DishDetailScreen() {
         <Text style={styles.errorSub}>
           {error || "Món ăn này không tồn tại trong hệ thống ẩm thực Hội An."}
         </Text>
-        <TouchableOpacity style={styles.backActionBtn} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backActionBtn}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={18} color="#090505" />
           <Text style={styles.backActionText}>Quay lại danh sách</Text>
         </TouchableOpacity>
