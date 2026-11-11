@@ -88,12 +88,7 @@ export default function HomeScreen() {
       : params.lang && PAGE_UI[params.lang]
         ? (params.lang as LangKey)
         : "vi";
-  const setLang = useCallback(
-    (value: LangKey) => {
-      setLanguageSelection({ route: params.lang, value });
-    },
-    [params.lang],
-  );
+
   const [cat, setCat] = useState<string>("all");
   const [search, setSearch] = useState<string>("");
   const [selectedDish, setSelectedDish] = useState<Dish | null>(
@@ -118,6 +113,14 @@ export default function HomeScreen() {
     stopSpeech();
     setIsSpeaking(false);
   }, []);
+
+  const setLang = useCallback(
+    (value: LangKey) => {
+      handleStopSpeech();
+      setLanguageSelection({ route: params.lang, value });
+    },
+    [handleStopSpeech, params.lang],
+  );
   const flatListRef = useRef<FlatList<Dish> | null>(null);
   const handleCloseDishModal = useCallback(() => {
     handleStopSpeech();
@@ -141,12 +144,6 @@ export default function HomeScreen() {
       stopSpeech();
     };
   }, []);
-
-  useEffect(() => {
-    if (isSpeaking) {
-      handleStopSpeech();
-    }
-  }, [lang]);
 
   const [favoritedDishIds, setFavoritedDishIds] = useState<number[]>([]);
   const [toastMsg, setToastMsg] = useState<string>("");
