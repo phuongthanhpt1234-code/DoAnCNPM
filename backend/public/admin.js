@@ -1315,7 +1315,7 @@ $("#btnClearImage").onclick = () => {
   updateImgPreview("");
 };
 
-function compressImage(file, maxWidth = 800, quality = 0.75) {
+function compressImage(file, maxWidth = 1200, quality = 0.82) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -1331,6 +1331,10 @@ function compressImage(file, maxWidth = 800, quality = 0.75) {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Trình duyệt không thể xử lý ảnh"));
+          return;
+        }
         ctx.drawImage(img, 0, 0, width, height);
         resolve(canvas.toDataURL("image/jpeg", quality));
       };
@@ -1349,16 +1353,41 @@ $("#imageFile").onchange = async (e) => {
     if (fnEl) fnEl.textContent = "Chưa chọn tệp";
     return;
   }
+
+  if (!file.type.startsWith("image/")) {
+    $("#uploadStatus").textContent = "Vui lòng chọn tệp hình ảnh hợp lệ.";
+    e.target.value = "";
+    return;
+  }
+
+  if (file.size > 12 * 1024 * 1024) {
+    $("#uploadStatus").textContent = "Ảnh gốc quá lớn. Vui lòng chọn ảnh dưới 12 MB.";
+    e.target.value = "";
+    return;
+  }
+
   if (fnEl) fnEl.textContent = file.name;
-  $("#uploadStatus").textContent = "Đang nén và xử lý ảnh...";
+  $("#uploadStatus").textContent = "Đang nén và tải ảnh lên máy chủ...";
   try {
-    const compressedDataUrl = await compressImage(file, 800, 0.75);
-    $("#imageUrlInput").value = compressedDataUrl;
-    updateImgPreview(compressedDataUrl);
-    $("#uploadStatus").textContent =
-      "Đã nạp ảnh: " + file.name + " (sẽ lưu trực tiếp vào cơ sở dữ liệu khi bấm Lưu)";
+    const compressedDataUrl = await compressImage(file, 1200, 0.82);
+    const uploaded = await api("/upload", {
+      method: "POST",
+      body: JSON.stringify({
+        filename: file.name,
+        dataUrl: compressedDataUrl,
+      }),
+    });
+
+    if (!uploaded?.url) {
+      throw new Error("Máy chủ không trả về đường dẫn ảnh.");
+    }
+
+    // Chỉ lưu URL ảnh trên server vào image_url, không lưu chuỗi Base64 vào database.
+    $("#imageUrlInput").value = uploaded.url;
+    updateImgPreview(uploaded.url);
+    $("#uploadStatus").textContent = "Tải ảnh thành công: " + file.name;
   } catch (err) {
-    $("#uploadStatus").textContent = "Lỗi xử lý ảnh: " + err.message;
+    $("#uploadStatus").textContent = "Lỗi tải ảnh: " + (err?.message || "Không xác định");
   }
 };
 
