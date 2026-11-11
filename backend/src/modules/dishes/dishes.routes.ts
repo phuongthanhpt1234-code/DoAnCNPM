@@ -274,7 +274,7 @@ const dishSchema = z.object({
   name: z.string().min(1),
   description: z.string().nullable().optional(),
   address: z.string().nullable().optional(),
-  image_url: z.string().nullable().optional(),
+  image_url: z.string().max(2048, 'Đường dẫn ảnh không được vượt quá 2048 ký tự').nullable().optional(),
   lat: z.number().optional().default(15.877),  lng: z.number().optional().default(108.327),
   is_active: z.boolean().default(true),
   translations: z
@@ -519,7 +519,7 @@ export async function ensureAllDishesSynced() {
            name = EXCLUDED.name,
            description = EXCLUDED.description,
            address = CASE WHEN dishes.id = 4 AND dishes.address ILIKE '%25 Trần Hưng Đạo%' THEN '26 Trần Quý Cáp, Old Town, Hội An, Đà Nẵng, Việt Nam' ELSE COALESCE(NULLIF(dishes.address, ''), EXCLUDED.address) END,
-           image_url = COALESCE(NULLIF(EXCLUDED.image_url, ''), dishes.image_url),
+           image_url = COALESCE(NULLIF(dishes.image_url, ''), NULLIF(EXCLUDED.image_url, '')) ,
            lat = EXCLUDED.lat,
            lng = EXCLUDED.lng,
            is_active = true`,
