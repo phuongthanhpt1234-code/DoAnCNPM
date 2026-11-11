@@ -48,21 +48,36 @@ if (!fs.existsSync(uploadsDir)) {
 
 app.post("/api/upload", requireAdminAuth, (req, res) => {
   const { filename, dataUrl } = req.body || {};
-  if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:image/")) {
-    return res
-      .status(400)
-      .json({ code: "INVALID_IMAGE", message: "File ảnh không hợp lệ" });
+
+  if (typeof dataUrl !== "string") {
+    return res.status(400).json({
+      code: "INVALID_IMAGE",
+      message: "Vui lòng chọn ảnh hợp lệ.",
+    });
   }
-  const match = dataUrl.match(/^data:image\/([a-zA-Z0-9+.-]+);base64,(.+)$/);
+
+  const match = dataUrl.match(
+    /^data:image\/(jpeg|jpg|png|webp|gif|avif);base64,([A-Za-z0-9+/]+={0,2})$/i,
+  );
   if (!match) {
-    return res
-      .status(400)
-      .json({ code: "INVALID_IMAGE", message: "Định dạng ảnh không hợp lệ" });
+    return res.status(400).json({
+      code: "INVALID_IMAGE",
+      message: "Ảnh phải có định dạng JPEG, PNG, WEBP, GIF hoặc AVIF.",
+    });
   }
-  const rawExt = match[1].toLowerCase().replace("jpeg", "jpg");
-  const ext = ["jpg", "png", "webp", "gif", "avif"].includes(rawExt)
-    ? rawExt
-    : "jpg";
+
+  const mimeExt = match[1].toLowerCase();
+  const ext = mimeExt === "jpeg" ? "jpg" : mimeExt;
+  const imageBuffer = Buffer.from(match[2], "base64");
+  const maxImageBytes = 10 * 1024 * 1024;
+
+  if (!imageBuffer.length || imageBuffer.length > maxImageBytes) {
+    return res.status(413).json({
+      code: "IMAGE_TOO_LARGE",
+      message: "Ảnh sau khi nén không được vượt quá 10 MB.",
+    });
+  }
+
   const baseName = String(filename || "dish")
     .replace(/\.[^/.]+$/, "")
     .replace(/[^a-zA-Z0-9_-]/g, "_")
@@ -70,10 +85,21 @@ app.post("/api/upload", requireAdminAuth, (req, res) => {
   const finalName = `${Date.now()}-${baseName || "dish"}.${ext}`;
   const filePath = path.join(uploadsDir, finalName);
 
-  fs.writeFileSync(filePath, Buffer.from(match[2], "base64"));
-  const proto = req.headers["x-forwarded-proto"] || req.protocol || "https";
+  try {
+    fs.writeFileSync(filePath, imageBuffer);
+  } catch (error) {
+    console.error("Không thể lưu ảnh:", error);
+    return res.status(500).json({
+      code: "UPLOAD_FAILED",
+      message: "Máy chủ không thể lưu ảnh. Vui lòng thử lại.",
+    });
+  }
+
+  const protoHeader = req.headers["x-forwarded-proto"];
+  const proto = (Array.isArray(protoHeader) ? protoHeader[0] : protoHeader) || req.protocol || "https";
   const host = req.get("host") || "";
   const hostUrl = host.includes("onrender.com") ? `https://${host}` : `${proto}://${host}`;
+
   return res.status(201).json({
     url: `${hostUrl}/uploads/${finalName}`,
     path: `/uploads/${finalName}`,
