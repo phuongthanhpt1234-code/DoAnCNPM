@@ -494,6 +494,17 @@ export default function HomeScreen() {
     }, 2800);
   }, []);
 
+  const handleSelectLanguage = async (k: LangKey) => {
+    setLang(k);
+    router.setParams({ lang: k });
+    try {
+      await AsyncStorage.setItem("appLanguage", k);
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem("customer_map_lang", k);
+      }
+    } catch (e) {}
+  };
+
   const syncActivityLists = useCallback(async (signal?: AbortSignal) => {
     const deviceId = encodeURIComponent(getClientDeviceId());
     const options = signal ? { signal } : {};
@@ -664,17 +675,6 @@ export default function HomeScreen() {
       }
     }, [params.lang, setLang]),
   );
-
-  const handleSelectLanguage = async (k: LangKey) => {
-    setLang(k);
-    router.setParams({ lang: k });
-    try {
-      await AsyncStorage.setItem("appLanguage", k);
-      if (typeof window !== "undefined" && window.localStorage) {
-        window.localStorage.setItem("customer_map_lang", k);
-      }
-    } catch (e) {}
-  };
 
   const isDesktop = width >= 900;
   const numColumns = isDesktop ? 3 : width >= 600 ? 2 : 1;
