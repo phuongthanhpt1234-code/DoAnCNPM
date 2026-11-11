@@ -3,6 +3,7 @@ import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
 import { requireAdminAuth } from '../../middlewares/auth';
 import { getPresenceSummary } from '../presence/presence.routes';
+import { runtimeStore } from '../../data/runtimeStore';
 
 const r = Router();
 
@@ -32,9 +33,16 @@ r.get('/', requireAdminAuth, ah(async (_req, res) => {
         LEFT JOIN dishes d ON d.category_id = c.id
         GROUP BY c.id ORDER BY c.id ASC`),
     ]);
+
+    const row = totals.rows[0] || {};
+    // If DB check_ins and favorites are both 0 or daily array is empty, fallback to runtimeStore data
+    if ((!row.check_ins && !row.favorites) || !daily.rows || daily.rows.length === 0) {
+      return res.json(runtimeStore.getStats(presence));
+    }
+
     return res.json({
       totals: {
-        ...totals.rows[0],
+        ...row,
         online_devices: presence.online_count,
         real_online_devices: presence.real_online,
       },
@@ -44,26 +52,7 @@ r.get('/', requireAdminAuth, ah(async (_req, res) => {
       by_category: byCat.rows,
     });
   } catch (err) {
-    return res.json({
-      totals: {
-        dishes: 10,
-        categories: 4,
-        favorites: 0,
-        check_ins: 0,
-        devices: 0,
-        online_devices: presence.online_count,
-        real_online_devices: presence.real_online,
-      },
-      presence,
-      daily: [],
-      top: [],
-      by_category: [
-        { id: 4, name: 'Món chính', slug: 'main', dish_count: 7 },
-        { id: 5, name: 'Bánh & Ăn vặt', slug: 'snack', dish_count: 1 },
-        { id: 6, name: 'Đường phố', slug: 'street', dish_count: 0 },
-        { id: 7, name: 'Chè & Đồ uống', slug: 'sweet', dish_count: 2 },
-      ],
-    });
+    return res.json(runtimeStore.getStats(presence));
   }
 }));
 

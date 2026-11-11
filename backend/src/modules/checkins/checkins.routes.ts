@@ -4,6 +4,7 @@ import { pool } from '../../config/db';
 import { ah } from '../../middlewares/error';
 import { requireAdminAuth } from '../../middlewares/auth';
 import { broadcastAdminRefresh } from '../presence/presence.routes';
+import { runtimeStore } from '../../data/runtimeStore';
 
 const r = Router();
 
@@ -24,24 +25,27 @@ const historyQuery = z.object({
 r.get('/history', ah(async (req, res) => {
   const { device_id, lang } = historyQuery.parse(req.query);
 
-  const { rows } = await pool.query(
-    `SELECT c.id, d.id AS dish_id,
-            COALESCE(NULLIF(t.name, ''), d.name) AS name,
-            d.image_url, c.created_at
-     FROM (
-       SELECT DISTINCT ON (dish_id) id, dish_id, created_at
-       FROM check_ins
-       WHERE device_id = $1
-       ORDER BY dish_id, created_at DESC, id DESC
-     ) c
-     JOIN dishes d ON d.id = c.dish_id
-     LEFT JOIN dish_translations t
-       ON t.dish_id = d.id AND t.lang = $2
-     ORDER BY c.created_at DESC, c.id DESC`,
-    [device_id, lang],
-  );
-
-  res.json({ items: rows });
+  try {
+    const { rows } = await pool.query(
+      `SELECT c.id, d.id AS dish_id,
+              COALESCE(NULLIF(t.name, ''), d.name) AS name,
+              d.image_url, c.created_at
+       FROM (
+         SELECT DISTINCT ON (dish_id) id, dish_id, created_at
+         FROM check_ins
+         WHERE device_id = $1
+         ORDER BY dish_id, created_at DESC, id DESC
+       ) c
+       JOIN dishes d ON d.id = c.dish_id
+       LEFT JOIN dish_translations t
+         ON t.dish_id = d.id AND t.lang = $2
+       ORDER BY c.created_at DESC, c.id DESC`,
+      [device_id, lang],
+    );
+    return res.json({ items: rows });
+  } catch {
+    return res.json({ items: runtimeStore.getCheckInHistory(device_id, lang) });
+  }
 }));
 
 r.get('/', ah(async (req, res) => {
@@ -51,17 +55,24 @@ r.get('/', ah(async (req, res) => {
     : null;
 
   if (deviceId) {
-    const { rows } = await pool.query(
-      `SELECT c.id, c.device_id, c.note, c.created_at,
-              d.id AS dish_id, d.name AS dish_name
-       FROM check_ins c
-       JOIN dishes d ON d.id = c.dish_id
-       WHERE c.device_id = $1
-       ORDER BY c.created_at DESC
-       LIMIT $2`,
-      [deviceId, limit],
-    );
-    return res.json(rows);
+    try {
+      const { rows } = await pool.query(
+        `SELECT c.id, c.device_id, c.note, c.created_at,
+                d.id AS dish_id, d.name AS dish_name
+         FROM check_ins c
+         JOIN dishes d ON d.id = c.dish_id
+         WHERE c.device_id = $1
+         ORDER BY c.created_at DESC
+         LIMIT $2`,
+        [deviceId, limit],
+      );
+      if (!rows || rows.length === 0) {
+        return res.json(runtimeStore.getRecentCheckIns(limit));
+      }
+      return res.json(rows);
+    } catch {
+      return res.json(runtimeStore.getCheckInHistory(deviceId).slice(0, limit));
+    }
   }
 
   return requireAdminAuth(req, res, async () => {
@@ -75,9 +86,12 @@ r.get('/', ah(async (req, res) => {
          LIMIT $1`,
         [limit],
       );
-      res.json(rows);
+      if (!rows || rows.length === 0) {
+        return res.json(runtimeStore.getRecentCheckIns(limit));
+      }
+      return res.json(rows);
     } catch {
-      res.json([]);
+      return res.json(runtimeStore.getRecentCheckIns(limit));
     }
   });
 }));
@@ -85,62 +99,68 @@ r.get('/', ah(async (req, res) => {
 r.post('/', ah(async (req, res) => {
   const b = schema.parse(req.body);
 
-  const checkDish = await pool.query(
-    'SELECT id, name FROM dishes WHERE id = $1',
-    [b.dish_id],
-  );
+  try {
+    const checkDish = await pool.query(
+      'SELECT id, name FROM dishes WHERE id = $1',
+      [b.dish_id],
+    );
 
-  if (checkDish.rowCount === 0) {
-    return res.status(404).json({
-      code: 'NOT_FOUND',
-      message: `Không tìm thấy món ăn với ID = ${b.dish_id}`,
-    });
+    if (checkDish.rowCount === 0) {
+      return res.status(404).json({
+        code: 'NOT_FOUND',
+        message: `Không tìm thấy món ăn với ID = ${b.dish_id}`,
+      });
+    }
+
+    const defaultNote = `Check-in món ${checkDish.rows[0].name}`;
+
+    const existing = b.day
+      ? await pool.query(
+          `SELECT id, device_id, dish_id, note, created_at
+           FROM check_ins
+           WHERE device_id = $1
+             AND dish_id = $2
+             AND created_at::date = $3::date
+           ORDER BY created_at DESC
+           LIMIT 1`,
+          [b.device_id, b.dish_id, b.day],
+        )
+      : await pool.query(
+          `SELECT id, device_id, dish_id, note, created_at
+           FROM check_ins
+           WHERE device_id = $1
+             AND dish_id = $2
+             AND created_at::date = CURRENT_DATE
+           ORDER BY created_at DESC
+           LIMIT 1`,
+          [b.device_id, b.dish_id],
+        );
+
+    if (existing.rowCount && existing.rowCount > 0) {
+      return res.status(200).json(existing.rows[0]);
+    }
+
+    const { rows } = b.day
+      ? await pool.query(
+          `INSERT INTO check_ins (device_id, dish_id, note, created_at)
+           VALUES ($1, $2, $3, ($4::date + localtime)::timestamptz)
+           RETURNING *`,
+          [b.device_id, b.dish_id, b.note ?? defaultNote, b.day],
+        )
+      : await pool.query(
+          `INSERT INTO check_ins (device_id, dish_id, note)
+           VALUES ($1, $2, $3)
+           RETURNING *`,
+          [b.device_id, b.dish_id, b.note ?? defaultNote],
+        );
+
+    broadcastAdminRefresh();
+    return res.status(201).json(rows[0]);
+  } catch (err) {
+    const fallbackItem = runtimeStore.addCheckIn(b.device_id, b.dish_id, b.note, b.day);
+    broadcastAdminRefresh();
+    return res.status(201).json(fallbackItem);
   }
-
-  const defaultNote = `Check-in món ${checkDish.rows[0].name}`;
-
-  const existing = b.day
-    ? await pool.query(
-        `SELECT id, device_id, dish_id, note, created_at
-         FROM check_ins
-         WHERE device_id = $1
-           AND dish_id = $2
-           AND created_at::date = $3::date
-         ORDER BY created_at DESC
-         LIMIT 1`,
-        [b.device_id, b.dish_id, b.day],
-      )
-    : await pool.query(
-        `SELECT id, device_id, dish_id, note, created_at
-         FROM check_ins
-         WHERE device_id = $1
-           AND dish_id = $2
-           AND created_at::date = CURRENT_DATE
-         ORDER BY created_at DESC
-         LIMIT 1`,
-        [b.device_id, b.dish_id],
-      );
-
-  if (existing.rowCount && existing.rowCount > 0) {
-    return res.status(200).json(existing.rows[0]);
-  }
-
-  const { rows } = b.day
-    ? await pool.query(
-        `INSERT INTO check_ins (device_id, dish_id, note, created_at)
-         VALUES ($1, $2, $3, ($4::date + localtime)::timestamptz)
-         RETURNING *`,
-        [b.device_id, b.dish_id, b.note ?? defaultNote, b.day],
-      )
-    : await pool.query(
-        `INSERT INTO check_ins (device_id, dish_id, note)
-         VALUES ($1, $2, $3)
-         RETURNING *`,
-        [b.device_id, b.dish_id, b.note ?? defaultNote],
-      );
-
-  broadcastAdminRefresh();
-  res.status(201).json(rows[0]);
 }));
 
 r.delete('/day/:day', requireAdminAuth, ah(async (req, res) => {
@@ -150,20 +170,22 @@ r.delete('/day/:day', requireAdminAuth, ah(async (req, res) => {
     return res.status(400).json({ message: 'Ngày không hợp lệ' });
   }
 
-  const result = await pool.query(
-    `DELETE FROM check_ins
-     WHERE id = (
-       SELECT id FROM check_ins
-       WHERE created_at::date = $1::date
-       ORDER BY created_at DESC, id DESC
-       LIMIT 1
-     )`,
-    [day],
-  );
+  try {
+    const result = await pool.query(
+      `DELETE FROM check_ins
+       WHERE id = (
+         SELECT id FROM check_ins
+         WHERE created_at::date = $1::date
+         ORDER BY created_at DESC, id DESC
+         LIMIT 1
+       )`,
+      [day],
+    );
 
-  if (result.rowCount && result.rowCount > 0) {
-    broadcastAdminRefresh();
-  }
+    if (result.rowCount && result.rowCount > 0) {
+      broadcastAdminRefresh();
+    }
+  } catch {}
 
   res.status(204).end();
 }));
@@ -178,18 +200,23 @@ r.delete('/:dishId', ah(async (req, res) => {
     });
   }
 
-  const result = await pool.query(
-    `DELETE FROM check_ins
-     WHERE id IN (
-       SELECT id FROM check_ins
-       WHERE device_id = $1 AND dish_id = $2
-       ORDER BY created_at DESC
-       LIMIT 1
-     )`,
-    [deviceId, dishId],
-  );
+  try {
+    const result = await pool.query(
+      `DELETE FROM check_ins
+       WHERE id IN (
+         SELECT id FROM check_ins
+         WHERE device_id = $1 AND dish_id = $2
+         ORDER BY created_at DESC
+         LIMIT 1
+       )`,
+      [deviceId, dishId],
+    );
 
-  if (result.rowCount && result.rowCount > 0) {
+    if (result.rowCount && result.rowCount > 0) {
+      broadcastAdminRefresh();
+    }
+  } catch {
+    runtimeStore.removeCheckIn(deviceId, dishId);
     broadcastAdminRefresh();
   }
 
@@ -206,18 +233,23 @@ r.delete('/', ah(async (req, res) => {
     });
   }
 
-  const result = await pool.query(
-    `DELETE FROM check_ins
-     WHERE id IN (
-       SELECT id FROM check_ins
-       WHERE device_id = $1 AND dish_id = $2
-       ORDER BY created_at DESC
-       LIMIT 1
-     )`,
-    [deviceId, dishId],
-  );
+  try {
+    const result = await pool.query(
+      `DELETE FROM check_ins
+       WHERE id IN (
+         SELECT id FROM check_ins
+         WHERE device_id = $1 AND dish_id = $2
+         ORDER BY created_at DESC
+         LIMIT 1
+       )`,
+      [deviceId, dishId],
+    );
 
-  if (result.rowCount && result.rowCount > 0) {
+    if (result.rowCount && result.rowCount > 0) {
+      broadcastAdminRefresh();
+    }
+  } catch {
+    runtimeStore.removeCheckIn(deviceId, dishId);
     broadcastAdminRefresh();
   }
 
