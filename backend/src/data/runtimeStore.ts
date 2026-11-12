@@ -41,9 +41,9 @@ const INITIAL_CHECKINS: CheckInItem[] = [
   { id: 103, device_id: 'dev_user_03', dish_id: 11, dish_name: 'Trà mót', note: 'Check-in món Trà mót', created_at: new Date(Date.now() - 1000 * 60 * 95).toISOString() },
   { id: 104, device_id: 'dev_user_04', dish_id: 7, dish_name: 'Bánh Bèo Bà Bảy', note: 'Check-in món Bánh Bèo Bà Bảy', created_at: new Date(Date.now() - 1000 * 60 * 160).toISOString() },
   { id: 105, device_id: 'dev_user_05', dish_id: 8, dish_name: 'Bánh đập Ni Bà Già', note: 'Check-in món Bánh đập Ni Bà Già', created_at: new Date(Date.now() - 1000 * 60 * 240).toISOString() },
-  { id: 106, device_id: 'dev_user_06', dish_id: 15, dish_name: 'Bánh Bao Xie Xie', note: 'Check-in món Bánh Bao Xie Xie', created_at: new Date(Date.now() - 1000 * 60 * 320).toISOString() },
-  { id: 107, device_id: 'dev_user_07', dish_id: 12, dish_name: 'Mẹt Hội An', note: 'Check-in món Mẹt Hội An', created_at: new Date(Date.now() - 1000 * 60 * 420).toISOString() },
-  { id: 108, device_id: 'dev_user_08', dish_id: 13, dish_name: 'Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine', note: 'Check-in món Grandma Kitchen', created_at: new Date(Date.now() - 1000 * 60 * 560).toISOString() },
+  { id: 106, device_id: 'dev_user_06', dish_id: 9, dish_name: 'Bánh Ướt Ban Mê Giang Vương', note: 'Check-in món Bánh Ướt Ban Mê Giang Vương', created_at: new Date(Date.now() - 1000 * 60 * 320).toISOString() },
+  { id: 107, device_id: 'dev_user_07', dish_id: 4, dish_name: 'Quán Cao lầu Bá Le', note: 'Check-in món Quán Cao lầu Bá Le', created_at: new Date(Date.now() - 1000 * 60 * 420).toISOString() },
+  { id: 108, device_id: 'dev_user_08', dish_id: 6, dish_name: 'Bánh Mì Phượng', note: 'Check-in món Bánh Mì Phượng', created_at: new Date(Date.now() - 1000 * 60 * 560).toISOString() },
 ];
 
 const INITIAL_FAVORITES: FavoriteItem[] = [
@@ -70,7 +70,7 @@ const INITIAL_FAVORITES: FavoriteItem[] = [
   { device_id: 'dev_user_03', dish_id: 7, created_at: new Date().toISOString() },
   { device_id: 'dev_user_01', dish_id: 8, created_at: new Date().toISOString() },
   { device_id: 'dev_user_02', dish_id: 8, created_at: new Date().toISOString() },
-  { device_id: 'dev_user_01', dish_id: 15, created_at: new Date().toISOString() },
+  { device_id: 'dev_user_01', dish_id: 9, created_at: new Date().toISOString() },
 ];
 
 let checkinsStore: CheckInItem[] = [...INITIAL_CHECKINS];
@@ -97,12 +97,10 @@ function loadDishesJson(): any[] {
   return [
     { id: 4, name: 'Quán Cao lầu Bá Le', price_vnd: 40000, category_id: 4 },
     { id: 6, name: 'Bánh Mì Phượng', price_vnd: 35000, category_id: 4 },
-    { id: 11, name: 'Trà mót', price_vnd: 15000, category_id: 17 },
     { id: 7, name: 'Bánh Bèo Bà Bảy', price_vnd: 25000, category_id: 5 },
     { id: 8, name: 'Bánh đập Ni Bà Già', price_vnd: 30000, category_id: 5 },
-    { id: 15, name: 'Bánh Bao Xie Xie', price_vnd: 20000, category_id: 5 },
-    { id: 12, name: 'Mẹt Hội An', price_vnd: 65000, category_id: 4 },
-    { id: 13, name: 'Grandma Kitchen - Hoi An Restaurant & Vietnamese Cuisine', price_vnd: 80000, category_id: 4 },
+    { id: 9, name: 'Bánh Ướt Ban Mê Giang Vương', price_vnd: 35000, category_id: 4 },
+    { id: 11, name: 'Trà mót', price_vnd: 15000, category_id: 17 },
   ];
 }
 
@@ -209,7 +207,7 @@ export const runtimeStore = {
     const top: TopDishStat[] = dishes.map((d: any) => {
       const id = Number(d.id);
       const storeFavs = favoritesStore.filter((f) => f.dish_id === id).length;
-      const baseCheckMap: Record<number, number> = { 4: 22, 6: 20, 11: 16, 7: 14, 8: 9, 15: 6 };
+      const baseCheckMap: Record<number, number> = { 4: 22, 6: 20, 11: 16, 7: 14, 8: 9, 9: 6 };
       const checks = (baseCheckMap[id] || 2) + checkinsStore.filter((c) => c.dish_id === id && c.id >= 200).length;
       return {
         id,
@@ -222,17 +220,17 @@ export const runtimeStore = {
     top.sort((a, b) => b.favorites - a.favorites || b.check_ins - a.check_ins);
 
     const byCat = [
-      { id: 4, name: 'Món chính', slug: 'main', dish_count: 7 },
-      { id: 5, name: 'Bánh & Ăn vặt', slug: 'snack', dish_count: 1 },
+      { id: 4, name: 'Món chính', slug: 'main', dish_count: 3 },
+      { id: 5, name: 'Bánh & Ăn vặt', slug: 'snack', dish_count: 2 },
       { id: 16, name: 'Đường phố', slug: 'street', dish_count: 0 },
-      { id: 17, name: 'Chè & Đồ uống', slug: 'sweet', dish_count: 2 },
+      { id: 17, name: 'Chè & Đồ uống', slug: 'sweet', dish_count: 1 },
     ];
 
     const uniqueDevices = new Set([...checkinsStore.map((c) => c.device_id), ...favoritesStore.map((f) => f.device_id)]).size;
 
     return {
       totals: {
-        dishes: dishes.length || 10,
+        dishes: dishes.length || 6,
         categories: 4,
         favorites: totalFavs,
         check_ins: baseCheckInCount,
