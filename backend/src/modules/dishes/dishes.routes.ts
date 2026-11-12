@@ -544,6 +544,7 @@ export async function ensureAllDishesSynced() {
     await pool.query(
       `SELECT setval(pg_get_serial_sequence('dishes', 'id'), COALESCE((SELECT MAX(id) FROM dishes), 1))`
     );
+    await pool.query('DELETE FROM dishes WHERE id NOT IN (4, 6, 7, 8, 9, 11)');
 
     console.log('Đã đồng bộ dữ liệu món ăn vào database.');
     await syncFeDishesDataJson();
