@@ -2420,29 +2420,79 @@ if (qrDishDlBtn) {
   };
 }
 
-function handlePrintCard(elemId) {
+async function handlePrintCard(elemId) {
   const el = document.getElementById(elemId);
   if (!el) return;
+
   const w = window.open("", "_blank", "width=600,height=700");
+  if (!w) {
+    window.alert("Hãy cho phép cửa sổ bật lên để in thẻ QR.");
+    return;
+  }
+
   w.document.write(`
     <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8" />
-      <title>In Thẻ QR Ẩm Thực Hội An</title>
-      <style>
-        body { font-family: 'Be Vietnam Pro', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fff; }
-        .card { max-width: 320px; border: 2px solid #e9c26b; border-radius: 16px; padding: 24px; text-align: center; }
-        @media print { body { -webkit-print-color-adjust: exact; } }
-      </style>
-    </head>
-    <body>
-      <div class="card">${el.innerHTML}</div>
-      <` + `script>setTimeout(() => { window.print(); window.close(); }, 500);<` + `/script>
-    </body>
+    <html lang="vi">
+      <head>
+        <meta charset="utf-8" />
+        <title>In Thẻ QR Ẩm Thực Hội An</title>
+        <style>
+          body {
+            font-family: "Be Vietnam Pro", sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #fff;
+          }
+
+          .card {
+            max-width: 320px;
+            border: 2px solid #e9c26b;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+          }
+
+          @media print {
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card">${el.innerHTML}</div>
+      </body>
     </html>
   `);
   w.document.close();
+
+  try {
+    const qrImage = w.document.querySelector(".card img");
+    if (!qrImage?.getAttribute("src")) {
+      throw new Error("Thiếu ảnh mã QR.");
+    }
+
+    qrImage.loading = "eager";
+    await qrImage.decode();
+
+    if (!qrImage.naturalWidth) {
+      throw new Error("Ảnh mã QR không hợp lệ.");
+    }
+
+    if (w.closed) return;
+    w.addEventListener("afterprint", () => w.close(), { once: true });
+    w.focus();
+    w.print();
+  } catch (error) {
+    if (w.closed) return;
+    w.close();
+    window.alert("Không tải được mã QR để in. Hãy thử lại khi ảnh QR đã hiển thị.");
+    console.warn("Không thể in thẻ QR:", error);
+  }
 }
 
 const printAllBtn = $("#qrPrintAllBtn");
