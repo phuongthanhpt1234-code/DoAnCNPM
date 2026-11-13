@@ -41,7 +41,7 @@ BEGIN
     SELECT 1 FROM information_schema.columns
     WHERE table_schema = 'public' AND table_name = 'dish_translations' AND column_name = 'lang'
   ) THEN
-    DROP TABLE dish_translations CASCADE;
+    RAISE EXCEPTION 'Legacy dish_translations schema requires a manual migration';
   END IF;
 END $$;
 
